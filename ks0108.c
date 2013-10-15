@@ -57,8 +57,6 @@ void gdInit(void)
 	return;
 }
 
-const unsigned char dat[] = {0x80, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC, 0xFE, 0xFF};
-
 void gdGraph(int16_t *fr)
 {
 	uint8_t i, j;
@@ -71,13 +69,13 @@ void gdGraph(int16_t *fr)
 		for (j = 0; j < GD_COLS * 2; j++)
 		{
 			val = fr[j>>2];
-			row = 8 - (val + 7) / 8;
+			row = 7 - val / 8;
 			data = 0xFF;
 			if (i == row)
-				data = dat[(val + 7) % 8];
+				data = 0xFF << (7 - val % 8);
 			else if (i < row)
 				data = 0x00;
-			if (j % 4 == 0)
+			if (!(j & 0x03))
 				data = 0x00;
 			if (j < GD_COLS)
 				gdWrite(GD_DATA, data, CS1);

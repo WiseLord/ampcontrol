@@ -1,4 +1,4 @@
-TARG=sgtest
+TARG=ampcontrol
 
 SRCS = main.c ks0108.c fft.c
 

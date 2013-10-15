@@ -36,19 +36,10 @@ static const int16_t dbTable[] PROGMEM =
 
 void hammWindow(int16_t *fr)
 {
-	int8_t i, j = 0;
-	int32_t calc;
-
-	for (i = 0; i < FFT_SIZE / 2; i++)
-	{
-		calc = ((int32_t)fr[j] * pgm_read_word(&hammTable[i])) >> 14;
-		fr[j++] = (int16_t)calc;
-	}
-	for (i = (FFT_SIZE / 2) - 1; i >= 0; i--)
-	{
-		calc = ((int32_t)fr[j] * pgm_read_word(&hammTable[i])) >> 14;
-		fr[j++] = (int16_t)calc;
-	}
+	uint8_t i;
+	for (i = 0; i < FFT_SIZE; i++)
+		fr[i] = ((int32_t)fr[i] * pgm_read_word(
+			&hammTable[i < FFT_SIZE / 2 ? i : FFT_SIZE - 1 - i])) >> 14;
 	return;
 }
 
@@ -81,7 +72,8 @@ static inline void sum_dif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 	*d = a - b;
 }
 
-static inline void mult_shf(int16_t cos, int16_t sin, int16_t x, int16_t y, int16_t *u, int16_t *v)
+static inline void mult_shf(int16_t cos, int16_t sin,
+	int16_t x, int16_t y, int16_t *u, int16_t *v)
 {
 	*u = ((long)x * cos - (long)y * sin) >> 14;
 	*v = ((long)y * cos + (long)x * sin) >> 14;
