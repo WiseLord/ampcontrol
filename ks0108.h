@@ -38,9 +38,15 @@
 #define STA_DISP_OFF				0x20
 #define STA_BUSY					0x80
 
+// Spectrum output mode
+#define MODE_MIXED					0
+#define MODE_LEFT					1
+#define MODE_RIGHT					2
+#define MODE_STEREO					3
+
 void gdWrite(uint8_t mode, uint8_t data, uint8_t cs);
 void gdInit(void);
 void gdFill(uint8_t data, uint8_t cs);
-void gdGraph(int16_t *fr);
+void gdSpectrum(uint8_t *buf, uint8_t mode);
 
 #endif // KS0108_H

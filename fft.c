@@ -24,14 +24,10 @@ static const int16_t hammTable[] PROGMEM =
 
 static const int16_t dbTable[] PROGMEM =
 {
-	   1,    1,    1,    1,    2,    2,    2,    3,
-	   3,    4,    4,    5,    6,    7,    8,    9,
-	  11,   12,   14,   17,   19,   22,   25,   29,
-	  34,   39,   45,   52,   60,   69,   79,   91,
-	 105,  121,  140,  161,  185,  213,  245,  282,
-	 324,  373,  430,  494,  569,  655,  754,  867,
-	 998, 1148, 1321, 1520, 1749, 2013, 2316, 2665,
-	3067, 3529, 4061, 4672, 5376, 6186, 7118, 8191,
+		1,   1,    2,    2,    3,    4,    6,    8,
+	   10,  14,   18,   24,   33,   44,   59,   78,
+	  105, 140,  187,  250,  335,  448,  599,  801,
+	1071, 1432, 1915, 2561, 3425, 4580, 6125, 8191,
 };
 
 void hammWindow(int16_t *fr)
@@ -43,7 +39,7 @@ void hammWindow(int16_t *fr)
 	return;
 }
 
-void rev_bin(int16_t *fr)
+void revBin(int16_t *fr)
 {
 	int8_t m, l, mr = 0;
 	int16_t tr;
@@ -66,20 +62,20 @@ void rev_bin(int16_t *fr)
 	return;
 }
 
-static inline void sum_dif(int16_t a, int16_t b, int16_t *s, int16_t *d)
+static inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 {
 	*s = a + b;
 	*d = a - b;
 }
 
-static inline void mult_shf(int16_t cos, int16_t sin,
+static inline void multShf(int16_t cos, int16_t sin,
 	int16_t x, int16_t y, int16_t *u, int16_t *v)
 {
 	*u = ((long)x * cos - (long)y * sin) >> 14;
 	*v = ((long)y * cos + (long)x * sin) >> 14;
 }
 
-void fft_radix4(int16_t *fr, int16_t *fi)
+void fftRad4(int16_t *fr, int16_t *fi)
 {
 	uint8_t ldm = 0, rdx = 2;
 	uint8_t i0, i1, i2, i3;
@@ -94,15 +90,15 @@ void fft_radix4(int16_t *fr, int16_t *fi)
 		i2 = i1 + 1;
 		i3 = i2 + 1;
 
-		sum_dif(fr[i0], fr[i1], &xr, &ur);
-		sum_dif(fr[i2], fr[i3], &yr, &vi);
-		sum_dif(fi[i0], fi[i1], &xi, &ui);
-		sum_dif(fi[i3], fi[i2], &yi, &vr);
+		sumDif(fr[i0], fr[i1], &xr, &ur);
+		sumDif(fr[i2], fr[i3], &yr, &vi);
+		sumDif(fi[i0], fi[i1], &xi, &ui);
+		sumDif(fi[i3], fi[i2], &yi, &vr);
 
-		sum_dif(ui, vi, &fi[i1], &fi[i3]);
-		sum_dif(xi, yi, &fi[i0], &fi[i2]);
-		sum_dif(ur, vr, &fr[i1], &fr[i3]);
-		sum_dif(xr, yr, &fr[i0], &fr[i2]);
+		sumDif(ui, vi, &fi[i1], &fi[i3]);
+		sumDif(xi, yi, &fi[i0], &fi[i2]);
+		sumDif(ur, vr, &fr[i1], &fr[i3]);
+		sumDif(xr, yr, &fr[i0], &fr[i2]);
 	}
 
 	for (ldm = 2 * rdx; ldm <= FFT_LOG2; ldm += rdx)
@@ -130,9 +126,9 @@ void fft_radix4(int16_t *fr, int16_t *fi)
 				i2 = i1 + m4;
 				i3 = i2 + m4;
 
-				mult_shf(cos2, sin2, fr[i1], fi[i1], &xr, &xi);
-				mult_shf(cos1, sin1, fr[i2], fi[i2], &yr, &vr);
-				mult_shf(cos3, sin3, fr[i3], fi[i3], &vi, &yi);
+				multShf(cos2, sin2, fr[i1], fi[i1], &xr, &xi);
+				multShf(cos1, sin1, fr[i2], fi[i2], &yr, &vr);
+				multShf(cos3, sin3, fr[i3], fi[i3], &vi, &yi);
 
 				t = yi - vr;
 				yi += vr;
@@ -141,7 +137,7 @@ void fft_radix4(int16_t *fr, int16_t *fi)
 				ur = fr[i0] - xr;
 				xr += fr[i0];
 
-				sum_dif(ur, vr, &fr[i1], &fr[i3]);
+				sumDif(ur, vr, &fr[i1], &fr[i3]);
 
 				t = yr - vi;
 				yr += vi;
@@ -150,9 +146,9 @@ void fft_radix4(int16_t *fr, int16_t *fi)
 				ui = fi[i0] - xi;
 				xi += fi[i0];
 
-				sum_dif(ui, vi, &fi[i1], &fi[i3]);
-				sum_dif(xr, yr, &fr[i0], &fr[i2]);
-				sum_dif(xi, yi, &fi[i0], &fi[i2]);
+				sumDif(ui, vi, &fi[i1], &fi[i3]);
+				sumDif(xr, yr, &fr[i0], &fr[i2]);
+				sumDif(xi, yi, &fi[i0], &fi[i2]);
 			}
 			phI += phI0;
 		}
@@ -173,5 +169,8 @@ void cplx2dB(int16_t *fr, int16_t *fi)
 				break;
 		fr[i] = j;
 	}
+	for (i = 0; i < FFT_SIZE; i++)
+		fi[i] = 0;
+
 	return;
 }

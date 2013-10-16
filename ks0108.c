@@ -57,19 +57,44 @@ void gdInit(void)
 	return;
 }
 
-void gdGraph(int16_t *fr)
+void gdSpectrum(uint8_t *buf, uint8_t mode)
 {
 	uint8_t i, j;
-	uint8_t row, data;
-	int16_t val;
+	int8_t row;
+	uint8_t data;
+	uint8_t val;
 	for (i = 0; i < GD_ROWS; i++)
 	{
 		gdWrite(GD_COMM, KS0108_SET_PAGE + i, CS1 | CS2);
 		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
 		for (j = 0; j < GD_COLS * 2; j++)
 		{
-			val = fr[j>>2];
-			row = 7 - val / 8;
+			switch (mode) {
+			case MODE_LEFT:
+				val = buf[j>>2] << 1;
+				row = 7 - val / 8;
+				break;
+			case MODE_RIGHT:
+				val = buf[(j>>2) + 32] << 1;
+				row = 7 - val / 8;
+				break;
+			case MODE_STEREO:
+				if (i < GD_ROWS / 2)
+				{
+					val = buf[j>>2];
+					row = 3 - val / 8;
+				}
+				else
+				{
+					val = buf[(j>>2) + 32];
+					row = 7 - val / 8;
+				}
+				break;
+			default:
+				val = buf[j>>2] + buf[(j>>2) + 32];
+				row = 7 - val / 8;
+				break;
+			}
 			data = 0xFF;
 			if (i == row)
 				data = 0xFF << (7 - val % 8);

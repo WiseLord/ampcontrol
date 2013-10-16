@@ -4,70 +4,73 @@
 #include "ks0108.h"
 #include "fft.h"
 
+volatile uint8_t ind = 0;
+int16_t f_l[FFT_SIZE];		// Real values for left channel
+int16_t f_r[FFT_SIZE];		// Real values for right channel
+int16_t f_i[FFT_SIZE];		// Imaginary values
+uint8_t buf[FFT_SIZE];		// Buffer with previous results
+
+static inline void adcPerform()
+{
+	ADCSRA |= 1<<ADSC;							// Start measure
+	while ((ADCSRA & (1<<ADSC)) == (1<<ADSC));	// Wait for finish
+	return;
+}
+
 void adcInit()
 {
 	ADCSRA |= (1<<ADEN);				// ADC enable
-	ADCSRA |= (1<<ADPS2) | (1<<ADPS0);	// Set ADC prescaler to 32 (250kHz)
-	ADCSRA |= (1<<ADIE);				// Enable ADC complete interrupt
+	ADCSRA |= (1<<ADPS2) | (1<<ADPS0);	// Set ADC prescaler to 32 (500 kHz)
+	adcPerform();
 	return;
 }
 
 void timerInit (void)
 {
-	TIMSK |= (1<<OCIE0);	// Enable timer compare match interrupt
 	TCCR0 = 0b010;			// Set timer prescaller to 8 (2 MHz)
-	OCR0 = 125;				// Value for compare => 2000000/125=16000 meas/sec
+	OCR0 = 143;				// Value for compare => 2000000/143=14k meas/sec
 	TCCR0 |= (1<<WGM01);	// Reset counter on match
 	return;
 }
 
-volatile uint8_t ind = 0;
-int16_t f_r[FFT_SIZE];
-int16_t f_i[FFT_SIZE];
-
 ISR (TIMER0_COMP_vect) {
-	ADCSRA |= 1<<ADSC;
+	ADMUX &= ~(1<<MUX0);			// Switch to left chnnel
+	adcPerform();
+	f_l[ind] = ADCL + (ADCH << 8);
+	f_l[ind] -= 507;
+
+	ADMUX |= (1<<MUX0);				// Switch to right channel
+	adcPerform();
+	f_r[ind] = ADCL + (ADCH << 8);
+	f_r[ind] -= 507;
+
+	f_i[ind++] = 0;
 	return;
 };
 
-ISR (ADC_vect)
-{
-	f_r[ind] = ADCL;
-	f_r[ind] += (ADCH << 8);
-	f_r[ind] -= 507; // Value from ADC when no signal
-	f_i[ind] = 0;
-	ind++;
-	return;
-}
-
-ISR (INT0_vect)
-{
-	gdFill(0x00, CS1 | CS2);
-	_delay_ms(500);
-	return;
-}
 
 void getValues()
 {
 	ind = 0;
-	sei();
+	TIMSK |= (1<<OCIE0);	// Enable timer compare match interrupt
 	while (ind < FFT_SIZE);
-	cli();
+	TIMSK &= ~(1<<OCIE0);
 	return;
 }
 
-int16_t buf[FFT_SIZE / 2];
-
-void slowFall()
+void slowFall(uint8_t fallRate)
 {
 	uint8_t i;
-	const uint8_t fs = 2;
 	for (i = 0; i < FFT_SIZE / 2; i++)
 	{
-		if (f_r[i] + fs <= buf[i])
-			buf[i] -= fs;
+		if (fallRate && (f_l[i] + fallRate <= buf[i]))
+			buf[i] -= fallRate;
 		else
-			buf[i] = f_r[i];
+			buf[i] = f_l[i];
+		if (fallRate && (f_r[i] + fallRate <= buf[i + FFT_SIZE / 2]))
+			buf[i + FFT_SIZE / 2] -= fallRate;
+		else
+			buf[i + FFT_SIZE / 2] = f_r[i];
 	}
 	return;
 }
@@ -75,12 +78,19 @@ void slowFall()
 void fft_loop()
 {
 	getValues();
+
+	hammWindow(f_l);
+	revBin(f_l);
+	fftRad4(f_l, f_i);
+	cplx2dB(f_l, f_i);
+
 	hammWindow(f_r);
-	rev_bin(f_r);
-	fft_radix4(f_r, f_i);
+	revBin(f_r);
+	fftRad4(f_r, f_i);
 	cplx2dB(f_r, f_i);
-	slowFall();
-	gdGraph(buf);
+
+	slowFall(2);
+	gdSpectrum(buf, MODE_STEREO);
 	return;
 }
 
@@ -90,6 +100,8 @@ int main(void)
 	gdInit();
 	timerInit();
 	adcInit();
+
+	sei();
 
 	while (1)
 	{
