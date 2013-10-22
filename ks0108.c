@@ -1,4 +1,5 @@
 #include "ks0108.h"
+#include "font.h"
 
 #include <util/delay.h>
 
@@ -69,7 +70,8 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
 		for (j = 0; j < GD_COLS * 2; j++)
 		{
-			switch (mode) {
+			switch (mode)
+			{
 			case MODE_LEFT:
 				val = buf[j>>2] << 1;
 				row = 7 - val / 8;
@@ -108,5 +110,58 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 				gdWrite(GD_DATA, data, CS2);
 		}
 	}
+	return;
+}
+
+static unsigned char xPos, yPos;
+
+void gdSetPos(unsigned char x, unsigned char y)
+{
+	unsigned char cs;
+	cs = CS1;
+	if (x >= GD_COLS)
+		cs = CS2;
+	gdWrite(GD_COMM, KS0108_SET_ADDRESS + (x & (GD_COLS - 1)), cs);
+	xPos = x;
+	gdWrite(GD_COMM, KS0108_SET_PAGE + (y >> 3), cs);
+	yPos = y;
+	return;
+}
+
+void gdWriteChar(unsigned char code)
+{
+	unsigned char cs;
+	cs = CS1;
+	if (xPos >= GD_COLS)
+		cs = CS2;
+	unsigned char i;
+	unsigned int index;
+	index = code * 5;
+	for (i = 0; i < 6; i++)
+	{
+		if (i == 5)
+			gdWrite(GD_DATA, 0x00, cs);
+		else
+			gdWrite(GD_DATA, pgm_read_byte(&k1013vg6_0[index + i]), cs);
+		xPos++;
+		if (xPos == GD_COLS)
+			cs = CS2;
+		if (xPos == GD_COLS * 2)
+		{
+			cs = CS1;
+			xPos = 0;
+			yPos += 8;
+			if (yPos >= 8 * GD_ROWS)
+				yPos /= (8 * GD_ROWS);
+		}
+		gdSetPos(xPos, yPos);
+	}
+	return;
+}
+
+void gdWriteString(char *string)
+{
+	while(*string)
+		gdWriteChar(*string++);
 	return;
 }

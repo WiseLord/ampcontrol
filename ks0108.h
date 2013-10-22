@@ -49,4 +49,7 @@ void gdInit(void);
 void gdFill(uint8_t data, uint8_t cs);
 void gdSpectrum(uint8_t *buf, uint8_t mode);
 
+void gdSetPos(unsigned char x, unsigned char y);
+void gdWriteChar(unsigned char code);
+void gdWriteString(char *string);
 #endif // KS0108_H

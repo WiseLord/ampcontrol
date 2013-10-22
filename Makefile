@@ -1,10 +1,15 @@
 TARG=ampcontrol
 
-SRCS = main.c ks0108.c fft.c
+SRCS = main.c ks0108.c fft.c adc.c
+MCU = atmega32
+F_CPU = 16000000L
 
-MCU=atmega32
+CS = -fexec-charset=k1013vg6-0
 
-F_CPU=16000000L
+OPTIMIZE = -Os -mcall-prologues
+CFLAGS = -g -Wall -Werror -lm $(OPTIMIZE) $(CS) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+LDFLAGS = -g -Wall -Werror -mmcu=$(MCU)
+OBJS = $(SRCS:.c=.o)
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
