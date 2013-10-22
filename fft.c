@@ -13,15 +13,6 @@ static const int16_t sinTable[] PROGMEM =
 	-11584, -10393,  -9101,  -7722,  -6269,  -4755,  -3196,  -1605,
 };
 
-static const int16_t hammTable[] PROGMEM =
-{
-	 1310,  1348,  1460,  1645,  1902,  2228,  2620,  3073,
-	 3585,  4148,  4758,  5409,  6093,  6806,  7538,  8284,
-	 9035,  9784, 10524, 11247, 11947, 12615, 13246, 13834,
-	14372, 14855, 15278, 15637, 15929, 16150, 16299, 16374,
-
-};
-
 static const int16_t dbTable[] PROGMEM =
 {
 		1,   1,    2,    2,    3,    4,    6,    8,
@@ -29,15 +20,6 @@ static const int16_t dbTable[] PROGMEM =
 	  105, 140,  187,  250,  335,  448,  599,  801,
 	1071, 1432, 1915, 2561, 3425, 4580, 6125, 8191,
 };
-
-void hammWindow(int16_t *fr)
-{
-	uint8_t i;
-	for (i = 0; i < FFT_SIZE; i++)
-		fr[i] = ((int32_t)fr[i] * pgm_read_word(
-			&hammTable[i < FFT_SIZE / 2 ? i : FFT_SIZE - 1 - i])) >> 14;
-	return;
-}
 
 void revBin(int16_t *fr)
 {

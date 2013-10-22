@@ -11,7 +11,6 @@
 #define B_LEFT	(1 << 6)
 #define B_RIGHT	(1 << 0)
 
-
 #define B_ANY (B_MENU | B_UP | B_DOWN | B_LEFT | B_RIGHT)
 
 int main(void)
@@ -23,7 +22,7 @@ int main(void)
 	sei();
 
 	uint8_t *buf;
-	while (1)
+	while(1)
 	{
 		buf = getData();
 		gdSpectrum(buf, MODE_STEREO);
