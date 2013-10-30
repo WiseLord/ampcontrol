@@ -105,6 +105,6 @@ uint8_t *getData()
 	fftRad4(f_r, f_i);
 	cplx2dB(f_r, f_i);
 
-	slowFall(2);
+	slowFall(1);
 	return buf;
 }
