@@ -53,8 +53,8 @@ static inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 static inline void multShf(int16_t cos, int16_t sin,
 	int16_t x, int16_t y, int16_t *u, int16_t *v)
 {
-	*u = ((long)x * cos - (long)y * sin) >> 14;
-	*v = ((long)y * cos + (long)x * sin) >> 14;
+	*u = ((int32_t)x * cos - (int32_t)y * sin) >> 14;
+	*v = ((int32_t)y * cos + (int32_t)x * sin) >> 14;
 }
 
 void fftRad4(int16_t *fr, int16_t *fi)
@@ -144,7 +144,7 @@ void cplx2dB(int16_t *fr, int16_t *fi)
 	int16_t calc;
 	for (i = 0; i < FFT_SIZE / 2; i++)
 	{
-		calc = ((long)fr[i] * fr[i] + (long)fi[i] * fi[i]) >> 13;
+		calc = ((int32_t)fr[i] * fr[i] + (int32_t)fi[i] * fi[i]) >> 13;
 
 		for (j = 0; j < N_DB; j++)
 			if (calc <= pgm_read_word(&dbTable[j]))

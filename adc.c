@@ -57,16 +57,16 @@ void getValues()
 		f_l[i] = ADCL;
 		f_l[i] += (ADCH << 8); // Read left channel value
 		f_l[i] -= CORR_L;
-		f_l[i] = (hv * f_l[i]) >> 14;
-		_delay_us(5);
+		f_l[i] = (hv * f_l[i]) >> 14; // Apply Hamming window
+		_delay_us(3); // Wait to be sure for new measure started
 
 		while ((ADCSRA & (1<<ADSC)) == (1<<ADSC)); // Wait for finish measure
 		ADMUX &= ~(1<<MUX0); // Switch to left channel
 		f_r[i] = ADCL;
 		f_r[i] += (ADCH << 8); // Read right channel value
 		f_r[i] -= CORR_R;
-		f_r[i] = (hv * f_r[i]) >> 14;
-		_delay_us(5);
+		f_r[i] = (hv * f_r[i]) >> 14; // Apply Hamming window
+		_delay_us(3); // Wait to be sure for new measure started
 
 		f_i[i++] = 0;
 	}

@@ -1,6 +1,6 @@
 TARG=ampcontrol
 
-SRCS = main.c ks0108.c fft.c adc.c
+SRCS = main.c ks0108.c fft.c adc.c input.c
 MCU = atmega32
 F_CPU = 16000000L
 
@@ -14,11 +14,6 @@ OBJS = $(SRCS:.c=.o)
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 AVRDUDE = avrdude
-
-OBJS = $(SRCS:.c=.o)
-
-CFLAGS = -mmcu=$(MCU) -Wall -g -Os -Werror -lm -mcall-prologues -DF_CPU=$(F_CPU)
-LDFLAGS = -mmcu=$(MCU) -Wall -g -Os -Werror
 
 all: $(TARG)
 

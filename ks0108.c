@@ -113,11 +113,11 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 	return;
 }
 
-static unsigned char xPos, yPos;
+static uint8_t xPos, yPos;
 
-void gdSetPos(unsigned char x, unsigned char y)
+void gdSetPos(uint8_t x, uint8_t y)
 {
-	unsigned char cs;
+	uint8_t cs;
 	cs = CS1;
 	if (x >= GD_COLS)
 		cs = CS2;
@@ -128,14 +128,14 @@ void gdSetPos(unsigned char x, unsigned char y)
 	return;
 }
 
-void gdWriteChar(unsigned char code)
+void gdWriteChar(uint8_t code)
 {
-	unsigned char cs;
+	uint8_t cs;
 	cs = CS1;
 	if (xPos >= GD_COLS)
 		cs = CS2;
-	unsigned char i;
-	unsigned int index;
+	uint8_t i;
+	uint16_t index;
 	index = code * 5;
 	for (i = 0; i < 6; i++)
 	{
@@ -159,9 +159,35 @@ void gdWriteChar(unsigned char code)
 	return;
 }
 
-void gdWriteString(char *string)
+void gdWriteString(uint8_t *string)
 {
 	while(*string)
 		gdWriteChar(*string++);
 	return;
+}
+
+void gdWriteNum(int16_t number, uint8_t width)
+{
+	uint8_t dig[width + 1];
+	int8_t i;
+	uint8_t sign = ' ';
+	if (number < 0)
+	{
+		sign = '-';
+		number = -number;
+	}
+	for (i = 0; i < width; i++)
+		dig[i] = ' ';
+	dig[width] = '\0';
+
+
+	i = width - 1;
+	while (number > 0 || i == width - 1)
+	{
+		dig[i--] = number % 10 + 0x30;
+		number /= 10;
+	}
+	if (i >= 0)
+		dig[i] = sign;
+	gdWriteString(dig);
 }

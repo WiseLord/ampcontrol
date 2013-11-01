@@ -12,12 +12,12 @@
 #define GD_CDDR						DDRC
 #define GD_CPIN						PINC
 
-#define RES							(1 << 2)
-#define CS2							(1 << 3)
-#define CS1							(1 << 4)
-#define E							(1 << 5)
-#define RW							(1 << 6)
-#define DI							(1 << 7)
+#define RES							(1<<PC2)
+#define CS2							(1<<PC3)
+#define CS1							(1<<PC4)
+#define E							(1<<PC5)
+#define RW							(1<<PC6)
+#define DI							(1<<PC7)
 
 #define GD_COLS						64
 #define GD_ROWS						8
@@ -49,7 +49,9 @@ void gdInit(void);
 void gdFill(uint8_t data, uint8_t cs);
 void gdSpectrum(uint8_t *buf, uint8_t mode);
 
-void gdSetPos(unsigned char x, unsigned char y);
+void gdSetPos(uint8_t x, uint8_t y);
 void gdWriteChar(unsigned char code);
-void gdWriteString(char *string);
+void gdWriteString(uint8_t *string);
+void gdWriteNum(int16_t number, uint8_t width);
+
 #endif // KS0108_H

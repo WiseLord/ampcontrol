@@ -4,28 +4,36 @@
 #include "ks0108.h"
 #include "fft.h"
 #include "adc.h"
+#include "input.h"
 
-#define B_MENU	(1 << 7)
-#define B_UP	(1 << 4)
-#define B_DOWN	(1 << 5)
-#define B_LEFT	(1 << 6)
-#define B_RIGHT	(1 << 0)
-
-#define B_ANY (B_MENU | B_UP | B_DOWN | B_LEFT | B_RIGHT)
 
 int main(void)
 {
 	_delay_ms(100);
 	gdInit();
 	adcInit();
+	btnInit();
 
 	sei();
 
+	int vol = 200;
+
+	int8_t cnt;
+
 	uint8_t *buf;
-	while(1)
+
+	while (1)
 	{
-		buf = getData();
-		gdSpectrum(buf, MODE_STEREO);
+		cnt = getEncValue();
+		if (cnt)
+			vol += cnt;
+		else
+		{
+			buf = getData();
+			gdSpectrum(buf, MODE_STEREO);
+//			gdSetPos(96, 0);
+//			gdWriteNum(vol, 5);
+		}
 	}
 	return 0;
 }
