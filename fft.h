@@ -5,7 +5,10 @@
 
 #define FFT_SIZE	64
 #define FFT_LOG2	6
+
 #define N_WAVE		64
+#define N_WAVE_Q	16 // N_WAVE / 4
+
 #define N_DB		32
 
 void revBin(int16_t *fr);

@@ -32,4 +32,4 @@ flash: $(TARG)
 	$(AVRDUDE) -p m32 -B 1.1 -U flash:w:$(TARG).hex:i
 
 fuse:
-	$(AVRDUDE) -p m32 -U lfuse:w:0xff:m -U hfuse:w:0xd9:m
+	$(AVRDUDE) -p m32 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m

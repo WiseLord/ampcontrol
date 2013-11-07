@@ -13,6 +13,8 @@
 #define BTN_LEFT	(1<<PD6)
 #define BTN_RIGHT	(1<<PD0)
 
+#define BTN_MASK (BTN_MENU | BTN_UP | BTN_DOWN | BTN_LEFT | BTN_RIGHT)
+
 #define ENC_A (1<<PD2)
 #define ENC_B (1<<PD1)
 #define ENC_AB (ENC_A | ENC_B)

@@ -1,5 +1,6 @@
 #include "ks0108.h"
 #include "font.h"
+#include "fft.h"
 
 #include <util/delay.h>
 
@@ -60,40 +61,41 @@ void gdInit(void)
 
 void gdSpectrum(uint8_t *buf, uint8_t mode)
 {
-	uint8_t i, j;
+	uint8_t i, j, k;
 	int8_t row;
 	uint8_t data;
 	uint8_t val;
+	uint8_t cs;
 	for (i = 0; i < GD_ROWS; i++)
 	{
 		gdWrite(GD_COMM, KS0108_SET_PAGE + i, CS1 | CS2);
 		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		for (j = 0; j < GD_COLS * 2; j++)
+		for (j = 0, k = FFT_SIZE / 2; j < FFT_SIZE / 2; j++, k++)
 		{
 			switch (mode)
 			{
 			case MODE_LEFT:
-				val = buf[j>>2] << 1;
+				val = buf[j] << 1;
 				row = 7 - val / 8;
 				break;
 			case MODE_RIGHT:
-				val = buf[(j>>2) + 32] << 1;
+				val = buf[k] << 1;
 				row = 7 - val / 8;
 				break;
 			case MODE_STEREO:
 				if (i < GD_ROWS / 2)
 				{
-					val = buf[j>>2];
+					val = buf[j];
 					row = 3 - val / 8;
 				}
 				else
 				{
-					val = buf[(j>>2) + 32];
+					val = buf[k];
 					row = 7 - val / 8;
 				}
 				break;
 			default:
-				val = buf[j>>2] + buf[(j>>2) + 32];
+				val = buf[j] + buf[k];
 				row = 7 - val / 8;
 				break;
 			}
@@ -102,12 +104,14 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 				data = 0xFF << (7 - val % 8);
 			else if (i < row)
 				data = 0x00;
-			if (!(j & 0x03))
-				data = 0x00;
-			if (j < GD_COLS)
-				gdWrite(GD_DATA, data, CS1);
+			if (j < FFT_SIZE / 4)
+				cs = CS1;
 			else
-				gdWrite(GD_DATA, data, CS2);
+				cs = CS2;
+				gdWrite(GD_DATA, data, cs);
+				gdWrite(GD_DATA, data, cs);
+				gdWrite(GD_DATA, data, cs);
+				gdWrite(GD_DATA, 0x00, cs);
 		}
 	}
 	return;

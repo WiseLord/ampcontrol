@@ -97,9 +97,9 @@ void fftRad4(int16_t *fr, int16_t *fi)
 			sin2 = pgm_read_word(&sinTable[2 * phI]);
 			sin3 = pgm_read_word(&sinTable[3 * phI]);
 
-			cos1 = pgm_read_word(&sinTable[phI + N_WAVE / 4]);
-			cos2 = pgm_read_word(&sinTable[2 * phI + N_WAVE / 4]);
-			cos3 = pgm_read_word(&sinTable[3 * phI + N_WAVE / 4]);
+			cos1 = pgm_read_word(&sinTable[phI + N_WAVE_Q]);
+			cos2 = pgm_read_word(&sinTable[2 * phI + N_WAVE_Q]);
+			cos3 = pgm_read_word(&sinTable[3 * phI + N_WAVE_Q]);
 
 			for (r = 0; r < FFT_SIZE; r += m)
 			{
