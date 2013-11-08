@@ -195,3 +195,62 @@ void gdWriteNum(int16_t number, uint8_t width)
 		dig[i] = sign;
 	gdWriteString(dig);
 }
+
+void gdWriteChar2(uint8_t code, uint8_t line)
+{
+	uint8_t cs;
+	cs = CS1;
+	if (xPos >= GD_COLS)
+		cs = CS2;
+	uint8_t i;
+	uint16_t index;
+	index = code * 5;
+
+	uint8_t data;
+
+	for (i = 0; i < 12; i++)
+	{
+		if (i >= 10)
+			gdWrite(GD_DATA, 0x00, cs);
+		else
+		{
+			data = pgm_read_byte(&k1013vg6_0[index + i/2]);
+			if (line == 0)
+				data = data & 0x0F;
+			else
+				data = (data & 0xF0) >> 4;
+
+			data = ((data & 0x08) * 3) << 3
+				 | ((data & 0x04) * 3) << 2
+				 | ((data & 0x02) * 3) << 1
+				 | ((data & 0x01) * 3);
+
+			gdWrite(GD_DATA, data, cs);
+		}
+		xPos++;
+		if (xPos == GD_COLS)
+			cs = CS2;
+		if (xPos == GD_COLS * 2)
+		{
+			cs = CS1;
+			xPos = 0;
+			yPos += 8;
+			if (yPos >= 8 * GD_ROWS)
+				yPos /= (8 * GD_ROWS);
+		}
+		gdSetPos(xPos, yPos);
+	}
+	return;
+}
+
+void gdWriteString2(uint8_t x, uint8_t y, uint8_t *string)
+{
+	gdSetPos(x, y);
+	uint8_t i;
+	for (i = 0; string[i]; i++)
+		gdWriteChar2(string[i], 0);
+	gdSetPos(x, y + 8);
+	for (i = 0; string[i]; i++)
+		gdWriteChar2(string[i], 1);
+	return;
+}

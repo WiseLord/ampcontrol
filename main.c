@@ -41,7 +41,7 @@ int8_t dbVolume(int8_t value)
 regParam volume = {
 	.min = -47,
 	.max = 0,
-	.label = "Громкость",
+	.label = " Громкость",
 	.i2cValue = &i2cVolume,
 	.dbValue = &dbVolume,
 };
@@ -49,7 +49,7 @@ regParam volume = {
 regParam bass = {
 	.min = -7,
 	.max = 7,
-	.label = " Тембр НЧ",
+	.label = " Тембр НЧ ",
 	.i2cValue = &i2cFreq,
 	.dbValue = &dbFreq,
 };
@@ -57,7 +57,7 @@ regParam bass = {
 regParam middle = {
 	.min = -7,
 	.max = 7,
-	.label = " Тембр СЧ",
+	.label = " Тембр СЧ ",
 	.i2cValue = &i2cFreq,
 	.dbValue = &dbFreq,
 };
@@ -65,7 +65,7 @@ regParam middle = {
 regParam treble = {
 	.min = -7,
 	.max = 7,
-	.label = " Тембр ВЧ",
+	.label = " Тембр ВЧ ",
 	.i2cValue = &i2cFreq,
 	.dbValue = &dbFreq,
 };
@@ -95,6 +95,32 @@ void changeCurParam()
 		curParam = &treble;
 	else if (curParam == &treble)
 		curParam = &volume;
+}
+
+void showParam(regParam *param)
+{
+	gdWriteString2(0, 8, param->label);
+
+	uint8_t i, j;
+	uint16_t l;
+	uint8_t data;
+	l = 96 * (1 + param->rawValue - param->min) / (1 + param->max - param->min);
+	for (j = 5; j <=6; j++)
+	{
+		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
+		gdWrite(GD_COMM, KS0108_SET_PAGE + j, CS1 | CS2);
+		for (i = 0; i < 96; i++)
+		{
+			data = 0x00;
+			if ((i < l) && (i % 2 == 0))
+				data = 0xFF;
+			gdWrite(GD_DATA, data, i < 64 ? CS1 : CS2);
+		}
+	}
+	gdSetPos(100, 40);
+	gdWriteNum(param->dbValue(param->rawValue), 4);
+	gdSetPos(112, 48);
+	gdWriteString(db);
 }
 
 int main(void)
@@ -136,14 +162,11 @@ int main(void)
 			{
 				if (!marker)
 					gdFill(0x00, CS1 | CS2);
-				marker = 1000;
+				marker = 200;
 			}
 			changeParam(curParam, delta);
 
-			gdSetPos(0, 0);
-			gdWriteString(curParam->label);
-			gdWriteNum(curParam->dbValue(curParam->rawValue), 4);
-			gdWriteString(db);
+			showParam(curParam);
 
 			marker--;
 			if (marker == 0)
