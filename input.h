@@ -22,5 +22,6 @@
 
 void btnInit(void);
 int8_t getEncValue(void);
+uint8_t getButtons(void);
 
 #endif // INPUT_H

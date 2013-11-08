@@ -1,7 +1,7 @@
 TARG=ampcontrol
 
-SRCS = main.c ks0108.c fft.c adc.c input.c
-MCU = atmega32
+SRCS = main.c ks0108.c fft.c adc.c input.c tda7439.c
+MCU = atmega16
 F_CPU = 16000000L
 
 CS = -fexec-charset=k1013vg6-0
@@ -29,7 +29,7 @@ clean:
 	rm -f *.elf *.bin *.hex $(OBJS) *.map
 
 flash: $(TARG)
-	$(AVRDUDE) -p m32 -B 1.1 -U flash:w:$(TARG).hex:i
+	$(AVRDUDE) -p m16 -B 1.1 -U flash:w:$(TARG).hex:i
 
 fuse:
-	$(AVRDUDE) -p m32 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
+	$(AVRDUDE) -p m16 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m

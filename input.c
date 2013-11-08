@@ -56,3 +56,7 @@ int8_t getEncValue(void)
 	cnt = 0;
 	return ret;
 }
+
+uint8_t getButtons(void) {
+	return (~BTN_PIN & BTN_MASK);
+}

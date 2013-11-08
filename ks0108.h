@@ -4,9 +4,9 @@
 #include <inttypes.h>
 #include <avr/io.h>
 
-#define GD_DPORT					PORTA
-#define GD_DDDR						DDRA
-#define GD_DPIN						PINA
+#define GD_DPORT					PORTB
+#define GD_DDDR						DDRB
+#define GD_DPIN						PINB
 
 #define GD_CPORT					PORTC
 #define GD_CDDR						DDRC
