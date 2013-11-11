@@ -11,7 +11,6 @@
 
 #define N_DB		32
 
-void revBin(int16_t *fr);
 void fftRad4(int16_t *fr, int16_t *fi);
 void cplx2dB(int16_t *fr, int16_t *fi);
 

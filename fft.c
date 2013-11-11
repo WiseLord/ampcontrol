@@ -21,29 +21,6 @@ static const int16_t dbTable[] PROGMEM =
 	1071, 1432, 1915, 2561, 3425, 4580, 6125, 8191,
 };
 
-void revBin(int16_t *fr)
-{
-	int8_t m, l, mr = 0;
-	int16_t tr;
-
-	for (m = 1; m < FFT_SIZE; m++)
-	{
-		l = FFT_SIZE;
-		do
-			l >>= 1;
-		while (mr + l >= FFT_SIZE);
-
-		mr = (mr & (l - 1)) + l;
-
-		if (mr <= m)
-			continue;
-		tr = fr[m];
-		fr[m] = fr[mr];
-		fr[mr] = tr;
-	}
-	return;
-}
-
 static inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 {
 	*s = a + b;

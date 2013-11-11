@@ -6,6 +6,8 @@
 #include "adc.h"
 #include "fft.h"
 
+#define swap(x) (__builtin_avr_swap(x)) // Swaps nibbles in byte
+
 int16_t f_l[FFT_SIZE]; // Real values for left channel
 int16_t f_r[FFT_SIZE]; // Real values for right channel
 int16_t f_i[FFT_SIZE]; // Imaginary values
@@ -35,9 +37,16 @@ ISR (TIMER0_COMP_vect) {
 	return;
 };
 
+static uint8_t revBits(uint8_t x)
+{
+	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1); // 00abcdef => 00badcfe
+	x = (x & 0x0C) | swap(x & 0x33); // 00badcfe => 00fedcba
+	return x;
+}
+
 void getValues()
 {
-	uint8_t i = 0;
+	uint8_t i = 0, j;
 	int32_t hv;
 	TCNT0 = 0; // Reset timer
 	TIMSK |= (1<<OCIE0); // Enable timer compare match interrupt
@@ -47,6 +56,7 @@ void getValues()
 
 	do
 	{
+		j = revBits(i);
 		if (i < FFT_SIZE / 2)
 			hv = pgm_read_word(&hammTable[i]);
 		else
@@ -54,18 +64,18 @@ void getValues()
 
 		while ((ADCSRA & (1<<ADSC)) == (1<<ADSC)); // Wait for finish measure
 		ADMUX |= (1<<MUX0); // Switch to right channel
-		f_l[i] = ADCL;
-		f_l[i] += (ADCH << 8); // Read left channel value
-		f_l[i] -= CORR_L;
-		f_l[i] = (hv * f_l[i]) >> 14; // Apply Hamming window
+		f_l[j] = ADCL;
+		f_l[j] += (ADCH << 8); // Read left channel value
+		f_l[j] -= CORR_L;
+		f_l[j] = (hv * f_l[j]) >> 14; // Apply Hamming window
 		_delay_us(3); // Wait to be sure for new measure started
 
 		while ((ADCSRA & (1<<ADSC)) == (1<<ADSC)); // Wait for finish measure
 		ADMUX &= ~(1<<MUX0); // Switch to left channel
-		f_r[i] = ADCL;
-		f_r[i] += (ADCH << 8); // Read right channel value
-		f_r[i] -= CORR_R;
-		f_r[i] = (hv * f_r[i]) >> 14; // Apply Hamming window
+		f_r[j] = ADCL;
+		f_r[j] += (ADCH << 8); // Read right channel value
+		f_r[j] -= CORR_R;
+		f_r[j] = (hv * f_r[j]) >> 14; // Apply Hamming window
 		_delay_us(3); // Wait to be sure for new measure started
 
 		f_i[i++] = 0;
@@ -76,19 +86,19 @@ void getValues()
 	return;
 }
 
-void slowFall(uint8_t fallRate)
+static void slowFall()
 {
-	uint8_t i;
-	for (i = 0; i < FFT_SIZE / 2; i++)
+	uint8_t i, j;
+	for (i = 0, j = FFT_SIZE / 2; i < FFT_SIZE / 2; i++, j++)
 	{
-		if (fallRate && (f_l[i] + fallRate <= buf[i]))
-			buf[i] -= fallRate;
+		if (f_l[i] < buf[i])
+			buf[i]--;
 		else
 			buf[i] = f_l[i];
-		if (fallRate && (f_r[i] + fallRate <= buf[i + FFT_SIZE / 2]))
-			buf[i + FFT_SIZE / 2] -= fallRate;
+		if (f_r[i] < buf[j])
+			buf[j]--;
 		else
-			buf[i + FFT_SIZE / 2] = f_r[i];
+			buf[j] = f_r[i];
 	}
 	return;
 }
@@ -97,14 +107,12 @@ uint8_t *getData()
 {
 	getValues();
 
-	revBin(f_l);
 	fftRad4(f_l, f_i);
 	cplx2dB(f_l, f_i);
 
-	revBin(f_r);
 	fftRad4(f_r, f_i);
 	cplx2dB(f_r, f_i);
 
-	slowFall(1);
+	slowFall();
 	return buf;
 }
