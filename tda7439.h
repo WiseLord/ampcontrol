@@ -18,4 +18,7 @@ regParam *nextParam(regParam * param);
 void loadParams(void);
 void saveParams(void);
 
+void incParam(regParam *param);
+void decParam(regParam *param);
+
 #endif // TDA7493_H

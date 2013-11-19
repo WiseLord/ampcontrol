@@ -66,6 +66,18 @@ void changeParam(regParam *param, int8_t encVal)
 		param->value = param->min;
 }
 
+void incParam(regParam *param)
+{
+	if (param->value < param->max)
+		param->value++;
+}
+
+void decParam(regParam *param)
+{
+	if (param->value > param->min)
+		param->value--;
+}
+
 void showParam(regParam *param)
 {
 	gdWriteString2(0, 8, param->label);

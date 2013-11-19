@@ -1,6 +1,6 @@
 TARG=ampcontrol
 
-SRCS = main.c ks0108.c fft.c adc.c input.c tda7439.c rc5.c
+SRCS = main.c ks0108.c fft.c adc.c input.c tda7439.c
 MCU = atmega16
 F_CPU = 16000000L
 
