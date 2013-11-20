@@ -30,7 +30,7 @@ int main(void)
 
 	while (1)
 	{
-		command = getBtnComm();
+		command = getCommand();
 
 		if (command | marker)
 		{
