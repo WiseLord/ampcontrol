@@ -6,8 +6,13 @@
 #include "adc.h"
 #include "input.h"
 #include "tda7439.h"
+#include "i2c.h"
 
 regParam *curParam;
+
+#define SHOW_FFT	0
+#define SHOW_PARAM	1
+#define SHOW_TIME	2
 
 int main(void)
 {
@@ -18,12 +23,20 @@ int main(void)
 	adcInit();
 	btnInit();
 
+	I2CInit();
+
+//	DS1307Write(0x02, 0x19);
+//	DS1307Write(0x01, 0x21);
+//	DS1307Write(0x00, 0x00);
+
 	sei();
 
 	uint8_t *buf;
 
 	uint8_t command = 0;
-	uint8_t marker = 0;
+	uint16_t marker = 0;
+
+	uint8_t mode = SHOW_FFT;
 
 	loadParams();
 	curParam = nextParam(0);
@@ -41,20 +54,31 @@ int main(void)
 			case COMM_ENC_UP:
 				incParam(curParam);
 				marker = 200;
+				mode = SHOW_PARAM;
 				break;
 			case COMM_ENC_DOWN:
 				decParam(curParam);
 				marker = 200;
+				mode = SHOW_PARAM;
 				break;
 			case COMM_BTN_MENU:
 				curParam = nextParam(curParam);
 				marker = 200;
+				mode = SHOW_PARAM;
+				break;
+			case COMM_SHOW_TIME:
+				gdFill(0x00, CS1 | CS2);
+				marker = 300;
+				mode = SHOW_TIME;
 				break;
 			default:
 				break;
 			}
 
-			showParam(curParam);
+			if (mode == SHOW_PARAM)
+				showParam(curParam);
+			else if (mode == SHOW_TIME)
+				showTime();
 
 			if (--marker == 0)
 			{

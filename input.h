@@ -22,6 +22,7 @@
 #define RC5_MENU		0x3B
 #define RC5_VOL_UP		0x10
 #define RC5_VOL_DOWN	0x11
+#define RC5_TIME		0x26
 
 #define BTN_MENU		(1<<PD7)
 #define BTN_UP			(1<<PD4)
@@ -44,6 +45,7 @@
 #define COMM_ENC_UP		1
 #define COMM_ENC_DOWN	2
 #define COMM_BTN_MENU	3
+#define COMM_SHOW_TIME	4
 
 typedef enum {
 	STATE_START1,

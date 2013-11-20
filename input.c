@@ -87,6 +87,9 @@ ISR(INT1_vect)
 			case RC5_VOL_DOWN:
 				rc5Buf = COMM_ENC_DOWN;
 				break;
+			case RC5_TIME:
+				rc5Buf = COMM_SHOW_TIME;
+				break;
 			default:
 				rc5Buf = 0;
 				break;
@@ -158,6 +161,9 @@ ISR (TIMER2_COMP_vect) {
 		break;
 	case BTN_LEFT:
 		cmdNow = COMM_ENC_DOWN;
+		break;
+	case BTN_DOWN:
+		cmdNow = COMM_SHOW_TIME;
 		break;
 	default:
 		break;

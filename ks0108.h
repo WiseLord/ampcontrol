@@ -54,7 +54,7 @@ void gdWriteChar(unsigned char code);
 void gdWriteString(uint8_t *string);
 void gdWriteNum(int16_t number, uint8_t width);
 
-#endif // KS0108_H
-
 void gdWriteChar2(uint8_t code, uint8_t line);
 void gdWriteString2(uint8_t x, uint8_t y, uint8_t *string);
+
+#endif // KS0108_H
