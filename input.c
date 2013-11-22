@@ -148,7 +148,7 @@ ISR (TIMER2_COMP_vect) {
 		cmdNow = CMD_VOL_DOWN;
 		break;
 	case BTN_DOWN:
-		cmdNow = CMD_TIMER;
+		cmdNow = CMD_TIME;
 		break;
 	default:
 		break;

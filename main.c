@@ -45,31 +45,34 @@ int main(void)
 	while (1) {
 		command = getCommand();
 
-		if ((command != CMD_NOCMD) || marker) {
-			if (marker == 0)
-				gdFill(0x00, CS1 | CS2);
-
+		if (command != CMD_NOCMD || marker) {
 			switch (command) {
 			case CMD_VOL_UP:
-				incParam(curParam);
-				marker = 200;
-				mode = SHOW_PARAM;
-				break;
 			case CMD_VOL_DOWN:
-				decParam(curParam);
-				marker = 200;
-				mode = SHOW_PARAM;
-				break;
 			case CMD_MENU:
-				curParam = nextParam(curParam);
+				if (mode != SHOW_PARAM)
+					gdFill(0x00, CS1 | CS2);
 				marker = 200;
 				mode = SHOW_PARAM;
 				break;
-			case CMD_TIMER:
+			case CMD_TIME:
 				if (mode != SHOW_TIME)
 					gdFill(0x00, CS1 | CS2);
 				marker = 300;
 				mode = SHOW_TIME;
+				break;
+			default:
+				break;
+			}
+			switch (command) {
+			case CMD_VOL_UP:
+				incParam(curParam);
+				break;
+			case CMD_VOL_DOWN:
+				decParam(curParam);
+				break;
+			case CMD_MENU:
+				curParam = nextParam(curParam);
 				break;
 			default:
 				break;
@@ -83,6 +86,7 @@ int main(void)
 			if (--marker == 0) {
 				saveParams();
 				curParam = nextParam(0);
+				mode = SHOW_FFT;
 			}
 		} else {
 			buf = getData();
