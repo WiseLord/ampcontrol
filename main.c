@@ -25,15 +25,16 @@ int main(void)
 
 	I2CInit();
 
-//	DS1307Write(0x02, 0x19);
-//	DS1307Write(0x01, 0x21);
-//	DS1307Write(0x00, 0x00);
-
+/*
+	DS1307Write(0x02, 0x19);
+	DS1307Write(0x01, 0x21);
+	DS1307Write(0x00, 0x00);
+*/
 	sei();
 
 	uint8_t *buf;
 
-	uint8_t command = 0;
+	uint8_t command = 0xFF;
 	uint16_t marker = 0;
 
 	uint8_t mode = SHOW_FFT;
@@ -41,33 +42,32 @@ int main(void)
 	loadParams();
 	curParam = nextParam(0);
 
-	while (1)
-	{
+	while (1) {
 		command = getCommand();
 
-		if (command | marker)
-		{
+		if ((command != CMD_NOCMD) || marker) {
 			if (marker == 0)
 				gdFill(0x00, CS1 | CS2);
 
 			switch (command) {
-			case COMM_ENC_UP:
+			case CMD_VOL_UP:
 				incParam(curParam);
 				marker = 200;
 				mode = SHOW_PARAM;
 				break;
-			case COMM_ENC_DOWN:
+			case CMD_VOL_DOWN:
 				decParam(curParam);
 				marker = 200;
 				mode = SHOW_PARAM;
 				break;
-			case COMM_BTN_MENU:
+			case CMD_MENU:
 				curParam = nextParam(curParam);
 				marker = 200;
 				mode = SHOW_PARAM;
 				break;
-			case COMM_SHOW_TIME:
-				gdFill(0x00, CS1 | CS2);
+			case CMD_TIMER:
+				if (mode != SHOW_TIME)
+					gdFill(0x00, CS1 | CS2);
 				marker = 300;
 				mode = SHOW_TIME;
 				break;
@@ -80,14 +80,11 @@ int main(void)
 			else if (mode == SHOW_TIME)
 				showTime();
 
-			if (--marker == 0)
-			{
+			if (--marker == 0) {
 				saveParams();
 				curParam = nextParam(0);
 			}
-		}
-		else
-		{
+		} else {
 			buf = getData();
 			gdSpectrum(buf, MODE_STEREO);
 		}

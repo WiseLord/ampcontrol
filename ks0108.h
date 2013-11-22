@@ -25,7 +25,7 @@
 #define GD_COMM						0
 #define GD_DATA						1
 
-// Display control instructions
+/* Display control instructions */
 #define KS0108_DISPLAY_ON			0x3F
 #define KS0108_DISPLAY_OFF			0x3E
 
@@ -33,12 +33,12 @@
 #define KS0108_SET_PAGE				0xB8
 #define KS0108_DISPLAY_START_LINE	0xC0
 
-// Status bytes
+/* Status bytes */
 #define STA_RESET					0x10
 #define STA_DISP_OFF				0x20
 #define STA_BUSY					0x80
 
-// Spectrum output mode
+/* Spectrum output mode */
 #define MODE_MIXED					0
 #define MODE_LEFT					1
 #define MODE_RIGHT					2
@@ -57,4 +57,4 @@ void gdWriteNum(int16_t number, uint8_t width);
 void gdWriteChar2(uint8_t code, uint8_t line);
 void gdWriteString2(uint8_t x, uint8_t y, uint8_t *string);
 
-#endif // KS0108_H
+#endif /* KS0108_H */

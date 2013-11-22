@@ -86,12 +86,10 @@ void showParam(regParam *param)
 	uint16_t l;
 	uint8_t data;
 	l = 96 * (1 + param->value - param->min) / (1 + param->max - param->min);
-	for (j = 5; j <=6; j++)
-	{
+	for (j = 5; j <=6; j++) {
 		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
 		gdWrite(GD_COMM, KS0108_SET_PAGE + j, CS1 | CS2);
-		for (i = 0; i < 96; i++)
-		{
+		for (i = 0; i < 96; i++) {
 			data = 0x00;
 			if ((i < l) && (i % 2 == 0))
 				data = 0xFF;

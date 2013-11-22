@@ -277,4 +277,4 @@ const unsigned char k1013vg6_0[] PROGMEM = {
 	0xFF, 0xFF, 0xFF, 0xFF, 0xFF, /* 0xFF => █ */
 };
 
-#endif // FONT_H
+#endif /* FONT_H */

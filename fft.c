@@ -1,8 +1,7 @@
 #include "fft.h"
 #include <avr/pgmspace.h>
 
-static const int16_t sinTable[] PROGMEM =
-{
+static const int16_t sinTable[] PROGMEM = {
 	     0,   1605,   3196,   4755,   6269,   7722,   9101,  10393,
 	 11584,  12664,  13621,  14448,  15135,  15677,  16068,  16304,
 	 16383,  16304,  16068,  15677,  15135,  14448,  13621,  12664,
@@ -13,8 +12,7 @@ static const int16_t sinTable[] PROGMEM =
 	-11584, -10393,  -9101,  -7722,  -6269,  -4755,  -3196,  -1605,
 };
 
-static const int16_t dbTable[] PROGMEM =
-{
+static const int16_t dbTable[] PROGMEM = {
 	   1,    1,    2,    2,    3,    4,    6,    8,
 	  10,   14,   18,   24,   33,   44,   59,   78,
 	 105,  140,  187,  250,  335,  448,  599,  801,
@@ -43,8 +41,7 @@ void fftRad4(int16_t *fr, int16_t *fi)
 	uint8_t m, m4, phI0, phI;
 	uint8_t r, i;
 
-	for (i0 = 0; i0 < FFT_SIZE; i0 += 4)
-	{
+	for (i0 = 0; i0 < FFT_SIZE; i0 += 4) {
 		i1 = i0 + 1;
 		i2 = i1 + 1;
 		i3 = i2 + 1;
@@ -60,16 +57,14 @@ void fftRad4(int16_t *fr, int16_t *fi)
 		sumDif(xr, yr, &fr[i0], &fr[i2]);
 	}
 
-	for (ldm = 2 * rdx; ldm <= FFT_LOG2; ldm += rdx)
-	{
+	for (ldm = 2 * rdx; ldm <= FFT_LOG2; ldm += rdx) {
 		m = (1 << ldm);
 		m4 = (m >> rdx);
 
 		phI0 =  N_WAVE / m;
 		phI  = 0;
 
-		for (i = 0; i < m4; i++)
-		{
+		for (i = 0; i < m4; i++) {
 			sin1 = pgm_read_word(&sinTable[phI]);
 			sin2 = pgm_read_word(&sinTable[2 * phI]);
 			sin3 = pgm_read_word(&sinTable[3 * phI]);
@@ -78,8 +73,7 @@ void fftRad4(int16_t *fr, int16_t *fi)
 			cos2 = pgm_read_word(&sinTable[2 * phI + N_WAVE_Q]);
 			cos3 = pgm_read_word(&sinTable[3 * phI + N_WAVE_Q]);
 
-			for (r = 0; r < FFT_SIZE; r += m)
-			{
+			for (r = 0; r < FFT_SIZE; r += m) {
 				i0 = i + r;
 				i1 = i0 + m4;
 				i2 = i1 + m4;
@@ -119,8 +113,7 @@ void cplx2dB(int16_t *fr, int16_t *fi)
 {
 	uint8_t i, j;
 	int16_t calc;
-	for (i = 0; i < FFT_SIZE / 2; i++)
-	{
+	for (i = 0; i < FFT_SIZE / 2; i++) {
 		calc = ((int32_t)fr[i] * fr[i] + (int32_t)fi[i] * fi[i]) >> 13;
 
 		for (j = 0; j < N_DB; j++)
@@ -130,6 +123,5 @@ void cplx2dB(int16_t *fr, int16_t *fi)
 	}
 	for (i = 0; i < FFT_SIZE; i++)
 		fi[i] = 0;
-
 	return;
 }

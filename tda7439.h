@@ -21,4 +21,4 @@ void saveParams(void);
 void incParam(regParam *param);
 void decParam(regParam *param);
 
-#endif // TDA7493_H
+#endif /* TDA7493_H */

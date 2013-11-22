@@ -3,9 +3,12 @@
 
 #include <inttypes.h>
 
-#define BTN_DDR			DDRD
-#define BTN_PORT		PORTD
-#define BTN_PIN			PIND
+/* RC5 definitions */
+#define RC5_DDR			DDRD
+#define RC5_PIN			PIND
+#define RC5_PORT		PORTD
+
+#define RC5_DATA		(1<<PD3)
 
 #define RC5_SHORT_MIN	888		/* 444 microseconds */
 #define RC5_SHORT_MAX	2666	/* 1333 microseconds */
@@ -19,10 +22,11 @@
 
 #define RC5_ADDR		0x400
 
-#define RC5_MENU		0x3B
-#define RC5_VOL_UP		0x10
-#define RC5_VOL_DOWN	0x11
-#define RC5_TIME		0x26
+
+/* Buttons definitions */
+#define BTN_DDR			DDRD
+#define BTN_PIN			PIND
+#define BTN_PORT		PORTD
 
 #define BTN_MENU		(1<<PD7)
 #define BTN_UP			(1<<PD4)
@@ -30,22 +34,65 @@
 #define BTN_LEFT		(1<<PD6)
 #define BTN_RIGHT		(1<<PD0)
 
-#define RC5_PIN			(1<<PD3)
-
 #define BTN_MASK		(BTN_MENU | BTN_UP | BTN_DOWN | BTN_LEFT | BTN_RIGHT)
+
+/* Encoder definitions */
+#define ENC_DDR			DDRD
+#define ENC_PIN			PIND
+#define ENC_PORT		PORTD
 
 #define ENC_A			(1<<PD2)
 #define ENC_B			(1<<PD1)
 #define ENC_AB			(ENC_A | ENC_B)
 #define ENC_0			0
 
-#define LONG_PRESS		400 /* Long press ~0.8sec while 500 polls/sec */
-#define REPEAT_TIME		50
+/* Remote control commands codes */
+#define CMD_TIMER		0x26
+#define CMD_STBY		0x0C
 
-#define COMM_ENC_UP		1
-#define COMM_ENC_DOWN	2
-#define COMM_BTN_MENU	3
-#define COMM_SHOW_TIME	4
+#define CMD_AV			0x38
+#define CMD_TV			0x3F
+#define CMD_MUTE		0x0D
+
+#define CMD_NUM1		0x01
+#define CMD_NUM2		0x02
+#define CMD_NUM3		0x03
+#define CMD_NUM4		0x04
+#define CMD_NUM5		0x05
+#define CMD_NUM6		0x06
+#define CMD_NUM7		0x07
+#define CMD_NUM8		0x08
+#define CMD_NUM9		0x09
+#define CMD_NUM0		0x00
+
+#define CMD_PP			0x0E
+#define CMD_DIG			0x0A
+
+#define CMD_TXT			0x3C
+#define CMD_MENU		0x3B
+
+#define CMD_VOL_UP		0x10
+#define CMD_VOL_DOWN	0x11
+#define CMD_CH_UP		0x20
+#define CMD_CH_DOWN		0x21
+
+#define CMD_DESCR		0x2C
+#define CMD_SCAN		0x2B
+#define CMD_TIME		0x2A
+
+#define CMD_SEARCH		0x1E
+#define CMD_BLUE		0x34
+#define CMD_STORE		0x29
+
+#define CMD_RED			0x37
+#define CMD_GREEN		0x37
+#define CMD_YELLOW		0x32
+
+#define CMD_NOCMD		0xFF
+
+/* Handling long press actions */
+#define TIME_LONG		400 /* Long press ~0.8sec while 500 polls/sec */
+#define TIME_REPEAT		50	/* Must be more than interval of RC5 sends */
 
 typedef enum {
 	STATE_START1,
@@ -63,4 +110,4 @@ void rc5Reset();
 void btnInit(void);
 uint8_t getCommand(void);
 
-#endif // INPUT_H
+#endif /* INPUT_H */

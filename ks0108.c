@@ -27,8 +27,7 @@ void gdFill(uint8_t data, uint8_t cs)
 {
 	GD_CPORT |= cs;
 	uint8_t i, j;
-	for (i = 0; i < GD_ROWS; i++)
-	{
+	for (i = 0; i < GD_ROWS; i++) {
 		gdWrite(GD_COMM, KS0108_SET_PAGE + i, cs);
 		gdWrite(GD_COMM, KS0108_SET_ADDRESS, cs);
 		for (j = 0; j < GD_COLS; j++)
@@ -66,14 +65,11 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 	uint8_t data;
 	uint8_t val;
 	uint8_t cs;
-	for (i = 0; i < GD_ROWS; i++)
-	{
+	for (i = 0; i < GD_ROWS; i++) {
 		gdWrite(GD_COMM, KS0108_SET_PAGE + i, CS1 | CS2);
 		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		for (j = 0, k = FFT_SIZE / 2; j < FFT_SIZE / 2; j++, k++)
-		{
-			switch (mode)
-			{
+		for (j = 0, k = FFT_SIZE / 2; j < FFT_SIZE / 2; j++, k++) {
+			switch (mode) {
 			case MODE_LEFT:
 				val = buf[j] << 1;
 				row = 7 - val / 8;
@@ -83,13 +79,10 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 				row = 7 - val / 8;
 				break;
 			case MODE_STEREO:
-				if (i < GD_ROWS / 2)
-				{
+				if (i < GD_ROWS / 2) {
 					val = buf[j];
 					row = 3 - val / 8;
-				}
-				else
-				{
+				} else {
 					val = buf[k];
 					row = 7 - val / 8;
 				}
@@ -141,8 +134,7 @@ void gdWriteChar(uint8_t code)
 	uint8_t i;
 	uint16_t index;
 	index = code * 5;
-	for (i = 0; i < 6; i++)
-	{
+	for (i = 0; i < 6; i++) {
 		if (i == 5)
 			gdWrite(GD_DATA, 0x00, cs);
 		else
@@ -150,8 +142,7 @@ void gdWriteChar(uint8_t code)
 		xPos++;
 		if (xPos == GD_COLS)
 			cs = CS2;
-		if (xPos == GD_COLS * 2)
-		{
+		if (xPos == GD_COLS * 2) {
 			cs = CS1;
 			xPos = 0;
 			yPos += 8;
@@ -175,8 +166,7 @@ void gdWriteNum(int16_t number, uint8_t width)
 	uint8_t dig[width + 1];
 	int8_t i;
 	uint8_t sign = ' ';
-	if (number < 0)
-	{
+	if (number < 0) {
 		sign = '-';
 		number = -number;
 	}
@@ -186,8 +176,7 @@ void gdWriteNum(int16_t number, uint8_t width)
 
 
 	i = width - 1;
-	while (number > 0 || i == width - 1)
-	{
+	while (number > 0 || i == width - 1) {
 		dig[i--] = number % 10 + 0x30;
 		number /= 10;
 	}
@@ -208,12 +197,10 @@ void gdWriteChar2(uint8_t code, uint8_t line)
 
 	uint8_t data;
 
-	for (i = 0; i < 12; i++)
-	{
+	for (i = 0; i < 12; i++) {
 		if (i >= 10)
 			gdWrite(GD_DATA, 0x00, cs);
-		else
-		{
+		else {
 			data = pgm_read_byte(&k1013vg6_0[index + i/2]);
 			if (line == 0)
 				data = data & 0x0F;
@@ -230,8 +217,7 @@ void gdWriteChar2(uint8_t code, uint8_t line)
 		xPos++;
 		if (xPos == GD_COLS)
 			cs = CS2;
-		if (xPos == GD_COLS * 2)
-		{
+		if (xPos == GD_COLS * 2) {
 			cs = CS1;
 			xPos = 0;
 			yPos += 8;
