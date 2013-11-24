@@ -2,8 +2,20 @@
 
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/pgmspace.h>
 
 #include "ks0108.h"
+
+#define DOW_LENGTH	12
+const uint8_t dayOfWeek[][DOW_LENGTH] PROGMEM = {
+	"ВОСКРЕСЕНЬЕ",
+	"ПОНЕДЕЛЬНИК",
+	"  ВТОРНИК",
+	"   СРЕДА",
+	"  ЧЕТВЕРГ",
+	"  ПЯТНИЦА",
+	"  СУББОТА",
+};
 
 void I2CInit(void)
 {
@@ -89,6 +101,7 @@ void showTime()
 {
 	uint8_t temp;
 	uint8_t time[] = "  :  :  ";
+	uint8_t date[] = "  .  .20  ";
 	DS1307Read(0x02, &temp);
 	time[0] = ((temp & 0xF0) >> 4) + 0x30;
 	time[1] = (temp & 0x0F) + 0x30;
@@ -98,7 +111,28 @@ void showTime()
 	DS1307Read(0x00, &temp);
 	time[6] = ((temp & 0xF0) >> 4) + 0x30;
 	time[7] = (temp & 0x0F) + 0x30;
-	gdWriteString2(16, 8, time);
+	gdWriteString2(17, 8, time);
+	DS1307Read(0x04, &temp);
+	date[0] = ((temp & 0xF0) >> 4) + 0x30;
+	date[1] = (temp & 0x0F) + 0x30;
+	DS1307Read(0x05, &temp);
+	date[3] = ((temp & 0xF0) >> 4) + 0x30;
+	date[4] = (temp & 0x0F) + 0x30;
+	DS1307Read(0x06, &temp);
+	date[8] = ((temp & 0xF0) >> 4) + 0x30;
+	date[9] = (temp & 0x0F) + 0x30;
+	gdWriteString2(4, 32, date);
+
+	DS1307Read(0x03, &temp);
+	temp %= 7;
+
+	uint8_t i = 0, ch;
+	gdSetPos(32, 56);
+
+	do {
+		ch = pgm_read_byte(&dayOfWeek[temp][i++]);
+		gdWriteChar(ch);
+	} while (ch);
 	return;
 }
 

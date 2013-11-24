@@ -91,8 +91,8 @@
 #define CMD_NOCMD		0xFF
 
 /* Handling long press actions */
-#define TIME_LONG		400 /* Long press ~0.8sec while 500 polls/sec */
-#define TIME_REPEAT		50	/* Must be more than interval of RC5 sends */
+#define TIME_LONG		800 /* Long press 800msec while 500 polls/sec */
+#define TIME_REPEAT		100	/* Must be more than interval of RC5 sends */
 
 typedef enum {
 	STATE_START1,
@@ -103,6 +103,9 @@ typedef enum {
 	STATE_BEGIN,
 	STATE_END
 } rc5State;
+
+void setDisplayTime(uint16_t value);
+uint16_t getDisplayTime(void);
 
 void rc5Init();
 void rc5Reset();

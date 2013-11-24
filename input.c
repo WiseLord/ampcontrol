@@ -11,7 +11,19 @@ volatile uint16_t rc5Cmd; /**/
 const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
 uint8_t rc5Cnt;
 
+volatile uint16_t displayTime;
+
 rc5State state = STATE_BEGIN;
+
+void setDisplayTime(uint16_t value)
+{
+	displayTime = value;
+}
+
+uint16_t getDisplayTime(void)
+{
+	return displayTime;
+}
 
 void rc5Reset()
 {
@@ -88,8 +100,8 @@ void btnInit(void)
 	ENC_DDR &= ~(ENC_AB);
 	ENC_PORT |= ENC_AB;
 
-	TCCR2 = 0b110;			/* Set timer prescaller to 256 (62.5 kHz) */
-	OCR2 = 125;				/* 62500/125 => 500 polls/sec */
+	TCCR2 = 0b101;			/* Set timer prescaller to 128 (125 kHz) */
+	OCR2 = 125;				/* 12500/125 => 1000 polls/sec */
 	TCCR2 |= (1<<WGM21);	/* Reset counter on match */
 	TCNT2 = 0;				/* Reset timer value */
 	TIMSK |= (1<<OCIE2);	/* Enable timer compare match interrupt */
@@ -129,10 +141,10 @@ ISR (TIMER2_COMP_vect) {
 
 	uint8_t cmdNow = rc5Buf; /* Read current command from IR RC buffer */
 
-	/* Clear IR RC buffer after 60 polls */
+	/* Clear IR RC buffer after 120ms (120 polls) */
 	rc5BufCnt++;
-	if (rc5BufCnt > 60) {
-		rc5BufCnt = 60;
+	if (rc5BufCnt > 120) {
+		rc5BufCnt = 120;
 		rc5Buf = CMD_NOCMD;
 	}
 
@@ -177,6 +189,8 @@ ISR (TIMER2_COMP_vect) {
 	else
 		btnCnt = 0;
 
+	if (displayTime)
+		displayTime--;
 	return;
 };
 
