@@ -12,6 +12,7 @@ uint8_t volumeLabel[] = "Громкость";
 uint8_t bassLabel[] = "Тембр НЧ";
 uint8_t middleLabel[] = "Тембр СЧ";
 uint8_t trebleLabel[] = "Тембр ВЧ";
+uint8_t balanceLabel[] = "Баланс";
 
 void hwInit(void)	/* Hardware initialization */
 {
@@ -62,6 +63,11 @@ int main(void)
 						mode = DISPLAY_TREBLE;
 						break;
 					case DISPLAY_TREBLE:
+						if (mode != DISPLAY_BALANCE)
+							gdFill(0x00, CS1 | CS2);
+						mode = DISPLAY_BALANCE;
+						break;
+					case DISPLAY_BALANCE:
 					case DISPLAY_SPECTRUM:
 					case DISPLAY_TIME:
 						if (mode != DISPLAY_VOLUME)
@@ -111,6 +117,9 @@ int main(void)
 					case DISPLAY_TREBLE:
 						incBMT(&treble);
 						break;
+					case DISPLAY_BALANCE:
+						incBalance();
+						break;
 					default:
 						break;
 					}
@@ -128,6 +137,9 @@ int main(void)
 						break;
 					case DISPLAY_TREBLE:
 						decBMT(&treble);
+						break;
+					case DISPLAY_BALANCE:
+						decBalance();
 						break;
 					default:
 						break;
@@ -150,6 +162,9 @@ int main(void)
 					break;
 				case DISPLAY_TREBLE:
 					showBMT(treble, trebleLabel);
+					break;
+				case DISPLAY_BALANCE:
+					showBalance(balanceLabel);
 					break;
 				case DISPLAY_TIME:
 					showTime();
