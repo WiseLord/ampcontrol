@@ -32,7 +32,7 @@ void decBalance(void) { balance--; if (balance < BAL_MIN) balance = BAL_MIN; }
 
 uint8_t db[] = "дБ";
 
-void showParLabel(uint8_t *parLabel)
+void showParLabel(int8_t *par, uint8_t *parLabel)
 {
 	gdWriteString2(0, 8, parLabel);
 	gdSetPos(100, 40);
@@ -43,7 +43,7 @@ void showParLabel(uint8_t *parLabel)
 
 void showVolume(uint8_t *parLabel)
 {
-	showParLabel(parLabel);
+	showParLabel(&volume, parLabel);
 
 	uint8_t i, j;
 	int16_t r;
@@ -66,19 +66,19 @@ void showVolume(uint8_t *parLabel)
 	}
 }
 
-void showBMT(int8_t par, uint8_t *parLabel)
+void showBMT(int8_t *par, uint8_t *parLabel)
 {
-	showParLabel(parLabel);
+	showParLabel(par, parLabel);
 
 	uint8_t i, j;
 	uint16_t l, r;
 	uint8_t data;
 
-	if (par > 0) {
+	if (*par > 0) {
 		l = 42;
-		r = 42 + par * 3;
+		r = 42 + *par * 3;
 	} else {
-		l = 42 + par * 3;
+		l = 42 + *par * 3;
 		r = 42;
 	}
 
@@ -101,7 +101,7 @@ void showBMT(int8_t par, uint8_t *parLabel)
 
 void showBalance(uint8_t *parLabel)
 {
-	showParLabel(parLabel);
+	showParLabel(&balance, parLabel);
 
 	uint8_t i, j;
 	uint16_t l, r;

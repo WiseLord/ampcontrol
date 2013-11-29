@@ -155,13 +155,13 @@ int main(void)
 					showVolume(volumeLabel);
 					break;
 				case DISPLAY_BASS:
-					showBMT(bass, bassLabel);
+					showBMT(&bass, bassLabel);
 					break;
 				case DISPLAY_MIDDLE:
-					showBMT(middle, middleLabel);
+					showBMT(&middle, middleLabel);
 					break;
 				case DISPLAY_TREBLE:
-					showBMT(treble, trebleLabel);
+					showBMT(&treble, trebleLabel);
 					break;
 				case DISPLAY_BALANCE:
 					showBalance(balanceLabel);

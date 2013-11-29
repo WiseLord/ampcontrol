@@ -37,7 +37,7 @@ void incBalance(void);
 void decBalance(void);
 
 void showVolume(uint8_t *parLabel);
-void showBMT(int8_t par, uint8_t *parLabel);
+void showBMT(int8_t *par, uint8_t *parLabel);
 void showBalance(uint8_t *parLabel);
 
 #endif /* PARAM_H */
