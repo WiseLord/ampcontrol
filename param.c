@@ -68,6 +68,7 @@ void loadParams(void)
 
 	I2CWrite(0b10001000, FUNC_INPUT_GAIN, 0);
 	setVolume(volume);
+	setChannel(channel);
 	I2CWrite(0b10001000, FUNC_SPEAKER_LEFT, 0);
 	I2CWrite(0b10001000, FUNC_SPEAKER_RIGHT, 0);
 	int8_t i;
