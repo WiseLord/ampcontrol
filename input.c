@@ -162,6 +162,9 @@ ISR (TIMER2_COMP_vect) {
 	case BTN_DOWN:
 		cmdNow = CMD_TIME;
 		break;
+	case BTN_UP:
+		cmdNow = CMD_SEARCH;
+		break;
 	default:
 		break;
 	}

@@ -68,6 +68,20 @@ uint8_t I2CReadByte(uint8_t *data, uint8_t ack)
 	return 0;
 }
 
+uint8_t I2CWrite(uint8_t device, uint8_t address, uint8_t data)
+{
+	I2CStart();
+	if (I2CWriteByte(device))
+		return 1;
+	if (I2CWriteByte(address))
+		return 1;
+	if (I2CWriteByte(data))
+		return 1;
+	I2CStop();
+	return 0;
+}
+
+
 uint8_t DS1307Write(uint8_t address, uint8_t data)
 {
 	I2CStart();
