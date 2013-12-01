@@ -18,7 +18,7 @@ void gdWrite(uint8_t mode, uint8_t data, uint8_t cs)
 
 	GD_DDDR = 0x00;
 	GD_CPORT &= ~cs;
-	_delay_us(7);
+	_delay_us(10);
 
 	return;
 }

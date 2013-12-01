@@ -8,16 +8,16 @@
 #define GD_DDDR						DDRB
 #define GD_DPIN						PINB
 
-#define GD_CPORT					PORTC
-#define GD_CDDR						DDRC
-#define GD_CPIN						PINC
+#define GD_CPORT					PORTA
+#define GD_CDDR						DDRA
+#define GD_CPIN						PINA
 
-#define RES							(1<<PC2)
-#define CS2							(1<<PC3)
-#define CS1							(1<<PC4)
-#define E							(1<<PC5)
-#define RW							(1<<PC6)
-#define DI							(1<<PC7)
+#define RES							(1<<PA7)
+#define CS2							(1<<PA6)
+#define CS1							(1<<PA5)
+#define E							(1<<PA4)
+#define RW							(1<<PA3)
+#define DI							(1<<PA2)
 
 #define GD_COLS						64
 #define GD_ROWS						8

@@ -29,7 +29,7 @@ clean:
 	rm -f *.elf *.bin *.hex $(OBJS) *.map
 
 flash: $(TARG)
-	$(AVRDUDE) -Vq -p m16 -B 20 -U flash:w:$(TARG).hex:i
+	$(AVRDUDE) -Vq -p m16 -B 1.1 -U flash:w:$(TARG).hex:i
 
 fuse:
 	$(AVRDUDE) -p m16 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
