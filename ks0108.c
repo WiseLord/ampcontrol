@@ -1,25 +1,36 @@
 #include "ks0108.h"
 #include "font.h"
-#include "fft.h"
 
 #include <util/delay.h>
 
-void gdWrite(uint8_t mode, uint8_t data, uint8_t cs)
+static uint8_t column = 0;	/* Current column (0..128) */
+static uint8_t row = 0;		/* Current row (0..8) */
+static uint8_t dig[6];		/* Array for num->string convert */
+
+void gdWriteData(uint8_t data, uint8_t cs)
 {
-	GD_CPORT |= cs;
-	GD_DDDR = 0xFF;
-	GD_DPORT = data;
-
-	if (mode) GD_CPORT |= DI; else GD_CPORT &= ~DI;
-
-	GD_CPORT |= E;
-	asm("nop");
-	GD_CPORT &= ~E;
-
-	GD_DDDR = 0x00;
-	GD_CPORT &= ~cs;
+	/* Wait for controller is ready */
 	_delay_us(10);
+	/* Set data byte */
+	GD_DPORT = data;
+	/* Select controller, data mode and perform strobe */
+	GD_CPORT |= (cs | DI | E);
+	/* Unselect controller */
+	GD_CPORT &= ~GD_CTRL;
+	column++;
+	column &= (GD_COLS << 1) - 1;
+	return;
+}
 
+void gdWriteCommand(uint8_t command, uint8_t cs)
+{
+	/* Wait for controller is ready */
+	_delay_us(10);
+	/* Set command byte */
+	GD_DPORT = command;
+	/* Select controller and perform strobe */
+	GD_CPORT |= cs | E;
+	GD_CPORT &= ~GD_CTRL;
 	return;
 }
 
@@ -27,11 +38,11 @@ void gdFill(uint8_t data, uint8_t cs)
 {
 	GD_CPORT |= cs;
 	uint8_t i, j;
+	gdWriteCommand(KS0108_SET_ADDRESS, cs);
 	for (i = 0; i < GD_ROWS; i++) {
-		gdWrite(GD_COMM, KS0108_SET_PAGE + i, cs);
-		gdWrite(GD_COMM, KS0108_SET_ADDRESS, cs);
+		gdWriteCommand(KS0108_SET_PAGE + i, cs);
 		for (j = 0; j < GD_COLS; j++)
-			gdWrite(GD_DATA, data, cs);
+			gdWriteData(data, cs);
 	}
 	GD_CPORT &= ~cs;
 	return;
@@ -39,22 +50,146 @@ void gdFill(uint8_t data, uint8_t cs)
 
 void gdInit(void)
 {
-	GD_DDDR = 0x00;
-	GD_DPORT = 0x00;
-
-	GD_CDDR |= CS1 | CS2 | RES | E | RW | DI;
-
-	GD_CPORT &= RES;
+	/* Set data and control lines as outputs */
+	GD_DDDR = 0xFF;
+	GD_CDDR |= GD_CTRL;
+	/* Unselect controller */
+	GD_CPORT &= ~GD_CTRL;
+	/* Reset */
 	_delay_us(10);
 	GD_CPORT |= RES;
-
-	GD_CPORT &= ~(CS1 | CS2 | E | RW | DI);
-
+	/* Clear display  and reset addresses */
 	gdFill(0x00, CS1 | CS2);
+	gdWriteCommand(KS0108_DISPLAY_ON, CS1 | CS2);
+	gdWriteCommand(KS0108_DISPLAY_START_LINE, CS1 | CS2);
+	return;
+}
 
-	gdWrite(GD_COMM, KS0108_DISPLAY_ON, CS1 | CS2);
-	gdWrite(GD_COMM, KS0108_DISPLAY_START_LINE, CS1 | CS2);
+int8_t gdSetXY(uint8_t x, uint8_t y)
+{
+	if (x >= (GD_COLS << 1))
+		return 1;
+	if (y >= GD_ROWS)
+		return 1;
+	if (x < GD_COLS) {
+		gdWriteCommand(KS0108_SET_ADDRESS + x, CS1);
+		gdWriteCommand(KS0108_SET_ADDRESS, CS2);
+	} else {
+		gdWriteCommand(KS0108_SET_ADDRESS, CS1);
+		gdWriteCommand(KS0108_SET_ADDRESS - GD_COLS + x, CS2);
+	}
+	column = x;
+	gdWriteCommand(KS0108_SET_PAGE + y, CS1 | CS2);
+	row = y;
+	return 0;
+}
 
+void gdWriteChar(uint8_t code)
+{
+	uint8_t cs;
+
+	uint8_t i;
+	uint16_t index;
+	index = code * 5;
+
+	for (i = 0; i < 6; i++)
+	{
+		if (column < GD_COLS)
+			cs = CS1;
+		else
+			cs = CS2;
+		if (i == 5)
+			gdWriteData(0x00, cs);
+		else
+			gdWriteData(pgm_read_byte(&k1013vg6_0[index + i]), cs);
+	}
+	return;
+}
+
+void gdWriteString(uint8_t *string)
+{
+	while(*string)
+		gdWriteChar(*string++);
+	return;
+}
+
+void mkNumString(int16_t number, uint8_t width, uint8_t lead)
+{
+	uint8_t sign = lead;
+	if (number < 0) {
+		sign = '-';
+		number = -number;
+	}
+	int8_t i;
+	for (i = 0; i < width; i++)
+		dig[i] = lead;
+	dig[width] = '\0';
+	i = width - 1;
+	while (number > 0 || i == width - 1) {
+		dig[i--] = number % 10 + 0x30;
+		number /= 10;
+	}
+	if (i >= 0)
+		dig[i] = sign;
+}
+
+void gdWriteNum(int16_t number, uint8_t width, uint8_t lead)
+{
+	mkNumString(number, width, lead);
+	gdWriteString(dig);
+}
+
+void gdWriteCharScaled(uint8_t code, uint8_t scale)
+{
+	uint8_t cs;
+
+	uint8_t i, j;
+	uint16_t index;
+	index = code * 5;
+
+	uint8_t xpos = column;
+	uint8_t ypos = row;
+
+	uint8_t data_read;
+	uint8_t data_write;
+
+	uint8_t bit;
+	uint8_t shift = 0;
+
+	for (j = 0; j < scale; j++)
+	{
+		gdSetXY(xpos, ypos + j);
+		for (i = 0; i < 6 * scale; i++)
+		{
+			if (column < GD_COLS)
+				cs = CS1;
+			else
+				cs = CS2;
+			if (i >= 5 * scale)
+				gdWriteData(0x00, cs);
+			else {
+				data_read = pgm_read_byte(&k1013vg6_0[index + i / scale]);
+				data_write = 0;
+
+				for (bit = 0; bit < 8; bit++)
+				{
+					if (data_read & (1 << ((shift+bit) / scale % 8)))
+						data_write |= (1 << bit);
+				}
+
+				gdWriteData(data_write, cs);
+			}
+		}
+		shift += 8;
+	}
+	gdSetXY(column, ypos);
+	return;
+}
+
+void gdWriteStringScaled(uint8_t *string, uint8_t scale)
+{
+	while(*string)
+		gdWriteCharScaled(*string++, scale);
 	return;
 }
 
@@ -66,9 +201,9 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 	uint8_t val;
 	uint8_t cs;
 	for (i = 0; i < GD_ROWS; i++) {
-		gdWrite(GD_COMM, KS0108_SET_PAGE + i, CS1 | CS2);
-		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		for (j = 0, k = FFT_SIZE / 2; j < FFT_SIZE / 2; j++, k++) {
+		gdWriteCommand(KS0108_SET_PAGE + i, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
+		for (j = 0, k = 32; j < 32; j++, k++) {
 			switch (mode) {
 			case MODE_LEFT:
 				val = buf[j] << 1;
@@ -97,146 +232,15 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 				data = 0xFF << (7 - val % 8);
 			else if (i < row)
 				data = 0x00;
-			if (j < FFT_SIZE / 4)
+			if (j < 16)
 				cs = CS1;
 			else
 				cs = CS2;
-				gdWrite(GD_DATA, data, cs);
-				gdWrite(GD_DATA, data, cs);
-				gdWrite(GD_DATA, data, cs);
-				gdWrite(GD_DATA, 0x00, cs);
+				gdWriteData(data, cs);
+				gdWriteData(data, cs);
+				gdWriteData(data, cs);
+				gdWriteData(0x00, cs);
 		}
 	}
-	return;
-}
-
-static uint8_t xPos, yPos;
-
-void gdSetPos(uint8_t x, uint8_t y)
-{
-	uint8_t cs;
-	cs = CS1;
-	if (x >= GD_COLS)
-		cs = CS2;
-	gdWrite(GD_COMM, KS0108_SET_ADDRESS + (x & (GD_COLS - 1)), cs);
-	xPos = x;
-	gdWrite(GD_COMM, KS0108_SET_PAGE + (y >> 3), cs);
-	yPos = y;
-	return;
-}
-
-void gdWriteChar(uint8_t code)
-{
-	uint8_t cs;
-	cs = CS1;
-	if (xPos >= GD_COLS)
-		cs = CS2;
-	uint8_t i;
-	uint16_t index;
-	index = code * 5;
-	for (i = 0; i < 6; i++) {
-		if (i == 5)
-			gdWrite(GD_DATA, 0x00, cs);
-		else
-			gdWrite(GD_DATA, pgm_read_byte(&k1013vg6_0[index + i]), cs);
-		xPos++;
-		if (xPos == GD_COLS)
-			cs = CS2;
-		if (xPos == GD_COLS * 2) {
-			cs = CS1;
-			xPos = 0;
-			yPos += 8;
-			if (yPos >= 8 * GD_ROWS)
-				yPos /= (8 * GD_ROWS);
-		}
-		gdSetPos(xPos, yPos);
-	}
-	return;
-}
-
-void gdWriteString(uint8_t *string)
-{
-	while(*string)
-		gdWriteChar(*string++);
-	return;
-}
-
-void gdWriteNum(int16_t number, uint8_t width)
-{
-	uint8_t dig[width + 1];
-	int8_t i;
-	uint8_t sign = ' ';
-	if (number < 0) {
-		sign = '-';
-		number = -number;
-	}
-	for (i = 0; i < width; i++)
-		dig[i] = ' ';
-	dig[width] = '\0';
-
-
-	i = width - 1;
-	while (number > 0 || i == width - 1) {
-		dig[i--] = number % 10 + 0x30;
-		number /= 10;
-	}
-	if (i >= 0)
-		dig[i] = sign;
-	gdWriteString(dig);
-}
-
-void gdWriteChar2(uint8_t code, uint8_t line)
-{
-	uint8_t cs;
-	cs = CS1;
-	if (xPos >= GD_COLS)
-		cs = CS2;
-	uint8_t i;
-	uint16_t index;
-	index = code * 5;
-
-	uint8_t data;
-
-	for (i = 0; i < 12; i++) {
-		if (i >= 10)
-			gdWrite(GD_DATA, 0x00, cs);
-		else {
-			data = pgm_read_byte(&k1013vg6_0[index + i/2]);
-			if (line == 0)
-				data = data & 0x0F;
-			else
-				data = (data & 0xF0) >> 4;
-
-			data = ((data & 0x08) * 3) << 3
-				 | ((data & 0x04) * 3) << 2
-				 | ((data & 0x02) * 3) << 1
-				 | ((data & 0x01) * 3);
-
-			gdWrite(GD_DATA, data, cs);
-		}
-		xPos++;
-		if (xPos == GD_COLS)
-			cs = CS2;
-		if (xPos == GD_COLS * 2) {
-			cs = CS1;
-			xPos = 0;
-			yPos += 8;
-			if (yPos >= 8 * GD_ROWS)
-				yPos /= (8 * GD_ROWS);
-		}
-		gdSetPos(xPos, yPos);
-	}
-	return;
-}
-
-void gdWriteString2(uint8_t x, uint8_t y, uint8_t *string)
-{
-	gdSetPos(x, y);
-	uint8_t i;
-	for (i = 0; string[i]; i++)
-		gdWriteChar2(string[i], 0);
-	gdSetPos(x, y + 8);
-	for (i = 0; string[i]; i++)
-		gdWriteChar2(string[i], 1);
 	return;
 }

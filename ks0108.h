@@ -19,6 +19,8 @@
 #define RW							(1<<PA3)
 #define DI							(1<<PA2)
 
+#define GD_CTRL						(CS1 | CS2 | E | RW | DI | RES)
+
 #define GD_COLS						64
 #define GD_ROWS						8
 
@@ -44,17 +46,21 @@
 #define MODE_RIGHT					2
 #define MODE_STEREO					3
 
-void gdWrite(uint8_t mode, uint8_t data, uint8_t cs);
-void gdInit(void);
-void gdFill(uint8_t data, uint8_t cs);
-void gdSpectrum(uint8_t *buf, uint8_t mode);
+void gdWriteData(uint8_t data, uint8_t cs);
+void gdWriteCommand(uint8_t command, uint8_t cs);
 
-void gdSetPos(uint8_t x, uint8_t y);
+void gdFill(uint8_t data, uint8_t cs);
+void gdInit(void);
+
+int8_t gdSetXY(uint8_t x, uint8_t y);
+
 void gdWriteChar(unsigned char code);
 void gdWriteString(uint8_t *string);
-void gdWriteNum(int16_t number, uint8_t width);
+void gdWriteNum(int16_t number, uint8_t width, uint8_t lead);
 
-void gdWriteChar2(uint8_t code, uint8_t line);
-void gdWriteString2(uint8_t x, uint8_t y, uint8_t *string);
+void gdWriteCharScaled(uint8_t code, uint8_t scale);
+void gdWriteStringScaled(uint8_t *string, uint8_t scale);
+
+void gdSpectrum(uint8_t *buf, uint8_t mode);
 
 #endif /* KS0108_H */

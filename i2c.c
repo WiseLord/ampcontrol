@@ -125,7 +125,8 @@ void showTime()
 	DS1307Read(0x00, &temp);
 	time[6] = ((temp & 0xF0) >> 4) + 0x30;
 	time[7] = (temp & 0x0F) + 0x30;
-	gdWriteString2(17, 8, time);
+	gdSetXY(0, 0);
+	gdWriteStringScaled(time, 2);
 	DS1307Read(0x04, &temp);
 	date[0] = ((temp & 0xF0) >> 4) + 0x30;
 	date[1] = (temp & 0x0F) + 0x30;
@@ -135,13 +136,14 @@ void showTime()
 	DS1307Read(0x06, &temp);
 	date[8] = ((temp & 0xF0) >> 4) + 0x30;
 	date[9] = (temp & 0x0F) + 0x30;
-	gdWriteString2(4, 32, date);
+	gdSetXY(0, 3);
+	gdWriteStringScaled(date, 2);
 
 	DS1307Read(0x03, &temp);
 	temp %= 7;
 
 	uint8_t i = 0, ch;
-	gdSetPos(32, 56);
+	gdSetXY(32, 7);
 
 	do {
 		ch = pgm_read_byte(&dayOfWeek[temp][i++]);

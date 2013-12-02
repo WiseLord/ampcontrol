@@ -193,12 +193,12 @@ uint8_t db[] = "дБ";
 
 void showParLabel(int8_t *par, uint8_t *parLabel)
 {
-	gdSetPos(122, 0);
-	gdWriteNum(channel + 1, 1);
-	gdWriteString2(0, 8, parLabel);
-	gdSetPos(100, 40);
-	gdWriteNum(*par, 4);
-	gdSetPos(112, 48);
+	gdSetXY(122, 0);
+	gdWriteNum(channel + 1, 1, ' ');
+	gdWriteStringScaled(parLabel, 2);
+	gdSetXY(100, 5);
+	gdWriteNum(*par, 4, ' ');
+	gdSetXY(112, 6);
 	gdWriteString(db);
 }
 
@@ -211,8 +211,8 @@ void showVolume(uint8_t *parLabel)
 	uint8_t data;
 	r = 2 * volume + 94;
 	for (j = 5; j <=6; j++) {
-		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWrite(GD_COMM, KS0108_SET_PAGE + j, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
 		for (i = 0; i < 94; i++) {
 			if (j == 5)
 				data = 0x80;
@@ -222,7 +222,7 @@ void showVolume(uint8_t *parLabel)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
-			gdWrite(GD_DATA, data, i < 64 ? CS1 : CS2);
+			gdWriteData(data, i < 64 ? CS1 : CS2);
 		}
 	}
 }
@@ -244,8 +244,8 @@ void showBMT(int8_t *par, uint8_t *parLabel)
 	}
 
 	for (j = 5; j <=6; j++) {
-		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWrite(GD_COMM, KS0108_SET_PAGE + j, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
 		for (i = 0; i < 86; i++) {
 			if (j == 5)
 				data = 0x80;
@@ -255,7 +255,7 @@ void showBMT(int8_t *par, uint8_t *parLabel)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
-			gdWrite(GD_DATA, data, i < 64 ? CS1 : CS2);
+			gdWriteData(data, i < 64 ? CS1 : CS2);
 		}
 	}
 }
@@ -277,8 +277,8 @@ void showBalance(uint8_t *parLabel)
 	}
 
 	for (j = 5; j <=6; j++) {
-		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWrite(GD_COMM, KS0108_SET_PAGE + j, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
 		for (i = 0; i < 86; i++) {
 			if (j == 5)
 				data = 0x80;
@@ -288,7 +288,7 @@ void showBalance(uint8_t *parLabel)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
-			gdWrite(GD_DATA, data, i < 64 ? CS1 : CS2);
+			gdWriteData(data, i < 64 ? CS1 : CS2);
 		}
 	}
 }
@@ -302,8 +302,8 @@ void showSpeaker(uint8_t *parLabel)
 	uint8_t data;
 	r = speaker + 79;
 	for (j = 5; j <=6; j++) {
-		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWrite(GD_COMM, KS0108_SET_PAGE + j, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
 		for (i = 0; i < 79; i++) {
 			if (j == 5)
 				data = 0x80;
@@ -313,7 +313,7 @@ void showSpeaker(uint8_t *parLabel)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
-			gdWrite(GD_DATA, data, i < 64 ? CS1 : CS2);
+			gdWriteData(data, i < 64 ? CS1 : CS2);
 		}
 	}
 }
@@ -327,8 +327,8 @@ void showGain(uint8_t chan, uint8_t *parLabel)
 	uint8_t data;
 	r = 3 * gain[chan];
 	for (j = 5; j <=6; j++) {
-		gdWrite(GD_COMM, KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWrite(GD_COMM, KS0108_SET_PAGE + j, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
 		for (i = 0; i < 90; i++) {
 			if (j == 5)
 				data = 0x80;
@@ -338,7 +338,7 @@ void showGain(uint8_t chan, uint8_t *parLabel)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
-			gdWrite(GD_DATA, data, i < 64 ? CS1 : CS2);
+			gdWriteData(data, i < 64 ? CS1 : CS2);
 		}
 	}
 }
