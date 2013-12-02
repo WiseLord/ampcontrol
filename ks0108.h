@@ -58,8 +58,9 @@ void gdWriteChar(unsigned char code);
 void gdWriteString(uint8_t *string);
 void gdWriteNum(int16_t number, uint8_t width, uint8_t lead);
 
-void gdWriteCharScaled(uint8_t code, uint8_t scale);
-void gdWriteStringScaled(uint8_t *string, uint8_t scale);
+void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY);
+void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY);
+void gdWriteNumScaled(int16_t num, uint8_t width, uint8_t scX, uint8_t scY);
 
 void gdSpectrum(uint8_t *buf, uint8_t mode);
 

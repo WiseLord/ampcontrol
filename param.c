@@ -193,13 +193,12 @@ uint8_t db[] = "дБ";
 
 void showParLabel(int8_t *par, uint8_t *parLabel)
 {
-	gdSetXY(122, 0);
-	gdWriteNum(channel + 1, 1, ' ');
-	gdWriteStringScaled(parLabel, 2);
-	gdSetXY(100, 5);
-	gdWriteNum(*par, 4, ' ');
-	gdSetXY(112, 6);
-	gdWriteString(db);
+	gdSetXY(0, 1);
+	gdWriteStringScaled(parLabel, 2, 3);
+	gdSetXY(94, 4);
+	gdWriteNumScaled(*par, 3, 2, 2);
+	gdSetXY(106, 6);
+	gdWriteStringScaled(db, 2, 2);
 }
 
 void showVolume(uint8_t *parLabel)
@@ -321,6 +320,9 @@ void showSpeaker(uint8_t *parLabel)
 void showGain(uint8_t chan, uint8_t *parLabel)
 {
 	showParLabel(gain + chan, parLabel);
+
+	gdSetXY(70, 1);
+	gdWriteNumScaled(channel + 1, 1, 2, 3);
 
 	uint8_t i, j;
 	int16_t r;

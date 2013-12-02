@@ -126,7 +126,7 @@ void showTime()
 	time[6] = ((temp & 0xF0) >> 4) + 0x30;
 	time[7] = (temp & 0x0F) + 0x30;
 	gdSetXY(0, 0);
-	gdWriteStringScaled(time, 2);
+	gdWriteStringScaled(time, 2, 2);
 	DS1307Read(0x04, &temp);
 	date[0] = ((temp & 0xF0) >> 4) + 0x30;
 	date[1] = (temp & 0x0F) + 0x30;
@@ -137,7 +137,7 @@ void showTime()
 	date[8] = ((temp & 0xF0) >> 4) + 0x30;
 	date[9] = (temp & 0x0F) + 0x30;
 	gdSetXY(0, 3);
-	gdWriteStringScaled(date, 2);
+	gdWriteStringScaled(date, 2, 2);
 
 	DS1307Read(0x03, &temp);
 	temp %= 7;

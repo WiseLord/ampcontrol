@@ -139,7 +139,7 @@ void gdWriteNum(int16_t number, uint8_t width, uint8_t lead)
 	gdWriteString(dig);
 }
 
-void gdWriteCharScaled(uint8_t code, uint8_t scale)
+void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 {
 	uint8_t cs;
 
@@ -156,24 +156,24 @@ void gdWriteCharScaled(uint8_t code, uint8_t scale)
 	uint8_t bit;
 	uint8_t shift = 0;
 
-	for (j = 0; j < scale; j++)
+	for (j = 0; j < scY; j++)
 	{
 		gdSetXY(xpos, ypos + j);
-		for (i = 0; i < 6 * scale; i++)
+		for (i = 0; i < 6 * scX; i++)
 		{
 			if (column < GD_COLS)
 				cs = CS1;
 			else
 				cs = CS2;
-			if (i >= 5 * scale)
+			if (i >= 5 * scX)
 				gdWriteData(0x00, cs);
 			else {
-				data_read = pgm_read_byte(&k1013vg6_0[index + i / scale]);
+				data_read = pgm_read_byte(&k1013vg6_0[index + i / scX]);
 				data_write = 0;
 
 				for (bit = 0; bit < 8; bit++)
 				{
-					if (data_read & (1 << ((shift+bit) / scale % 8)))
+					if (data_read & (1 << ((shift+bit) / scY % 8)))
 						data_write |= (1 << bit);
 				}
 
@@ -186,11 +186,17 @@ void gdWriteCharScaled(uint8_t code, uint8_t scale)
 	return;
 }
 
-void gdWriteStringScaled(uint8_t *string, uint8_t scale)
+void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY)
 {
 	while(*string)
-		gdWriteCharScaled(*string++, scale);
+		gdWriteCharScaled(*string++, scX, scY);
 	return;
+}
+
+void gdWriteNumScaled(int16_t num, uint8_t width, uint8_t scX, uint8_t scY)
+{
+	mkNumString(num, width, ' ');
+	gdWriteStringScaled(dig, scX, scY);
 }
 
 void gdSpectrum(uint8_t *buf, uint8_t mode)
