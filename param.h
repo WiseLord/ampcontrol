@@ -64,10 +64,10 @@ void incChannel(void);
 void incGain(uint8_t chan);
 void decGain(uint8_t chan);
 
-void showVolume(uint8_t *parLabel);
-void showBMT(int8_t *par, uint8_t *parLabel);
-void showBalance(uint8_t *parLabel);
-void showSpeaker(uint8_t *parLabel);
-void showGain(uint8_t chan, uint8_t *parLabel);
+void showVolume(const uint8_t *parLabel);
+void showBMT(int8_t *par, const uint8_t *parLabel);
+void showBalance(const uint8_t *parLabel);
+void showSpeaker(const uint8_t *parLabel);
+void showGain(uint8_t chan, const uint8_t *parLabel);
 
 #endif /* PARAM_H */

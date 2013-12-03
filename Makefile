@@ -1,6 +1,6 @@
 TARG=ampcontrol
 
-SRCS = main.c ks0108.c fft.c adc.c input.c i2c.c param.c
+SRCS = main.c ks0108.c fft.c adc.c input.c i2c.c param.c ds1307.c
 MCU = atmega16
 F_CPU = 16000000L
 

@@ -18,7 +18,6 @@ void gdWriteData(uint8_t data, uint8_t cs)
 	/* Unselect controller */
 	GD_CPORT &= ~GD_CTRL;
 	column++;
-	column &= (GD_COLS << 1) - 1;
 	return;
 }
 
@@ -87,26 +86,25 @@ int8_t gdSetXY(uint8_t x, uint8_t y)
 void gdWriteChar(uint8_t code)
 {
 	uint8_t cs;
-
 	uint8_t i;
 	uint16_t index;
 	index = code * 5;
-
 	uint8_t pgmData;
 
-	for (i = 0; i < 6; i++)
-	{
-		if (column < GD_COLS)
-			cs = CS1;
-		else
-			cs = CS2;
-		if (i == 5)
-			gdWriteData(0x00, cs);
-		else
-		{
-			pgmData = pgm_read_byte(&k1013vg6_0[index + i]);
-			if (pgmData != 0x5A)
-				gdWriteData(pgmData, cs);
+	for (i = 0; i < 6; i++) {
+		if (column < (GD_COLS << 1)) {
+			if (column < GD_COLS)
+				cs = CS1;
+			else
+				cs = CS2;
+			if (i == 5)
+				gdWriteData(0x00, cs);
+			else
+			{
+				pgmData = pgm_read_byte(&k1013vg6_0[index + i]);
+				if (pgmData != 0x5A)
+					gdWriteData(pgmData, cs);
+			}
 		}
 	}
 	return;
@@ -116,6 +114,16 @@ void gdWriteString(uint8_t *string)
 {
 	while(*string)
 		gdWriteChar(*string++);
+	return;
+}
+
+void gdWriteStringProgmem(const uint8_t *string)
+{
+	uint8_t i = 0, ch;
+	do {
+		ch = pgm_read_byte(&string[i++]);
+		gdWriteChar(ch);
+	} while (ch);
 	return;
 }
 
@@ -162,29 +170,29 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 	uint8_t bit;
 	uint8_t shift = 0;
 
-	for (j = 0; j < scY; j++)
-	{
+	for (j = 0; j < scY; j++) {
 		gdSetXY(xpos, ypos + j);
-		for (i = 0; i < 6 * scX; i++)
-		{
-			if (column < GD_COLS)
-				cs = CS1;
-			else
-				cs = CS2;
-			if (i >= 5 * scX)
-				gdWriteData(0x00, cs);
-			else {
-				pgmData = pgm_read_byte(&k1013vg6_0[index + i / scX]);
-				if (pgmData != 0x5A) {
-					wrData = 0;
+		for (i = 0; i < 6 * scX; i++) {
+			if (column < (GD_COLS << 1)) {
+				if (column < GD_COLS)
+					cs = CS1;
+				else
+					cs = CS2;
+				if (i >= 5 * scX)
+					gdWriteData(0x00, cs);
+				else {
+					pgmData = pgm_read_byte(&k1013vg6_0[index + i / scX]);
+					if (pgmData != 0x5A) {
+						wrData = 0;
 
-					for (bit = 0; bit < 8; bit++)
-					{
-						if (pgmData & (1 << ((shift+bit) / scY % 8)))
-							wrData |= (1 << bit);
+						for (bit = 0; bit < 8; bit++)
+						{
+							if (pgmData & (1 << ((shift+bit) / scY % 8)))
+								wrData |= (1 << bit);
+						}
+
+						gdWriteData(wrData, cs);
 					}
-
-					gdWriteData(wrData, cs);
 				}
 			}
 		}
@@ -198,6 +206,16 @@ void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY)
 {
 	while(*string)
 		gdWriteCharScaled(*string++, scX, scY);
+	return;
+}
+
+void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY)
+{
+	uint8_t i = 0, ch;
+	do {
+		ch = pgm_read_byte(&string[i++]);
+		gdWriteCharScaled(ch, scX, scY);
+	} while (ch);
 	return;
 }
 

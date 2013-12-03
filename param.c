@@ -191,17 +191,17 @@ void decBalance(void) {
 
 uint8_t db[] = "дБ";
 
-void showParLabel(int8_t *par, uint8_t *parLabel)
+void showParLabel(int8_t *par, const uint8_t *parLabel)
 {
 	gdSetXY(0, 1);
-	gdWriteStringScaled(parLabel, 2, 3);
+	gdWriteStringScaledProgmem(parLabel, 2, 3);
 	gdSetXY(94, 4);
 	gdWriteNumScaled(*par, 3, 2, 2);
 	gdSetXY(106, 6);
 	gdWriteStringScaled(db, 2, 2);
 }
 
-void showVolume(uint8_t *parLabel)
+void showVolume(const uint8_t *parLabel)
 {
 	showParLabel(&volume, parLabel);
 
@@ -226,7 +226,7 @@ void showVolume(uint8_t *parLabel)
 	}
 }
 
-void showBMT(int8_t *par, uint8_t *parLabel)
+void showBMT(int8_t *par, const uint8_t *parLabel)
 {
 	showParLabel(par, parLabel);
 
@@ -259,7 +259,7 @@ void showBMT(int8_t *par, uint8_t *parLabel)
 	}
 }
 
-void showBalance(uint8_t *parLabel)
+void showBalance(const uint8_t *parLabel)
 {
 	showParLabel(&balance, parLabel);
 
@@ -292,7 +292,7 @@ void showBalance(uint8_t *parLabel)
 	}
 }
 
-void showSpeaker(uint8_t *parLabel)
+void showSpeaker(const uint8_t *parLabel)
 {
 	showParLabel(&speaker, parLabel);
 
@@ -317,7 +317,7 @@ void showSpeaker(uint8_t *parLabel)
 	}
 }
 
-void showGain(uint8_t chan, uint8_t *parLabel)
+void showGain(uint8_t chan, const uint8_t *parLabel)
 {
 	showParLabel(gain + chan, parLabel);
 

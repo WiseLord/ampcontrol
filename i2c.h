@@ -13,10 +13,6 @@ uint8_t I2CWriteByte(uint8_t data);
 uint8_t I2CReadByte(uint8_t *data, uint8_t ack);
 
 uint8_t I2CWrite(uint8_t device, uint8_t address, uint8_t data);
-
-uint8_t DS1307Write(uint8_t address, uint8_t data);
-uint8_t DS1307Read(uint8_t address, uint8_t *data);
-
-void showTime(void);
+uint8_t I2CRead(uint8_t device, uint8_t address, uint8_t *data);
 
 #endif /* I2C_H */

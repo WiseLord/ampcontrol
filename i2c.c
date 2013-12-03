@@ -1,21 +1,6 @@
 #include "i2c.h"
 
 #include <avr/io.h>
-#include <util/delay.h>
-#include <avr/pgmspace.h>
-
-#include "ks0108.h"
-
-#define DOW_LENGTH	12
-const uint8_t dayOfWeek[][DOW_LENGTH] PROGMEM = {
-	"ВОСКРЕСЕНЬЕ",
-	"ПОНЕДЕЛЬНИК",
-	"ВТОРНИК",
-	"СРЕДА",
-	"ЧЕТВЕРГ",
-	"ПЯТНИЦА",
-	"СУББОТА",
-};
 
 void I2CInit(void)
 {
@@ -81,74 +66,18 @@ uint8_t I2CWrite(uint8_t device, uint8_t address, uint8_t data)
 	return 0;
 }
 
-
-uint8_t DS1307Write(uint8_t address, uint8_t data)
+uint8_t I2CRead(uint8_t device, uint8_t address, uint8_t *data)
 {
 	I2CStart();
-	if (I2CWriteByte(0b11010000))
-		return 1;
-	if (I2CWriteByte(address))
-		return 1;
-	if (I2CWriteByte(data))
-		return 1;
-	I2CStop();
-	return 0;
-}
-
-uint8_t DS1307Read(uint8_t address, uint8_t *data)
-{
-	I2CStart();
-	if (I2CWriteByte(0b11010000))
+	if (I2CWriteByte(device))
 		return 1;
 	if (I2CWriteByte(address))
 		return 1;
 	I2CStart();
-	if (I2CWriteByte(0b11010001))
+	if (I2CWriteByte(device + 1))
 		return 1;
 	if (I2CReadByte(data, 0))
 		return 1;
 	I2CStop();
 	return 0;
 }
-
-void showTime()
-{
-	uint8_t temp;
-	uint8_t time[] = "  :  :  ";
-	uint8_t date[] = "  .  .20  ";
-	DS1307Read(0x02, &temp);
-	time[0] = ((temp & 0xF0) >> 4) + 0x30;
-	time[1] = (temp & 0x0F) + 0x30;
-	DS1307Read(0x01, &temp);
-	time[3] = ((temp & 0xF0) >> 4) + 0x30;
-	time[4] = (temp & 0x0F) + 0x30;
-	DS1307Read(0x00, &temp);
-	time[6] = ((temp & 0xF0) >> 4) + 0x30;
-	time[7] = (temp & 0x0F) + 0x30;
-	gdSetXY(0, 0);
-	gdWriteStringScaled(time, 3, 3);
-	DS1307Read(0x04, &temp);
-	date[0] = ((temp & 0xF0) >> 4) + 0x30;
-	date[1] = (temp & 0x0F) + 0x30;
-	DS1307Read(0x05, &temp);
-	date[3] = ((temp & 0xF0) >> 4) + 0x30;
-	date[4] = (temp & 0x0F) + 0x30;
-	DS1307Read(0x06, &temp);
-	date[8] = ((temp & 0xF0) >> 4) + 0x30;
-	date[9] = (temp & 0x0F) + 0x30;
-	gdSetXY(0, 4);
-	gdWriteStringScaled(date, 2, 2);
-
-	DS1307Read(0x03, &temp);
-	temp %= 7;
-
-	uint8_t i = 0, ch;
-	gdSetXY(0, 7);
-
-	do {
-		ch = pgm_read_byte(&dayOfWeek[temp][i++]);
-		gdWriteChar(ch);
-	} while (ch);
-	return;
-}
-

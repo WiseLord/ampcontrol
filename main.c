@@ -1,20 +1,22 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include <avr/pgmspace.h>
 
 #include "ks0108.h"
 #include "fft.h"
 #include "adc.h"
 #include "input.h"
 #include "i2c.h"
-
 #include "param.h"
-uint8_t volumeLabel[] = "Усиление";
-uint8_t bassLabel[] = "Тембр НЧ";
-uint8_t middleLabel[] = "Тембр СЧ";
-uint8_t trebleLabel[] = "Тембр ВЧ";
-uint8_t balanceLabel[] = "Баланс";
-uint8_t speakerLabel[] = "Громкость";
-uint8_t gainLabel[] = "Канал";
+#include "ds1307.h"
+
+const uint8_t volumeLabel[] PROGMEM = "Усиление";
+const uint8_t bassLabel[] PROGMEM = "Тембр НЧ";
+const uint8_t middleLabel[] PROGMEM = "Тембр СЧ";
+const uint8_t trebleLabel[] PROGMEM = "Тембр ВЧ";
+const uint8_t balanceLabel[] PROGMEM = "Баланс";
+const uint8_t speakerLabel[] PROGMEM = "Громкость";
+const uint8_t gainLabel[] PROGMEM = "Канал";
 
 void hwInit(void)	/* Hardware initialization */
 {
