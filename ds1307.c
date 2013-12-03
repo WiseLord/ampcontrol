@@ -44,18 +44,18 @@ void showTime()
 	weekday = bd2d(&temp);
 
 	gdSetXY(0, 0);
-	gdWriteNumScaled(hour, 2, 3, 3);
+	gdWriteStringScaled(mkNumString(hour, 2, '0'), 3, 3);
 	gdWriteCharScaled(':', 3, 3);
-	gdWriteNumScaled(minute, 2, 3, 3);
+	gdWriteStringScaled(mkNumString(minute, 2, '0'), 3, 3);
 	gdWriteCharScaled(':', 3, 3);
-	gdWriteNumScaled(second, 2, 3, 3);
+	gdWriteStringScaled(mkNumString(second, 2, '0'), 3, 3);
 
 	gdSetXY(0, 4);
-	gdWriteNumScaled(day, 2, 2, 2);
+	gdWriteStringScaled(mkNumString(day, 2, '0'), 2, 2);
 	gdWriteCharScaled('.', 2, 2);
-	gdWriteNumScaled(month, 2, 2, 2);
+	gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2);
 	gdWriteCharScaled('.', 2, 2);
-	gdWriteNumScaled(year + 2000, 4, 2, 2);
+	gdWriteStringScaled(mkNumString(year, 2, '0'), 2, 2);
 
 	gdSetXY(0, 7);
 	gdWriteStringProgmem(dayOfWeek[weekday % 7]);

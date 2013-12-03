@@ -127,7 +127,7 @@ void gdWriteStringProgmem(const uint8_t *string)
 	return;
 }
 
-void mkNumString(int16_t number, uint8_t width, uint8_t lead)
+uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 {
 	uint8_t sign = lead;
 	if (number < 0) {
@@ -145,14 +145,15 @@ void mkNumString(int16_t number, uint8_t width, uint8_t lead)
 	}
 	if (i >= 0)
 		dig[i] = sign;
+	return dig;
 }
-
+/*
 void gdWriteNum(int16_t number, uint8_t width, uint8_t lead)
 {
 	mkNumString(number, width, lead);
 	gdWriteString(dig);
 }
-
+*/
 void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 {
 	uint8_t cs;
@@ -218,13 +219,13 @@ void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY)
 	} while (ch);
 	return;
 }
-
+/*
 void gdWriteNumScaled(int16_t num, uint8_t width, uint8_t scX, uint8_t scY)
 {
 	mkNumString(num, width, ' ');
 	gdWriteStringScaled(dig, scX, scY);
 }
-
+*/
 void gdSpectrum(uint8_t *buf, uint8_t mode)
 {
 	uint8_t i, j, k;

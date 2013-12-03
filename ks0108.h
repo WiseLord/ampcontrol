@@ -57,12 +57,12 @@ int8_t gdSetXY(uint8_t x, uint8_t y);
 void gdWriteChar(unsigned char code);
 void gdWriteString(uint8_t *string);
 void gdWriteStringProgmem(const uint8_t *string);
-void gdWriteNum(int16_t number, uint8_t width, uint8_t lead);
+
+uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead);
 
 void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY);
 void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY);
 void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY);
-void gdWriteNumScaled(int16_t num, uint8_t width, uint8_t scX, uint8_t scY);
 
 void gdSpectrum(uint8_t *buf, uint8_t mode);
 

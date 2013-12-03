@@ -196,7 +196,7 @@ void showParLabel(int8_t *par, const uint8_t *parLabel)
 	gdSetXY(0, 1);
 	gdWriteStringScaledProgmem(parLabel, 2, 3);
 	gdSetXY(94, 4);
-	gdWriteNumScaled(*par, 3, 2, 2);
+	gdWriteStringScaled(mkNumString(*par, 3, ' '), 2, 2);
 	gdSetXY(106, 6);
 	gdWriteStringScaled(db, 2, 2);
 }
@@ -322,7 +322,7 @@ void showGain(uint8_t chan, const uint8_t *parLabel)
 	showParLabel(gain + chan, parLabel);
 
 	gdSetXY(70, 1);
-	gdWriteNumScaled(channel + 1, 1, 2, 3);
+	gdWriteStringScaled(mkNumString(channel + 1, 3, ' '), 2, 3);
 
 	uint8_t i, j;
 	int16_t r;
