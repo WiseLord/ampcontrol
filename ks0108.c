@@ -92,6 +92,8 @@ void gdWriteChar(uint8_t code)
 	uint16_t index;
 	index = code * 5;
 
+	uint8_t pgmData;
+
 	for (i = 0; i < 6; i++)
 	{
 		if (column < GD_COLS)
@@ -101,7 +103,11 @@ void gdWriteChar(uint8_t code)
 		if (i == 5)
 			gdWriteData(0x00, cs);
 		else
-			gdWriteData(pgm_read_byte(&k1013vg6_0[index + i]), cs);
+		{
+			pgmData = pgm_read_byte(&k1013vg6_0[index + i]);
+			if (pgmData != 0x5A)
+				gdWriteData(pgmData, cs);
+		}
 	}
 	return;
 }
@@ -150,8 +156,8 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 	uint8_t xpos = column;
 	uint8_t ypos = row;
 
-	uint8_t data_read;
-	uint8_t data_write;
+	uint8_t pgmData;
+	uint8_t wrData;
 
 	uint8_t bit;
 	uint8_t shift = 0;
@@ -168,16 +174,18 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 			if (i >= 5 * scX)
 				gdWriteData(0x00, cs);
 			else {
-				data_read = pgm_read_byte(&k1013vg6_0[index + i / scX]);
-				data_write = 0;
+				pgmData = pgm_read_byte(&k1013vg6_0[index + i / scX]);
+				if (pgmData != 0x5A) {
+					wrData = 0;
 
-				for (bit = 0; bit < 8; bit++)
-				{
-					if (data_read & (1 << ((shift+bit) / scY % 8)))
-						data_write |= (1 << bit);
+					for (bit = 0; bit < 8; bit++)
+					{
+						if (pgmData & (1 << ((shift+bit) / scY % 8)))
+							wrData |= (1 << bit);
+					}
+
+					gdWriteData(wrData, cs);
 				}
-
-				gdWriteData(data_write, cs);
 			}
 		}
 		shift += 8;

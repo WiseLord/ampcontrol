@@ -112,5 +112,6 @@ void rc5Reset();
 
 void btnInit(void);
 uint8_t getCommand(void);
+uint8_t getCmdCount(void);
 
 #endif /* INPUT_H */

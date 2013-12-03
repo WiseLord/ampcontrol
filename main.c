@@ -33,24 +33,26 @@ int main(void)
 	hwInit();
 /*
 	DS1307Write(0x00, 0x00);
-	DS1307Write(0x01, 0x37);
-	DS1307Write(0x02, 0x19);
+	DS1307Write(0x01, 0x41);
+	DS1307Write(0x02, 0x09);
 
-	DS1307Write(0x03, 0x01);
+	DS1307Write(0x03, 0x02);
 
-	DS1307Write(0x04, 0x01);
+	DS1307Write(0x04, 0x02);
 	DS1307Write(0x05, 0x12);
 	DS1307Write(0x06, 0x13);
 */
-
 	uint8_t *buf;
 	uint8_t command = 0xFF;
+	uint8_t cmdCnt = 0;
+	uint8_t i;
 	displayMode mode = DISPLAY_SPECTRUM;
 
 	loadParams();
 
 	while (1) {
 		command = getCommand();
+		cmdCnt = getCmdCount();
 
 		if (command != CMD_NOCMD || getDisplayTime()) {
 			/* Change current mode */
@@ -135,59 +137,61 @@ int main(void)
 			/* Execute command */
 			switch (command) {
 			case CMD_VOL_UP:
-				switch (mode) {
-				case DISPLAY_SPEAKER:
-					incSpeaker();
+				for (i = 0; i < cmdCnt; i++)
+					switch (mode) {
+					case DISPLAY_SPEAKER:
+						incSpeaker();
+						break;
+					case DISPLAY_BASS:
+						incBMT(&bass);
+						break;
+					case DISPLAY_MIDDLE:
+						incBMT(&middle);
+						break;
+					case DISPLAY_TREBLE:
+						incBMT(&treble);
+						break;
+					case DISPLAY_VOLUME:
+						incVolume();
+						break;
+					case DISPLAY_GAIN:
+						incGain(channel);
+						break;
+					case DISPLAY_BALANCE:
+						incBalance();
+						break;
+					default:
+						break;
+					}
 					break;
-				case DISPLAY_BASS:
-					incBMT(&bass);
-					break;
-				case DISPLAY_MIDDLE:
-					incBMT(&middle);
-					break;
-				case DISPLAY_TREBLE:
-					incBMT(&treble);
-					break;
-				case DISPLAY_VOLUME:
-					incVolume();
-					break;
-				case DISPLAY_GAIN:
-					incGain(channel);
-					break;
-				case DISPLAY_BALANCE:
-					incBalance();
-					break;
-				default:
-					break;
-				}
-				break;
 			case CMD_VOL_DOWN:
-				switch (mode) {
-				case DISPLAY_SPEAKER:
-					decSpeaker();
+				for (i = 0; i < cmdCnt; i++)
+					switch (mode) {
+					case DISPLAY_SPEAKER:
+						decSpeaker();
+						break;
+					case DISPLAY_BASS:
+						decBMT(&bass);
+						break;
+					case DISPLAY_MIDDLE:
+						decBMT(&middle);
+						break;
+					case DISPLAY_TREBLE:
+						decBMT(&treble);
+						break;
+					case DISPLAY_VOLUME:
+						decVolume();
+						break;
+					case DISPLAY_GAIN:
+						decGain(channel);
+						break;
+					case DISPLAY_BALANCE:
+						decBalance();
+						break;
+					default:
+						break;
+					}
 					break;
-				case DISPLAY_BASS:
-					decBMT(&bass);
-					break;
-				case DISPLAY_MIDDLE:
-					decBMT(&middle);
-					break;
-				case DISPLAY_TREBLE:
-					decBMT(&treble);
-					break;
-				case DISPLAY_VOLUME:
-					decVolume();
-					break;
-				case DISPLAY_GAIN:
-					decGain(channel);
-					break;
-				case DISPLAY_BALANCE:
-					decBalance();
-					break;
-				default:
-					break;
-				}
-				break;
 			case CMD_SEARCH:
 				incChannel();
 				break;

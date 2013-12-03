@@ -4,6 +4,7 @@
 #include "input.h"
 
 volatile uint8_t cmdBuf = CMD_NOCMD;	/* Command buffer, cleared when read */
+volatile uint8_t cmdCnt = 0;			/* Counter for commands */
 volatile uint8_t rc5Buf = CMD_NOCMD;	/* Buffer for last command from RC */
 volatile uint8_t rc5BufCnt = 0;			/* Counter for IR RC command buffer */
 
@@ -119,8 +120,14 @@ ISR (TIMER2_COMP_vect) {
 	/* If encoder event has happened, send it to command buffer */
 	switch (encNow) {
 	case ENC_AB:
-		if (encPrev == ENC_B) cmdBuf = CMD_VOL_UP;
-		if (encPrev == ENC_A) cmdBuf = CMD_VOL_DOWN;
+		if (encPrev == ENC_B) {
+			cmdBuf = CMD_VOL_UP;
+			cmdCnt++;
+		}
+		if (encPrev == ENC_A) {
+			cmdBuf = CMD_VOL_DOWN;
+			cmdCnt++;
+		}
 		break;
 /*	case ENC_A:
 		if (encPrev == ENC_AB) cmdBuf = COMM_ENC_UP;
@@ -131,8 +138,14 @@ ISR (TIMER2_COMP_vect) {
 		if (encPrev == ENC_AB) cmdBuf = COMM_ENC_DOWN;
 		break;
 */	case ENC_0:
-		if (encPrev == ENC_A) cmdBuf = CMD_VOL_UP;
-		if (encPrev == ENC_B) cmdBuf = CMD_VOL_DOWN;
+		if (encPrev == ENC_A) {
+			cmdBuf = CMD_VOL_UP;
+			cmdCnt++;
+		}
+		if (encPrev == ENC_B) {
+			cmdBuf = CMD_VOL_DOWN;
+			cmdCnt++;
+		}
 		break;
 	default:
 		break;
@@ -171,7 +184,11 @@ ISR (TIMER2_COMP_vect) {
 
 	/* Send current command to buffer if it exists and differ from previous */
 	if ((cmdNow != CMD_NOCMD) && (cmdPrev != cmdNow || btnCnt >= TIME_LONG))
+	{
 		cmdBuf = cmdNow;
+		if (cmdNow == CMD_VOL_UP || cmdNow == CMD_VOL_DOWN)
+			cmdCnt++;
+	}
 
 	/* Handle long press */
 	if (btnCnt >= TIME_LONG) {
@@ -201,5 +218,12 @@ uint8_t getCommand(void) /* Read command and clear command buffer */
 {
 	uint8_t ret = cmdBuf;
 	cmdBuf = CMD_NOCMD;
+	return ret;
+}
+
+uint8_t getCmdCount(void)
+{
+	uint8_t ret = cmdCnt;
+	cmdCnt = 0;
 	return ret;
 }
