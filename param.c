@@ -193,154 +193,79 @@ uint8_t db[] = "дБ";
 
 void showParLabel(int8_t *par, const uint8_t *parLabel)
 {
-	gdSetXY(0, 1);
+	gdSetXY(0, 0);
 	gdWriteStringScaledProgmem(parLabel, 2, 3);
+	gdSetXY(113, 0);
+	gdWriteStringScaled(mkNumString(channel + 1, 1, ' '), 3, 3);
 	gdSetXY(94, 4);
 	gdWriteStringScaled(mkNumString(*par, 3, ' '), 2, 2);
 	gdSetXY(106, 6);
 	gdWriteStringScaled(db, 2, 2);
 }
 
-void showVolume(const uint8_t *parLabel)
+void showBar(uint8_t length, int8_t from, int8_t to)
 {
-	showParLabel(&volume, parLabel);
-
-	uint8_t i, j;
-	int16_t r;
+	int8_t i, j;
 	uint8_t data;
-	r = 2 * volume + 94;
 	for (j = 5; j <=6; j++) {
 		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
 		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
-		for (i = 0; i < 94; i++) {
+		for (i = 0; i < length; i++) {
 			if (j == 5)
 				data = 0x80;
 			else
 				data = 0x01;
-			if (i < r)
+			if (i >= from && i <= to)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
 			gdWriteData(data, i < 64 ? CS1 : CS2);
 		}
 	}
+}
+
+void showVolume(const uint8_t *parLabel)
+{
+	int8_t r;
+	r = 2 * volume + 93;
+	showBar(94, 0, r);
+	showParLabel(&volume, parLabel);
 }
 
 void showBMT(int8_t *par, const uint8_t *parLabel)
 {
+	int8_t l = 42, r = 42;
+	if (*par > 0)
+		r += *par * 3;
+	else
+		l += *par * 3;
 	showParLabel(par, parLabel);
-
-	uint8_t i, j;
-	uint16_t l, r;
-	uint8_t data;
-
-	if (*par > 0) {
-		l = 42;
-		r = 42 + *par * 3;
-	} else {
-		l = 42 + *par * 3;
-		r = 42;
-	}
-
-	for (j = 5; j <=6; j++) {
-		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
-		for (i = 0; i < 86; i++) {
-			if (j == 5)
-				data = 0x80;
-			else
-				data = 0x01;
-			if (i >= l && i <= r)
-				data = 0xFF;
-			if (i % 2)
-				data = 0x00;
-			gdWriteData(data, i < 64 ? CS1 : CS2);
-		}
-	}
+	showBar(86, l, r);
 }
 
 void showBalance(const uint8_t *parLabel)
 {
+	int8_t l = 42, r = 42;
+	if (balance > 0)
+		r += balance * 2;
+	else
+		l += balance * 2;
 	showParLabel(&balance, parLabel);
-
-	uint8_t i, j;
-	uint16_t l, r;
-	uint8_t data;
-
-	if (balance > 0) {
-		l = 42;
-		r = 42 + balance * 2;
-	} else {
-		l = 42 + balance * 2;
-		r = 42;
-	}
-
-	for (j = 5; j <=6; j++) {
-		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
-		for (i = 0; i < 86; i++) {
-			if (j == 5)
-				data = 0x80;
-			else
-				data = 0x01;
-			if (i >= l && i <= r)
-				data = 0xFF;
-			if (i % 2)
-				data = 0x00;
-			gdWriteData(data, i < 64 ? CS1 : CS2);
-		}
-	}
+	showBar(86, l, r);
 }
 
 void showSpeaker(const uint8_t *parLabel)
 {
+	int8_t r;
+	r = speaker + 78;
+	showBar(79, 0, r);
 	showParLabel(&speaker, parLabel);
-
-	uint8_t i, j;
-	int16_t r;
-	uint8_t data;
-	r = speaker + 79;
-	for (j = 5; j <=6; j++) {
-		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
-		for (i = 0; i < 79; i++) {
-			if (j == 5)
-				data = 0x80;
-			else
-				data = 0x01;
-			if (i < r)
-				data = 0xFF;
-			if (i % 2)
-				data = 0x00;
-			gdWriteData(data, i < 64 ? CS1 : CS2);
-		}
-	}
 }
 
 void showGain(uint8_t chan, const uint8_t *parLabel)
 {
+	int8_t r;
+	r = 3 * gain[chan] - 1;
+	showBar(90, 0, r);
 	showParLabel(gain + chan, parLabel);
-
-	gdSetXY(70, 1);
-	gdWriteStringScaled(mkNumString(channel + 1, 3, ' '), 2, 3);
-
-	uint8_t i, j;
-	int16_t r;
-	uint8_t data;
-	r = 3 * gain[chan];
-	for (j = 5; j <=6; j++) {
-		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
-		for (i = 0; i < 90; i++) {
-			if (j == 5)
-				data = 0x80;
-			else
-				data = 0x01;
-			if (i < r)
-				data = 0xFF;
-			if (i % 2)
-				data = 0x00;
-			gdWriteData(data, i < 64 ? CS1 : CS2);
-		}
-	}
 }

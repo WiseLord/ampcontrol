@@ -35,7 +35,6 @@ void gdWriteCommand(uint8_t command, uint8_t cs)
 
 void gdFill(uint8_t data, uint8_t cs)
 {
-	GD_CPORT |= cs;
 	uint8_t i, j;
 	gdWriteCommand(KS0108_SET_ADDRESS, cs);
 	for (i = 0; i < GD_ROWS; i++) {
@@ -43,7 +42,6 @@ void gdFill(uint8_t data, uint8_t cs)
 		for (j = 0; j < GD_COLS; j++)
 			gdWriteData(data, cs);
 	}
-	GD_CPORT &= ~cs;
 	return;
 }
 
@@ -122,7 +120,8 @@ void gdWriteStringProgmem(const uint8_t *string)
 	uint8_t i = 0, ch;
 	do {
 		ch = pgm_read_byte(&string[i++]);
-		gdWriteChar(ch);
+		if (ch)
+			gdWriteChar(ch);
 	} while (ch);
 	return;
 }
@@ -147,13 +146,7 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 		dig[i] = sign;
 	return dig;
 }
-/*
-void gdWriteNum(int16_t number, uint8_t width, uint8_t lead)
-{
-	mkNumString(number, width, lead);
-	gdWriteString(dig);
-}
-*/
+
 void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 {
 	uint8_t cs;
@@ -215,17 +208,12 @@ void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY)
 	uint8_t i = 0, ch;
 	do {
 		ch = pgm_read_byte(&string[i++]);
-		gdWriteCharScaled(ch, scX, scY);
+		if (ch)
+			gdWriteCharScaled(ch, scX, scY);
 	} while (ch);
 	return;
 }
-/*
-void gdWriteNumScaled(int16_t num, uint8_t width, uint8_t scX, uint8_t scY)
-{
-	mkNumString(num, width, ' ');
-	gdWriteStringScaled(dig, scX, scY);
-}
-*/
+
 void gdSpectrum(uint8_t *buf, uint8_t mode)
 {
 	uint8_t i, j, k;
