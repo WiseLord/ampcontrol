@@ -41,10 +41,8 @@
 #define STA_BUSY					0x80
 
 /* Spectrum output mode */
-#define MODE_MIXED					0
-#define MODE_LEFT					1
-#define MODE_RIGHT					2
-#define MODE_STEREO					3
+#define MODE_STEREO					0
+#define MODE_MIXED					1
 
 void gdWriteData(uint8_t data, uint8_t cs);
 void gdWriteCommand(uint8_t command, uint8_t cs);
@@ -60,9 +58,9 @@ void gdWriteStringProgmem(const uint8_t *string);
 
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead);
 
-void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY);
-void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY);
-void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY);
+void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY, uint8_t inv);
+void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv);
+void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv);
 
 void gdSpectrum(uint8_t *buf, uint8_t mode);
 

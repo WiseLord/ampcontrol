@@ -22,7 +22,8 @@ typedef enum {
 	DISPLAY_VOLUME,
 	DISPLAY_GAIN,
 	DISPLAY_BALANCE,
-	DISPLAY_TIME
+	DISPLAY_TIME,
+	DISPLAY_EDIT_TIME
 } displayMode;
 
 #define VOL_MIN		-47
@@ -47,8 +48,12 @@ int8_t speaker;
 uint8_t channel;
 int8_t gain[4];
 
+int8_t spMode;
+
 void loadParams(void);
 void saveParams(void);
+
+void editSpMode();
 
 void incVolume(void);
 void decVolume(void);

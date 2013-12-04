@@ -147,7 +147,7 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 	return dig;
 }
 
-void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
+void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY, uint8_t inv)
 {
 	uint8_t cs;
 
@@ -173,7 +173,10 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 				else
 					cs = CS2;
 				if (i >= 5 * scX)
-					gdWriteData(0x00, cs);
+					if (inv)
+						gdWriteData(0xFF, cs);
+					else
+						gdWriteData(0x00, cs);
 				else {
 					pgmData = pgm_read_byte(&k1013vg6_0[index + i / scX]);
 					if (pgmData != 0x5A) {
@@ -184,8 +187,10 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 							if (pgmData & (1 << ((shift+bit) / scY % 8)))
 								wrData |= (1 << bit);
 						}
-
-						gdWriteData(wrData, cs);
+						if (inv)
+							gdWriteData(~wrData, cs);
+						else
+							gdWriteData(wrData, cs);
 					}
 				}
 			}
@@ -196,20 +201,20 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY)
 	return;
 }
 
-void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY)
+void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv)
 {
 	while(*string)
-		gdWriteCharScaled(*string++, scX, scY);
+		gdWriteCharScaled(*string++, scX, scY, inv);
 	return;
 }
 
-void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY)
+void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv)
 {
 	uint8_t i = 0, ch;
 	do {
 		ch = pgm_read_byte(&string[i++]);
 		if (ch)
-			gdWriteCharScaled(ch, scX, scY);
+			gdWriteCharScaled(ch, scX, scY, inv);
 	} while (ch);
 	return;
 }
@@ -226,14 +231,6 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
 		for (j = 0, k = 32; j < 32; j++, k++) {
 			switch (mode) {
-			case MODE_LEFT:
-				val = buf[j] << 1;
-				row = 7 - val / 8;
-				break;
-			case MODE_RIGHT:
-				val = buf[k] << 1;
-				row = 7 - val / 8;
-				break;
 			case MODE_STEREO:
 				if (i < GD_ROWS / 2) {
 					val = buf[j];

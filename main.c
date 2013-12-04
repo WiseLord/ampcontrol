@@ -83,11 +83,6 @@ int main(void)
 					mode = DISPLAY_VOLUME;
 					break;
 				case DISPLAY_VOLUME:
-					if (mode != DISPLAY_GAIN)
-						gdFill(0x00, CS1 | CS2);
-					mode = DISPLAY_GAIN;
-					break;
-				case DISPLAY_GAIN:
 					if (mode != DISPLAY_BALANCE)
 						gdFill(0x00, CS1 | CS2);
 					mode = DISPLAY_BALANCE;
@@ -121,8 +116,8 @@ int main(void)
 				if (mode != DISPLAY_TIME)
 					gdFill(0x00, CS1 | CS2);
 				mode = DISPLAY_TIME;
+				etm = EDIT_NOEDIT;
 				break;
-			case CMD_SEARCH:
 			case CMD_NUM1:
 			case CMD_NUM2:
 			case CMD_NUM3:
@@ -162,6 +157,10 @@ int main(void)
 					case DISPLAY_BALANCE:
 						incBalance();
 						break;
+					case DISPLAY_EDIT_TIME:
+						setDisplayTime(30000);
+						incTime();
+						break;
 					default:
 						break;
 					}
@@ -190,12 +189,28 @@ int main(void)
 					case DISPLAY_BALANCE:
 						decBalance();
 						break;
+					case DISPLAY_EDIT_TIME:
+						setDisplayTime(30000);
+						decTime();
+						break;
 					default:
 						break;
 					}
 					break;
 			case CMD_SEARCH:
-				incChannel();
+				setDisplayTime(3000);
+				if (mode != DISPLAY_GAIN)
+					gdFill(0x00, CS1 | CS2);
+				else
+					incChannel();
+				mode = DISPLAY_GAIN;
+				break;
+			case CMD_STORE:
+				setDisplayTime(30000);
+				if (mode != DISPLAY_EDIT_TIME)
+					gdFill(0x00, CS1 | CS2);
+				mode = DISPLAY_EDIT_TIME;
+				editTime();
 				break;
 			case CMD_NUM1:
 				setChannel(0);
@@ -208,6 +223,10 @@ int main(void)
 				break;
 			case CMD_NUM4:
 				setChannel(3);
+				break;
+			case CMD_DESCR:
+				editSpMode();
+				saveParams();
 				break;
 			default:
 				break;
@@ -237,6 +256,7 @@ int main(void)
 				showBalance(balanceLabel);
 				break;
 			case DISPLAY_TIME:
+			case DISPLAY_EDIT_TIME:
 				showTime();
 				break;
 			default:
@@ -247,9 +267,10 @@ int main(void)
 			{
 				mode = DISPLAY_SPECTRUM;
 				saveParams();
+				etm = EDIT_NOEDIT;
 			}
 			buf = getData();
-			gdSpectrum(buf, MODE_STEREO);
+			gdSpectrum(buf, spMode);
 		}
 	}
 

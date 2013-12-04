@@ -65,6 +65,7 @@ void loadParams(void)
 	gain[1] = eeprom_read_byte((void*)8);
 	gain[2] = eeprom_read_byte((void*)9);
 	gain[3] = eeprom_read_byte((void*)10);
+	spMode = eeprom_read_byte((void*)11);
 
 	I2CWrite(0b10001000, FUNC_INPUT_GAIN, 0);
 	setVolume(volume);
@@ -91,6 +92,15 @@ void saveParams(void)
 	eeprom_write_byte((void*)8, gain[1]);
 	eeprom_write_byte((void*)9, gain[2]);
 	eeprom_write_byte((void*)10, gain[3]);
+	eeprom_write_byte((void*)11, spMode);
+}
+
+void editSpMode()
+{
+	if (spMode == MODE_STEREO)
+		spMode = MODE_MIXED;
+	else
+		spMode = MODE_STEREO;
 }
 
 void incVolume(void)
@@ -194,13 +204,13 @@ uint8_t db[] = "дБ";
 void showParLabel(int8_t *par, const uint8_t *parLabel)
 {
 	gdSetXY(0, 0);
-	gdWriteStringScaledProgmem(parLabel, 2, 3);
+	gdWriteStringScaledProgmem(parLabel, 2, 3, 0);
 	gdSetXY(113, 0);
-	gdWriteStringScaled(mkNumString(channel + 1, 1, ' '), 3, 3);
+	gdWriteStringScaled(mkNumString(channel + 1, 1, ' '), 3, 3, 0);
 	gdSetXY(94, 4);
-	gdWriteStringScaled(mkNumString(*par, 3, ' '), 2, 2);
+	gdWriteStringScaled(mkNumString(*par, 3, ' '), 2, 2, 0);
 	gdSetXY(106, 6);
-	gdWriteStringScaled(db, 2, 2);
+	gdWriteStringScaled(db, 2, 2, 0);
 }
 
 void showBar(uint8_t length, int8_t from, int8_t to)
