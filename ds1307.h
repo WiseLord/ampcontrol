@@ -16,7 +16,7 @@ typedef enum {
 
 editTimeMode etm;
 
-void showTime(void);
+void showTime(uint8_t inv);
 void editTime(void);
 void incTime(void);
 void decTime(void);

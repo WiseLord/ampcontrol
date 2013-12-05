@@ -95,43 +95,43 @@ void setTime(void)
 	}
 }
 
-void showTime(void)
+void showTime(uint8_t inv)
 {
 	getTime();
 	gdSetXY(0, 0);
 	if (etm == EDIT_HOURS)
-		gdWriteStringScaled(mkNumString(hour, 2, '0'), 3, 3, 1);
+		gdWriteStringScaled(mkNumString(hour, 2, '0'), 3, 3, !inv);
 	else
-		gdWriteStringScaled(mkNumString(hour, 2, '0'), 3, 3, 0);
-	gdWriteCharScaled(':', 3, 3, 0);
+		gdWriteStringScaled(mkNumString(hour, 2, '0'), 3, 3, inv);
+	gdWriteCharScaled(':', 3, 3, inv);
 	if (etm == EDIT_MINUTES)
-		gdWriteStringScaled(mkNumString(minute, 2, '0'), 3, 3, 1);
+		gdWriteStringScaled(mkNumString(minute, 2, '0'), 3, 3, !inv);
 	else
-		gdWriteStringScaled(mkNumString(minute, 2, '0'), 3, 3, 0);
-	gdWriteCharScaled(':', 3, 3, 0);
+		gdWriteStringScaled(mkNumString(minute, 2, '0'), 3, 3, inv);
+	gdWriteCharScaled(':', 3, 3, inv);
 	if (etm == EDIT_SECONDS)
-		gdWriteStringScaled(mkNumString(second, 2, '0'), 3, 3, 1);
+		gdWriteStringScaled(mkNumString(second, 2, '0'), 3, 3, !inv);
 	else
-		gdWriteStringScaled(mkNumString(second, 2, '0'), 3, 3, 0);
+		gdWriteStringScaled(mkNumString(second, 2, '0'), 3, 3, inv);
 
 	gdSetXY(0, 4);
 	if (etm == EDIT_DAY)
-		gdWriteStringScaled(mkNumString(day, 2, '0'), 2, 2, 1);
+		gdWriteStringScaled(mkNumString(day, 2, '0'), 2, 2, !inv);
 	else
-		gdWriteStringScaled(mkNumString(day, 2, '0'), 2, 2, 0);
-	gdWriteCharScaled('.', 2, 2, 0);
+		gdWriteStringScaled(mkNumString(day, 2, '0'), 2, 2, inv);
+	gdWriteCharScaled('.', 2, 2, inv);
 	if (etm == EDIT_MONTH)
-		gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2, 1);
+		gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2, !inv);
 	else
-		gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2, 0);
-	gdWriteCharScaled('.', 2, 2, 0);
+		gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2, inv);
+	gdWriteCharScaled('.', 2, 2, inv);
 	if (etm == EDIT_YEAR)
-		gdWriteStringScaled(mkNumString(year, 2, '0'), 2, 2, 1);
+		gdWriteStringScaled(mkNumString(year, 2, '0'), 2, 2, !inv);
 	else
-		gdWriteStringScaled(mkNumString(year, 2, '0'), 2, 2, 0);
+		gdWriteStringScaled(mkNumString(year, 2, '0'), 2, 2, inv);
 
 	gdSetXY(0, 7);
-	gdWriteStringProgmem(dayOfWeek[weekday % 7]);
+	gdWriteStringProgmem(dayOfWeek[weekday % 7], inv);
 
 	return;
 }
@@ -145,7 +145,7 @@ void editTime(void)
 	}
 	else
 		etm++;
-	showTime();
+	showTime(0);
 }
 
 void incTime(void)
@@ -186,7 +186,7 @@ void incTime(void)
 		break;
 	}
 	setTime();
-	showTime();
+	showTime(0);
 }
 
 void decTime(void)
@@ -227,5 +227,5 @@ void decTime(void)
 		break;
 	}
 	setTime();
-	showTime();
+	showTime(0);
 }

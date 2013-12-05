@@ -14,7 +14,7 @@ void gdWriteData(uint8_t data, uint8_t cs)
 	/* Set data byte */
 	GD_DPORT = data;
 	/* Select controller, data mode and perform strobe */
-	GD_CPORT |= (cs | DI | E);
+	GD_CPORT |= (cs | GD_DI | GD_E);
 	/* Unselect controller */
 	GD_CPORT &= ~GD_CTRL;
 	column++;
@@ -28,7 +28,7 @@ void gdWriteCommand(uint8_t command, uint8_t cs)
 	/* Set command byte */
 	GD_DPORT = command;
 	/* Select controller and perform strobe */
-	GD_CPORT |= cs | E;
+	GD_CPORT |= cs | GD_E;
 	GD_CPORT &= ~GD_CTRL;
 	return;
 }
@@ -47,18 +47,21 @@ void gdFill(uint8_t data, uint8_t cs)
 
 void gdInit(void)
 {
-	/* Set data and control lines as outputs */
+	/* Set data, control and backlight lines as outputs */
 	GD_DDDR = 0xFF;
 	GD_CDDR |= GD_CTRL;
+	GD_LDDR |= GD_BACKLIGHT;
+	/* Turn off backlight */
+	GD_LPORT &= ~GD_BACKLIGHT;
 	/* Unselect controller */
 	GD_CPORT &= ~GD_CTRL;
 	/* Reset */
 	_delay_us(10);
-	GD_CPORT |= RES;
+	GD_CPORT |= GD_RES;
 	/* Clear display  and reset addresses */
-	gdFill(0x00, CS1 | CS2);
-	gdWriteCommand(KS0108_DISPLAY_ON, CS1 | CS2);
-	gdWriteCommand(KS0108_DISPLAY_START_LINE, CS1 | CS2);
+	gdFill(0x00, GD_CS1 | GD_CS2);
+	gdWriteCommand(KS0108_DISPLAY_ON, GD_CS1 | GD_CS2);
+	gdWriteCommand(KS0108_DISPLAY_START_LINE, GD_CS1 | GD_CS2);
 	return;
 }
 
@@ -69,19 +72,19 @@ int8_t gdSetXY(uint8_t x, uint8_t y)
 	if (y >= GD_ROWS)
 		return 1;
 	if (x < GD_COLS) {
-		gdWriteCommand(KS0108_SET_ADDRESS + x, CS1);
-		gdWriteCommand(KS0108_SET_ADDRESS, CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS + x, GD_CS1);
+		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS2);
 	} else {
-		gdWriteCommand(KS0108_SET_ADDRESS, CS1);
-		gdWriteCommand(KS0108_SET_ADDRESS - GD_COLS + x, CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS1);
+		gdWriteCommand(KS0108_SET_ADDRESS - GD_COLS + x, GD_CS2);
 	}
 	column = x;
-	gdWriteCommand(KS0108_SET_PAGE + y, CS1 | CS2);
+	gdWriteCommand(KS0108_SET_PAGE + y, GD_CS1 | GD_CS2);
 	row = y;
 	return 0;
 }
 
-void gdWriteChar(uint8_t code)
+void gdWriteChar(uint8_t code, uint8_t inv)
 {
 	uint8_t cs;
 	uint8_t i;
@@ -91,37 +94,46 @@ void gdWriteChar(uint8_t code)
 
 	for (i = 0; i < 6; i++) {
 		if (column < (GD_COLS << 1)) {
-			if (column < GD_COLS)
-				cs = CS1;
-			else
-				cs = CS2;
-			if (i == 5)
-				gdWriteData(0x00, cs);
-			else
-			{
+			if (column < GD_COLS) {
+				cs = GD_CS1;
+			} else {
+				cs = GD_CS2;
+			}
+			if (i == 5) {
+				if (inv) {
+					gdWriteData(0xFF, cs);
+				} else {
+					gdWriteData(0x00, cs);
+				}
+			} else {
 				pgmData = pgm_read_byte(&k1013vg6_0[index + i]);
-				if (pgmData != 0x5A)
-					gdWriteData(pgmData, cs);
+				if (pgmData != 0x5A) {
+					if (inv) {
+						gdWriteData(~pgmData, cs);
+					} else {
+						gdWriteData(pgmData, cs);
+					}
+				}
 			}
 		}
 	}
 	return;
 }
 
-void gdWriteString(uint8_t *string)
+void gdWriteString(uint8_t *string, uint8_t inv)
 {
 	while(*string)
-		gdWriteChar(*string++);
+		gdWriteChar(*string++, inv);
 	return;
 }
 
-void gdWriteStringProgmem(const uint8_t *string)
+void gdWriteStringProgmem(const uint8_t *string, uint8_t inv)
 {
 	uint8_t i = 0, ch;
 	do {
 		ch = pgm_read_byte(&string[i++]);
 		if (ch)
-			gdWriteChar(ch);
+			gdWriteChar(ch, inv);
 	} while (ch);
 	return;
 }
@@ -168,16 +180,18 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY, uint8_t inv)
 		gdSetXY(xpos, ypos + j);
 		for (i = 0; i < 6 * scX; i++) {
 			if (column < (GD_COLS << 1)) {
-				if (column < GD_COLS)
-					cs = CS1;
-				else
-					cs = CS2;
-				if (i >= 5 * scX)
-					if (inv)
+				if (column < GD_COLS) {
+					cs = GD_CS1;
+				} else {
+					cs = GD_CS2;
+				}
+				if (i >= 5 * scX) {
+					if (inv) {
 						gdWriteData(0xFF, cs);
-					else
+					} else {
 						gdWriteData(0x00, cs);
-				else {
+					}
+				} else {
 					pgmData = pgm_read_byte(&k1013vg6_0[index + i / scX]);
 					if (pgmData != 0x5A) {
 						wrData = 0;
@@ -187,10 +201,11 @@ void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY, uint8_t inv)
 							if (pgmData & (1 << ((shift+bit) / scY % 8)))
 								wrData |= (1 << bit);
 						}
-						if (inv)
+						if (inv) {
 							gdWriteData(~wrData, cs);
-						else
+						} else {
 							gdWriteData(wrData, cs);
+						}
 					}
 				}
 			}
@@ -227,8 +242,8 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 	uint8_t val;
 	uint8_t cs;
 	for (i = 0; i < GD_ROWS; i++) {
-		gdWriteCommand(KS0108_SET_PAGE + i, CS1 | CS2);
-		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_PAGE + i, GD_CS1 | GD_CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS1 | GD_CS2);
 		for (j = 0, k = 32; j < 32; j++, k++) {
 			switch (mode) {
 			case MODE_STEREO:
@@ -251,9 +266,9 @@ void gdSpectrum(uint8_t *buf, uint8_t mode)
 			else if (i < row)
 				data = 0x00;
 			if (j < 16)
-				cs = CS1;
+				cs = GD_CS1;
 			else
-				cs = CS2;
+				cs = GD_CS2;
 				gdWriteData(data, cs);
 				gdWriteData(data, cs);
 				gdWriteData(data, cs);

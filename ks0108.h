@@ -3,29 +3,32 @@
 
 #include <inttypes.h>
 #include <avr/io.h>
-
+/* Data port */
 #define GD_DPORT					PORTB
 #define GD_DDDR						DDRB
 #define GD_DPIN						PINB
-
+/* Control port */
 #define GD_CPORT					PORTA
 #define GD_CDDR						DDRA
 #define GD_CPIN						PINA
+/* Backlight port */
+#define GD_LPORT					PORTC
+#define GD_LDDR						DDRC
+#define GD_LPIN						PINC
 
-#define RES							(1<<PA7)
-#define CS2							(1<<PA6)
-#define CS1							(1<<PA5)
-#define E							(1<<PA4)
-#define RW							(1<<PA3)
-#define DI							(1<<PA2)
+#define GD_RES						(1<<PA7)
+#define GD_CS2						(1<<PA6)
+#define GD_CS1						(1<<PA5)
+#define GD_E						(1<<PA4)
+#define GD_RW						(1<<PA3)
+#define GD_DI						(1<<PA2)
 
-#define GD_CTRL						(CS1 | CS2 | E | RW | DI | RES)
+#define GD_CTRL						(GD_CS1|GD_CS2|GD_E|GD_RW|GD_DI|GD_RES)
+
+#define GD_BACKLIGHT				(1<<PC7)
 
 #define GD_COLS						64
 #define GD_ROWS						8
-
-#define GD_COMM						0
-#define GD_DATA						1
 
 /* Display control instructions */
 #define KS0108_DISPLAY_ON			0x3F
@@ -52,9 +55,9 @@ void gdInit(void);
 
 int8_t gdSetXY(uint8_t x, uint8_t y);
 
-void gdWriteChar(unsigned char code);
-void gdWriteString(uint8_t *string);
-void gdWriteStringProgmem(const uint8_t *string);
+void gdWriteChar(unsigned char code, uint8_t inv);
+void gdWriteString(uint8_t *string, uint8_t inv);
+void gdWriteStringProgmem(const uint8_t *string, uint8_t inv);
 
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead);
 

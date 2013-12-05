@@ -67,11 +67,9 @@ void loadParams(void)
 	gain[3] = eeprom_read_byte((void*)10);
 	spMode = eeprom_read_byte((void*)11);
 
-	I2CWrite(0b10001000, FUNC_INPUT_GAIN, 0);
 	setVolume(volume);
 	setChannel(channel);
-	I2CWrite(0b10001000, FUNC_SPEAKER_LEFT, 0);
-	I2CWrite(0b10001000, FUNC_SPEAKER_RIGHT, 0);
+	setGain(channel, gain[channel]);
 	int8_t i;
 	for (i = SPK_MIN; i <= speaker; i++) {
 		setSpeaker(i);
@@ -218,8 +216,8 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 	int8_t i, j;
 	uint8_t data;
 	for (j = 5; j <=6; j++) {
-		gdWriteCommand(KS0108_SET_ADDRESS, CS1 | CS2);
-		gdWriteCommand(KS0108_SET_PAGE + j, CS1 | CS2);
+		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS1 | GD_CS2);
+		gdWriteCommand(KS0108_SET_PAGE + j, GD_CS1 | GD_CS2);
 		for (i = 0; i < length; i++) {
 			if (j == 5)
 				data = 0x80;
@@ -229,7 +227,7 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
-			gdWriteData(data, i < 64 ? CS1 : CS2);
+			gdWriteData(data, i < 64 ? GD_CS1 : GD_CS2);
 		}
 	}
 }

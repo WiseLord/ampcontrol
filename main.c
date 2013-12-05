@@ -33,30 +33,21 @@ void hwInit(void)	/* Hardware initialization */
 int main(void)
 {
 	hwInit();
-/*
-	DS1307Write(0x00, 0x00);
-	DS1307Write(0x01, 0x41);
-	DS1307Write(0x02, 0x09);
 
-	DS1307Write(0x03, 0x02);
-
-	DS1307Write(0x04, 0x02);
-	DS1307Write(0x05, 0x12);
-	DS1307Write(0x06, 0x13);
-*/
 	uint8_t *buf;
-	uint8_t command = 0xFF;
+	uint8_t command = CMD_NOCMD;
 	uint8_t cmdCnt = 0;
 	uint8_t i;
-	displayMode mode = DISPLAY_SPECTRUM;
 
-	loadParams();
+	gdFill(0xFF, GD_CS1 | GD_CS2);
+	displayMode mode = DISPLAY_TIME;
+	uint8_t stdby = 1;
 
 	while (1) {
 		command = getCommand();
 		cmdCnt = getCmdCount();
 
-		if (command != CMD_NOCMD || getDisplayTime()) {
+		if (!stdby && (command != CMD_NOCMD || getDisplayTime())) {
 			/* Change current mode */
 			switch (command) {
 			case CMD_MENU:
@@ -64,34 +55,34 @@ int main(void)
 				switch (mode) {
 				case DISPLAY_SPEAKER:
 					if (mode != DISPLAY_BASS)
-						gdFill(0x00, CS1 | CS2);
+						gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_BASS;
 					break;
 				case DISPLAY_BASS:
 					if (mode != DISPLAY_MIDDLE)
-						gdFill(0x00, CS1 | CS2);
+						gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_MIDDLE;
 					break;
 				case DISPLAY_MIDDLE:
 					if (mode != DISPLAY_TREBLE)
-						gdFill(0x00, CS1 | CS2);
+						gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_TREBLE;
 					break;
 				case DISPLAY_TREBLE:
 					if (mode != DISPLAY_VOLUME)
-						gdFill(0x00, CS1 | CS2);
+						gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_VOLUME;
 					break;
 				case DISPLAY_VOLUME:
 					if (mode != DISPLAY_BALANCE)
-						gdFill(0x00, CS1 | CS2);
+						gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_BALANCE;
 					break;
 				case DISPLAY_BALANCE:
 				case DISPLAY_SPECTRUM:
 				case DISPLAY_TIME:
 					if (mode != DISPLAY_SPEAKER)
-						gdFill(0x00, CS1 | CS2);
+						gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_SPEAKER;
 					break;
 				default:
@@ -104,7 +95,7 @@ int main(void)
 				switch (mode) {
 				case DISPLAY_SPECTRUM:
 				case DISPLAY_TIME:
-					gdFill(0x00, CS1 | CS2);
+					gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_SPEAKER;
 					break;
 				default:
@@ -114,7 +105,7 @@ int main(void)
 			case CMD_TIME:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_TIME)
-					gdFill(0x00, CS1 | CS2);
+					gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_TIME;
 				etm = EDIT_NOEDIT;
 				break;
@@ -124,9 +115,14 @@ int main(void)
 			case CMD_NUM4:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
-					gdFill(0x00, CS1 | CS2);
+					gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_GAIN;
 				break;
+			case CMD_STBY:
+				stdby = 1;
+				GD_LPORT &= ~GD_BACKLIGHT;
+				gdFill(0xFF, GD_CS1 | GD_CS2);
+				mode = DISPLAY_TIME;
 			default:
 				break;
 			}
@@ -200,7 +196,7 @@ int main(void)
 			case CMD_SEARCH:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
-					gdFill(0x00, CS1 | CS2);
+					gdFill(0x00, GD_CS1 | GD_CS2);
 				else
 					incChannel();
 				mode = DISPLAY_GAIN;
@@ -208,7 +204,7 @@ int main(void)
 			case CMD_STORE:
 				setDisplayTime(30000);
 				if (mode != DISPLAY_EDIT_TIME)
-					gdFill(0x00, CS1 | CS2);
+					gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_EDIT_TIME;
 				editTime();
 				break;
@@ -257,20 +253,32 @@ int main(void)
 				break;
 			case DISPLAY_TIME:
 			case DISPLAY_EDIT_TIME:
-				showTime();
+				showTime(0);
 				break;
 			default:
 				break;
 			}
 		} else {
-			if (mode != DISPLAY_SPECTRUM)
-			{
-				mode = DISPLAY_SPECTRUM;
-				saveParams();
-				etm = EDIT_NOEDIT;
+			if (!stdby) {
+				if (mode != DISPLAY_SPECTRUM)
+				{
+					mode = DISPLAY_SPECTRUM;
+					saveParams();
+					etm = EDIT_NOEDIT;
+				}
+				buf = getData();
+				gdSpectrum(buf, spMode);
+			} else {
+				showTime(1);
+				switch (command) {
+				case CMD_STBY:
+					stdby = 0;
+					GD_LPORT |= GD_BACKLIGHT;
+					break;
+				default:
+					break;
+				}
 			}
-			buf = getData();
-			gdSpectrum(buf, spMode);
 		}
 	}
 
