@@ -39,7 +39,6 @@ int main(void)
 	uint8_t cmdCnt = 0;
 	uint8_t i;
 
-	gdFill(0xFF, GD_CS1 | GD_CS2);
 	displayMode mode = DISPLAY_TIME;
 	uint8_t stdby = 1;
 
@@ -121,7 +120,7 @@ int main(void)
 			case CMD_STBY:
 				stdby = 1;
 				GD_LPORT &= ~GD_BACKLIGHT;
-				gdFill(0xFF, GD_CS1 | GD_CS2);
+				gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_TIME;
 			default:
 				break;
@@ -269,7 +268,8 @@ int main(void)
 				buf = getData();
 				gdSpectrum(buf, spMode);
 			} else {
-				showTime(1);
+				setDisplayTime(2000);
+				showTime(0);
 				switch (command) {
 				case CMD_STBY:
 					stdby = 0;

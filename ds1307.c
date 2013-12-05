@@ -126,9 +126,9 @@ void showTime(uint8_t inv)
 		gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2, inv);
 	gdWriteCharScaled('.', 2, 2, inv);
 	if (etm == EDIT_YEAR)
-		gdWriteStringScaled(mkNumString(year, 2, '0'), 2, 2, !inv);
+		gdWriteStringScaled(mkNumString(2000 + year, 4, '0'), 2, 2, !inv);
 	else
-		gdWriteStringScaled(mkNumString(year, 2, '0'), 2, 2, inv);
+		gdWriteStringScaled(mkNumString(2000 + year, 4, '0'), 2, 2, inv);
 
 	gdSetXY(0, 7);
 	gdWriteStringProgmem(dayOfWeek[weekday % 7], inv);
