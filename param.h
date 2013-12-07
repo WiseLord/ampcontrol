@@ -50,6 +50,9 @@ int8_t gain[4];
 
 int8_t spMode;
 
+void muteSpeaker();
+void unmuteSpeaker();
+
 void loadParams(void);
 void saveParams(void);
 

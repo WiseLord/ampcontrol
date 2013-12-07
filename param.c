@@ -52,6 +52,20 @@ void setGain(uint8_t ch, int8_t val)
 	I2CWrite(0b10001000, FUNC_INPUT_GAIN, val);
 }
 
+void muteSpeaker()
+{
+	setSpeaker(SPK_MIN);
+}
+
+void unmuteSpeaker()
+{
+	int8_t i;
+	for (i = SPK_MIN; i <= speaker; i++) {
+		setSpeaker(i);
+		_delay_ms(20);
+	}
+}
+
 void loadParams(void)
 {
 	volume = eeprom_read_byte((void*)0);
@@ -67,14 +81,13 @@ void loadParams(void)
 	gain[3] = eeprom_read_byte((void*)10);
 	spMode = eeprom_read_byte((void*)11);
 
-	setVolume(volume);
 	setChannel(channel);
 	setGain(channel, gain[channel]);
-	int8_t i;
-	for (i = SPK_MIN; i <= speaker; i++) {
-		setSpeaker(i);
-		_delay_ms(20);
-	}
+	setVolume(volume);
+	setBMT(FUNC_BASS, bass);
+	setBMT(FUNC_MIDDLE, middle);
+	setBMT(FUNC_TREBLE, treble);
+	unmuteSpeaker();
 }
 
 void saveParams(void)

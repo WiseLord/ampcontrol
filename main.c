@@ -42,6 +42,8 @@ int main(void)
 	displayMode mode = DISPLAY_TIME;
 	uint8_t stdby = 1;
 
+	muteSpeaker();
+
 	while (1) {
 		command = getCommand();
 		cmdCnt = getCmdCount();
@@ -122,6 +124,8 @@ int main(void)
 				GD_LPORT &= ~GD_BACKLIGHT;
 				gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_TIME;
+				muteSpeaker();
+				saveParams();
 			default:
 				break;
 			}
@@ -274,6 +278,7 @@ int main(void)
 				case CMD_STBY:
 					stdby = 0;
 					GD_LPORT |= GD_BACKLIGHT;
+					loadParams();
 					break;
 				default:
 					break;
