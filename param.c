@@ -40,12 +40,6 @@ void setBMT(int8_t address, int8_t val)
 	I2CWrite(0b10001000, address, val);
 }
 
-void setChannel(uint8_t ch)
-{
-	channel = ch;
-	I2CWrite(0b10001000, FUNC_INPUT_SELECT, 3 - ch);
-}
-
 void setGain(uint8_t ch, int8_t val)
 {
 	val = val >> 1;
@@ -66,6 +60,13 @@ void unmuteSpeaker()
 	}
 }
 
+void setChannel(uint8_t ch)
+{
+	setGain(ch, gain[ch]);
+	I2CWrite(0b10001000, FUNC_INPUT_SELECT, 3 - ch);
+	channel = ch;
+}
+
 void loadParams(void)
 {
 	volume = eeprom_read_byte((void*)0);
@@ -82,7 +83,6 @@ void loadParams(void)
 	spMode = eeprom_read_byte((void*)11);
 
 	setChannel(channel);
-	setGain(channel, gain[channel]);
 	setVolume(volume);
 	setBMT(FUNC_BASS, bass);
 	setBMT(FUNC_MIDDLE, middle);
