@@ -11,10 +11,6 @@
 #define GD_CPORT					PORTA
 #define GD_CDDR						DDRA
 #define GD_CPIN						PINA
-/* Backlight port */
-#define GD_LPORT					PORTC
-#define GD_LDDR						DDRC
-#define GD_LPIN						PINC
 
 #define GD_RES						(1<<PA7)
 #define GD_CS2						(1<<PA6)
@@ -24,8 +20,6 @@
 #define GD_DI						(1<<PA2)
 
 #define GD_CTRL						(GD_CS1|GD_CS2|GD_E|GD_RW|GD_DI|GD_RES)
-
-#define GD_BACKLIGHT				(1<<PC7)
 
 #define GD_COLS						64
 #define GD_ROWS						8

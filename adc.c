@@ -63,7 +63,7 @@ void getValues()
 		ADMUX |= (1<<MUX0);						/* Switch to right channel */
 		f_l[j] = ADCL;
 		f_l[j] += (ADCH << 8);					/* Read left channel value */
-		f_l[j] -= CORR_L;
+		f_l[j] -= DC_CORR;
 		f_l[j] = (hv * f_l[j]) >> 14;			/* Apply Hamming window */
 		_delay_us(3);							/* Wait for new measure */
 
@@ -71,7 +71,7 @@ void getValues()
 		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
 		f_r[j] = ADCL;
 		f_r[j] += (ADCH << 8);					/* Read right channel value */
-		f_r[j] -= CORR_R;
+		f_r[j] -= DC_CORR;
 		f_r[j] = (hv * f_r[j]) >> 14;			/* Apply Hamming window */
 		_delay_us(3);							/* Wait for new measure */
 

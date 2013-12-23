@@ -5,8 +5,7 @@
 
 #define swap(x) (__builtin_avr_swap(x))		/*  Swaps nibbles in byte */
 
-#define CORR_L 505 /* Raw value from ADC when no signal in left channel */
-#define CORR_R 510 /* Raw value from ADC when no signal in right channel */
+#define DC_CORR 512 /* Raw value from ADC when no signal */
 
 void adcInit();
 uint8_t * getData();

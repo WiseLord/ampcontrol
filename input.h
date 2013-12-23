@@ -29,12 +29,12 @@
 #define BTN_PORT		PORTD
 
 #define BTN_MENU		(1<<PD7)
-#define BTN_UP			(1<<PD4)
-#define BTN_DOWN		(1<<PD5)
-#define BTN_LEFT		(1<<PD6)
-#define BTN_RIGHT		(1<<PD0)
+#define BTN_INPUT			(1<<PD4)
+#define BTN_TIME		(1<<PD5)
+#define BTN_MUTE		(1<<PD6)
+#define BTN_STDBY		(1<<PD0)
 
-#define BTN_MASK		(BTN_MENU | BTN_UP | BTN_DOWN | BTN_LEFT | BTN_RIGHT)
+#define BTN_MASK		(BTN_MENU | BTN_INPUT | BTN_TIME | BTN_MUTE | BTN_STDBY)
 
 /* Encoder definitions */
 #define ENC_DDR			DDRD

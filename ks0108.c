@@ -47,12 +47,9 @@ void gdFill(uint8_t data, uint8_t cs)
 
 void gdInit(void)
 {
-	/* Set data, control and backlight lines as outputs */
+	/* Set data and control lines as outputs */
 	GD_DDDR = 0xFF;
 	GD_CDDR |= GD_CTRL;
-	GD_LDDR |= GD_BACKLIGHT;
-	/* Turn off backlight */
-	GD_LPORT &= ~GD_BACKLIGHT;
 	/* Unselect controller */
 	GD_CPORT &= ~GD_CTRL;
 	/* Reset */

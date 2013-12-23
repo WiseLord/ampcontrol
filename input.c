@@ -130,14 +130,26 @@ ISR (TIMER2_COMP_vect) {
 		}
 		break;
 /*	case ENC_A:
-		if (encPrev == ENC_AB) cmdBuf = COMM_ENC_UP;
-		if (encPrev == ENC_0) cmdBuf = COMM_ENC_DOWN;
+		if (encPrev == ENC_AB) {
+			cmdBuf = CMD_VOL_UP;
+			cmdCnt++;
+		}
+		if (encPrev == ENC_0) {
+			cmdBuf = CMD_VOL_DOWN;
+			cmdCnt++;
+		}
 		break;
 	case ENC_B:
-		if (encPrev == ENC_0) cmdBuf = COMM_ENC_UP;
-		if (encPrev == ENC_AB) cmdBuf = COMM_ENC_DOWN;
+		if (encPrev == ENC_0) {
+			cmdBuf = CMD_VOL_UP;
+			cmdCnt++;
+		}
+		if (encPrev == ENC_AB) {
+			cmdBuf = CMD_VOL_DOWN;
+			cmdCnt++;
+		}
 		break;
-*/	case ENC_0:
+	case ENC_0:
 		if (encPrev == ENC_A) {
 			cmdBuf = CMD_VOL_UP;
 			cmdCnt++;
@@ -147,7 +159,7 @@ ISR (TIMER2_COMP_vect) {
 			cmdCnt++;
 		}
 		break;
-	default:
+*/	default:
 		break;
 	}
 	encPrev = encNow;	/* Save current encoder state */
@@ -166,16 +178,16 @@ ISR (TIMER2_COMP_vect) {
 	case BTN_MENU:
 		cmdNow = CMD_MENU;
 		break;
-	case BTN_RIGHT:
-		cmdNow = CMD_VOL_UP;
+	case BTN_STDBY:
+		cmdNow = CMD_STBY;
 		break;
-	case BTN_LEFT:
-		cmdNow = CMD_VOL_DOWN;
+	case BTN_MUTE:
+		cmdNow = CMD_MUTE;
 		break;
-	case BTN_DOWN:
+	case BTN_TIME:
 		cmdNow = CMD_TIME;
 		break;
-	case BTN_UP:
+	case BTN_INPUT:
 		cmdNow = CMD_SEARCH;
 		break;
 	default:

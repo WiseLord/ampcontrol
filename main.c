@@ -10,6 +10,13 @@
 #include "param.h"
 #include "ds1307.h"
 
+#define SMF_DDR DDRC
+#define SMF_PORT PORTC
+
+#define FAN		(1<<PC2)
+#define STDBY	(1<<PC7)
+#define MUTE	(1<<PC6)
+
 const uint8_t volumeLabel[] PROGMEM = "Усиление";
 const uint8_t bassLabel[] PROGMEM = "Тембр НЧ";
 const uint8_t middleLabel[] PROGMEM = "Тембр СЧ";
@@ -17,6 +24,8 @@ const uint8_t trebleLabel[] PROGMEM = "Тембр ВЧ";
 const uint8_t balanceLabel[] PROGMEM = "Баланс";
 const uint8_t speakerLabel[] PROGMEM = "Громкость";
 const uint8_t gainLabel[] PROGMEM = "Канал";
+const uint8_t adcLeftLabel[] PROGMEM = "ADC левый";
+const uint8_t adcRightLabel[] PROGMEM = "ADC правый";
 
 void hwInit(void)	/* Hardware initialization */
 {
@@ -26,6 +35,8 @@ void hwInit(void)	/* Hardware initialization */
 	adcInit();		/* Analog-to-digital converter */
 	btnInit();		/* Buttons/encoder polling */
 	I2CInit();		/* I2C bus */
+	SMF_DDR |= (STDBY | FAN);
+	SMF_PORT &= ~(STDBY | MUTE | FAN);
 	sei();
 	return;
 }
@@ -120,8 +131,12 @@ int main(void)
 				mode = DISPLAY_GAIN;
 				break;
 			case CMD_STBY:
+				SMF_DDR &= ~MUTE;
+				SMF_PORT &= ~MUTE;
+				_delay_ms(50);
 				stdby = 1;
-				GD_LPORT &= ~GD_BACKLIGHT;
+				SMF_PORT &= ~STDBY;
+				SMF_PORT &= ~FAN;
 				gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_TIME;
 				muteSpeaker();
@@ -277,7 +292,11 @@ int main(void)
 				switch (command) {
 				case CMD_STBY:
 					stdby = 0;
-					GD_LPORT |= GD_BACKLIGHT;
+					SMF_PORT |= STDBY;
+					_delay_ms(50);
+					SMF_DDR |= MUTE;
+					SMF_PORT |= MUTE;
+					SMF_PORT |= FAN;
 					loadParams();
 					break;
 				default:
