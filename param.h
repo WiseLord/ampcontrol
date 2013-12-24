@@ -15,11 +15,11 @@
 
 typedef enum {
 	DISPLAY_SPECTRUM,
-	DISPLAY_SPEAKER,
+	DISPLAY_VOLUME,
 	DISPLAY_BASS,
 	DISPLAY_MIDDLE,
 	DISPLAY_TREBLE,
-	DISPLAY_VOLUME,
+	DISPLAY_PREAMP,
 	DISPLAY_GAIN,
 	DISPLAY_BALANCE,
 	DISPLAY_TIME,
@@ -37,6 +37,9 @@ typedef enum {
 
 #define GAIN_MIN	0
 #define GAIN_MAX	30
+
+#define FAN_MIN		0
+#define FAN_MAX		20
 
 int8_t volume;
 int8_t bass;
@@ -72,10 +75,10 @@ void incChannel(void);
 void incGain(uint8_t chan);
 void decGain(uint8_t chan);
 
-void showVolume(const uint8_t *parLabel);
-void showBMT(int8_t *par, const uint8_t *parLabel);
-void showBalance(const uint8_t *parLabel);
-void showSpeaker(const uint8_t *parLabel);
-void showGain(uint8_t chan, const uint8_t *parLabel);
+void showVolume(uint8_t *parLabel);
+void showBMT(int8_t *par, uint8_t *parLabel);
+void showBalance(uint8_t *parLabel);
+void showSpeaker(uint8_t *parLabel);
+void showGain(uint8_t chan, uint8_t *parLabel);
 
 #endif /* PARAM_H */

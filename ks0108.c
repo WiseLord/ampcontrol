@@ -231,6 +231,17 @@ void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY,
 	return;
 }
 
+void gdWriteStringScaledEeprom(const uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv)
+{
+	uint8_t i = 0, ch;
+	do {
+		ch = eeprom_read_byte(&string[i++]);
+		if (ch)
+			gdWriteCharScaled(ch, scX, scY, inv);
+	} while (ch);
+	return;
+}
+
 void gdSpectrum(uint8_t *buf, uint8_t mode)
 {
 	uint8_t i, j, k;

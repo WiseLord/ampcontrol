@@ -29,7 +29,7 @@
 #define BTN_PORT		PORTD
 
 #define BTN_MENU		(1<<PD7)
-#define BTN_INPUT			(1<<PD4)
+#define BTN_INPUT		(1<<PD4)
 #define BTN_TIME		(1<<PD5)
 #define BTN_MUTE		(1<<PD6)
 #define BTN_STDBY		(1<<PD0)
@@ -45,6 +45,14 @@
 #define ENC_B			(1<<PD1)
 #define ENC_AB			(ENC_A | ENC_B)
 #define ENC_0			0
+
+/* Standby/Mute/Fan port definitions */
+#define SMF_DDR DDRC
+#define SMF_PORT PORTC
+
+#define FAN		(1<<PC2)
+#define STDBY	(1<<PC7)
+#define MUTE	(1<<PC6)
 
 /* Remote control commands codes */
 #define CMD_TIMER		0x26

@@ -26,10 +26,13 @@ $(TARG): $(OBJS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	rm -f *.elf *.bin *.hex $(OBJS) *.map
+	rm -f $(TARG).elf $(TARG).bin $(TARG).hex $(OBJS) *.map
 
 flash: $(TARG)
 	$(AVRDUDE) -Vq -p m16 -B 1.1 -U flash:w:$(TARG).hex:i
 
 fuse:
 	$(AVRDUDE) -p m16 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
+
+eeprom:
+	$(AVRDUDE) avrdude -p m16 -U eeprom:w:eeprom.bin:r
