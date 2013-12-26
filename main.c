@@ -19,8 +19,8 @@ void hwInit(void)	/* Hardware initialization */
 	adcInit();		/* Analog-to-digital converter */
 	btnInit();		/* Buttons/encoder polling */
 	I2CInit();		/* I2C bus */
-	SMF_DDR |= (STDBY | FAN);
-	SMF_PORT &= ~(STDBY | MUTE | FAN);
+	SMBF_DDR |= (STDBY | FAN | BCKL);
+	SMBF_PORT &= ~(STDBY | MUTE | FAN | BCKL);
 	sei();
 	return;
 }
@@ -115,12 +115,13 @@ int main(void)
 				mode = DISPLAY_GAIN;
 				break;
 			case CMD_STBY:
-				SMF_DDR &= ~MUTE;
-				SMF_PORT &= ~MUTE;
+				SMBF_DDR &= ~MUTE;
+				SMBF_PORT &= ~MUTE;
 				_delay_ms(50);
 				stdby = 1;
-				SMF_PORT &= ~STDBY;
-				SMF_PORT &= ~FAN;
+				SMBF_PORT &= ~STDBY;
+				SMBF_PORT &= ~FAN;
+				SMBF_PORT &= ~BCKL;
 				gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_TIME;
 				muteSpeaker();
@@ -276,11 +277,12 @@ int main(void)
 				switch (command) {
 				case CMD_STBY:
 					stdby = 0;
-					SMF_PORT |= STDBY;
+					SMBF_PORT |= STDBY;
 					_delay_ms(50);
-					SMF_DDR |= MUTE;
-					SMF_PORT |= MUTE;
-					SMF_PORT |= FAN;
+					SMBF_DDR |= MUTE;
+					SMBF_PORT |= MUTE;
+					SMBF_PORT |= FAN;
+					SMBF_PORT |= BCKL;
 					loadParams();
 					break;
 				default:

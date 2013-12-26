@@ -47,12 +47,13 @@
 #define ENC_0			0
 
 /* Standby/Mute/Fan port definitions */
-#define SMF_DDR DDRC
-#define SMF_PORT PORTC
+#define SMBF_DDR DDRC
+#define SMBF_PORT PORTC
 
 #define FAN		(1<<PC2)
-#define STDBY	(1<<PC7)
-#define MUTE	(1<<PC6)
+#define MUTE	(1<<PC5)
+#define STDBY	(1<<PC6)
+#define BCKL	(1<<PC7)
 
 /* Remote control commands codes */
 #define CMD_TIMER		0x26
