@@ -94,7 +94,7 @@
 #define CMD_STORE		0x29
 
 #define CMD_RED			0x37
-#define CMD_GREEN		0x37
+#define CMD_GREEN		0x36
 #define CMD_YELLOW		0x32
 
 #define CMD_NOCMD		0xFF

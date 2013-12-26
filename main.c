@@ -37,7 +37,8 @@ int main(void)
 	displayMode mode = DISPLAY_TIME;
 	uint8_t stdby = 1;
 
-	muteSpeaker();
+	muteVolume();
+	uint8_t mute = 1;
 
 	while (1) {
 		command = getCommand();
@@ -77,6 +78,7 @@ int main(void)
 				case DISPLAY_BALANCE:
 				case DISPLAY_SPECTRUM:
 				case DISPLAY_TIME:
+				case DISPLAY_GAIN:
 					if (mode != DISPLAY_VOLUME)
 						gdFill(0x00, GD_CS1 | GD_CS2);
 					mode = DISPLAY_VOLUME;
@@ -100,15 +102,19 @@ int main(void)
 				break;
 			case CMD_TIME:
 				setDisplayTime(3000);
-				if (mode != DISPLAY_TIME)
-					gdFill(0x00, GD_CS1 | GD_CS2);
-				mode = DISPLAY_TIME;
-				etm = EDIT_NOEDIT;
+				if (mode == DISPLAY_EDIT_TIME)
+					editTime();
+				else {
+					if (mode != DISPLAY_TIME)
+						gdFill(0x00, GD_CS1 | GD_CS2);
+					mode = DISPLAY_TIME;
+					etm = EDIT_NOEDIT;
+				}
 				break;
-			case CMD_NUM1:
-			case CMD_NUM2:
-			case CMD_NUM3:
-			case CMD_NUM4:
+			case CMD_RED:
+			case CMD_GREEN:
+			case CMD_YELLOW:
+//			case CMD_BLUE:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
 					gdFill(0x00, GD_CS1 | GD_CS2);
@@ -124,7 +130,8 @@ int main(void)
 				SMBF_PORT &= ~BCKL;
 				gdFill(0x00, GD_CS1 | GD_CS2);
 				mode = DISPLAY_TIME;
-				muteSpeaker();
+				muteVolume();
+				mute = 1;
 				saveParams();
 			default:
 				break;
@@ -196,6 +203,15 @@ int main(void)
 						break;
 					}
 					break;
+			case CMD_MUTE:
+				if (mute) {
+					unmuteVolume();
+					mute = 0;
+				} else {
+					muteVolume();
+					mute = 1;
+				}
+				break;
 			case CMD_SEARCH:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
@@ -211,19 +227,20 @@ int main(void)
 				mode = DISPLAY_EDIT_TIME;
 				editTime();
 				break;
-			case CMD_NUM1:
+			case CMD_RED:
 				setChannel(0);
 				break;
-			case CMD_NUM2:
+			case CMD_GREEN:
 				setChannel(1);
 				break;
-			case CMD_NUM3:
+			case CMD_YELLOW:
 				setChannel(2);
 				break;
-			case CMD_NUM4:
-				setChannel(3);
-				break;
+//			case CMD_BLUE:
+//				setChannel(3);
+//				break;
 			case CMD_DESCR:
+				setDisplayTime(100);
 				editSpMode();
 				saveParams();
 				break;
@@ -284,6 +301,8 @@ int main(void)
 					SMBF_PORT |= FAN;
 					SMBF_PORT |= BCKL;
 					loadParams();
+					unmuteVolume();
+					mute = 0;
 					break;
 				default:
 					break;

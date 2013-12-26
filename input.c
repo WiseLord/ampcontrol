@@ -6,6 +6,7 @@
 volatile uint8_t cmdBuf = CMD_NOCMD;	/* Command buffer, cleared when read */
 volatile uint8_t encCnt = 0;			/* Counter for encoder */
 volatile uint8_t rc5Buf = CMD_NOCMD;	/* Buffer for last command from RC */
+volatile uint16_t rc5Timer = 0;
 
 volatile uint16_t rc5Cmd; /**/
 const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
@@ -47,6 +48,9 @@ ISR(INT1_vect)
 {
 	uint16_t delay = TCNT1;
 
+	static uint8_t togBitNow = 0;
+	static uint8_t togBitPrev = 0;
+
 	/* event: 0 / 2 - short space/pulse, 4 / 6 - long space/pulse */
 	uint8_t event = (BTN_PIN & RC5_DATA) ? 2 : 0;
 
@@ -82,7 +86,19 @@ ISR(INT1_vect)
 	if (rc5Cnt == 0 && (state == STATE_START1 || state == STATE_MID0)) {
 		/* If RC5 address is correct, send command to IR RC buffer */
 		if ((rc5Cmd & RC5_ADDR_MASK) == RC5_ADDR) {
-			rc5Buf = rc5Cmd & RC5_COMM_MASK;
+			if (rc5Cmd & RC5_TOGB_MASK)
+				togBitNow = 1;
+			else
+				togBitNow = 0;
+			rc5Cmd &= RC5_COMM_MASK;
+			if ((togBitNow != togBitPrev) ||
+			    ((rc5Timer > 200) &
+			     (rc5Cmd == CMD_VOL_UP || rc5Cmd == CMD_VOL_DOWN)) ||
+			    (rc5Timer > 800)) {
+				rc5Buf = rc5Cmd;
+				rc5Timer = 0;
+			}
+			togBitPrev = togBitNow;
 		}
 		rc5Reset();
 	}
@@ -119,8 +135,11 @@ ISR (TIMER2_COMP_vect) {
 
 	if (rc5Buf != CMD_NOCMD) {
 		cmdBuf = rc5Buf;
+		encCnt++;
 		rc5Buf = CMD_NOCMD;
 	}
+	if (rc5Timer < 1000)
+		rc5Timer++;
 
 	/* If encoder event has happened, send it to command buffer */
 	switch (encNow) {

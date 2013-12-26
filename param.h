@@ -6,12 +6,12 @@
 /* Function selection */
 #define FUNC_INPUT_SELECT	0x00
 #define FUNC_INPUT_GAIN		0x01
-#define FUNC_VOLUME			0x02
+#define FUNC_PREAMP			0x02
 #define FUNC_BASS			0x03
 #define FUNC_MIDDLE			0x04
 #define FUNC_TREBLE			0x05
-#define FUNC_SPEAKER_RIGHT	0x06
-#define FUNC_SPEAKER_LEFT	0x07
+#define FUNC_VOLUME_RIGHT	0x06
+#define FUNC_VOLUME_LEFT	0x07
 
 typedef enum {
 	DISPLAY_SPECTRUM,
@@ -26,14 +26,14 @@ typedef enum {
 	DISPLAY_EDIT_TIME
 } displayMode;
 
-#define VOL_MIN		-47
-#define VOL_MAX		0
+#define AMP_MIN		-47
+#define AMP_MAX		0
 #define BMT_MIN		-14
 #define BMT_MAX		14
 #define BAL_MIN		-21
 #define BAL_MAX		21
-#define SPK_MIN		-79
-#define SPK_MAX		0
+#define VOL_MIN		-79
+#define VOL_MAX		0
 
 #define GAIN_MIN	0
 #define GAIN_MAX	30
@@ -41,20 +41,20 @@ typedef enum {
 #define FAN_MIN		0
 #define FAN_MAX		20
 
-int8_t volume;
+int8_t preamp;
 int8_t bass;
 int8_t middle;
 int8_t treble;
 int8_t balance;
-int8_t speaker;
+int8_t volume;
 
 uint8_t channel;
 int8_t gain[4];
 
 int8_t spMode;
 
-void muteSpeaker();
-void unmuteSpeaker();
+void muteVolume();
+void unmuteVolume();
 
 void loadParams(void);
 void saveParams(void);

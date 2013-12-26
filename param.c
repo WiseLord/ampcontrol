@@ -6,28 +6,28 @@
 #include "ks0108.h"
 #include "i2c.h"
 
-void setVolume(int8_t val)
+void setPreamp(int8_t val)
 {
-	I2CWrite(0b10001000, FUNC_VOLUME, -val);
+	I2CWrite(0b10001000, FUNC_PREAMP, -val);
 }
 
-void setSpeaker(int8_t val)
+void setVolume(int8_t val)
 {
 	int8_t spLeft = val;
 	int8_t spRight = val;
 
 	if (balance > 0) {
 		spLeft -= balance;
-		if (spLeft < SPK_MIN)
-			spLeft = SPK_MIN;
+		if (spLeft < VOL_MIN)
+			spLeft = VOL_MIN;
 	} else {
 		spRight += balance;
-		if (spRight < SPK_MIN)
-			spRight = SPK_MIN;
+		if (spRight < VOL_MIN)
+			spRight = VOL_MIN;
 	}
 
-	I2CWrite(0b10001000, FUNC_SPEAKER_LEFT, -spLeft);
-	I2CWrite(0b10001000, FUNC_SPEAKER_RIGHT, -spRight);
+	I2CWrite(0b10001000, FUNC_VOLUME_LEFT, -spLeft);
+	I2CWrite(0b10001000, FUNC_VOLUME_RIGHT, -spRight);
 }
 
 void setBMT(int8_t address, int8_t val)
@@ -46,18 +46,19 @@ void setGain(uint8_t ch, int8_t val)
 	I2CWrite(0b10001000, FUNC_INPUT_GAIN, val);
 }
 
-void muteSpeaker()
+void muteVolume()
 {
-	setSpeaker(SPK_MIN);
+	setVolume(VOL_MIN);
 }
 
-void unmuteSpeaker()
+void unmuteVolume()
 {
-	int8_t i;
-	for (i = SPK_MIN; i <= speaker; i++) {
-		setSpeaker(i);
-		_delay_ms(20);
-	}
+	setVolume(volume);
+//	int8_t i;
+//	for (i = VOL_MIN; i <= volume; i++) {
+//		setVolume(i);
+//		_delay_ms(20);
+//	}
 }
 
 void setChannel(uint8_t ch)
@@ -69,12 +70,12 @@ void setChannel(uint8_t ch)
 
 void loadParams(void)
 {
-	volume = eeprom_read_byte((void*)0);
+	preamp = eeprom_read_byte((void*)0);
 	bass = eeprom_read_byte((void*)1);
 	middle = eeprom_read_byte((void*)2);
 	treble = eeprom_read_byte((void*)3);
 	balance = eeprom_read_byte((void*)4);
-	speaker = eeprom_read_byte((void*)5);
+	volume = eeprom_read_byte((void*)5);
 	channel = eeprom_read_byte((void*)6);
 	gain[0] = eeprom_read_byte((void*)7);
 	gain[1] = eeprom_read_byte((void*)8);
@@ -83,21 +84,20 @@ void loadParams(void)
 	spMode = eeprom_read_byte((void*)11);
 
 	setChannel(channel);
-	setVolume(volume);
+	setPreamp(preamp);
 	setBMT(FUNC_BASS, bass);
 	setBMT(FUNC_MIDDLE, middle);
 	setBMT(FUNC_TREBLE, treble);
-	unmuteSpeaker();
 }
 
 void saveParams(void)
 {
-	eeprom_write_byte((void*)0, volume);
+	eeprom_write_byte((void*)0, preamp);
 	eeprom_write_byte((void*)1, bass);
 	eeprom_write_byte((void*)2, middle);
 	eeprom_write_byte((void*)3, treble);
 	eeprom_write_byte((void*)4, balance);
-	eeprom_write_byte((void*)5, speaker);
+	eeprom_write_byte((void*)5, volume);
 	eeprom_write_byte((void*)6, channel);
 	eeprom_write_byte((void*)7, gain[0]);
 	eeprom_write_byte((void*)8, gain[1]);
@@ -116,34 +116,34 @@ void editSpMode()
 
 void incVolume(void)
 {
+	preamp++;
+	if (preamp > AMP_MAX)
+		preamp = AMP_MAX;
+	setPreamp(preamp);
+}
+
+void decVolume(void)
+{
+	preamp--;
+	if (preamp < AMP_MIN)
+		preamp = AMP_MIN;
+	setPreamp(preamp);
+}
+
+void incSpeaker(void)
+{
 	volume++;
 	if (volume > VOL_MAX)
 		volume = VOL_MAX;
 	setVolume(volume);
 }
 
-void decVolume(void)
+void decSpeaker(void)
 {
 	volume--;
 	if (volume < VOL_MIN)
 		volume = VOL_MIN;
 	setVolume(volume);
-}
-
-void incSpeaker(void)
-{
-	speaker++;
-	if (speaker > SPK_MAX)
-		speaker = SPK_MAX;
-	setSpeaker(speaker);
-}
-
-void decSpeaker(void)
-{
-	speaker--;
-	if (speaker < SPK_MIN)
-		speaker = SPK_MIN;
-	setSpeaker(speaker);
 }
 
 void incBMT(int8_t *par)
@@ -175,7 +175,7 @@ void decBMT(int8_t *par)
 void incChannel(void)
 {
 	channel++;
-	if (channel > 3)
+	if (channel >= 3) // if use 3 channels
 		channel = 0;
 	setChannel(channel);
 }
@@ -200,14 +200,14 @@ void incBalance(void) {
 	balance++;
 	if (balance > BAL_MAX)
 		balance = BAL_MAX;
-	setSpeaker(speaker);
+	setVolume(volume);
 }
 
 void decBalance(void) {
 	balance--;
 	if (balance < BAL_MIN)
 		balance = BAL_MIN;
-	setSpeaker(speaker);
+	setVolume(volume);
 }
 
 uint8_t db[] = "дБ";
@@ -248,9 +248,9 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 void showVolume(uint8_t *parLabel)
 {
 	int8_t r;
-	r = 2 * volume + 93;
+	r = 2 * preamp + 93;
 	showBar(94, 0, r);
-	showParLabel(&volume, parLabel);
+	showParLabel(&preamp, parLabel);
 }
 
 void showBMT(int8_t *par, uint8_t *parLabel)
@@ -278,9 +278,9 @@ void showBalance(uint8_t *parLabel)
 void showSpeaker(uint8_t *parLabel)
 {
 	int8_t r;
-	r = speaker + 78;
+	r = volume + 78;
 	showBar(79, 0, r);
-	showParLabel(&speaker, parLabel);
+	showParLabel(&volume, parLabel);
 }
 
 void showGain(uint8_t chan, uint8_t *parLabel)
