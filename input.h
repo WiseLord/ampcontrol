@@ -99,9 +99,12 @@
 
 #define CMD_NOCMD		0xFF
 
-/* Handling long press actions */
-#define TIME_LONG		800 /* Long press 800msec while 500 polls/sec */
-#define TIME_REPEAT		100	/* Must be more than interval of RC5 sends */
+// Handling long press actions */
+//#define TIME_LONG		800 /* Long press 800msec while 500 polls/sec */
+//#define TIME_REPEAT		100	/* Must be more than interval of RC5 sends
+
+#define SHORT_PRESS		100
+#define LONG_PRESS		600
 
 typedef enum {
 	STATE_START1,

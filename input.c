@@ -4,9 +4,8 @@
 #include "input.h"
 
 volatile uint8_t cmdBuf = CMD_NOCMD;	/* Command buffer, cleared when read */
-volatile uint8_t cmdCnt = 0;			/* Counter for commands */
+volatile uint8_t encCnt = 0;			/* Counter for encoder */
 volatile uint8_t rc5Buf = CMD_NOCMD;	/* Buffer for last command from RC */
-volatile uint8_t rc5BufCnt = 0;			/* Counter for IR RC command buffer */
 
 volatile uint16_t rc5Cmd; /**/
 const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
@@ -84,7 +83,6 @@ ISR(INT1_vect)
 		/* If RC5 address is correct, send command to IR RC buffer */
 		if ((rc5Cmd & RC5_ADDR_MASK) == RC5_ADDR) {
 			rc5Buf = rc5Cmd & RC5_COMM_MASK;
-			rc5BufCnt = 0;
 		}
 		rc5Reset();
 	}
@@ -110,53 +108,60 @@ void btnInit(void)
 
 ISR (TIMER2_COMP_vect) {
 	static uint8_t encPrev = ENC_0;		/* Previous encoder state */
-	static uint8_t cmdPrev = CMD_NOCMD;	/* Previous command */
 	static int16_t btnCnt = 0;
+
+	static uint8_t btnPrev = 0;
 
 	uint8_t btnPin = ~BTN_PIN;
 	uint8_t encNow = btnPin & (ENC_A | ENC_B);
 	uint8_t btnNow = btnPin & BTN_MASK;
+
+
+	if (rc5Buf != CMD_NOCMD) {
+		cmdBuf = rc5Buf;
+		rc5Buf = CMD_NOCMD;
+	}
 
 	/* If encoder event has happened, send it to command buffer */
 	switch (encNow) {
 	case ENC_AB:
 		if (encPrev == ENC_B) {
 			cmdBuf = CMD_VOL_UP;
-			cmdCnt++;
+			encCnt++;
 		}
 		if (encPrev == ENC_A) {
 			cmdBuf = CMD_VOL_DOWN;
-			cmdCnt++;
+			encCnt++;
 		}
 		break;
 /*	case ENC_A:
 		if (encPrev == ENC_AB) {
 			cmdBuf = CMD_VOL_UP;
-			cmdCnt++;
+			encCnt++;
 		}
 		if (encPrev == ENC_0) {
 			cmdBuf = CMD_VOL_DOWN;
-			cmdCnt++;
+			encCnt++;
 		}
 		break;
 	case ENC_B:
 		if (encPrev == ENC_0) {
 			cmdBuf = CMD_VOL_UP;
-			cmdCnt++;
+			encCnt++;
 		}
 		if (encPrev == ENC_AB) {
 			cmdBuf = CMD_VOL_DOWN;
-			cmdCnt++;
+			encCnt++;
 		}
 		break;
 	case ENC_0:
 		if (encPrev == ENC_A) {
 			cmdBuf = CMD_VOL_UP;
-			cmdCnt++;
+			encCnt++;
 		}
 		if (encPrev == ENC_B) {
 			cmdBuf = CMD_VOL_DOWN;
-			cmdCnt++;
+			encCnt++;
 		}
 		break;
 */	default:
@@ -164,62 +169,61 @@ ISR (TIMER2_COMP_vect) {
 	}
 	encPrev = encNow;	/* Save current encoder state */
 
-	uint8_t cmdNow = rc5Buf; /* Read current command from IR RC buffer */
-
-	/* Clear IR RC buffer after 120ms (120 polls) */
-	rc5BufCnt++;
-	if (rc5BufCnt > 120) {
-		rc5BufCnt = 120;
-		rc5Buf = CMD_NOCMD;
-	}
-
-	/* If any button is pressed, read current command from buttons state */
-	switch (btnNow) {
-	case BTN_MENU:
-		cmdNow = CMD_MENU;
-		break;
-	case BTN_STDBY:
-		cmdNow = CMD_STBY;
-		break;
-	case BTN_MUTE:
-		cmdNow = CMD_MUTE;
-		break;
-	case BTN_TIME:
-		cmdNow = CMD_TIME;
-		break;
-	case BTN_INPUT:
-		cmdNow = CMD_SEARCH;
-		break;
-	default:
-		break;
-	}
-
-	/* Send current command to buffer if it exists and differ from previous */
-	if ((cmdNow != CMD_NOCMD) && (cmdPrev != cmdNow || btnCnt >= TIME_LONG))
-	{
-		cmdBuf = cmdNow;
-		if (cmdNow == CMD_VOL_UP || cmdNow == CMD_VOL_DOWN)
-			cmdCnt++;
-	}
-
-	/* Handle long press */
-	if (btnCnt >= TIME_LONG) {
-		switch (cmdNow) {
-		case CMD_VOL_UP:
-		case CMD_VOL_DOWN:
-			btnCnt = TIME_LONG - TIME_REPEAT;
-			break;
-		default:
+	if (btnNow) {
+		if (btnNow == btnPrev)
+			btnCnt++;
+		else
 			btnCnt = 0;
-			break;
+		btnPrev = btnNow;
+	} else {
+		if (btnCnt > LONG_PRESS) {
+			// Place "long" command to buffer
+			switch (btnPrev) {
+			case BTN_MENU:
+				cmdBuf = CMD_MENU;
+				break;
+			case BTN_STDBY:
+				cmdBuf = CMD_STBY;
+				break;
+			case BTN_MUTE:
+				cmdBuf = CMD_MUTE;
+				break;
+			case BTN_TIME:
+				cmdBuf = CMD_STORE;
+				break;
+			case BTN_INPUT:
+				cmdBuf = CMD_SEARCH;
+				break;
+			default:
+				break;
+			}
+		} else {
+			if (btnCnt > SHORT_PRESS) {
+				// Place "short" command to buffer
+				switch (btnPrev) {
+				case BTN_MENU:
+					cmdBuf = CMD_MENU;
+					break;
+				case BTN_STDBY:
+					cmdBuf = CMD_STBY;
+					break;
+				case BTN_MUTE:
+					cmdBuf = CMD_MUTE;
+					break;
+				case BTN_TIME:
+					cmdBuf = CMD_TIME;
+					break;
+				case BTN_INPUT:
+					cmdBuf = CMD_SEARCH;
+					break;
+				default:
+					break;
+				}
+			}
 		}
-	}
-	cmdPrev = cmdNow;
-
-	if (cmdNow != CMD_NOCMD)
-		btnCnt++;
-	else
+		// Clear button counter
 		btnCnt = 0;
+	}
 
 	if (displayTime)
 		displayTime--;
@@ -235,7 +239,7 @@ uint8_t getCommand(void) /* Read command and clear command buffer */
 
 uint8_t getCmdCount(void)
 {
-	uint8_t ret = cmdCnt;
-	cmdCnt = 0;
+	uint8_t ret = encCnt;
+	encCnt = 0;
 	return ret;
 }
