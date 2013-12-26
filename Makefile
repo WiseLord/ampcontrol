@@ -35,4 +35,4 @@ fuse:
 	$(AVRDUDE) -p m16 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
 
 eeprom:
-	$(AVRDUDE) avrdude -p m16 -U eeprom:w:eeprom.bin:r
+	$(AVRDUDE) -p m16 -U eeprom:w:eeprom.bin:r
