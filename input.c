@@ -205,7 +205,7 @@ ISR (TIMER2_COMP_vect) {
 				cmdBuf = CMD_STBY;
 				break;
 			case BTN_MUTE:
-				cmdBuf = CMD_MUTE;
+				cmdBuf = CMD_DESCR;
 				break;
 			case BTN_TIME:
 				cmdBuf = CMD_STORE;
