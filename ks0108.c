@@ -1,35 +1,102 @@
 #include "ks0108.h"
 #include "font.h"
 
-#include <util/delay.h>
-
 static uint8_t column = 0;	/* Current column (0..128) */
 static uint8_t row = 0;		/* Current row (0..8) */
 static uint8_t dig[6];		/* Array for num->string convert */
 
-void gdWriteData(uint8_t data, uint8_t cs)
+static inline void setPortCS(uint8_t cs)
 {
-	/* Wait for controller is ready */
-	_delay_us(10);
-	/* Set data byte */
-	GD_DPORT = data;
-	/* Select controller, data mode and perform strobe */
-	GD_CPORT |= (cs | GD_DI | GD_E);
-	/* Unselect controller */
-	GD_CPORT &= ~GD_CTRL;
-	column++;
+	GD_CPORT &= ~(GD_CS1 | GD_CS2);
+	GD_CPORT |= cs;
 	return;
+}
+
+static void writeStrob()
+{
+	asm("nop");	/* 120ns */
+	asm("nop");
+	GD_CPORT |= GD_E;
+	asm("nop");	/* 360ns */
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	GD_CPORT &= ~GD_E;
+
+	return;
+}
+
+static uint8_t readStrob()
+{
+	uint8_t pin;
+
+	asm("nop");	/* 120ns */
+	asm("nop");
+	GD_CPORT |= GD_E;
+	asm("nop");	/* 300ns */
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	asm("nop");
+	pin = GD_DPIN;
+	GD_CPORT &= ~GD_E;
+
+	return pin;
+}
+
+uint8_t gdReadStatus(uint8_t cs)
+{
+	uint8_t status;
+
+	GD_DDDR = 0x00;
+
+	setPortCS(cs);
+
+	GD_CPORT |= GD_RW;
+	GD_CPORT &= ~GD_DI;
+
+	status = readStrob();
+
+	return status;
 }
 
 void gdWriteCommand(uint8_t command, uint8_t cs)
 {
-	/* Wait for controller is ready */
-	_delay_us(10);
-	/* Set command byte */
+	while(gdReadStatus(cs) & STA_BUSY);
+
+	GD_DDDR = 0xFF;
+
+	setPortCS(cs);
+
+	GD_CPORT &= ~GD_RW;
+	GD_CPORT &= ~GD_DI;
+
 	GD_DPORT = command;
-	/* Select controller and perform strobe */
-	GD_CPORT |= cs | GD_E;
-	GD_CPORT &= ~GD_CTRL;
+
+	writeStrob();
+
+	return;
+}
+
+void gdWriteData(uint8_t data, uint8_t cs)
+{
+	while(gdReadStatus(cs) & STA_BUSY);
+
+	GD_DDDR = 0xFF;
+
+	setPortCS(cs);
+
+	GD_CPORT &= ~GD_RW;
+	GD_CPORT |= GD_DI;
+
+	GD_DPORT = data;
+
+	writeStrob();
+
+	column++;
+
 	return;
 }
 
@@ -53,8 +120,13 @@ void gdInit(void)
 	/* Unselect controller */
 	GD_CPORT &= ~GD_CTRL;
 	/* Reset */
-	_delay_us(10);
+	/* Reset */
+	GD_CPORT &= ~(GD_RES);
+	asm("nop");
+	asm("nop");
 	GD_CPORT |= GD_RES;
+	asm("nop");
+	asm("nop");
 	/* Clear display  and reset addresses */
 	gdFill(0x00, GD_CS1 | GD_CS2);
 	gdWriteCommand(KS0108_DISPLAY_ON, GD_CS1 | GD_CS2);
