@@ -63,6 +63,4 @@ void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv)
 void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv);
 void gdWriteStringScaledEeprom(const uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv);
 
-void gdSpectrum(uint8_t *buf, uint8_t mode);
-
 #endif /* KS0108_H */
