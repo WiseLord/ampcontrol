@@ -215,13 +215,13 @@ uint8_t db[] = "дБ";
 void showParLabel(int8_t *par, const uint8_t *parLabel)
 {
 	gdSetXY(0, 0);
-	gdWriteStringScaledEeprom(parLabel, 2, 3, 0);
+	gdWriteStringEeprom(parLabel);
 	gdSetXY(113, 0);
-	gdWriteStringScaled(mkNumString(channel + 1, 1, ' '), 3, 3, 0);
+	gdWriteString(mkNumString(channel + 1, 1, ' '));
 	gdSetXY(94, 4);
-	gdWriteStringScaled(mkNumString(*par, 3, ' '), 2, 2, 0);
+	gdWriteString(mkNumString(*par, 3, ' '));
 	gdSetXY(106, 6);
-	gdWriteStringScaled(db, 2, 2, 0);
+	gdWriteString(db);
 }
 
 void showBar(uint8_t length, int8_t from, int8_t to)
@@ -229,8 +229,7 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 	int8_t i, j;
 	uint8_t data;
 	for (j = 5; j <=6; j++) {
-		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS1 | GD_CS2);
-		gdWriteCommand(KS0108_SET_PAGE + j, GD_CS1 | GD_CS2);
+		gdSetXY(0, j);
 		for (i = 0; i < length; i++) {
 			if (j == 5)
 				data = 0x80;
@@ -240,7 +239,7 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 				data = 0xFF;
 			if (i % 2)
 				data = 0x00;
-			gdWriteData(data, i < 64 ? GD_CS1 : GD_CS2);
+			gdWriteData(data);
 		}
 	}
 }

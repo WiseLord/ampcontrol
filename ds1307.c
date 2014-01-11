@@ -100,38 +100,38 @@ void showTime(uint8_t inv)
 	getTime();
 	gdSetXY(0, 0);
 	if (etm == EDIT_HOURS)
-		gdWriteStringScaled(mkNumString(hour, 2, '0'), 3, 3, !inv);
+		gdWriteString(mkNumString(hour, 2, '0')); // Inverted
 	else
-		gdWriteStringScaled(mkNumString(hour, 2, '0'), 3, 3, inv);
-	gdWriteCharScaled(':', 3, 3, inv);
+		gdWriteString(mkNumString(hour, 2, '0'));
+	gdWriteChar(':');
 	if (etm == EDIT_MINUTES)
-		gdWriteStringScaled(mkNumString(minute, 2, '0'), 3, 3, !inv);
+		gdWriteString(mkNumString(minute, 2, '0')); // Inverted
 	else
-		gdWriteStringScaled(mkNumString(minute, 2, '0'), 3, 3, inv);
-	gdWriteCharScaled(':', 3, 3, inv);
+		gdWriteString(mkNumString(minute, 2, '0'));
+	gdWriteChar(':');
 	if (etm == EDIT_SECONDS)
-		gdWriteStringScaled(mkNumString(second, 2, '0'), 3, 3, !inv);
+		gdWriteString(mkNumString(second, 2, '0')); // Inverted
 	else
-		gdWriteStringScaled(mkNumString(second, 2, '0'), 3, 3, inv);
+		gdWriteString(mkNumString(second, 2, '0'));
 
 	gdSetXY(0, 4);
 	if (etm == EDIT_DAY)
-		gdWriteStringScaled(mkNumString(day, 2, '0'), 2, 2, !inv);
+		gdWriteString(mkNumString(day, 2, '0')); // Inverted
 	else
-		gdWriteStringScaled(mkNumString(day, 2, '0'), 2, 2, inv);
-	gdWriteCharScaled('.', 2, 2, inv);
+		gdWriteString(mkNumString(day, 2, '0'));
+	gdWriteChar('.');
 	if (etm == EDIT_MONTH)
-		gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2, !inv);
+		gdWriteString(mkNumString(month, 2, '0')); // Inverted
 	else
-		gdWriteStringScaled(mkNumString(month, 2, '0'), 2, 2, inv);
-	gdWriteCharScaled('.', 2, 2, inv);
+		gdWriteString(mkNumString(month, 2, '0'));
+	gdWriteChar('.');
 	if (etm == EDIT_YEAR)
-		gdWriteStringScaled(mkNumString(2000 + year, 4, '0'), 2, 2, !inv);
+		gdWriteString(mkNumString(2000 + year, 4, '0')); // Inverted
 	else
-		gdWriteStringScaled(mkNumString(2000 + year, 4, '0'), 2, 2, inv);
+		gdWriteString(mkNumString(2000 + year, 4, '0'));
 
 	gdSetXY(0, 7);
-	gdWriteStringProgmem(dayOfWeek[weekday % 7], inv);
+	gdWriteStringProgmem(dayOfWeek[weekday % 7]);
 
 	return;
 }

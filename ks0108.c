@@ -1,14 +1,26 @@
 #include "ks0108.h"
-#include "font.h"
+//#include "font-ks0066-ru-08.h"
 
-static uint8_t column = 0;	/* Current column (0..128) */
-static uint8_t row = 0;		/* Current row (0..8) */
+#include <avr/pgmspace.h>
+#include <avr/eeprom.h>
+
+const uint8_t *_font;
+static uint8_t _cs, _row, _col;
+
+static fontParams fp;
+
 static uint8_t dig[6];		/* Array for num->string convert */
 
-static inline void setPortCS(uint8_t cs)
+
+static inline void setPortCS()
 {
-	GD_CPORT &= ~(GD_CS1 | GD_CS2);
-	GD_CPORT |= cs;
+#ifndef CS_INVERTED
+	GD_CHIP_PORT &= ~(GD_CS1 | GD_CS2);
+	GD_CHIP_PORT |= _cs;
+#else
+	GD_CHIP_PORT |= (GD_CS1 | GD_CS2);
+	GD_CHIP_PORT &= ~_cs;
+#endif
 	return;
 }
 
@@ -16,14 +28,14 @@ static void writeStrob()
 {
 	asm("nop");	/* 120ns */
 	asm("nop");
-	GD_CPORT |= GD_E;
+	GD_CONTROL_PORT |= GD_E;
 	asm("nop");	/* 360ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
 	asm("nop");
 	asm("nop");
-	GD_CPORT &= ~GD_E;
+	GD_CONTROL_PORT &= ~GD_E;
 
 	return;
 }
@@ -34,175 +46,261 @@ static uint8_t readStrob()
 
 	asm("nop");	/* 120ns */
 	asm("nop");
-	GD_CPORT |= GD_E;
+	GD_CONTROL_PORT |= GD_E;
 	asm("nop");	/* 300ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
 	asm("nop");
-	pin = GD_DPIN;
-	GD_CPORT &= ~GD_E;
+	pin = GD_DATA_PIN;
+	GD_CONTROL_PORT &= ~GD_E;
 
 	return pin;
 }
 
-uint8_t gdReadStatus(uint8_t cs)
+uint8_t gdReadStatus()
 {
 	uint8_t status;
 
-	GD_DDDR = 0x00;
+	GD_DATA_DDR = 0x00;
 
-	setPortCS(cs);
+	setPortCS();
 
-	GD_CPORT |= GD_RW;
-	GD_CPORT &= ~GD_DI;
+	GD_CONTROL_PORT |= GD_RW;
+	GD_CONTROL_PORT &= ~GD_DI;
 
 	status = readStrob();
 
 	return status;
 }
 
-void gdWriteCommand(uint8_t command, uint8_t cs)
+uint8_t gdReadData()
 {
-	while(gdReadStatus(cs) & STA_BUSY);
+	uint8_t data;
 
-	GD_DDDR = 0xFF;
+	while(gdReadStatus() & STA_BUSY);
+	GD_CONTROL_PORT |= GD_DI;
 
-	setPortCS(cs);
+	writeStrob();
 
-	GD_CPORT &= ~GD_RW;
-	GD_CPORT &= ~GD_DI;
+	while(gdReadStatus() & STA_BUSY);
+	GD_CONTROL_PORT |= GD_DI;
 
-	GD_DPORT = command;
+	data = readStrob();
+
+	return data;
+}
+
+void gdWriteCommand(uint8_t command)
+{
+	while(gdReadStatus() & STA_BUSY);
+
+	GD_DATA_DDR = 0xFF;
+
+	setPortCS();
+
+	GD_CONTROL_PORT &= ~GD_RW;
+	GD_CONTROL_PORT &= ~GD_DI;
+
+	GD_DATA_PORT = command;
 
 	writeStrob();
 
 	return;
 }
 
-void gdWriteData(uint8_t data, uint8_t cs)
+void gdWriteData(uint8_t data)
 {
-	while(gdReadStatus(cs) & STA_BUSY);
+	while(gdReadStatus() & STA_BUSY);
 
-	GD_DDDR = 0xFF;
+	GD_DATA_DDR = 0xFF;
 
-	setPortCS(cs);
+	setPortCS();
 
-	GD_CPORT &= ~GD_RW;
-	GD_CPORT |= GD_DI;
+	GD_CONTROL_PORT &= ~GD_RW;
+	GD_CONTROL_PORT |= GD_DI;
 
-	GD_DPORT = data;
+	GD_DATA_PORT = data;
 
 	writeStrob();
 
-	column++;
+	if (++_col == 64) {
+		_col = 0;
 
+		if (_cs & GD_CS2)
+			_row += fp.height;
+		if (_row == GD_ROWS)
+			_row = 0;
+
+		if (_cs == GD_CS1)
+			_cs = GD_CS2;
+		else if (_cs == GD_CS2)
+			_cs = GD_CS1;
+
+		gdWriteCommand(KS0108_SET_ADDRESS);
+		gdWriteCommand(KS0108_SET_PAGE + _row);
+	}
 	return;
 }
 
-void gdFill(uint8_t data, uint8_t cs)
+void gdFill(uint8_t data)
 {
 	uint8_t i, j;
-	gdWriteCommand(KS0108_SET_ADDRESS, cs);
-	for (i = 0; i < GD_ROWS; i++) {
-		gdWriteCommand(KS0108_SET_PAGE + i, cs);
+	uint8_t cs = _cs;
+
+	_cs = GD_CS1 | GD_CS2;
+	gdWriteCommand(KS0108_SET_ADDRESS + _col);
+	gdWriteCommand(KS0108_SET_PAGE + _row);
+
+	for (i = 0; i < GD_ROWS; i++)
 		for (j = 0; j < GD_COLS; j++)
-			gdWriteData(data, cs);
-	}
+			gdWriteData(data);
+	_cs = cs;
 	return;
 }
 
 void gdInit(void)
 {
-	/* Set data and control lines as outputs */
-	GD_DDDR = 0xFF;
-	GD_CDDR |= GD_CTRL;
-	/* Unselect controller */
-	GD_CPORT &= ~GD_CTRL;
+	/* Set control lines as outputs */
+	GD_CONTROL_DDR |= GD_DI | GD_RW | GD_E;
+	GD_CHIP_DDR |= GD_CS1 | GD_CS2 | GD_RES;
+	GD_BACKLIGHT_DDR |= GD_BCKL;
+
 	/* Reset */
-	/* Reset */
-	GD_CPORT &= ~(GD_RES);
+	GD_CHIP_PORT &= ~(GD_RES);
 	asm("nop");
 	asm("nop");
-	GD_CPORT |= GD_RES;
+	GD_CHIP_PORT |= GD_RES;
 	asm("nop");
 	asm("nop");
+
 	/* Clear display  and reset addresses */
-	gdFill(0x00, GD_CS1 | GD_CS2);
-	gdWriteCommand(KS0108_DISPLAY_ON, GD_CS1 | GD_CS2);
-	gdWriteCommand(KS0108_DISPLAY_START_LINE, GD_CS1 | GD_CS2);
+	_cs = GD_CS1 | GD_CS2;
+
+	gdWriteCommand(KS0108_DISPLAY_START_LINE);
+	gdWriteCommand(KS0108_SET_ADDRESS);
+	gdWriteCommand(KS0108_SET_PAGE);
+
+	fp.height = 1;
+	gdFill(0x00);
+
+	/* Turn on display */
+	GD_BACKLIGHT_PORT |= GD_BCKL;
+
+	gdWriteCommand(KS0108_DISPLAY_ON);
+
+	_row = 0;
+	_col = 0;
+	_cs = GD_CS2;
+
 	return;
 }
 
-int8_t gdSetXY(uint8_t x, uint8_t y)
+void gdSetXY(uint8_t x, uint8_t y)
 {
-	if (x >= (GD_COLS << 1))
-		return 1;
-	if (y >= GD_ROWS)
-		return 1;
-	if (x < GD_COLS) {
-		gdWriteCommand(KS0108_SET_ADDRESS + x, GD_CS1);
-		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS2);
-	} else {
-		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS1);
-		gdWriteCommand(KS0108_SET_ADDRESS - GD_COLS + x, GD_CS2);
-	}
-	column = x;
-	gdWriteCommand(KS0108_SET_PAGE + y, GD_CS1 | GD_CS2);
-	row = y;
-	return 0;
+	if (x > ((GD_COLS << 1) - 1))
+		y += fp.height;
+
+	if ((x & ((GD_COLS << 1) - 1)) < GD_COLS)
+		_cs = GD_CS1;
+	else
+		_cs = GD_CS2;
+
+	_col = x & (GD_COLS - 1);
+	_row = y & (GD_ROWS - 1);
+
+	gdWriteCommand(KS0108_SET_ADDRESS + _col);
+	gdWriteCommand(KS0108_SET_PAGE + _row);
+
 }
 
-void gdWriteChar(uint8_t code, uint8_t inv)
+void gdLoadFont(const uint8_t *font)
 {
-	uint8_t cs;
-	uint8_t i;
-	uint16_t index;
-	index = code * 5;
+	_font = font + 4;
+	fp.height = pgm_read_byte(font);
+	fp.ccnt = pgm_read_byte(font + 1);
+	fp.ofta = pgm_read_byte(font + 2);
+	fp.oftna = pgm_read_byte(font + 3);
+}
+
+void gdWriteChar(uint8_t code)
+{
+	/* Store current position before writing to display */
+	uint8_t cs = _cs;
+	uint8_t row = _row;
+	uint8_t col = _col;
+	if (cs == GD_CS2)
+		col += GD_COLS;
+
+	uint8_t i, j;
+
 	uint8_t pgmData;
 
-	for (i = 0; i < 6; i++) {
-		if (column < (GD_COLS << 1)) {
-			if (column < GD_COLS) {
-				cs = GD_CS1;
-			} else {
-				cs = GD_CS2;
-			}
-			if (i == 5) {
-				if (inv) {
-					gdWriteData(0xFF, cs);
-				} else {
-					gdWriteData(0x00, cs);
-				}
-			} else {
-				pgmData = pgm_read_byte(&k1013vg6_0[index + i]);
-				if (pgmData != 0x5A) {
-					if (inv) {
-						gdWriteData(~pgmData, cs);
-					} else {
-						gdWriteData(pgmData, cs);
-					}
-				}
-			}
+	uint8_t spos = code - ((code > 128) ? fp.oftna : fp.ofta);
+
+	uint16_t oft = 0;	/* Current symbol offset in array*/
+	uint8_t swd = 0;	/* Current symbol width */
+
+	for (i = 0; i < spos; i++) {
+		swd = pgm_read_byte(_font + i);
+		oft += swd;
+	}
+	swd = pgm_read_byte(_font + spos);
+	oft *= fp.height;
+	oft += fp.ccnt;
+
+	for (j = 0; j < fp.height; j++) {
+		gdSetXY(col, row + j);
+		for (i = 0; i < swd; i++) {
+			pgmData = pgm_read_byte(_font + oft + (swd * j) + i);
+			gdWriteData(pgmData);
 		}
+	}
+
+	gdSetXY(col + swd, row);
+
+	return;
+}
+
+void gdWriteString(uint8_t *string)
+{
+	if (*string)
+		gdWriteChar(*string++);
+	while(*string) {
+		gdWriteChar(0x7F);
+		gdWriteChar(*string++);
 	}
 	return;
 }
 
-void gdWriteString(uint8_t *string, uint8_t inv)
+void gdWriteStringProgmem(const uint8_t *string)
 {
-	while(*string)
-		gdWriteChar(*string++, inv);
+	uint8_t i = 0, ch;
+	ch = pgm_read_byte(&string[i++]);
+	if (ch)
+		gdWriteChar(ch);
+	do {
+		ch = pgm_read_byte(&string[i++]);
+		if (ch) {
+			gdWriteChar(0x7F);
+			gdWriteChar(ch);
+		}
+	} while (ch);
 	return;
 }
 
-void gdWriteStringProgmem(const uint8_t *string, uint8_t inv)
+void gdWriteStringEeprom(const uint8_t *string)
 {
 	uint8_t i = 0, ch;
+	ch = eeprom_read_byte(&string[i++]);
+	if (ch)
+		gdWriteChar(ch);
 	do {
-		ch = pgm_read_byte(&string[i++]);
-		if (ch)
-			gdWriteChar(ch, inv);
+		ch = eeprom_read_byte(&string[i++]);
+		if (ch) {
+			gdWriteChar(0x7F);
+			gdWriteChar(ch);
+		}
 	} while (ch);
 	return;
 }
@@ -228,88 +326,45 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 	return dig;
 }
 
-void gdWriteCharScaled(uint8_t code, uint8_t scX, uint8_t scY, uint8_t inv)
+void gdSpectrum32(uint8_t *buf, uint8_t mode)
 {
-	uint8_t cs;
-
-	uint8_t i, j;
-	uint16_t index;
-	index = code * 5;
-
-	uint8_t xpos = column;
-	uint8_t ypos = row;
-
-	uint8_t pgmData;
-	uint8_t wrData;
-
-	uint8_t bit;
-	uint8_t shift = 0;
-
-	for (j = 0; j < scY; j++) {
-		gdSetXY(xpos, ypos + j);
-		for (i = 0; i < 6 * scX; i++) {
-			if (column < (GD_COLS << 1)) {
-				if (column < GD_COLS) {
-					cs = GD_CS1;
+	uint8_t i, j, k;
+	int8_t row;
+	uint8_t data;
+	uint8_t val;
+	for (i = 0; i < GD_ROWS; i++) {
+		gdSetXY(0, i);
+		for (j = 0, k = 32; j < 32; j++, k++) {
+			switch (mode) {
+			case MODE_STEREO:
+				if (i < GD_ROWS / 2) {
+					val = buf[j];
+					row = 3 - val / 8;
 				} else {
-					cs = GD_CS2;
+					val = buf[k];
+					row = 7 - val / 8;
 				}
-				if (i >= 5 * scX) {
-					if (inv) {
-						gdWriteData(0xFF, cs);
-					} else {
-						gdWriteData(0x00, cs);
-					}
-				} else {
-					pgmData = pgm_read_byte(&k1013vg6_0[index + i / scX]);
-					if (pgmData != 0x5A) {
-						wrData = 0;
-
-						for (bit = 0; bit < 8; bit++)
-						{
-							if (pgmData & (1 << ((shift+bit) / scY % 8)))
-								wrData |= (1 << bit);
-						}
-						if (inv) {
-							gdWriteData(~wrData, cs);
-						} else {
-							gdWriteData(wrData, cs);
-						}
-					}
-				}
+				break;
+			default:
+				val = buf[j] + buf[k];
+				row = 7 - val / 8;
+				break;
 			}
+			data = 0xFF;
+			if (i == row)
+				data = 0xFF << (7 - val % 8);
+			else if (i < row)
+				data = 0x00;
+			if (j < 16)
+				_cs = GD_CS1;
+			else
+				_cs = GD_CS2;
+				gdWriteData(data);
+				gdWriteData(data);
+				gdWriteData(data);
+				gdWriteData(0x00);
 		}
-		shift += 8;
 	}
-	gdSetXY(column, ypos);
 	return;
 }
 
-void gdWriteStringScaled(uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv)
-{
-	while(*string)
-		gdWriteCharScaled(*string++, scX, scY, inv);
-	return;
-}
-
-void gdWriteStringScaledProgmem(const uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv)
-{
-	uint8_t i = 0, ch;
-	do {
-		ch = pgm_read_byte(&string[i++]);
-		if (ch)
-			gdWriteCharScaled(ch, scX, scY, inv);
-	} while (ch);
-	return;
-}
-
-void gdWriteStringScaledEeprom(const uint8_t *string, uint8_t scX, uint8_t scY, uint8_t inv)
-{
-	uint8_t i = 0, ch;
-	do {
-		ch = eeprom_read_byte(&string[i++]);
-		if (ch)
-			gdWriteCharScaled(ch, scX, scY, inv);
-	} while (ch);
-	return;
-}

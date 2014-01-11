@@ -11,6 +11,8 @@
 #include "param.h"
 #include "ds1307.h"
 
+#include "font-ks0066-ru-08.h"
+
 void hwInit(void)	/* Hardware initialization */
 {
 	_delay_ms(100);
@@ -21,51 +23,8 @@ void hwInit(void)	/* Hardware initialization */
 	I2CInit();		/* I2C bus */
 	SMBF_DDR |= (STDBY | FAN | BCKL);
 	SMBF_PORT &= ~(STDBY | MUTE | FAN | BCKL);
+	gdLoadFont(font_ks0066_ru_08);
 	sei();
-	return;
-}
-
-void gdSpectrum(uint8_t *buf, uint8_t mode)
-{
-	uint8_t i, j, k;
-	int8_t row;
-	uint8_t data;
-	uint8_t val;
-	uint8_t cs;
-	for (i = 0; i < GD_ROWS; i++) {
-		gdWriteCommand(KS0108_SET_PAGE + i, GD_CS1 | GD_CS2);
-		gdWriteCommand(KS0108_SET_ADDRESS, GD_CS1 | GD_CS2);
-		for (j = 0, k = 32; j < 32; j++, k++) {
-			switch (mode) {
-			case MODE_STEREO:
-				if (i < GD_ROWS / 2) {
-					val = buf[j];
-					row = 3 - val / 8;
-				} else {
-					val = buf[k];
-					row = 7 - val / 8;
-				}
-				break;
-			default:
-				val = buf[j] + buf[k];
-				row = 7 - val / 8;
-				break;
-			}
-			data = 0xFF;
-			if (i == row)
-				data = 0xFF << (7 - val % 8);
-			else if (i < row)
-				data = 0x00;
-			if (j < 16)
-				cs = GD_CS1;
-			else
-				cs = GD_CS2;
-				gdWriteData(data, cs);
-				gdWriteData(data, cs);
-				gdWriteData(data, cs);
-				gdWriteData(0x00, cs);
-		}
-	}
 	return;
 }
 
@@ -96,27 +55,27 @@ int main(void)
 				switch (mode) {
 				case DISPLAY_VOLUME:
 					if (mode != DISPLAY_BASS)
-						gdFill(0x00, GD_CS1 | GD_CS2);
+						gdFill(0x00);
 					mode = DISPLAY_BASS;
 					break;
 				case DISPLAY_BASS:
 					if (mode != DISPLAY_MIDDLE)
-						gdFill(0x00, GD_CS1 | GD_CS2);
+						gdFill(0x00);
 					mode = DISPLAY_MIDDLE;
 					break;
 				case DISPLAY_MIDDLE:
 					if (mode != DISPLAY_TREBLE)
-						gdFill(0x00, GD_CS1 | GD_CS2);
+						gdFill(0x00);
 					mode = DISPLAY_TREBLE;
 					break;
 				case DISPLAY_TREBLE:
 					if (mode != DISPLAY_PREAMP)
-						gdFill(0x00, GD_CS1 | GD_CS2);
+						gdFill(0x00);
 					mode = DISPLAY_PREAMP;
 					break;
 				case DISPLAY_PREAMP:
 					if (mode != DISPLAY_BALANCE)
-						gdFill(0x00, GD_CS1 | GD_CS2);
+						gdFill(0x00);
 					mode = DISPLAY_BALANCE;
 					break;
 				case DISPLAY_BALANCE:
@@ -124,7 +83,7 @@ int main(void)
 				case DISPLAY_TIME:
 				case DISPLAY_GAIN:
 					if (mode != DISPLAY_VOLUME)
-						gdFill(0x00, GD_CS1 | GD_CS2);
+						gdFill(0x00);
 					mode = DISPLAY_VOLUME;
 					break;
 				default:
@@ -137,7 +96,7 @@ int main(void)
 				switch (mode) {
 				case DISPLAY_SPECTRUM:
 				case DISPLAY_TIME:
-					gdFill(0x00, GD_CS1 | GD_CS2);
+					gdFill(0x00);
 					mode = DISPLAY_VOLUME;
 					break;
 				default:
@@ -150,7 +109,7 @@ int main(void)
 					editTime();
 				else {
 					if (mode != DISPLAY_TIME)
-						gdFill(0x00, GD_CS1 | GD_CS2);
+						gdFill(0x00);
 					mode = DISPLAY_TIME;
 					etm = EDIT_NOEDIT;
 				}
@@ -161,7 +120,7 @@ int main(void)
 //			case CMD_BLUE:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
-					gdFill(0x00, GD_CS1 | GD_CS2);
+					gdFill(0x00);
 				mode = DISPLAY_GAIN;
 				break;
 			case CMD_STBY:
@@ -172,7 +131,7 @@ int main(void)
 				SMBF_PORT &= ~STDBY;
 				SMBF_PORT &= ~FAN;
 				SMBF_PORT &= ~BCKL;
-				gdFill(0x00, GD_CS1 | GD_CS2);
+				gdFill(0x00);
 				mode = DISPLAY_TIME;
 				muteVolume();
 				mute = 1;
@@ -259,7 +218,7 @@ int main(void)
 			case CMD_SEARCH:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
-					gdFill(0x00, GD_CS1 | GD_CS2);
+					gdFill(0x00);
 				else
 					incChannel();
 				mode = DISPLAY_GAIN;
@@ -267,7 +226,7 @@ int main(void)
 			case CMD_STORE:
 				setDisplayTime(30000);
 				if (mode != DISPLAY_EDIT_TIME)
-					gdFill(0x00, GD_CS1 | GD_CS2);
+					gdFill(0x00);
 				mode = DISPLAY_EDIT_TIME;
 				editTime();
 				break;
@@ -331,7 +290,7 @@ int main(void)
 					etm = EDIT_NOEDIT;
 				}
 				buf = getData();
-				gdSpectrum(buf, spMode);
+				gdSpectrum32(buf, spMode);
 			} else {
 				setDisplayTime(2000);
 				showTime(0);
