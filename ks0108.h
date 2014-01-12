@@ -4,6 +4,8 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
+#include "fonts.h"
+
 /*
  * Some displays like WG12864B have inverted (zero) active level on CS1/CS2.
  * Set CS_INVERTED for such displays.
@@ -61,9 +63,11 @@
 
 typedef struct {
 	uint8_t height;
+	uint8_t ltsppos;
 	uint8_t ccnt;
 	uint8_t ofta;
 	uint8_t oftna;
+	uint8_t color;
 } fontParams;
 
 uint8_t gdReadStatus();
@@ -77,7 +81,7 @@ void gdInit(void);
 
 void gdSetXY(uint8_t x, uint8_t y);
 
-void gdLoadFont(const uint8_t *font);
+void gdLoadFont(const uint8_t *font, uint8_t color);
 
 void gdWriteChar(uint8_t code);
 void gdWriteString(uint8_t *string);

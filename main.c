@@ -11,8 +11,6 @@
 #include "param.h"
 #include "ds1307.h"
 
-#include "font-ks0066-ru-08.h"
-
 void hwInit(void)	/* Hardware initialization */
 {
 	_delay_ms(100);
@@ -23,7 +21,7 @@ void hwInit(void)	/* Hardware initialization */
 	I2CInit();		/* I2C bus */
 	SMBF_DDR |= (STDBY | FAN | BCKL);
 	SMBF_PORT &= ~(STDBY | MUTE | FAN | BCKL);
-	gdLoadFont(font_ks0066_ru_08);
+	gdLoadFont(font_ks0066_ru_08, 1);
 	sei();
 	return;
 }

@@ -5,17 +5,7 @@
 #include "i2c.h"
 #include "ks0108.h"
 #include "input.h"
-
-#define DOW_LENGTH	12
-const uint8_t dayOfWeek[][DOW_LENGTH] PROGMEM = {
-	"ВОСКРЕСЕНЬЕ",
-	"ПОНЕДЕЛЬНИК",
-	"ВТОРНИК    ",
-	"СРЕДА      ",
-	"ЧЕТВЕРГ    ",
-	"ПЯТНИЦА    ",
-	"СУББОТА    ",
-};
+#include "eeprom.h"
 
 int8_t hour, minute, second, day, month, year, weekday;
 
@@ -98,40 +88,51 @@ void setTime(void)
 void showTime(uint8_t inv)
 {
 	getTime();
-	gdSetXY(0, 0);
+	gdSetXY(4, 0);
 	if (etm == EDIT_HOURS)
-		gdWriteString(mkNumString(hour, 2, '0')); // Inverted
+		gdLoadFont(font_digits_32, 0);
 	else
-		gdWriteString(mkNumString(hour, 2, '0'));
-	gdWriteChar(':');
+		gdLoadFont(font_digits_32, 1);
+	gdWriteString(mkNumString(hour, 2, '0'));
+	gdLoadFont(font_digits_32, 1);
+	gdWriteString((uint8_t*)"\x7F:\x7F");
 	if (etm == EDIT_MINUTES)
-		gdWriteString(mkNumString(minute, 2, '0')); // Inverted
+		gdLoadFont(font_digits_32, 0);
 	else
-		gdWriteString(mkNumString(minute, 2, '0'));
-	gdWriteChar(':');
+		gdLoadFont(font_digits_32, 1);
+	gdWriteString(mkNumString(minute, 2, '0'));
+	gdLoadFont(font_digits_32, 1);
+	gdWriteString((uint8_t*)"\x7F:\x7F");
 	if (etm == EDIT_SECONDS)
-		gdWriteString(mkNumString(second, 2, '0')); // Inverted
+		gdLoadFont(font_digits_32, 0);
 	else
-		gdWriteString(mkNumString(second, 2, '0'));
+		gdLoadFont(font_digits_32, 1);
+	gdWriteString(mkNumString(second, 2, '0'));
 
-	gdSetXY(0, 4);
+	gdSetXY(9, 4);
 	if (etm == EDIT_DAY)
-		gdWriteString(mkNumString(day, 2, '0')); // Inverted
+		gdLoadFont(font_ks0066_ru_24, 0);
 	else
-		gdWriteString(mkNumString(day, 2, '0'));
-	gdWriteChar('.');
+		gdLoadFont(font_ks0066_ru_24, 1);
+	gdWriteString(mkNumString(day, 2, '0'));
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdWriteString((uint8_t*)"\x7F.\x7F");
 	if (etm == EDIT_MONTH)
-		gdWriteString(mkNumString(month, 2, '0')); // Inverted
+		gdLoadFont(font_ks0066_ru_24, 0);
 	else
-		gdWriteString(mkNumString(month, 2, '0'));
-	gdWriteChar('.');
+		gdLoadFont(font_ks0066_ru_24, 1);
+	gdWriteString(mkNumString(month, 2, '0'));
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdWriteString((uint8_t*)"\x7F.\x7F");
 	if (etm == EDIT_YEAR)
-		gdWriteString(mkNumString(2000 + year, 4, '0')); // Inverted
+		gdLoadFont(font_ks0066_ru_24, 0);
 	else
-		gdWriteString(mkNumString(2000 + year, 4, '0'));
+		gdLoadFont(font_ks0066_ru_24, 1);
+	gdWriteString(mkNumString(2000 + year, 4, '0'));
 
-	gdSetXY(0, 7);
-	gdWriteStringProgmem(dayOfWeek[weekday % 7]);
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(19, 7);
+	gdWriteStringEeprom(weekdayLabel + 16 * (weekday % 7));
 
 	return;
 }

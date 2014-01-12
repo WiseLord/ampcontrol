@@ -5,6 +5,7 @@
 
 #include "ks0108.h"
 #include "i2c.h"
+#include "eeprom.h"
 
 void setPreamp(int8_t val)
 {
@@ -210,18 +211,18 @@ void decBalance(void) {
 	setVolume(volume);
 }
 
-uint8_t db[] = "дБ";
-
 void showParLabel(int8_t *par, const uint8_t *parLabel)
 {
+	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
 	gdWriteStringEeprom(parLabel);
-	gdSetXY(113, 0);
+	gdSetXY(118, 0);
 	gdWriteString(mkNumString(channel + 1, 1, ' '));
-	gdSetXY(94, 4);
+	gdSetXY(93, 4);
 	gdWriteString(mkNumString(*par, 3, ' '));
-	gdSetXY(106, 6);
-	gdWriteString(db);
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(116, 7);
+	gdWriteStringEeprom(dbLabel);
 }
 
 void showBar(uint8_t length, int8_t from, int8_t to)

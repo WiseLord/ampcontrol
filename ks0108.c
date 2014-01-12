@@ -1,5 +1,4 @@
 #include "ks0108.h"
-//#include "font-ks0066-ru-08.h"
 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
@@ -214,13 +213,15 @@ void gdSetXY(uint8_t x, uint8_t y)
 
 }
 
-void gdLoadFont(const uint8_t *font)
+void gdLoadFont(const uint8_t *font, uint8_t color)
 {
-	_font = font + 4;
+	_font = font + 5;
 	fp.height = pgm_read_byte(font);
-	fp.ccnt = pgm_read_byte(font + 1);
-	fp.ofta = pgm_read_byte(font + 2);
-	fp.oftna = pgm_read_byte(font + 3);
+	fp.ltsppos = pgm_read_byte(font + 1);
+	fp.ccnt = pgm_read_byte(font + 2);
+	fp.ofta = pgm_read_byte(font + 3);
+	fp.oftna = pgm_read_byte(font + 4);
+	fp.color = color;
 }
 
 void gdWriteChar(uint8_t code)
@@ -236,7 +237,7 @@ void gdWriteChar(uint8_t code)
 
 	uint8_t pgmData;
 
-	uint8_t spos = code - ((code > 128) ? fp.oftna : fp.ofta);
+	uint8_t spos = code - ((code >= 128) ? fp.oftna : fp.ofta);
 
 	uint16_t oft = 0;	/* Current symbol offset in array*/
 	uint8_t swd = 0;	/* Current symbol width */
@@ -253,7 +254,10 @@ void gdWriteChar(uint8_t code)
 		gdSetXY(col, row + j);
 		for (i = 0; i < swd; i++) {
 			pgmData = pgm_read_byte(_font + oft + (swd * j) + i);
-			gdWriteData(pgmData);
+			if (fp.color)
+				gdWriteData(pgmData);
+			else
+				gdWriteData(~pgmData);
 		}
 	}
 
@@ -267,7 +271,7 @@ void gdWriteString(uint8_t *string)
 	if (*string)
 		gdWriteChar(*string++);
 	while(*string) {
-		gdWriteChar(0x7F);
+		gdWriteChar(fp.ltsppos);
 		gdWriteChar(*string++);
 	}
 	return;
@@ -282,7 +286,7 @@ void gdWriteStringProgmem(const uint8_t *string)
 	do {
 		ch = pgm_read_byte(&string[i++]);
 		if (ch) {
-			gdWriteChar(0x7F);
+			gdWriteChar(fp.ltsppos);
 			gdWriteChar(ch);
 		}
 	} while (ch);
@@ -298,7 +302,7 @@ void gdWriteStringEeprom(const uint8_t *string)
 	do {
 		ch = eeprom_read_byte(&string[i++]);
 		if (ch) {
-			gdWriteChar(0x7F);
+			gdWriteChar(fp.ltsppos);
 			gdWriteChar(ch);
 		}
 	} while (ch);
