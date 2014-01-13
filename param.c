@@ -115,7 +115,7 @@ void editSpMode()
 		spMode = MODE_STEREO;
 }
 
-void incVolume(void)
+void incPreamp(void)
 {
 	preamp++;
 	if (preamp > AMP_MAX)
@@ -123,7 +123,7 @@ void incVolume(void)
 	setPreamp(preamp);
 }
 
-void decVolume(void)
+void decPreamp(void)
 {
 	preamp--;
 	if (preamp < AMP_MIN)
@@ -131,7 +131,7 @@ void decVolume(void)
 	setPreamp(preamp);
 }
 
-void incSpeaker(void)
+void incVolume(void)
 {
 	volume++;
 	if (volume > VOL_MAX)
@@ -139,7 +139,7 @@ void incSpeaker(void)
 	setVolume(volume);
 }
 
-void decSpeaker(void)
+void decVolume(void)
 {
 	volume--;
 	if (volume < VOL_MIN)
@@ -176,7 +176,7 @@ void decBMT(int8_t *par)
 void incChannel(void)
 {
 	channel++;
-	if (channel >= 3) // if use 3 channels
+	if (channel >= 4)
 		channel = 0;
 	setChannel(channel);
 }
@@ -245,7 +245,7 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 	}
 }
 
-void showVolume(uint8_t *parLabel)
+void showPreamp(uint8_t *parLabel)
 {
 	int8_t r;
 	r = 2 * preamp + 93;
@@ -275,7 +275,7 @@ void showBalance(uint8_t *parLabel)
 	showBar(86, l, r);
 }
 
-void showSpeaker(uint8_t *parLabel)
+void showVolume(uint8_t *parLabel)
 {
 	int8_t r;
 	r = volume + 78;

@@ -163,7 +163,9 @@ void gdInit(void)
 	/* Set control lines as outputs */
 	GD_CONTROL_DDR |= GD_DI | GD_RW | GD_E;
 	GD_CHIP_DDR |= GD_CS1 | GD_CS2 | GD_RES;
+
 	GD_BACKLIGHT_DDR |= GD_BCKL;
+	GD_BACKLIGHT_PORT &= ~GD_BCKL; /* Turn off backlight */
 
 	/* Reset */
 	GD_CHIP_PORT &= ~(GD_RES);
@@ -182,9 +184,6 @@ void gdInit(void)
 
 	fp.height = 1;
 	gdFill(0x00);
-
-	/* Turn on display */
-	GD_BACKLIGHT_PORT |= GD_BCKL;
 
 	gdWriteCommand(KS0108_DISPLAY_ON);
 

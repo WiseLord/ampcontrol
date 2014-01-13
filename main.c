@@ -19,8 +19,8 @@ void hwInit(void)	/* Hardware initialization */
 	adcInit();		/* Analog-to-digital converter */
 	btnInit();		/* Buttons/encoder polling */
 	I2CInit();		/* I2C bus */
-	SMBF_DDR |= (STDBY | FAN | BCKL);
-	SMBF_PORT &= ~(STDBY | MUTE | FAN | BCKL);
+	SMF_DDR |= (STDBY | FAN);
+	SMF_PORT &= ~(STDBY | MUTE | FAN);
 	gdLoadFont(font_ks0066_ru_08, 1);
 	sei();
 	return;
@@ -115,20 +115,20 @@ int main(void)
 			case CMD_RED:
 			case CMD_GREEN:
 			case CMD_YELLOW:
-//			case CMD_BLUE:
+			case CMD_BLUE:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
 					gdFill(0x00);
 				mode = DISPLAY_GAIN;
 				break;
 			case CMD_STBY:
-				SMBF_DDR &= ~MUTE;
-				SMBF_PORT &= ~MUTE;
+				SMF_DDR &= ~MUTE;
+				SMF_PORT &= ~MUTE;
 				_delay_ms(50);
 				stdby = 1;
-				SMBF_PORT &= ~STDBY;
-				SMBF_PORT &= ~FAN;
-				SMBF_PORT &= ~BCKL;
+				SMF_PORT &= ~STDBY;
+				SMF_PORT &= ~FAN;
+				GD_BACKLIGHT_PORT &= ~GD_BCKL;
 				gdFill(0x00);
 				mode = DISPLAY_TIME;
 				muteVolume();
@@ -144,7 +144,7 @@ int main(void)
 				for (i = 0; i < cmdCnt; i++)
 					switch (mode) {
 					case DISPLAY_VOLUME:
-						incSpeaker();
+						incVolume();
 						break;
 					case DISPLAY_BASS:
 						incBMT(&bass);
@@ -156,7 +156,7 @@ int main(void)
 						incBMT(&treble);
 						break;
 					case DISPLAY_PREAMP:
-						incVolume();
+						incPreamp();
 						break;
 					case DISPLAY_GAIN:
 						incGain(channel);
@@ -176,7 +176,7 @@ int main(void)
 				for (i = 0; i < cmdCnt; i++)
 					switch (mode) {
 					case DISPLAY_VOLUME:
-						decSpeaker();
+						decVolume();
 						break;
 					case DISPLAY_BASS:
 						decBMT(&bass);
@@ -188,7 +188,7 @@ int main(void)
 						decBMT(&treble);
 						break;
 					case DISPLAY_PREAMP:
-						decVolume();
+						decPreamp();
 						break;
 					case DISPLAY_GAIN:
 						decGain(channel);
@@ -237,9 +237,9 @@ int main(void)
 			case CMD_YELLOW:
 				setChannel(2);
 				break;
-//			case CMD_BLUE:
-//				setChannel(3);
-//				break;
+			case CMD_BLUE:
+				setChannel(3);
+				break;
 			case CMD_DESCR:
 				setDisplayTime(100);
 				editSpMode();
@@ -252,7 +252,7 @@ int main(void)
 			/* Show result */
 			switch (mode) {
 			case DISPLAY_VOLUME:
-				showSpeaker(volumeLabel);
+				showVolume(volumeLabel);
 				break;
 			case DISPLAY_BASS:
 				showBMT(&bass, bassLabel);
@@ -264,7 +264,7 @@ int main(void)
 				showBMT(&treble, trebleLabel);
 				break;
 			case DISPLAY_PREAMP:
-				showVolume(preampLabel);
+				showPreamp(preampLabel);
 				break;
 			case DISPLAY_GAIN:
 				showGain(channel, gainLabel);
@@ -295,12 +295,12 @@ int main(void)
 				switch (command) {
 				case CMD_STBY:
 					stdby = 0;
-					SMBF_PORT |= STDBY;
+					SMF_PORT |= STDBY;
 					_delay_ms(50);
-					SMBF_DDR |= MUTE;
-					SMBF_PORT |= MUTE;
-					SMBF_PORT |= FAN;
-					SMBF_PORT |= BCKL;
+					SMF_DDR |= MUTE;
+					SMF_PORT |= MUTE;
+					SMF_PORT |= FAN;
+					GD_BACKLIGHT_PORT |= GD_BCKL;
 					loadParams();
 					unmuteVolume();
 					mute = 0;

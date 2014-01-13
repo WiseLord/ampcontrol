@@ -61,24 +61,24 @@ void saveParams(void);
 
 void editSpMode();
 
-void incVolume(void);
-void decVolume(void);
+void incPreamp(void);
+void decPreamp(void);
 void incBMT(int8_t *par);
 void decBMT(int8_t *par);
 void incBalance(void);
 void decBalance(void);
-void incSpeaker(void);
-void decSpeaker(void);
+void incVolume(void);
+void decVolume(void);
 
 void setChannel(uint8_t ch);
 void incChannel(void);
 void incGain(uint8_t chan);
 void decGain(uint8_t chan);
 
-void showVolume(uint8_t *parLabel);
+void showPreamp(uint8_t *parLabel);
 void showBMT(int8_t *par, uint8_t *parLabel);
 void showBalance(uint8_t *parLabel);
-void showSpeaker(uint8_t *parLabel);
+void showVolume(uint8_t *parLabel);
 void showGain(uint8_t chan, uint8_t *parLabel);
 
 #endif /* PARAM_H */
