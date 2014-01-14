@@ -9,7 +9,7 @@
 
 void setPreamp(int8_t val)
 {
-	I2CWrite(0b10001000, FUNC_PREAMP, -val);
+	I2CWrite(TDA7439_ADDR, FUNC_PREAMP, -val);
 }
 
 void setVolume(int8_t val)
@@ -27,8 +27,8 @@ void setVolume(int8_t val)
 			spRight = VOL_MIN;
 	}
 
-	I2CWrite(0b10001000, FUNC_VOLUME_LEFT, -spLeft);
-	I2CWrite(0b10001000, FUNC_VOLUME_RIGHT, -spRight);
+	I2CWrite(TDA7439_ADDR, FUNC_VOLUME_LEFT, -spLeft);
+	I2CWrite(TDA7439_ADDR, FUNC_VOLUME_RIGHT, -spRight);
 }
 
 void setBMT(int8_t address, int8_t val)
@@ -38,13 +38,13 @@ void setBMT(int8_t address, int8_t val)
 		val = 15 - val;
 	else
 		val = 7 + val;
-	I2CWrite(0b10001000, address, val);
+	I2CWrite(TDA7439_ADDR, address, val);
 }
 
 void setGain(uint8_t ch, int8_t val)
 {
 	val = val >> 1;
-	I2CWrite(0b10001000, FUNC_INPUT_GAIN, val);
+	I2CWrite(TDA7439_ADDR, FUNC_INPUT_GAIN, val);
 }
 
 void muteVolume()
@@ -65,7 +65,7 @@ void unmuteVolume()
 void setChannel(uint8_t ch)
 {
 	setGain(ch, gain[ch]);
-	I2CWrite(0b10001000, FUNC_INPUT_SELECT, 3 - ch);
+	I2CWrite(TDA7439_ADDR, FUNC_INPUT_SELECT, 3 - ch);
 	channel = ch;
 }
 

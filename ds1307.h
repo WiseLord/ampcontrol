@@ -3,6 +3,17 @@
 
 #include <inttypes.h>
 
+#define DS1307_ADDR		0b11010000
+
+/* DS1307 memory */
+#define DS1307_SECONDS	0
+#define DS1307_MINUTES	1
+#define DS1307_HOURS	2
+#define DS1307_WEEKDAY	3
+#define DS1307_DAY		4
+#define DS1307_MONTH	5
+#define DS1307_YEAR		6
+
 typedef enum {
 	EDIT_NOEDIT,
 	EDIT_HOURS,

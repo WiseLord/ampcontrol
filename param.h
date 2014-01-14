@@ -3,6 +3,8 @@
 
 #include <inttypes.h>
 
+#define TDA7439_ADDR		0b10001000
+
 /* Function selection */
 #define FUNC_INPUT_SELECT	0x00
 #define FUNC_INPUT_GAIN		0x01

@@ -48,21 +48,21 @@ void getTime(void)
 {
 	uint8_t temp;
 
-	I2CRead(0b11010000, 0x02, &temp);
+	I2CRead(DS1307_ADDR, DS1307_HOURS, &temp);
 	hour = bd2d(temp);
-	I2CRead(0b11010000, 0x01, &temp);
+	I2CRead(DS1307_ADDR, DS1307_MINUTES, &temp);
 	minute = bd2d(temp);
-	I2CRead(0b11010000, 0x00, &temp);
+	I2CRead(DS1307_ADDR, DS1307_SECONDS, &temp);
 	second = bd2d(temp);
 
-	I2CRead(0b11010000, 0x04, &temp);
+	I2CRead(DS1307_ADDR, DS1307_DAY, &temp);
 	day = bd2d(temp);
-	I2CRead(0b11010000, 0x05, &temp);
+	I2CRead(DS1307_ADDR, DS1307_MONTH, &temp);
 	month = bd2d(temp);
-	I2CRead(0b11010000, 0x06, &temp);
+	I2CRead(DS1307_ADDR, DS1307_YEAR, &temp);
 	year = bd2d(temp);
 
-	I2CRead(0b11010000, 0x03, &temp);
+	I2CRead(DS1307_ADDR, DS1307_WEEKDAY, &temp);
 	weekday = bd2d(temp);
 }
 
@@ -70,18 +70,18 @@ void setTime(void)
 {
 	if (day > daysInMonth())
 		day = daysInMonth();
-	I2CWrite(0b11010000, 0x02, d2bd(hour));
-	I2CWrite(0b11010000, 0x01, d2bd(minute));
+	I2CWrite(DS1307_ADDR, DS1307_HOURS, d2bd(hour));
+	I2CWrite(DS1307_ADDR, DS1307_MINUTES, d2bd(minute));
 	if (etm == EDIT_SECONDS)
-		I2CWrite(0b11010000, 0x00, d2bd(second));
+		I2CWrite(DS1307_ADDR, DS1307_SECONDS, d2bd(second));
 
-	I2CWrite(0b11010000, 0x04, d2bd(day));
-	I2CWrite(0b11010000, 0x05, d2bd(month));
-	I2CWrite(0b11010000, 0x06, d2bd(year));
+	I2CWrite(DS1307_ADDR, DS1307_DAY, d2bd(day));
+	I2CWrite(DS1307_ADDR, DS1307_MONTH, d2bd(month));
+	I2CWrite(DS1307_ADDR, DS1307_YEAR, d2bd(year));
 
 	if (etm >= EDIT_DAY) {
 		calcWeekDay();
-		I2CWrite(0b11010000, 0x03, d2bd(weekday));
+		I2CWrite(DS1307_ADDR, DS1307_WEEKDAY, d2bd(weekday));
 	}
 }
 
