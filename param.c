@@ -71,18 +71,18 @@ void setChannel(uint8_t ch)
 
 void loadParams(void)
 {
-	preamp = eeprom_read_byte((void*)0);
-	bass = eeprom_read_byte((void*)1);
-	middle = eeprom_read_byte((void*)2);
-	treble = eeprom_read_byte((void*)3);
-	balance = eeprom_read_byte((void*)4);
-	volume = eeprom_read_byte((void*)5);
-	channel = eeprom_read_byte((void*)6);
-	gain[0] = eeprom_read_byte((void*)7);
-	gain[1] = eeprom_read_byte((void*)8);
-	gain[2] = eeprom_read_byte((void*)9);
-	gain[3] = eeprom_read_byte((void*)10);
-	spMode = eeprom_read_byte((void*)11);
+	preamp  = eeprom_read_byte(eepromPreamp);
+	bass    = eeprom_read_byte(eepromBass);
+	middle  = eeprom_read_byte(eepromMiddle);
+	treble  = eeprom_read_byte(eepromTreble);
+	balance = eeprom_read_byte(eepromBalance);
+	volume  = eeprom_read_byte(eepromVolume);
+	channel = eeprom_read_byte(eepromChannel);
+	gain[0] = eeprom_read_byte(eepromGain0);
+	gain[1] = eeprom_read_byte(eepromGain1);
+	gain[2] = eeprom_read_byte(eepromGain2);
+	gain[3] = eeprom_read_byte(eepromGain3);
+	spMode  = eeprom_read_byte(eepromSpMode);
 
 	setChannel(channel);
 	setPreamp(preamp);
@@ -93,18 +93,18 @@ void loadParams(void)
 
 void saveParams(void)
 {
-	eeprom_write_byte((void*)0, preamp);
-	eeprom_write_byte((void*)1, bass);
-	eeprom_write_byte((void*)2, middle);
-	eeprom_write_byte((void*)3, treble);
-	eeprom_write_byte((void*)4, balance);
-	eeprom_write_byte((void*)5, volume);
-	eeprom_write_byte((void*)6, channel);
-	eeprom_write_byte((void*)7, gain[0]);
-	eeprom_write_byte((void*)8, gain[1]);
-	eeprom_write_byte((void*)9, gain[2]);
-	eeprom_write_byte((void*)10, gain[3]);
-	eeprom_write_byte((void*)11, spMode);
+	eeprom_write_byte(eepromPreamp, preamp);
+	eeprom_write_byte(eepromBass, bass);
+	eeprom_write_byte(eepromMiddle, middle);
+	eeprom_write_byte(eepromTreble, treble);
+	eeprom_write_byte(eepromBalance, balance);
+	eeprom_write_byte(eepromVolume, volume);
+	eeprom_write_byte(eepromChannel, channel);
+	eeprom_write_byte(eepromGain0, gain[0]);
+	eeprom_write_byte(eepromGain1, gain[1]);
+	eeprom_write_byte(eepromGain2, gain[2]);
+	eeprom_write_byte(eepromGain3, gain[3]);
+	eeprom_write_byte(eepromSpMode, spMode);
 }
 
 void editSpMode()

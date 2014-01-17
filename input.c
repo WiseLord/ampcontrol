@@ -1,7 +1,9 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
+#include <avr/eeprom.h>
 
 #include "input.h"
+#include "eeprom.h"
 
 volatile uint8_t cmdBuf = CMD_NOCMD;	/* Command buffer, cleared when read */
 volatile uint8_t encCnt = 0;			/* Counter for encoder */
@@ -11,6 +13,8 @@ volatile uint16_t rc5Timer = 0;
 volatile uint16_t rc5Cmd; /**/
 const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
 uint8_t rc5Cnt;
+
+uint8_t rc5DeviceAddr;
 
 volatile uint16_t displayTime;
 
@@ -40,6 +44,9 @@ void rc5Init()
 	TCCR1A = 0;				/* Reset Timer1 counter */
 	TCCR1B = (1<<CS11);		/* Set Timer1 prescaler to 8 (2MHz) */
 	GICR |= (1<<INT1);		/* Enable INT1 interrupt */
+
+	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
+
 
 	rc5Reset();
 }
@@ -85,7 +92,7 @@ ISR(INT1_vect)
 
 	if (rc5Cnt == 0 && (state == STATE_START1 || state == STATE_MID0)) {
 		/* If RC5 address is correct, send command to IR RC buffer */
-		if ((rc5Cmd & RC5_ADDR_MASK) == RC5_ADDR) {
+		if ((rc5Cmd & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr) {
 			if (rc5Cmd & RC5_TOGB_MASK)
 				togBitNow = 1;
 			else

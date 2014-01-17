@@ -20,8 +20,7 @@
 #define RC5_ADDR_MASK	0x07C0
 #define RC5_COMM_MASK	0x003F
 
-#define RC5_ADDR		0x640
-
+//#define RC5_ADDR		0x640
 
 /* Buttons definitions */
 #define BTN_DDR			DDRD
