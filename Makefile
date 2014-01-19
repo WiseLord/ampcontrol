@@ -29,10 +29,10 @@ clean:
 	rm -f $(TARG).elf $(TARG).bin $(TARG).hex $(OBJS) *.map
 
 flash: $(TARG)
-	$(AVRDUDE) -Vq -p m16 -B 1.1 -U flash:w:$(TARG).hex:i
+	$(AVRDUDE) -V -p m16 -B 1.1 -U flash:w:$(TARG).hex:i
 
 fuse:
 	$(AVRDUDE) -p m16 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
 
 eeprom:
-	$(AVRDUDE) -p m16 -U eeprom:w:eeprom.bin:r
+	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom.bin:r

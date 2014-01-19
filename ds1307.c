@@ -131,8 +131,8 @@ void showTime(uint8_t inv)
 	gdWriteString(mkNumString(2000 + year, 4, '0'));
 
 	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(19, 7);
-	gdWriteStringEeprom(weekdayLabel + 16 * (weekday % 7));
+	gdSetXY(32, 7);
+	gdWriteStringEeprom(mondayLabel + 16 * (weekday % 7));
 
 	return;
 }

@@ -7,6 +7,19 @@
 #include "i2c.h"
 #include "eeprom.h"
 
+regParam *params[10] = {
+	&volume,
+	&bass,
+	&middle,
+	&treble,
+	&preamp,
+	&balance,
+	&gain[0],
+	&gain[1],
+	&gain[2],
+	&gain[3],
+};
+
 void setPreamp(int8_t val)
 {
 	I2CWrite(TDA7439_ADDR, FUNC_PREAMP, -val);
@@ -17,212 +30,147 @@ void setVolume(int8_t val)
 	int8_t spLeft = val;
 	int8_t spRight = val;
 
-	if (balance > 0) {
-		spLeft -= balance;
-		if (spLeft < VOL_MIN)
-			spLeft = VOL_MIN;
+	if (balance.value > 0) {
+		spLeft -= balance.value;
+		if (spLeft < volume.min)
+			spLeft = volume.min;
 	} else {
-		spRight += balance;
-		if (spRight < VOL_MIN)
-			spRight = VOL_MIN;
+		spRight += balance.value;
+		if (spRight < volume.min)
+			spRight = volume.min;
 	}
 
 	I2CWrite(TDA7439_ADDR, FUNC_VOLUME_LEFT, -spLeft);
 	I2CWrite(TDA7439_ADDR, FUNC_VOLUME_RIGHT, -spRight);
 }
 
-void setBMT(int8_t address, int8_t val)
+int8_t setBMT(int8_t val)
 {
-	val = val >> 1;
 	if (val > 0)
-		val = 15 - val;
-	else
-		val = 7 + val;
-	I2CWrite(TDA7439_ADDR, address, val);
+		return 15 - val;
+	return 7 + val;
 }
 
-void setGain(uint8_t ch, int8_t val)
+void setBass(int8_t val)
 {
-	val = val >> 1;
+	I2CWrite(TDA7439_ADDR, FUNC_BASS, setBMT(val));
+}
+
+void setMiddle(int8_t val)
+{
+	I2CWrite(TDA7439_ADDR, FUNC_MIDDLE, setBMT(val));
+}
+
+void setTreble(int8_t val)
+{
+	I2CWrite(TDA7439_ADDR, FUNC_TREBLE, setBMT(val));
+}
+
+void setGain(int8_t val)
+{
 	I2CWrite(TDA7439_ADDR, FUNC_INPUT_GAIN, val);
 }
 
-void muteVolume()
+void setChan(uint8_t ch)
 {
-	setVolume(VOL_MIN);
-}
-
-void unmuteVolume()
-{
-	setVolume(volume);
-//	int8_t i;
-//	for (i = VOL_MIN; i <= volume; i++) {
-//		setVolume(i);
-//		_delay_ms(20);
-//	}
-}
-
-void setChannel(uint8_t ch)
-{
-	setGain(ch, gain[ch]);
+	setGain(gain[ch].value);
 	I2CWrite(TDA7439_ADDR, FUNC_INPUT_SELECT, 3 - ch);
-	channel = ch;
+	chan = ch;
+}
+
+void setBalance(int8_t val)
+{
+	setVolume(volume.value);
+}
+
+void muteVolume(void) {
+	setVolume(volume.min);
+}
+
+void unmuteVolume(void) {
+	setVolume(volume.value);
 }
 
 void loadParams(void)
 {
-	preamp  = eeprom_read_byte(eepromPreamp);
-	bass    = eeprom_read_byte(eepromBass);
-	middle  = eeprom_read_byte(eepromMiddle);
-	treble  = eeprom_read_byte(eepromTreble);
-	balance = eeprom_read_byte(eepromBalance);
-	volume  = eeprom_read_byte(eepromVolume);
-	channel = eeprom_read_byte(eepromChannel);
-	gain[0] = eeprom_read_byte(eepromGain0);
-	gain[1] = eeprom_read_byte(eepromGain1);
-	gain[2] = eeprom_read_byte(eepromGain2);
-	gain[3] = eeprom_read_byte(eepromGain3);
-	spMode  = eeprom_read_byte(eepromSpMode);
+	uint8_t i;
 
-	setChannel(channel);
-	setPreamp(preamp);
-	setBMT(FUNC_BASS, bass);
-	setBMT(FUNC_MIDDLE, middle);
-	setBMT(FUNC_TREBLE, treble);
+	for (i = 0; i < 10; i++) {
+		params[i]->value = eeprom_read_byte(eepromVolume + i);
+		params[i]->label = volumeLabel + 16 * i;
+		params[i]->min = eeprom_read_byte(eepromMinimums + i);
+		params[i]->max = eeprom_read_byte(eepromMaximums + i);
+		params[i]->step = eeprom_read_byte(eepromSteps + i);
+	}
+
+	chan = eeprom_read_byte(eepromChannel);
+
+	volume.set = setVolume;
+	bass.set = setBass;
+	middle.set = setMiddle;
+	treble.set = setTreble;
+	balance.set = setBalance;
+	preamp.set = setPreamp;
+
+	for (i = 0; i < 4; i++) {
+		gain[i].set = setGain;
+	}
+
+	setChan(chan);
+	setPreamp(preamp.value);
+	setBass(bass.value);
+	setMiddle(middle.value);
+	setTreble(treble.value);
 }
 
 void saveParams(void)
 {
-	eeprom_write_byte(eepromPreamp, preamp);
-	eeprom_write_byte(eepromBass, bass);
-	eeprom_write_byte(eepromMiddle, middle);
-	eeprom_write_byte(eepromTreble, treble);
-	eeprom_write_byte(eepromBalance, balance);
-	eeprom_write_byte(eepromVolume, volume);
-	eeprom_write_byte(eepromChannel, channel);
-	eeprom_write_byte(eepromGain0, gain[0]);
-	eeprom_write_byte(eepromGain1, gain[1]);
-	eeprom_write_byte(eepromGain2, gain[2]);
-	eeprom_write_byte(eepromGain3, gain[3]);
-	eeprom_write_byte(eepromSpMode, spMode);
+	uint8_t i;
+
+	for (i = 0; i < 10; i++) {
+		eeprom_write_byte(eepromVolume + i, params[i]->value);
+	}
 }
 
-void editSpMode()
+void incParam(regParam *param)
 {
-	if (spMode == MODE_STEREO)
-		spMode = MODE_MIXED;
-	else
-		spMode = MODE_STEREO;
+	param->value++;
+	if (param->value > param->max)
+		param->value = param->max;
+	param->set(param->value);
 }
 
-void incPreamp(void)
+void decParam(regParam *param)
 {
-	preamp++;
-	if (preamp > AMP_MAX)
-		preamp = AMP_MAX;
-	setPreamp(preamp);
+	param->value--;
+	if (param->value < param->min)
+		param->value = param->min;
+	param->set(param->value);
 }
 
-void decPreamp(void)
+void nextChan(void)
 {
-	preamp--;
-	if (preamp < AMP_MIN)
-		preamp = AMP_MIN;
-	setPreamp(preamp);
+	chan++;
+	if (chan >= 4)
+		chan = 0;
+	setChan(chan);
 }
 
-void incVolume(void)
-{
-	volume++;
-	if (volume > VOL_MAX)
-		volume = VOL_MAX;
-	setVolume(volume);
-}
-
-void decVolume(void)
-{
-	volume--;
-	if (volume < VOL_MIN)
-		volume = VOL_MIN;
-	setVolume(volume);
-}
-
-void incBMT(int8_t *par)
-{
-	*par += 2;
-	if (*par > BMT_MAX)
-		*par = BMT_MAX;
-	if (par == &bass)
-		setBMT(FUNC_BASS, *par);
-	else if (par == &middle)
-		setBMT(FUNC_MIDDLE, *par);
-	else if (par == &treble)
-		setBMT(FUNC_TREBLE, *par);
-}
-
-void decBMT(int8_t *par)
-{
-	*par -= 2;
-	if (*par < BMT_MIN)
-		*par = BMT_MIN;
-	if (par == &bass)
-		setBMT(FUNC_BASS, *par);
-	else if (par == &middle)
-		setBMT(FUNC_MIDDLE, *par);
-	else if (par == &treble)
-		setBMT(FUNC_TREBLE, *par);
-}
-
-void incChannel(void)
-{
-	channel++;
-	if (channel >= 4)
-		channel = 0;
-	setChannel(channel);
-}
-
-void incGain(uint8_t chan)
-{
-	gain[chan] += 2;
-	if (gain[chan] > GAIN_MAX)
-			gain[chan] = GAIN_MAX;
-	setGain(chan, gain[chan]);
-}
-
-void decGain(uint8_t chan)
-{
-	gain[chan] -= 2;
-	if (gain[chan] < GAIN_MIN)
-			gain[chan] = GAIN_MIN;
-	setGain(chan, gain[chan]);
-}
-
-void incBalance(void) {
-	balance++;
-	if (balance > BAL_MAX)
-		balance = BAL_MAX;
-	setVolume(volume);
-}
-
-void decBalance(void) {
-	balance--;
-	if (balance < BAL_MIN)
-		balance = BAL_MIN;
-	setVolume(volume);
-}
-
-void showParLabel(int8_t *par, const uint8_t *parLabel)
+void showParLabel(const uint8_t *parLabel)
 {
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
 	gdWriteStringEeprom(parLabel);
-	gdSetXY(118, 0);
-	gdWriteString(mkNumString(channel + 1, 1, ' '));
-	gdSetXY(93, 4);
-	gdWriteString(mkNumString(*par, 3, ' '));
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(116, 7);
 	gdWriteStringEeprom(dbLabel);
+}
+
+void showParValue(int8_t value)
+{
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(93, 4);
+	gdWriteString(mkNumString(value, 3, ' '));
 }
 
 void showBar(uint8_t length, int8_t from, int8_t to)
@@ -245,48 +193,24 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 	}
 }
 
-void showPreamp(uint8_t *parLabel)
+void showParam(regParam *param)
 {
-	int8_t r;
-	r = 2 * preamp + 93;
-	showBar(94, 0, r);
-	showParLabel(&preamp, parLabel);
-}
-
-void showBMT(int8_t *par, uint8_t *parLabel)
-{
-	int8_t l = 42, r = 42;
-	if (*par > 0)
-		r += *par * 3;
-	else
-		l += *par * 3;
-	showParLabel(par, parLabel);
-	showBar(86, l, r);
-}
-
-void showBalance(uint8_t *parLabel)
-{
-	int8_t l = 42, r = 42;
-	if (balance > 0)
-		r += balance * 2;
-	else
-		l += balance * 2;
-	showParLabel(&balance, parLabel);
-	showBar(86, l, r);
-}
-
-void showVolume(uint8_t *parLabel)
-{
-	int8_t r;
-	r = volume + 78;
-	showBar(79, 0, r);
-	showParLabel(&volume, parLabel);
-}
-
-void showGain(uint8_t chan, uint8_t *parLabel)
-{
-	int8_t r;
-	r = 3 * gain[chan] - 1;
-	showBar(90, 0, r);
-	showParLabel(gain + chan, parLabel);
+	int8_t l, r, m;
+	m = 94 / (param->max - param->min);
+	if (param->min < 0 && param->max > 0) {
+		l = 42;
+		r = 42;
+		if (param->value > 0) {
+			r += m * param->value;
+		} else {
+			l += m * param->value;
+		}
+		showBar(86, l, r);
+	} else {
+		l = 0;
+		r = m * (param->value - param->min) - 1;
+		showBar(m * (param->max - param->min), l, r);
+	}
+	showParValue(param->value * param->step);
+	showParLabel(param->label);
 }

@@ -1,6 +1,7 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 
 #include "eeprom.h"
 #include "ks0108.h"
@@ -10,6 +11,30 @@
 #include "i2c.h"
 #include "param.h"
 #include "ds1307.h"
+
+typedef enum {
+	DISPLAY_SPECTRUM,
+	DISPLAY_VOLUME,
+	DISPLAY_BASS,
+	DISPLAY_MIDDLE,
+	DISPLAY_TREBLE,
+	DISPLAY_PREAMP,
+	DISPLAY_GAIN,
+	DISPLAY_BALANCE,
+	DISPLAY_TIME,
+	DISPLAY_EDIT_TIME
+} displayMode;
+
+uint8_t spMode;
+
+void switchSpMode()
+{
+	if (spMode == MODE_STEREO)
+		spMode = MODE_MIXED;
+	else
+		spMode = MODE_STEREO;
+	return;
+}
 
 void hwInit(void)	/* Hardware initialization */
 {
@@ -38,6 +63,11 @@ int main(void)
 	displayMode mode = DISPLAY_TIME;
 	uint8_t stdby = 1;
 
+	spMode  = eeprom_read_byte(eepromSpMode);
+
+	regParam *curParam = &volume;
+
+	loadParams();
 	muteVolume();
 	uint8_t mute = 1;
 
@@ -55,26 +85,31 @@ int main(void)
 					if (mode != DISPLAY_BASS)
 						gdFill(0x00);
 					mode = DISPLAY_BASS;
+					curParam = &bass;
 					break;
 				case DISPLAY_BASS:
 					if (mode != DISPLAY_MIDDLE)
 						gdFill(0x00);
 					mode = DISPLAY_MIDDLE;
+					curParam = &middle;
 					break;
 				case DISPLAY_MIDDLE:
 					if (mode != DISPLAY_TREBLE)
 						gdFill(0x00);
 					mode = DISPLAY_TREBLE;
+					curParam = &treble;
 					break;
 				case DISPLAY_TREBLE:
 					if (mode != DISPLAY_PREAMP)
 						gdFill(0x00);
 					mode = DISPLAY_PREAMP;
+					curParam = &preamp;
 					break;
 				case DISPLAY_PREAMP:
 					if (mode != DISPLAY_BALANCE)
 						gdFill(0x00);
 					mode = DISPLAY_BALANCE;
+					curParam = &balance;
 					break;
 				case DISPLAY_BALANCE:
 				case DISPLAY_SPECTRUM:
@@ -83,6 +118,7 @@ int main(void)
 					if (mode != DISPLAY_VOLUME)
 						gdFill(0x00);
 					mode = DISPLAY_VOLUME;
+					curParam = &volume;
 					break;
 				default:
 					break;
@@ -96,6 +132,7 @@ int main(void)
 				case DISPLAY_TIME:
 					gdFill(0x00);
 					mode = DISPLAY_VOLUME;
+					curParam = &volume;
 					break;
 				default:
 					break;
@@ -120,6 +157,7 @@ int main(void)
 				if (mode != DISPLAY_GAIN)
 					gdFill(0x00);
 				mode = DISPLAY_GAIN;
+				curParam = &gain[chan];
 				break;
 			case CMD_STBY:
 				SMF_DDR &= ~MUTE;
@@ -134,6 +172,7 @@ int main(void)
 				muteVolume();
 				mute = 1;
 				saveParams();
+				eeprom_write_byte(eepromSpMode, spMode);
 			default:
 				break;
 			}
@@ -144,25 +183,13 @@ int main(void)
 				for (i = 0; i < cmdCnt; i++)
 					switch (mode) {
 					case DISPLAY_VOLUME:
-						incVolume();
-						break;
 					case DISPLAY_BASS:
-						incBMT(&bass);
-						break;
 					case DISPLAY_MIDDLE:
-						incBMT(&middle);
-						break;
 					case DISPLAY_TREBLE:
-						incBMT(&treble);
-						break;
 					case DISPLAY_PREAMP:
-						incPreamp();
-						break;
-					case DISPLAY_GAIN:
-						incGain(channel);
-						break;
 					case DISPLAY_BALANCE:
-						incBalance();
+					case DISPLAY_GAIN:
+						incParam(curParam);
 						break;
 					case DISPLAY_EDIT_TIME:
 						setDisplayTime(30000);
@@ -176,25 +203,13 @@ int main(void)
 				for (i = 0; i < cmdCnt; i++)
 					switch (mode) {
 					case DISPLAY_VOLUME:
-						decVolume();
-						break;
 					case DISPLAY_BASS:
-						decBMT(&bass);
-						break;
 					case DISPLAY_MIDDLE:
-						decBMT(&middle);
-						break;
 					case DISPLAY_TREBLE:
-						decBMT(&treble);
-						break;
 					case DISPLAY_PREAMP:
-						decPreamp();
-						break;
-					case DISPLAY_GAIN:
-						decGain(channel);
-						break;
 					case DISPLAY_BALANCE:
-						decBalance();
+					case DISPLAY_GAIN:
+						decParam(curParam);
 						break;
 					case DISPLAY_EDIT_TIME:
 						setDisplayTime(30000);
@@ -218,8 +233,9 @@ int main(void)
 				if (mode != DISPLAY_GAIN)
 					gdFill(0x00);
 				else
-					incChannel();
+					nextChan();
 				mode = DISPLAY_GAIN;
+				curParam = &gain[chan];
 				break;
 			case CMD_STORE:
 				setDisplayTime(30000);
@@ -229,21 +245,22 @@ int main(void)
 				editTime();
 				break;
 			case CMD_RED:
-				setChannel(0);
+				setChan(0);
 				break;
 			case CMD_GREEN:
-				setChannel(1);
+				setChan(1);
 				break;
 			case CMD_YELLOW:
-				setChannel(2);
+				setChan(2);
 				break;
 			case CMD_BLUE:
-				setChannel(3);
+				setChan(3);
 				break;
 			case CMD_DESCR:
 				setDisplayTime(100);
-				editSpMode();
+				switchSpMode();
 				saveParams();
+				eeprom_write_byte(eepromSpMode, spMode);
 				break;
 			default:
 				break;
@@ -252,25 +269,13 @@ int main(void)
 			/* Show result */
 			switch (mode) {
 			case DISPLAY_VOLUME:
-				showVolume(volumeLabel);
-				break;
 			case DISPLAY_BASS:
-				showBMT(&bass, bassLabel);
-				break;
 			case DISPLAY_MIDDLE:
-				showBMT(&middle, middleLabel);
-				break;
 			case DISPLAY_TREBLE:
-				showBMT(&treble, trebleLabel);
-				break;
 			case DISPLAY_PREAMP:
-				showPreamp(preampLabel);
-				break;
-			case DISPLAY_GAIN:
-				showGain(channel, gainLabel);
-				break;
 			case DISPLAY_BALANCE:
-				showBalance(balanceLabel);
+			case DISPLAY_GAIN:
+				showParam(curParam);
 				break;
 			case DISPLAY_TIME:
 			case DISPLAY_EDIT_TIME:
@@ -285,6 +290,7 @@ int main(void)
 				{
 					mode = DISPLAY_SPECTRUM;
 					saveParams();
+					eeprom_write_byte(eepromSpMode, spMode);
 					etm = EDIT_NOEDIT;
 				}
 				buf = getData();
@@ -301,7 +307,6 @@ int main(void)
 					SMF_PORT |= MUTE;
 					SMF_PORT |= FAN;
 					GD_BACKLIGHT_PORT |= GD_BCKL;
-					loadParams();
 					unmuteVolume();
 					mute = 0;
 					break;
