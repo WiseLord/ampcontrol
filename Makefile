@@ -34,5 +34,8 @@ flash: $(TARG)
 fuse:
 	$(AVRDUDE) -p m16 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
 
-eeprom:
-	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom.bin:r
+eeprom_tda7439:
+	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom_tda7439.bin:r
+
+eeprom_tda7313:
+	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom_tda7313.bin:r

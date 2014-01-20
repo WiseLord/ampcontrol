@@ -88,10 +88,20 @@ int main(void)
 					curParam = &bass;
 					break;
 				case DISPLAY_BASS:
-					if (mode != DISPLAY_MIDDLE)
-						gdFill(0x00);
-					mode = DISPLAY_MIDDLE;
-					curParam = &middle;
+					switch (tdaIC) {
+					case TDA7313_IC:
+						if (mode != DISPLAY_TREBLE)
+							gdFill(0x00);
+						mode = DISPLAY_TREBLE;
+						curParam = &treble;
+						break;
+					default:
+						if (mode != DISPLAY_MIDDLE)
+							gdFill(0x00);
+						mode = DISPLAY_MIDDLE;
+						curParam = &middle;
+						break;
+					}
 					break;
 				case DISPLAY_MIDDLE:
 					if (mode != DISPLAY_TREBLE)
@@ -157,7 +167,6 @@ int main(void)
 				if (mode != DISPLAY_GAIN)
 					gdFill(0x00);
 				mode = DISPLAY_GAIN;
-				curParam = &gain[chan];
 				break;
 			case CMD_STBY:
 				SMF_DDR &= ~MUTE;
@@ -228,6 +237,11 @@ int main(void)
 					mute = 1;
 				}
 				break;
+			case CMD_PP:
+				if (tdaIC == TDA7313_IC) {
+					switchLoudness();
+				}
+				break;
 			case CMD_SEARCH:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
@@ -246,15 +260,21 @@ int main(void)
 				break;
 			case CMD_RED:
 				setChan(0);
+				curParam = &gain[chan];
 				break;
 			case CMD_GREEN:
 				setChan(1);
+				curParam = &gain[chan];
 				break;
 			case CMD_YELLOW:
 				setChan(2);
+				curParam = &gain[chan];
 				break;
 			case CMD_BLUE:
-				setChan(3);
+				if (tdaIC != TDA7313_IC) {
+					setChan(3);
+					curParam = &gain[chan];
+				}
 				break;
 			case CMD_DESCR:
 				setDisplayTime(100);

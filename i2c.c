@@ -81,3 +81,14 @@ uint8_t I2CRead(uint8_t device, uint8_t address, uint8_t *data)
 	I2CStop();
 	return 0;
 }
+
+uint8_t I2CWrComm(uint8_t device, uint8_t command)
+{
+	I2CStart();
+	if (I2CWriteByte(device))
+		return 1;
+	if (I2CWriteByte(command))
+		return 1;
+	I2CStop();
+	return 0;
+}

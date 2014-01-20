@@ -203,51 +203,51 @@ ISR (TIMER2_COMP_vect) {
 		btnPrev = btnNow;
 	} else {
 		if (btnCnt > LONG_PRESS) {
-			// Place "long" command to buffer
+			/* Place "long" command to buffer */
 			switch (btnPrev) {
-			case BTN_MENU:
-				cmdBuf = CMD_MENU;
-				break;
 			case BTN_STDBY:
-				cmdBuf = CMD_STBY;
+				cmdBuf = CMD_STBY; /* Standby */
+				break;
+			case BTN_MENU:
+				cmdBuf = CMD_DESCR; /* Spectrum mode common/separate */
 				break;
 			case BTN_MUTE:
-				cmdBuf = CMD_DESCR;
+				cmdBuf = CMD_PP; /* Loudness */
 				break;
 			case BTN_TIME:
-				cmdBuf = CMD_STORE;
+				cmdBuf = CMD_STORE; /* Edit time */
 				break;
 			case BTN_INPUT:
-				cmdBuf = CMD_SEARCH;
+				cmdBuf = CMD_SEARCH; /* Switch input */
 				break;
 			default:
 				break;
 			}
 		} else {
 			if (btnCnt > SHORT_PRESS) {
-				// Place "short" command to buffer
+				/* Place "short" command to buffer */
 				switch (btnPrev) {
-				case BTN_MENU:
-					cmdBuf = CMD_MENU;
-					break;
 				case BTN_STDBY:
-					cmdBuf = CMD_STBY;
+					cmdBuf = CMD_STBY; /* Standby */
+					break;
+				case BTN_MENU:
+					cmdBuf = CMD_MENU; /* Menu */
 					break;
 				case BTN_MUTE:
-					cmdBuf = CMD_MUTE;
+					cmdBuf = CMD_MUTE; /* Mute */
 					break;
 				case BTN_TIME:
-					cmdBuf = CMD_TIME;
+					cmdBuf = CMD_TIME; /* Show time */
 					break;
 				case BTN_INPUT:
-					cmdBuf = CMD_SEARCH;
+					cmdBuf = CMD_SEARCH; /* Switch input */
 					break;
 				default:
 					break;
 				}
 			}
 		}
-		// Clear button counter
+		/* Clear button counter */
 		btnCnt = 0;
 	}
 

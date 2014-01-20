@@ -17,6 +17,9 @@
 #define eepromRC5Addr	((void*)0x10)
 #define eepromChannel	((void*)0x11)
 #define eepromSpMode	((void*)0x12)
+#define eepromLoudness	((void*)0x13)
+#define eepromChanCnt	((void*)0x14)
+#define eepromICSelect	((void*)0x15)
 
 /* Parameters min/max/step values */
 
@@ -30,8 +33,8 @@
 #define bassLabel		((uint8_t*)0x080)
 #define middleLabel		((uint8_t*)0x090)
 #define trebleLabel		((uint8_t*)0x0A0)
-#define balanceLabel	((uint8_t*)0x0B0)
-#define preampLabel		((uint8_t*)0x0C0)
+#define preampLabel		((uint8_t*)0x0B0)
+#define balanceLabel	((uint8_t*)0x0C0)
 #define gainLabel0		((uint8_t*)0x0D0)
 #define gainLabel1		((uint8_t*)0x0E0)
 #define gainLabel2		((uint8_t*)0x0F0)

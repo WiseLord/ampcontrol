@@ -15,4 +15,6 @@ uint8_t I2CReadByte(uint8_t *data, uint8_t ack);
 uint8_t I2CWrite(uint8_t device, uint8_t address, uint8_t data);
 uint8_t I2CRead(uint8_t device, uint8_t address, uint8_t *data);
 
+uint8_t I2CWrComm(uint8_t device, uint8_t command);
+
 #endif /* I2C_H */

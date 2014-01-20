@@ -20,28 +20,63 @@ regParam *params[10] = {
 	&gain[3],
 };
 
-void setPreamp(int8_t val)
-{
-	I2CWrite(TDA7439_ADDR, FUNC_PREAMP, -val);
-}
-
 void setVolume(int8_t val)
 {
-	int8_t spLeft = val;
-	int8_t spRight = val;
+	int8_t spFrontLeft = 0;
+	int8_t spFrontRight = 0;
+	int8_t spRearLeft = 0;
+	int8_t spRearRight = 0;
 
-	if (balance.value > 0) {
-		spLeft -= balance.value;
-		if (spLeft < volume.min)
-			spLeft = volume.min;
-	} else {
-		spRight += balance.value;
-		if (spRight < volume.min)
-			spRight = volume.min;
+	switch (tdaIC) {
+	case TDA7313_IC:
+		I2CWrComm(TDA7313_ADDR, TDA7313_VOLUME | -val);
+		if (balance.value > 0) {
+			spFrontRight -= balance.value;
+			spRearRight -= balance.value;
+		} else {
+			spFrontLeft += balance.value;
+			spRearLeft += balance.value;
+		}
+		if (preamp.value > 0) {
+			spRearLeft -= preamp.value;
+			spRearRight -= preamp.value;
+		} else {
+			spFrontLeft += preamp.value;
+			spFrontRight += preamp.value;
+		}
+		I2CWrComm(TDA7313_ADDR, TDA7313_SP_FRONT_LEFT | -spFrontLeft);
+		I2CWrComm(TDA7313_ADDR, TDA7313_SP_FRONT_RIGHT | -spFrontRight);
+		I2CWrComm(TDA7313_ADDR, TDA7313_SP_REAR_LEFT | -spRearLeft);
+		I2CWrComm(TDA7313_ADDR, TDA7313_SP_REAR_RIGHT | -spRearRight);
+		break;
+	default:
+		spFrontLeft = val;
+		spFrontRight = val;
+		if (balance.value > 0) {
+			spFrontLeft -= balance.value;
+			if (spFrontLeft < volume.min)
+				spFrontLeft = volume.min;
+		} else {
+			spFrontRight += balance.value;
+			if (spFrontRight < volume.min)
+				spFrontRight = volume.min;
+		}
+		I2CWrite(TDA7439_ADDR, TDA7439_VOLUME_LEFT, -spFrontLeft);
+		I2CWrite(TDA7439_ADDR, TDA7439_VOLUME_RIGHT, -spFrontRight);
+		break;
 	}
+}
 
-	I2CWrite(TDA7439_ADDR, FUNC_VOLUME_LEFT, -spLeft);
-	I2CWrite(TDA7439_ADDR, FUNC_VOLUME_RIGHT, -spRight);
+void setPreamp(int8_t val) /* For TDA7313 used as balance front/rear */
+{
+	switch (tdaIC) {
+	case TDA7313_IC:
+		setVolume(volume.value);
+		break;
+	default:
+		I2CWrite(TDA7439_ADDR, TDA7439_PREAMP, -val);
+		break;
+	}
 }
 
 int8_t setBMT(int8_t val)
@@ -53,29 +88,68 @@ int8_t setBMT(int8_t val)
 
 void setBass(int8_t val)
 {
-	I2CWrite(TDA7439_ADDR, FUNC_BASS, setBMT(val));
+	switch (tdaIC) {
+	case TDA7313_IC:
+		I2CWrComm(TDA7313_ADDR, TDA7313_BASS | setBMT(val));
+		break;
+	default:
+		I2CWrite(TDA7439_ADDR, TDA7439_BASS, setBMT(val));
+		break;
+	}
 }
 
 void setMiddle(int8_t val)
 {
-	I2CWrite(TDA7439_ADDR, FUNC_MIDDLE, setBMT(val));
+	switch (tdaIC) {
+	case TDA7313_IC:
+		break;
+	default:
+		I2CWrite(TDA7439_ADDR, TDA7439_MIDDLE, setBMT(val));
+		break;
+	}
 }
 
 void setTreble(int8_t val)
 {
-	I2CWrite(TDA7439_ADDR, FUNC_TREBLE, setBMT(val));
+	switch (tdaIC) {
+	case TDA7313_IC:
+		I2CWrComm(TDA7313_ADDR, TDA7313_TREBLE | setBMT(val));
+		break;
+	default:
+		I2CWrite(TDA7439_ADDR, TDA7439_TREBLE, setBMT(val));
+		break;
+	}
+}
+
+void setSwitch(int8_t gain)
+{
+	I2CWrComm(TDA7313_ADDR, TDA7313_SW | (3 - gain) << 3 | loud << 2 | chan);
 }
 
 void setGain(int8_t val)
 {
-	I2CWrite(TDA7439_ADDR, FUNC_INPUT_GAIN, val);
+	switch (tdaIC) {
+	case TDA7313_IC:
+		setSwitch(val);
+		break;
+	default:
+		I2CWrite(TDA7439_ADDR, TDA7439_INPUT_GAIN, val);
+		break;
+	}
 }
 
 void setChan(uint8_t ch)
 {
-	setGain(gain[ch].value);
-	I2CWrite(TDA7439_ADDR, FUNC_INPUT_SELECT, 3 - ch);
 	chan = ch;
+	setGain(gain[ch].value);
+	switch (tdaIC) {
+	case TDA7313_IC:
+		setSwitch(gain[chan].value);
+		break;
+	default:
+		I2CWrite(TDA7439_ADDR, TDA7439_INPUT_SELECT, chanCnt - ch);
+		break;
+	}
 }
 
 void setBalance(int8_t val)
@@ -83,12 +157,23 @@ void setBalance(int8_t val)
 	setVolume(volume.value);
 }
 
-void muteVolume(void) {
+void muteVolume(void)
+{
 	setVolume(volume.min);
 }
 
-void unmuteVolume(void) {
+void unmuteVolume(void)
+{
 	setVolume(volume.value);
+}
+
+void switchLoudness(void)
+{
+	if (loud == 0)
+		loud = 1;
+	else
+		loud = 0;
+	setSwitch(gain[chan].value);
 }
 
 void loadParams(void)
@@ -104,6 +189,9 @@ void loadParams(void)
 	}
 
 	chan = eeprom_read_byte(eepromChannel);
+	loud = eeprom_read_byte(eepromLoudness);
+	chanCnt = eeprom_read_byte(eepromChanCnt);
+	tdaIC = eeprom_read_byte(eepromICSelect);
 
 	volume.set = setVolume;
 	bass.set = setBass;
@@ -130,6 +218,9 @@ void saveParams(void)
 	for (i = 0; i < 10; i++) {
 		eeprom_write_byte(eepromVolume + i, params[i]->value);
 	}
+	eeprom_write_byte(eepromChannel, chan);
+	eeprom_write_byte(eepromLoudness, loud);
+	eeprom_write_byte(eepromChanCnt, chanCnt);
 }
 
 void incParam(regParam *param)
@@ -151,7 +242,7 @@ void decParam(regParam *param)
 void nextChan(void)
 {
 	chan++;
-	if (chan >= 4)
+	if (chan >= chanCnt)
 		chan = 0;
 	setChan(chan);
 }
@@ -196,6 +287,22 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 void showParam(regParam *param)
 {
 	int8_t l, r, m;
+
+	double mult = 1;
+
+	if (param->label == volumeLabel
+	 || param->label == preampLabel
+	 || param->label == balanceLabel)
+	{
+		mult = 1.25;
+	}
+	if (param->label == gainLabel0
+	 || param->label == gainLabel1
+	 || param->label == gainLabel2
+	 || param->label == gainLabel3)
+	{
+		mult = 1.875;
+	}
 	m = 94 / (param->max - param->min);
 	if (param->min < 0 && param->max > 0) {
 		l = 42;
@@ -211,6 +318,6 @@ void showParam(regParam *param)
 		r = m * (param->value - param->min) - 1;
 		showBar(m * (param->max - param->min), l, r);
 	}
-	showParValue(param->value * param->step);
+	showParValue(param->value * param->step * mult);
 	showParLabel(param->label);
 }
