@@ -7,6 +7,7 @@
 
 #define TDA7439_IC				0x00
 #define TDA7313_IC				0x01
+#define TDA7318_IC				0x02
 
 #define TDA7439_ADDR			0b10001000
 #define TDA7313_ADDR			0b10001000

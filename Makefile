@@ -39,3 +39,6 @@ eeprom_tda7439:
 
 eeprom_tda7313:
 	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom_tda7313.bin:r
+
+eeprom_tda7318:
+	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom_tda7318.bin:r

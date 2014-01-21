@@ -91,6 +91,7 @@ int main(void)
 				case DISPLAY_BASS:
 					switch (tdaIC) {
 					case TDA7313_IC:
+					case TDA7318_IC:
 						if (mode != DISPLAY_TREBLE)
 							gdFill(0x00);
 						mode = DISPLAY_TREBLE;
@@ -279,7 +280,7 @@ int main(void)
 				curParam = &gain[chan];
 				break;
 			case CMD_BLUE:
-				if (tdaIC != TDA7313_IC) {
+				if (tdaIC == TDA7439_IC) {
 					setChan(3);
 					curParam = &gain[chan];
 				}

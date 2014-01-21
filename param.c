@@ -78,18 +78,20 @@ void showParam(regParam *param)
 
 	double mult = 1;
 
-	if (param->label == volumeLabel
-	 || param->label == preampLabel
-	 || param->label == balanceLabel)
-	{
-		mult = 1.25;
-	}
-	if (param->label == gainLabel0
-	 || param->label == gainLabel1
-	 || param->label == gainLabel2
-	 || param->label == gainLabel3)
-	{
-		mult = 1.875;
+	if (tdaIC == TDA7313_IC || tdaIC == TDA7318_IC) {
+		if (param->label == volumeLabel
+		 || param->label == preampLabel
+		 || param->label == balanceLabel)
+		{
+			mult = 1.25;
+		}
+		if (param->label == gainLabel0
+		 || param->label == gainLabel1
+		 || param->label == gainLabel2
+		 || param->label == gainLabel3)
+		{
+			mult = 1.875;
+		}
 	}
 	m = 94 / (param->max - param->min);
 	if (param->min < 0 && param->max > 0) {
@@ -119,6 +121,7 @@ void setVolume(int8_t val)
 
 	switch (tdaIC) {
 	case TDA7313_IC:
+	case TDA7318_IC:
 		I2CWrComm(TDA7313_ADDR, TDA7313_VOLUME | -val);
 		if (balance.value > 0) {
 			spFrontRight -= balance.value;
@@ -161,6 +164,7 @@ void setPreamp(int8_t val) /* For TDA7313 used as balance front/rear */
 {
 	switch (tdaIC) {
 	case TDA7313_IC:
+	case TDA7318_IC:
 		setVolume(volume.value);
 		break;
 	default:
@@ -180,6 +184,7 @@ void setBass(int8_t val)
 {
 	switch (tdaIC) {
 	case TDA7313_IC:
+	case TDA7318_IC:
 		I2CWrComm(TDA7313_ADDR, TDA7313_BASS | setBMT(val));
 		break;
 	default:
@@ -192,6 +197,7 @@ void setMiddle(int8_t val)
 {
 	switch (tdaIC) {
 	case TDA7313_IC:
+	case TDA7318_IC:
 		break;
 	default:
 		I2CWrite(TDA7439_ADDR, TDA7439_MIDDLE, setBMT(val));
@@ -203,6 +209,7 @@ void setTreble(int8_t val)
 {
 	switch (tdaIC) {
 	case TDA7313_IC:
+	case TDA7318_IC:
 		I2CWrComm(TDA7313_ADDR, TDA7313_TREBLE | setBMT(val));
 		break;
 	default:
@@ -220,6 +227,7 @@ void setGain(int8_t val)
 {
 	switch (tdaIC) {
 	case TDA7313_IC:
+	case TDA7318_IC:
 		setSwitch(val);
 		break;
 	default:
@@ -234,6 +242,7 @@ void setChan(uint8_t ch)
 	setGain(gain[ch].value);
 	switch (tdaIC) {
 	case TDA7313_IC:
+	case TDA7318_IC:
 		setSwitch(gain[chan].value);
 		break;
 	default:
