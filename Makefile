@@ -19,7 +19,7 @@ all: $(TARG)
 
 $(TARG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.elf  $(OBJS) -lm
-	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
+#	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
 
 %.o: %.c

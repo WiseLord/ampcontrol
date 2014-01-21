@@ -31,6 +31,12 @@
 #define TDA7313_BASS			0x60
 #define TDA7313_TREBLE			0x70
 
+#define MUTE_ON					1
+#define MUTE_OFF				0
+
+#define LOUDNESS_ON				0
+#define LOUDNESS_OFF			1
+
 typedef struct {
 	int8_t value;
 	int8_t min;
@@ -50,6 +56,7 @@ regParam gain[4];
 
 uint8_t chan;
 uint8_t loud;
+uint8_t mute;
 uint8_t chanCnt;
 
 uint8_t tdaIC;
@@ -66,8 +73,10 @@ void setChan(uint8_t ch);
 void muteVolume(void);
 void unmuteVolume(void);
 
+void switchMute(void);
 void switchLoudness(void);
 
+void showBoolParam(uint8_t value, const uint8_t *parLabel);
 void showParam(regParam *param);
 
 #endif /* PARAM_H */

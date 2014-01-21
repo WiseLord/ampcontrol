@@ -32,6 +32,7 @@
 #define volumeLabel		((uint8_t*)0x070)
 #define bassLabel		((uint8_t*)0x080)
 #define middleLabel		((uint8_t*)0x090)
+#define loudnessLabel	((uint8_t*)0x090)
 #define trebleLabel		((uint8_t*)0x0A0)
 #define preampLabel		((uint8_t*)0x0B0)
 #define balanceLabel	((uint8_t*)0x0C0)
@@ -39,6 +40,9 @@
 #define gainLabel1		((uint8_t*)0x0E0)
 #define gainLabel2		((uint8_t*)0x0F0)
 #define gainLabel3		((uint8_t*)0x100)
+#define muteLabel		((uint8_t*)0x110)
+#define onLabel			((uint8_t*)0x120)
+#define offLabel		((uint8_t*)0x130)
 
 #define dbLabel			((uint8_t*)0x170)
 #define mondayLabel		((uint8_t*)0x180)

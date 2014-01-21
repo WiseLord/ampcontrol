@@ -20,6 +20,96 @@ regParam *params[10] = {
 	&gain[3],
 };
 
+
+void showParLabel(const uint8_t *parLabel)
+{
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(0, 0);
+	gdWriteStringEeprom(parLabel);
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(116, 7);
+	gdWriteStringEeprom(dbLabel);
+}
+
+void showParValue(int8_t value)
+{
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(93, 4);
+	gdWriteString(mkNumString(value, 3, ' '));
+	gdLoadFont(font_ks0066_ru_08, 1);
+}
+
+void showBoolParam(uint8_t value, const uint8_t *parLabel)
+{
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(0, 0);
+	gdWriteStringEeprom(parLabel);
+	gdSetXY(0, 4);
+	if (value)
+		gdWriteStringEeprom(onLabel);
+	else
+		gdWriteStringEeprom(offLabel);
+	gdLoadFont(font_ks0066_ru_08, 1);
+}
+
+void showBar(uint8_t length, int8_t from, int8_t to)
+{
+	int8_t i, j;
+	uint8_t data;
+	for (j = 5; j <=6; j++) {
+		gdSetXY(0, j);
+		for (i = 0; i < length; i++) {
+			if (j == 5)
+				data = 0x80;
+			else
+				data = 0x01;
+			if (i >= from && i <= to)
+				data = 0xFF;
+			if (i % 2)
+				data = 0x00;
+			gdWriteData(data);
+		}
+	}
+}
+
+void showParam(regParam *param)
+{
+	int8_t l, r, m;
+
+	double mult = 1;
+
+	if (param->label == volumeLabel
+	 || param->label == preampLabel
+	 || param->label == balanceLabel)
+	{
+		mult = 1.25;
+	}
+	if (param->label == gainLabel0
+	 || param->label == gainLabel1
+	 || param->label == gainLabel2
+	 || param->label == gainLabel3)
+	{
+		mult = 1.875;
+	}
+	m = 94 / (param->max - param->min);
+	if (param->min < 0 && param->max > 0) {
+		l = 42;
+		r = 42;
+		if (param->value > 0) {
+			r += m * param->value;
+		} else {
+			l += m * param->value;
+		}
+		showBar(86, l, r);
+	} else {
+		l = 0;
+		r = m * (param->value - param->min) - 1;
+		showBar(m * (param->max - param->min), l, r);
+	}
+	showParValue(param->value * param->step * mult);
+	showParLabel(param->label);
+}
+
 void setVolume(int8_t val)
 {
 	int8_t spFrontLeft = 0;
@@ -160,19 +250,30 @@ void setBalance(int8_t val)
 void muteVolume(void)
 {
 	setVolume(volume.min);
+	mute = MUTE_ON;
 }
 
 void unmuteVolume(void)
 {
 	setVolume(volume.value);
+	mute = MUTE_OFF;
+}
+
+void switchMute(void)
+{
+	if (mute == MUTE_ON) {
+		unmuteVolume();
+	} else {
+		muteVolume();
+	}
 }
 
 void switchLoudness(void)
 {
-	if (loud == 0)
-		loud = 1;
+	if (loud == LOUDNESS_ON)
+		loud = LOUDNESS_OFF;
 	else
-		loud = 0;
+		loud = LOUDNESS_ON;
 	setSwitch(gain[chan].value);
 }
 
@@ -245,79 +346,4 @@ void nextChan(void)
 	if (chan >= chanCnt)
 		chan = 0;
 	setChan(chan);
-}
-
-void showParLabel(const uint8_t *parLabel)
-{
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(0, 0);
-	gdWriteStringEeprom(parLabel);
-	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(116, 7);
-	gdWriteStringEeprom(dbLabel);
-}
-
-void showParValue(int8_t value)
-{
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(93, 4);
-	gdWriteString(mkNumString(value, 3, ' '));
-}
-
-void showBar(uint8_t length, int8_t from, int8_t to)
-{
-	int8_t i, j;
-	uint8_t data;
-	for (j = 5; j <=6; j++) {
-		gdSetXY(0, j);
-		for (i = 0; i < length; i++) {
-			if (j == 5)
-				data = 0x80;
-			else
-				data = 0x01;
-			if (i >= from && i <= to)
-				data = 0xFF;
-			if (i % 2)
-				data = 0x00;
-			gdWriteData(data);
-		}
-	}
-}
-
-void showParam(regParam *param)
-{
-	int8_t l, r, m;
-
-	double mult = 1;
-
-	if (param->label == volumeLabel
-	 || param->label == preampLabel
-	 || param->label == balanceLabel)
-	{
-		mult = 1.25;
-	}
-	if (param->label == gainLabel0
-	 || param->label == gainLabel1
-	 || param->label == gainLabel2
-	 || param->label == gainLabel3)
-	{
-		mult = 1.875;
-	}
-	m = 94 / (param->max - param->min);
-	if (param->min < 0 && param->max > 0) {
-		l = 42;
-		r = 42;
-		if (param->value > 0) {
-			r += m * param->value;
-		} else {
-			l += m * param->value;
-		}
-		showBar(86, l, r);
-	} else {
-		l = 0;
-		r = m * (param->value - param->min) - 1;
-		showBar(m * (param->max - param->min), l, r);
-	}
-	showParValue(param->value * param->step * mult);
-	showParLabel(param->label);
 }

@@ -22,7 +22,9 @@ typedef enum {
 	DISPLAY_GAIN,
 	DISPLAY_BALANCE,
 	DISPLAY_TIME,
-	DISPLAY_EDIT_TIME
+	DISPLAY_EDIT_TIME,
+	DISPLAY_MUTE,
+	DISPLAY_LOUDNESS,
 } displayMode;
 
 uint8_t spMode;
@@ -69,7 +71,6 @@ int main(void)
 
 	loadParams();
 	muteVolume();
-	uint8_t mute = 1;
 
 	while (1) {
 		command = getCommand();
@@ -148,6 +149,20 @@ int main(void)
 					break;
 				}
 				break;
+			case CMD_MUTE:
+				setDisplayTime(2000);
+				if (mode != DISPLAY_MUTE)
+					gdFill(0x00);
+				mode = DISPLAY_MUTE;
+				break;
+			case CMD_PP:
+				if (tdaIC == TDA7313_IC) {
+					setDisplayTime(2000);
+					if (mode != DISPLAY_LOUDNESS)
+						gdFill(0x00);
+					mode = DISPLAY_LOUDNESS;
+				}
+				break;
 			case CMD_TIME:
 				setDisplayTime(3000);
 				if (mode == DISPLAY_EDIT_TIME)
@@ -179,7 +194,6 @@ int main(void)
 				gdFill(0x00);
 				mode = DISPLAY_TIME;
 				muteVolume();
-				mute = 1;
 				saveParams();
 				eeprom_write_byte(eepromSpMode, spMode);
 			default:
@@ -229,13 +243,7 @@ int main(void)
 					}
 					break;
 			case CMD_MUTE:
-				if (mute) {
-					unmuteVolume();
-					mute = 0;
-				} else {
-					muteVolume();
-					mute = 1;
-				}
+				switchMute();
 				break;
 			case CMD_PP:
 				if (tdaIC == TDA7313_IC) {
@@ -301,6 +309,12 @@ int main(void)
 			case DISPLAY_EDIT_TIME:
 				showTime(0);
 				break;
+			case DISPLAY_MUTE:
+				showBoolParam(mute, muteLabel);
+				break;
+			case DISPLAY_LOUDNESS:
+				showBoolParam(!loud, loudnessLabel);
+				break;
 			default:
 				break;
 			}
@@ -328,7 +342,6 @@ int main(void)
 					SMF_PORT |= FAN;
 					GD_BACKLIGHT_PORT |= GD_BCKL;
 					unmuteVolume();
-					mute = 0;
 					break;
 				default:
 					break;
