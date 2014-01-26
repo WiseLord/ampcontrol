@@ -73,16 +73,26 @@ uint8_t gdReadStatus()
 	return status;
 }
 
+void waitWhile(uint8_t status)
+{
+	uint8_t i = 0;
+	while(gdReadStatus() & status) {
+		if (i++ > 200)	/* Avoid endless loop */
+			return;
+	}
+	return;
+}
+
 uint8_t gdReadData()
 {
 	uint8_t data;
 
-	while(gdReadStatus() & STA_BUSY);
+	waitWhile(STA_BUSY);
 	GD_CONTROL_PORT |= GD_DI;
 
 	writeStrob();
 
-	while(gdReadStatus() & STA_BUSY);
+	waitWhile(STA_BUSY);
 	GD_CONTROL_PORT |= GD_DI;
 
 	data = readStrob();
@@ -92,7 +102,7 @@ uint8_t gdReadData()
 
 void gdWriteCommand(uint8_t command)
 {
-	while(gdReadStatus() & STA_BUSY);
+	waitWhile(STA_BUSY);
 
 	GD_DATA_DDR = 0xFF;
 
@@ -110,7 +120,7 @@ void gdWriteCommand(uint8_t command)
 
 void gdWriteData(uint8_t data)
 {
-	while(gdReadStatus() & STA_BUSY);
+	waitWhile(STA_BUSY);
 
 	GD_DATA_DDR = 0xFF;
 
