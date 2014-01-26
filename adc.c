@@ -10,11 +10,11 @@ int16_t f_r[FFT_SIZE];	/* Real values for right channel */
 int16_t f_i[FFT_SIZE];	/* Imaginary values */
 uint8_t buf[FFT_SIZE];	/* Previous fft results: both left and right */
 
-static const uint8_t hammTable[] PROGMEM = {
-	 19,  20,  22,  25,  29,  34,  40,  47,
-	 55,  64,  74,  84,  95, 106, 117, 129,
-	141, 153, 164, 175, 186, 197, 207, 216,
-	224, 232, 239, 244, 249, 252, 254, 255,
+static const uint8_t hannTable[] PROGMEM = {
+	  0,   1,   3,   6,  10,  16,  22,  30,
+	 38,  48,  58,  69,  81,  93, 105, 118,
+	131, 143, 156, 168, 180, 191, 202, 212,
+	221, 229, 236, 242, 247, 251, 254, 255,
 };
 
 void adcInit()
@@ -57,9 +57,9 @@ void getValues()
 	do {
 		j = revBits(i);
 		if (i < FFT_SIZE / 2)
-			hv = pgm_read_byte(&hammTable[i]);
+			hv = pgm_read_byte(&hannTable[i]);
 		else
-			hv = pgm_read_byte(&hammTable[FFT_SIZE - 1 - i]);
+			hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
