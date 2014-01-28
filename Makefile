@@ -13,7 +13,15 @@ OBJS = $(SRCS:.c=.o)
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
+
 AVRDUDE = avrdude
+AD_MCU = m16
+#AD_PROG = stk500v2
+#AD_PORT = avrdoper
+AD_PROG = usbasp
+AD_PORT = usbasp
+
+AD_CMDLINE = -p $(AD_MCU) -c $(AD_PROG) -P $(AD_PORT)
 
 all: $(TARG)
 
@@ -29,16 +37,16 @@ clean:
 	rm -f $(TARG).elf $(TARG).bin $(TARG).hex $(OBJS) *.map
 
 flash: $(TARG)
-	$(AVRDUDE) -V -p m16 -B 1.1 -U flash:w:$(TARG).hex:i
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:$(TARG).hex:i
 
 fuse:
-	$(AVRDUDE) -p m16 -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
+	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
 
 eeprom_tda7439:
-	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom_tda7439.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7439.bin:r
 
 eeprom_tda7313:
-	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom_tda7313.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7313.bin:r
 
 eeprom_tda7318:
-	$(AVRDUDE) -V -p m16 -B 1.1 -U eeprom:w:eeprom_tda7318.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7318.bin:r
