@@ -53,9 +53,9 @@
 #define KS0108_DISPLAY_START_LINE	0xC0
 
 /* Status bytes */
-#define STA_RESET					0x10	/* DB7 */
-#define STA_DISP_OFF				0x20	/* DB5 */
-#define STA_BUSY					0x80	/* DB4 */
+#define KS0108_STA_RESET			0x10	/* DB7 */
+#define KS0108_STA_DISP_OFF			0x20	/* DB5 */
+#define KS0108_STA_BUSY				0x80	/* DB4 */
 
 /* Spectrum output mode */
 #define MODE_STEREO					0

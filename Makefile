@@ -1,4 +1,4 @@
-TARG=ampcontrol
+TARG=ampcontrol_gd
 
 SRCS = main.c ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c fft.c adc.c input.c i2c.c param.c ds1307.c
 MCU = atmega16

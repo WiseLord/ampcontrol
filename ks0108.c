@@ -87,12 +87,12 @@ uint8_t gdReadData()
 {
 	uint8_t data;
 
-	waitWhile(STA_BUSY);
+	waitWhile(KS0108_STA_BUSY);
 	GD_CONTROL_PORT |= GD_DI;
 
 	writeStrob();
 
-	waitWhile(STA_BUSY);
+	waitWhile(KS0108_STA_BUSY);
 	GD_CONTROL_PORT |= GD_DI;
 
 	data = readStrob();
@@ -102,7 +102,7 @@ uint8_t gdReadData()
 
 void gdWriteCommand(uint8_t command)
 {
-	waitWhile(STA_BUSY);
+	waitWhile(KS0108_STA_BUSY);
 
 	GD_DATA_DDR = 0xFF;
 
@@ -120,7 +120,7 @@ void gdWriteCommand(uint8_t command)
 
 void gdWriteData(uint8_t data)
 {
-	waitWhile(STA_BUSY);
+	waitWhile(KS0108_STA_BUSY);
 
 	GD_DATA_DDR = 0xFF;
 
