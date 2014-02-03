@@ -10,7 +10,7 @@
  * Some displays like WG12864B have inverted (zero) active level on CS1/CS2.
  * Set CS_INVERTED for such displays.
  */
-/* #define CS_INVERTED */
+/*#define CS_INVERTED */
 
 /* Data port */
 #define GD_DATA_PORT				PORTB
