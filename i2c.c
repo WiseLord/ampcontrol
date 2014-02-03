@@ -12,24 +12,36 @@ void I2CInit(void)
 
 void I2CStart(void)
 {
+	uint8_t i = 0;
 	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTA);	/* Start */
-	while (!(TWCR & (1<<TWINT)));				/* Wait for TWINT */
+	while (!(TWCR & (1<<TWINT))) {				/* Wait for TWINT */
+		if (i++ > 250)	/* Avoid endless loop */
+			return;
+	}
 	return;
 }
 
 void I2CStop(void)
 {
+	uint8_t i = 0;
 	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTO);	/* Stop */
-	while (TWCR & (1<<TWSTO));					/* Wait for TWSTO */
+	while (TWCR & (1<<TWSTO)) {					/* Wait for TWSTO */
+		if (i++ > 250)	/* Avoid endless loop */
+			return;
+	}
 	return;
 }
 
 uint8_t I2CWriteByte(uint8_t data)
 {
+	uint8_t i = 0;
 	TWDR = data;
 	TWCR = (1<<TWEN) | (1<<TWINT);	/* Start data transfer */
 
-	while (!(TWCR & (1<<TWINT)));	/* Wait for finish */
+	while (!(TWCR & (1<<TWINT))) {	/* Wait for finish */
+		if (i++ > 250)	/* Avoid endless loop */
+			return 1;
+	}
 
 	if (TWSR_STA != 0x18 && TWSR_STA != 0x28 && TWSR_STA != 0x40)
 		return 1;
@@ -38,15 +50,21 @@ uint8_t I2CWriteByte(uint8_t data)
 
 uint8_t I2CReadByte(uint8_t *data, uint8_t ack)
 {
+	uint8_t i = 0;
 	if (ack)
 		TWCR |= (1<<TWEA);
 	else
 		TWCR &= ~(1<<TWEA);
 	TWCR |= (1 << TWINT);
 
-	while (!(TWCR & (1<<TWINT)));	/* Wait for finish */
+	while (!(TWCR & (1<<TWINT))) {	/* Wait for finish */
+		if (i++ > 250)	/* Avoid endless loop */
+			return 1;
+	}
 
 	if (TWSR_STA != 0x58 && TWSR_STA != 0x50)
+		if (i++ > 250)	/* Avoid endless loop */
+			return 1;
 		return 1;
 
 	*data = TWDR;
