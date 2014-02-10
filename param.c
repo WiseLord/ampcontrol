@@ -246,7 +246,7 @@ void setChan(uint8_t ch)
 		setSwitch(gain[chan].value);
 		break;
 	default:
-		I2CWrite(TDA7439_ADDR, TDA7439_INPUT_SELECT, chanCnt - ch);
+		I2CWrite(TDA7439_ADDR, TDA7439_INPUT_SELECT, chanCnt - 1 - ch);
 		break;
 	}
 }

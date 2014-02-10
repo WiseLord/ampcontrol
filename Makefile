@@ -15,13 +15,13 @@ CC = avr-gcc
 OBJCOPY = avr-objcopy
 
 AVRDUDE = avrdude
-AD_MCU = m16
-#AD_PROG = stk500v2
-#AD_PORT = avrdoper
-AD_PROG = usbasp
-AD_PORT = usbasp
+AD_MCU = -p m16
+#AD_PROG = -c stk500v2
+#AD_PORT = -P avrdoper
+#AD_PROG = -c usbasp
+#AD_PORT = -P usbasp
 
-AD_CMDLINE = -p $(AD_MCU) -c $(AD_PROG) -P $(AD_PORT)
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
 all: $(TARG)
 

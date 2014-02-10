@@ -63,8 +63,6 @@ uint8_t I2CReadByte(uint8_t *data, uint8_t ack)
 	}
 
 	if (TWSR_STA != 0x58 && TWSR_STA != 0x50)
-		if (i++ > 250)	/* Avoid endless loop */
-			return 1;
 		return 1;
 
 	*data = TWDR;
