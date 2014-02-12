@@ -76,21 +76,21 @@ void showParam(regParam *param)
 {
 	int8_t l, r, m;
 
-	double mult = 1;
+	uint8_t mult = 8;
 
 	if (tdaIC == TDA7313_IC || tdaIC == TDA7318_IC) {
 		if (param->label == volumeLabel
 		 || param->label == preampLabel
 		 || param->label == balanceLabel)
 		{
-			mult = 1.25;
+			mult = 10;
 		}
 		if (param->label == gainLabel0
 		 || param->label == gainLabel1
 		 || param->label == gainLabel2
 		 || param->label == gainLabel3)
 		{
-			mult = 1.875;
+			mult = 15;
 		}
 	}
 	m = 94 / (param->max - param->min);
@@ -108,7 +108,7 @@ void showParam(regParam *param)
 		r = m * (param->value - param->min) - 1;
 		showBar(m * (param->max - param->min), l, r);
 	}
-	showParValue(param->value * param->step * mult);
+	showParValue(((int16_t)(param->value) * param->step * mult) >> 3);
 	showParLabel(param->label);
 }
 
