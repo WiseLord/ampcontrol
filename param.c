@@ -52,21 +52,32 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel)
 	gdLoadFont(font_ks0066_ru_08, 1);
 }
 
-void showBar(uint8_t length, int8_t from, int8_t to)
+void showBar(int8_t min, int8_t max, int8_t value)
 {
-	int8_t i, j;
-	uint8_t data;
-	for (j = 5; j <=6; j++) {
+	uint8_t i, j, data;
+
+	if (min + max) {
+		value = (int16_t)85 * (value - min) / (max - min);
+	} else {
+		value = (int16_t)42 * value / max;
+	}
+	for (j = 5; j <= 6; j++) {
 		gdSetXY(0, j);
-		for (i = 0; i < length; i++) {
-			if (j == 5)
-				data = 0x80;
-			else
-				data = 0x01;
-			if (i >= from && i <= to)
+		for (i = 0; i < 85; i++) {
+			if (((min + max) && (value <= i)) || (!(min + max) &&
+				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
+				((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
+				if (j == 5) {
+					data = 0x80;
+				} else {
+					data = 0x01;
+				}
+			} else {
 				data = 0xFF;
-			if (i % 2)
+			}
+			if (i & 0x01) {
 				data = 0x00;
+			}
 			gdWriteData(data);
 		}
 	}
@@ -74,8 +85,6 @@ void showBar(uint8_t length, int8_t from, int8_t to)
 
 void showParam(regParam *param)
 {
-	int8_t l, r, m;
-
 	uint8_t mult = 8;
 
 	if (tdaIC == TDA7313_IC || tdaIC == TDA7318_IC) {
@@ -93,22 +102,8 @@ void showParam(regParam *param)
 			mult = 15;
 		}
 	}
-	m = 94 / (param->max - param->min);
-	if (param->min < 0 && param->max > 0) {
-		l = 42;
-		r = 42;
-		if (param->value > 0) {
-			r += m * param->value;
-		} else {
-			l += m * param->value;
-		}
-		showBar(86, l, r);
-	} else {
-		l = 0;
-		r = m * (param->value - param->min) - 1;
-		showBar(m * (param->max - param->min), l, r);
-	}
-	showParValue(((int16_t)(param->value) * param->step * mult) >> 3);
+	showBar(param->min, param->max, param->value);
+	showParValue(((int16_t)(param->value) * param->step * mult + 4) >> 3);
 	showParLabel(param->label);
 }
 
