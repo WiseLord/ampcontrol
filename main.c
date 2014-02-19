@@ -63,6 +63,7 @@ int main(void)
 	uint8_t i;
 
 	displayMode mode = DISPLAY_TIME;
+	displayMode defMode = DISPLAY_SPECTRUM;
 	uint8_t stdby = 1;
 
 	spMode  = eeprom_read_byte(eepromSpMode);
@@ -165,13 +166,18 @@ int main(void)
 				}
 				break;
 			case CMD_TIME:
-				setDisplayTime(3000);
 				if (mode == DISPLAY_EDIT_TIME)
 					editTime();
 				else {
 					if (mode != DISPLAY_TIME)
 						gdFill(0x00);
-					mode = DISPLAY_TIME;
+					if (mode == DISPLAY_TIME) {
+						mode = DISPLAY_SPECTRUM;
+						setDisplayTime(0);
+					} else {
+						mode = DISPLAY_TIME;
+					}
+					defMode = mode;
 					etm = EDIT_NOEDIT;
 				}
 				break;
@@ -307,6 +313,9 @@ int main(void)
 				showParam(curParam);
 				break;
 			case DISPLAY_TIME:
+				setDisplayTime(3000);
+				showTime(0);
+				break;
 			case DISPLAY_EDIT_TIME:
 				showTime(0);
 				break;
@@ -321,17 +330,22 @@ int main(void)
 			}
 		} else {
 			if (!stdby) {
-				if (mode != DISPLAY_SPECTRUM)
+				if (mode != defMode)
 				{
-					mode = DISPLAY_SPECTRUM;
+					gdFill(0x00);
+					mode = defMode;
 					saveParams();
 					eeprom_write_byte(eepromSpMode, spMode);
 					etm = EDIT_NOEDIT;
 				}
-				buf = getData();
-				gdSpectrum32(buf, spMode);
+				if (mode == DISPLAY_SPECTRUM) {
+					buf = getData();
+					gdSpectrum32(buf, spMode);
+				} else {
+					showTime(0);
+				}
 			} else {
-				setDisplayTime(2000);
+				setDisplayTime(200);
 				showTime(0);
 				switch (command) {
 				case CMD_STBY:
@@ -343,6 +357,7 @@ int main(void)
 					SMF_PORT |= FAN;
 					GD_BACKLIGHT_PORT |= GD_BCKL;
 					unmuteVolume();
+					mode = defMode;
 					break;
 				default:
 					break;
