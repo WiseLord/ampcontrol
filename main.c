@@ -58,7 +58,7 @@ int main(void)
 	hwInit();
 
 	uint8_t *buf;
-	uint8_t command = CMD_NOCMD;
+	uint8_t command = CMD_EMPTY;
 	uint8_t cmdCnt = 0;
 	uint8_t i;
 
@@ -77,7 +77,7 @@ int main(void)
 		command = getCommand();
 		cmdCnt = getCmdCount();
 
-		if (!stdby && (command != CMD_NOCMD || getDisplayTime())) {
+		if (!stdby && (command != CMD_EMPTY || getDisplayTime())) {
 			/* Change current mode */
 			switch (command) {
 			case CMD_MENU:
@@ -157,7 +157,7 @@ int main(void)
 					gdFill(0x00);
 				mode = DISPLAY_MUTE;
 				break;
-			case CMD_PP:
+			case CMD_LOUDNESS:
 				if (tdaIC == TDA7313_IC) {
 					setDisplayTime(2000);
 					if (mode != DISPLAY_LOUDNESS)
@@ -181,10 +181,10 @@ int main(void)
 					etm = EDIT_NOEDIT;
 				}
 				break;
-			case CMD_RED:
-			case CMD_GREEN:
-			case CMD_YELLOW:
-			case CMD_BLUE:
+			case CMD_INPUT_0:
+			case CMD_INPUT_1:
+			case CMD_INPUT_2:
+			case CMD_INPUT_4:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
 					gdFill(0x00);
@@ -252,12 +252,12 @@ int main(void)
 			case CMD_MUTE:
 				switchMute();
 				break;
-			case CMD_PP:
+			case CMD_LOUDNESS:
 				if (tdaIC == TDA7313_IC) {
 					switchLoudness();
 				}
 				break;
-			case CMD_SEARCH:
+			case CMD_NEXT_INPUT:
 				setDisplayTime(3000);
 				if (mode != DISPLAY_GAIN)
 					gdFill(0x00);
@@ -266,32 +266,32 @@ int main(void)
 				mode = DISPLAY_GAIN;
 				curParam = &gain[chan];
 				break;
-			case CMD_STORE:
+			case CMD_EDIT_TIME:
 				setDisplayTime(30000);
 				if (mode != DISPLAY_EDIT_TIME)
 					gdFill(0x00);
 				mode = DISPLAY_EDIT_TIME;
 				editTime();
 				break;
-			case CMD_RED:
+			case CMD_INPUT_0:
 				setChan(0);
 				curParam = &gain[chan];
 				break;
-			case CMD_GREEN:
+			case CMD_INPUT_1:
 				setChan(1);
 				curParam = &gain[chan];
 				break;
-			case CMD_YELLOW:
+			case CMD_INPUT_2:
 				setChan(2);
 				curParam = &gain[chan];
 				break;
-			case CMD_BLUE:
+			case CMD_INPUT_4:
 				if (tdaIC == TDA7439_IC) {
 					setChan(3);
 					curParam = &gain[chan];
 				}
 				break;
-			case CMD_DESCR:
+			case CMD_SP_MODE:
 				setDisplayTime(100);
 				switchSpMode();
 				saveParams();

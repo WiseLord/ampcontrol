@@ -53,54 +53,25 @@
 #define MUTE	(1<<PC5)
 #define STDBY	(1<<PC6)
 
-/* Remote control commands codes */
-#define CMD_TIMER		0x26
-#define CMD_STBY		0x0C
-
-#define CMD_AV			0x38
-#define CMD_TV			0x3F
-#define CMD_MUTE		0x0D
-
-#define CMD_NUM1		0x01
-#define CMD_NUM2		0x02
-#define CMD_NUM3		0x03
-#define CMD_NUM4		0x04
-#define CMD_NUM5		0x05
-#define CMD_NUM6		0x06
-#define CMD_NUM7		0x07
-#define CMD_NUM8		0x08
-#define CMD_NUM9		0x09
-#define CMD_NUM0		0x00
-
-#define CMD_PP			0x0E
-#define CMD_DIG			0x0A
-
-#define CMD_TXT			0x3C
-#define CMD_MENU		0x3B
-
-#define CMD_VOL_UP		0x10
-#define CMD_VOL_DOWN	0x11
-#define CMD_CH_UP		0x20
-#define CMD_CH_DOWN		0x21
-
-#define CMD_DESCR		0x2C
-#define CMD_SCAN		0x2B
-#define CMD_TIME		0x2A
-
-#define CMD_SEARCH		0x1E
-#define CMD_BLUE		0x34
-#define CMD_STORE		0x29
-
-#define CMD_RED			0x37
-#define CMD_GREEN		0x36
-#define CMD_YELLOW		0x32
-
-#define CMD_NOCMD		0xFF
+typedef enum {
+	CMD_STBY,
+	CMD_MUTE,
+	CMD_MENU,
+	CMD_VOL_UP,
+	CMD_VOL_DOWN,
+	CMD_INPUT_0,
+	CMD_INPUT_1,
+	CMD_INPUT_2,
+	CMD_INPUT_4,
+	CMD_NEXT_INPUT,
+	CMD_TIME,
+	CMD_EDIT_TIME,
+	CMD_SP_MODE,
+	CMD_LOUDNESS,
+	CMD_EMPTY,
+} command;
 
 // Handling long press actions */
-//#define TIME_LONG		800 /* Long press 800msec while 500 polls/sec */
-//#define TIME_REPEAT		100	/* Must be more than interval of RC5 sends
-
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
 

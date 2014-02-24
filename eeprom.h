@@ -27,6 +27,10 @@
 #define eepromMaximums	((void*)0x30)
 #define eepromSteps		((void*)0x40)
 
+/* RC5 commands array */
+
+#define eepromRC5Cmd	((uint8_t*)0x50)
+
 /* Text labels (maximum 15 byte followed by \0) */
 
 #define volumeLabel		((uint8_t*)0x070)

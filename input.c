@@ -5,13 +5,18 @@
 #include "input.h"
 #include "eeprom.h"
 
-volatile uint8_t cmdBuf = CMD_NOCMD;	/* Command buffer, cleared when read */
+#define CMD_COUNT	14
+
+volatile uint8_t cmdBuf = CMD_EMPTY;	/* Command buffer, cleared when read */
 volatile uint8_t encCnt = 0;			/* Counter for encoder */
-volatile uint8_t rc5Buf = CMD_NOCMD;	/* Buffer for last command from RC */
+
 volatile uint16_t rc5Timer = 0;
 
-volatile uint16_t rc5Cmd; /**/
+volatile uint16_t rc5Cmd;
 const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
+
+volatile uint8_t rcCode[CMD_COUNT];		/* Array with rc5 commands */
+
 uint8_t rc5Cnt;
 
 uint8_t rc5DeviceAddr;
@@ -45,9 +50,12 @@ void rc5Init()
 	TCCR1B = (1<<CS11);		/* Set Timer1 prescaler to 8 (2MHz) */
 	GICR |= (1<<INT1);		/* Enable INT1 interrupt */
 
+	/* Load RC5 device address and commands from eeprom */
 	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-
-
+	uint8_t i;
+	for (i = 0; i < CMD_COUNT; i++) {
+		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
+	}
 	rc5Reset();
 }
 
@@ -57,6 +65,7 @@ ISR(INT1_vect)
 
 	static uint8_t togBitNow = 0;
 	static uint8_t togBitPrev = 0;
+	uint8_t i;
 
 	/* event: 0 / 2 - short space/pulse, 4 / 6 - long space/pulse */
 	uint8_t event = (BTN_PIN & RC5_DATA) ? 2 : 0;
@@ -100,10 +109,19 @@ ISR(INT1_vect)
 			rc5Cmd &= RC5_COMM_MASK;
 			if ((togBitNow != togBitPrev) ||
 			    ((rc5Timer > 200) &
-			     (rc5Cmd == CMD_VOL_UP || rc5Cmd == CMD_VOL_DOWN)) ||
+			     (rc5Cmd == rcCode[CMD_VOL_UP] ||
+			      rc5Cmd == rcCode[CMD_VOL_DOWN])) ||
 			    (rc5Timer > 800)) {
-				rc5Buf = rc5Cmd;
+				encCnt++;
 				rc5Timer = 0;
+				cmdBuf = CMD_EMPTY;
+				for (i = 0; i < CMD_COUNT; i++) {
+					if (rc5Cmd == rcCode[i])
+					{
+						cmdBuf = i;
+						break;
+					}
+				}
 			}
 			togBitPrev = togBitNow;
 		}
@@ -138,15 +156,6 @@ ISR (TIMER2_COMP_vect) {
 	uint8_t btnPin = ~BTN_PIN;
 	uint8_t encNow = btnPin & (ENC_A | ENC_B);
 	uint8_t btnNow = btnPin & BTN_MASK;
-
-
-	if (rc5Buf != CMD_NOCMD) {
-		cmdBuf = rc5Buf;
-		encCnt++;
-		rc5Buf = CMD_NOCMD;
-	}
-	if (rc5Timer < 1000)
-		rc5Timer++;
 
 	/* If encoder event has happened, send it to command buffer */
 	switch (encNow) {
@@ -209,16 +218,16 @@ ISR (TIMER2_COMP_vect) {
 				cmdBuf = CMD_STBY; /* Standby */
 				break;
 			case BTN_MENU:
-				cmdBuf = CMD_DESCR; /* Spectrum mode common/separate */
+				cmdBuf = CMD_SP_MODE; /* Spectrum mode common/separate */
 				break;
 			case BTN_MUTE:
-				cmdBuf = CMD_PP; /* Loudness */
+				cmdBuf = CMD_LOUDNESS; /* Loudness */
 				break;
 			case BTN_TIME:
-				cmdBuf = CMD_STORE; /* Edit time */
+				cmdBuf = CMD_EDIT_TIME; /* Edit time */
 				break;
 			case BTN_INPUT:
-				cmdBuf = CMD_SEARCH; /* Switch input */
+				cmdBuf = CMD_NEXT_INPUT; /* Switch input */
 				break;
 			default:
 				break;
@@ -240,7 +249,7 @@ ISR (TIMER2_COMP_vect) {
 					cmdBuf = CMD_TIME; /* Show time */
 					break;
 				case BTN_INPUT:
-					cmdBuf = CMD_SEARCH; /* Switch input */
+					cmdBuf = CMD_NEXT_INPUT; /* Switch input */
 					break;
 				default:
 					break;
@@ -253,13 +262,16 @@ ISR (TIMER2_COMP_vect) {
 
 	if (displayTime)
 		displayTime--;
+
+	if (rc5Timer < 1000)
+		rc5Timer++;
 	return;
 };
 
 uint8_t getCommand(void) /* Read command and clear command buffer */
 {
 	uint8_t ret = cmdBuf;
-	cmdBuf = CMD_NOCMD;
+	cmdBuf = CMD_EMPTY;
 	return ret;
 }
 
