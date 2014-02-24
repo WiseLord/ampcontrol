@@ -88,7 +88,7 @@ void gdWriteString(uint8_t *string);
 void gdWriteStringProgmem(const uint8_t *string);
 void gdWriteStringEeprom(const uint8_t *string);
 
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead);
+uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void gdSpectrum32(uint8_t *buf, uint8_t mode);
 

@@ -93,42 +93,42 @@ void showTime(uint8_t inv)
 		gdLoadFont(font_digits_32, 0);
 	else
 		gdLoadFont(font_digits_32, 1);
-	gdWriteString(mkNumString(hour, 2, '0'));
+	gdWriteString(mkNumString(hour, 2, '0', 10));
 	gdLoadFont(font_digits_32, 1);
 	gdWriteString((uint8_t*)"\x7F:\x7F");
 	if (etm == EDIT_MINUTES)
 		gdLoadFont(font_digits_32, 0);
 	else
 		gdLoadFont(font_digits_32, 1);
-	gdWriteString(mkNumString(minute, 2, '0'));
+	gdWriteString(mkNumString(minute, 2, '0', 10));
 	gdLoadFont(font_digits_32, 1);
 	gdWriteString((uint8_t*)"\x7F:\x7F");
 	if (etm == EDIT_SECONDS)
 		gdLoadFont(font_digits_32, 0);
 	else
 		gdLoadFont(font_digits_32, 1);
-	gdWriteString(mkNumString(second, 2, '0'));
+	gdWriteString(mkNumString(second, 2, '0', 10));
 
 	gdSetXY(9, 4);
 	if (etm == EDIT_DAY)
 		gdLoadFont(font_ks0066_ru_24, 0);
 	else
 		gdLoadFont(font_ks0066_ru_24, 1);
-	gdWriteString(mkNumString(day, 2, '0'));
+	gdWriteString(mkNumString(day, 2, '0', 10));
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
 	if (etm == EDIT_MONTH)
 		gdLoadFont(font_ks0066_ru_24, 0);
 	else
 		gdLoadFont(font_ks0066_ru_24, 1);
-	gdWriteString(mkNumString(month, 2, '0'));
+	gdWriteString(mkNumString(month, 2, '0', 10));
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
 	if (etm == EDIT_YEAR)
 		gdLoadFont(font_ks0066_ru_24, 0);
 	else
 		gdLoadFont(font_ks0066_ru_24, 1);
-	gdWriteString(mkNumString(2000 + year, 4, '0'));
+	gdWriteString(mkNumString(2000 + year, 4, '0', 10));
 
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(32, 7);

@@ -35,7 +35,7 @@ void showParValue(int8_t value)
 {
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(93, 4);
-	gdWriteString(mkNumString(value, 3, ' '));
+	gdWriteString(mkNumString(value, 3, ' ', 10));
 	gdLoadFont(font_ks0066_ru_08, 1);
 }
 

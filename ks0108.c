@@ -8,7 +8,7 @@ static uint8_t _cs, _row, _col;
 
 static fontParams fp;
 
-static uint8_t dig[6];		/* Array for num->string convert */
+static uint8_t dig[17];		/* Array for num->string convert */
 
 
 static inline void setPortCS()
@@ -318,8 +318,9 @@ void gdWriteStringEeprom(const uint8_t *string)
 	return;
 }
 
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
+uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 {
+	uint8_t numdiv;
 	uint8_t sign = lead;
 	if (number < 0) {
 		sign = '-';
@@ -331,8 +332,12 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead)
 	dig[width] = '\0';
 	i = width - 1;
 	while (number > 0 || i == width - 1) {
-		dig[i--] = number % 10 + 0x30;
-		number /= 10;
+		numdiv = number % radix;
+		dig[i] = numdiv + 0x30;
+		if (numdiv >= 10)
+			dig[i] += 7;
+		i--;
+		number /= radix;
 	}
 	if (i >= 0)
 		dig[i] = sign;

@@ -33,6 +33,7 @@
 #define BTN_MUTE		(1<<PD6)
 #define BTN_STDBY		(1<<PD0)
 
+#define BTN_TESTMODE	(BTN_STDBY | BTN_MUTE | BTN_MENU)
 #define BTN_MASK		(BTN_MENU | BTN_INPUT | BTN_TIME | BTN_MUTE | BTN_STDBY)
 
 /* Encoder definitions */
@@ -62,13 +63,14 @@ typedef enum {
 	CMD_INPUT_0,
 	CMD_INPUT_1,
 	CMD_INPUT_2,
-	CMD_INPUT_4,
+	CMD_INPUT_3,
 	CMD_NEXT_INPUT,
 	CMD_TIME,
 	CMD_EDIT_TIME,
 	CMD_SP_MODE,
 	CMD_LOUDNESS,
 	CMD_EMPTY,
+	CMD_TESTMODE,
 } command;
 
 // Handling long press actions */
@@ -94,5 +96,6 @@ void rc5Reset();
 void btnInit(void);
 uint8_t getCommand(void);
 uint8_t getCmdCount(void);
+uint16_t getRC5Buf(void);
 
 #endif /* INPUT_H */

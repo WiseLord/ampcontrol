@@ -11,6 +11,7 @@ volatile uint8_t cmdBuf = CMD_EMPTY;	/* Command buffer, cleared when read */
 volatile uint8_t encCnt = 0;			/* Counter for encoder */
 
 volatile uint16_t rc5Timer = 0;
+volatile uint16_t rc5Buf = 0;
 
 volatile uint16_t rc5Cmd;
 const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
@@ -106,6 +107,7 @@ ISR(INT1_vect)
 				togBitNow = 1;
 			else
 				togBitNow = 0;
+			uint16_t rc5CmdRaw = rc5Cmd;
 			rc5Cmd &= RC5_COMM_MASK;
 			if ((togBitNow != togBitPrev) ||
 			    ((rc5Timer > 200) &
@@ -122,6 +124,7 @@ ISR(INT1_vect)
 						break;
 					}
 				}
+				rc5Buf = rc5CmdRaw;
 			}
 			togBitPrev = togBitNow;
 		}
@@ -205,11 +208,17 @@ ISR (TIMER2_COMP_vect) {
 	encPrev = encNow;	/* Save current encoder state */
 
 	if (btnNow) {
-		if (btnNow == btnPrev)
+		if (btnNow == btnPrev) {
 			btnCnt++;
-		else
-			btnCnt = 0;
-		btnPrev = btnNow;
+		} else {
+			if (btnNow == BTN_TESTMODE || btnPrev == BTN_TESTMODE) {
+				btnCnt++;
+			} else {
+				btnCnt = 0;
+			}
+		}
+		if (btnPrev != BTN_TESTMODE || btnCnt < LONG_PRESS)
+			btnPrev = btnNow;
 	} else {
 		if (btnCnt > LONG_PRESS) {
 			/* Place "long" command to buffer */
@@ -228,6 +237,9 @@ ISR (TIMER2_COMP_vect) {
 				break;
 			case BTN_INPUT:
 				cmdBuf = CMD_NEXT_INPUT; /* Switch input */
+				break;
+			case BTN_TESTMODE:
+				cmdBuf = CMD_TESTMODE;
 				break;
 			default:
 				break;
@@ -279,5 +291,12 @@ uint8_t getCmdCount(void)
 {
 	uint8_t ret = encCnt;
 	encCnt = 0;
+	return ret;
+}
+
+uint16_t getRC5Buf(void)
+{
+	uint16_t ret = rc5Buf;
+	rc5Buf = 0;
 	return ret;
 }

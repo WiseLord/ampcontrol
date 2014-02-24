@@ -25,6 +25,7 @@ typedef enum {
 	DISPLAY_EDIT_TIME,
 	DISPLAY_MUTE,
 	DISPLAY_LOUDNESS,
+	DISPLAY_TESTMODE,
 } displayMode;
 
 uint8_t spMode;
@@ -53,6 +54,26 @@ void hwInit(void)	/* Hardware initialization */
 	return;
 }
 
+void showRC5Info(uint16_t rc5buf)
+{
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(0, 0);
+	gdWriteString((uint8_t*)"== RC5 test mode ==");
+	gdSetXY(0, 2);
+	gdWriteString((uint8_t*)"Raw = ");
+	gdWriteString(mkNumString(rc5buf, 14, '0', 2));
+	gdSetXY(0, 4);
+	gdWriteString((uint8_t*)"Tog. bit = ");
+	gdWriteString(mkNumString(((rc5buf & 0x0800) > 0), 1, '0', 16));
+	gdSetXY(0, 5);
+	gdWriteString((uint8_t*)"RC code = ");
+	gdWriteString(mkNumString((rc5buf & 0x07C0)>>6, 2, '0', 16));
+	gdSetXY(0, 6);
+	gdWriteString((uint8_t*)"Command = ");
+	gdWriteString(mkNumString(rc5buf & 0x003F, 2, '0', 16));
+
+}
+
 int main(void)
 {
 	hwInit();
@@ -61,6 +82,8 @@ int main(void)
 	uint8_t command = CMD_EMPTY;
 	uint8_t cmdCnt = 0;
 	uint8_t i;
+
+	uint16_t rc5buf;
 
 	displayMode mode = DISPLAY_TIME;
 	displayMode defMode = DISPLAY_SPECTRUM;
@@ -76,229 +99,240 @@ int main(void)
 	while (1) {
 		command = getCommand();
 		cmdCnt = getCmdCount();
+		rc5buf = getRC5Buf();
 
 		if (!stdby && (command != CMD_EMPTY || getDisplayTime())) {
-			/* Change current mode */
-			switch (command) {
-			case CMD_MENU:
-				setDisplayTime(3000);
-				switch (mode) {
-				case DISPLAY_VOLUME:
-					if (mode != DISPLAY_BASS)
-						gdFill(0x00);
-					mode = DISPLAY_BASS;
-					curParam = &bass;
-					break;
-				case DISPLAY_BASS:
-					switch (tdaIC) {
-					case TDA7313_IC:
-					case TDA7318_IC:
+			if (mode != DISPLAY_TESTMODE) {
+				/* Change current mode */
+				switch (command) {
+				case CMD_MENU:
+					setDisplayTime(3000);
+					switch (mode) {
+					case DISPLAY_VOLUME:
+						if (mode != DISPLAY_BASS)
+							gdFill(0x00);
+						mode = DISPLAY_BASS;
+						curParam = &bass;
+						break;
+					case DISPLAY_BASS:
+						switch (tdaIC) {
+						case TDA7313_IC:
+						case TDA7318_IC:
+							if (mode != DISPLAY_TREBLE)
+								gdFill(0x00);
+							mode = DISPLAY_TREBLE;
+							curParam = &treble;
+							break;
+						default:
+							if (mode != DISPLAY_MIDDLE)
+								gdFill(0x00);
+							mode = DISPLAY_MIDDLE;
+							curParam = &middle;
+							break;
+						}
+						break;
+					case DISPLAY_MIDDLE:
 						if (mode != DISPLAY_TREBLE)
 							gdFill(0x00);
 						mode = DISPLAY_TREBLE;
 						curParam = &treble;
 						break;
-					default:
-						if (mode != DISPLAY_MIDDLE)
+					case DISPLAY_TREBLE:
+						if (mode != DISPLAY_PREAMP)
 							gdFill(0x00);
-						mode = DISPLAY_MIDDLE;
-						curParam = &middle;
+						mode = DISPLAY_PREAMP;
+						curParam = &preamp;
+						break;
+					case DISPLAY_PREAMP:
+						if (mode != DISPLAY_BALANCE)
+							gdFill(0x00);
+						mode = DISPLAY_BALANCE;
+						curParam = &balance;
+						break;
+					case DISPLAY_BALANCE:
+					case DISPLAY_SPECTRUM:
+					case DISPLAY_TIME:
+					case DISPLAY_GAIN:
+						if (mode != DISPLAY_VOLUME)
+							gdFill(0x00);
+						mode = DISPLAY_VOLUME;
+						curParam = &volume;
+						break;
+					default:
 						break;
 					}
 					break;
-				case DISPLAY_MIDDLE:
-					if (mode != DISPLAY_TREBLE)
-						gdFill(0x00);
-					mode = DISPLAY_TREBLE;
-					curParam = &treble;
-					break;
-				case DISPLAY_TREBLE:
-					if (mode != DISPLAY_PREAMP)
-						gdFill(0x00);
-					mode = DISPLAY_PREAMP;
-					curParam = &preamp;
-					break;
-				case DISPLAY_PREAMP:
-					if (mode != DISPLAY_BALANCE)
-						gdFill(0x00);
-					mode = DISPLAY_BALANCE;
-					curParam = &balance;
-					break;
-				case DISPLAY_BALANCE:
-				case DISPLAY_SPECTRUM:
-				case DISPLAY_TIME:
-				case DISPLAY_GAIN:
-					if (mode != DISPLAY_VOLUME)
-						gdFill(0x00);
-					mode = DISPLAY_VOLUME;
-					curParam = &volume;
-					break;
-				default:
-					break;
-				}
-				break;
-			case CMD_VOL_UP:
-			case CMD_VOL_DOWN:
-				setDisplayTime(2000);
-				switch (mode) {
-				case DISPLAY_SPECTRUM:
-				case DISPLAY_TIME:
-					gdFill(0x00);
-					mode = DISPLAY_VOLUME;
-					curParam = &volume;
-					break;
-				default:
-					break;
-				}
-				break;
-			case CMD_MUTE:
-				setDisplayTime(2000);
-				if (mode != DISPLAY_MUTE)
-					gdFill(0x00);
-				mode = DISPLAY_MUTE;
-				break;
-			case CMD_LOUDNESS:
-				if (tdaIC == TDA7313_IC) {
+				case CMD_VOL_UP:
+				case CMD_VOL_DOWN:
 					setDisplayTime(2000);
-					if (mode != DISPLAY_LOUDNESS)
+					switch (mode) {
+					case DISPLAY_SPECTRUM:
+					case DISPLAY_TIME:
 						gdFill(0x00);
-					mode = DISPLAY_LOUDNESS;
-				}
-				break;
-			case CMD_TIME:
-				if (mode == DISPLAY_EDIT_TIME)
-					editTime();
-				else {
-					if (mode != DISPLAY_TIME)
-						gdFill(0x00);
-					if (mode == DISPLAY_TIME) {
-						mode = DISPLAY_SPECTRUM;
-						setDisplayTime(0);
-					} else {
-						mode = DISPLAY_TIME;
+						mode = DISPLAY_VOLUME;
+						curParam = &volume;
+						break;
+					default:
+						break;
 					}
-					defMode = mode;
-					etm = EDIT_NOEDIT;
-				}
-				break;
-			case CMD_INPUT_0:
-			case CMD_INPUT_1:
-			case CMD_INPUT_2:
-			case CMD_INPUT_4:
-				setDisplayTime(3000);
-				if (mode != DISPLAY_GAIN)
+					break;
+				case CMD_MUTE:
+					setDisplayTime(2000);
+					if (mode != DISPLAY_MUTE)
+						gdFill(0x00);
+					mode = DISPLAY_MUTE;
+					break;
+				case CMD_LOUDNESS:
+					if (tdaIC == TDA7313_IC) {
+						setDisplayTime(2000);
+						if (mode != DISPLAY_LOUDNESS)
+							gdFill(0x00);
+						mode = DISPLAY_LOUDNESS;
+					}
+					break;
+				case CMD_TIME:
+					if (mode == DISPLAY_EDIT_TIME)
+						editTime();
+					else {
+						if (mode != DISPLAY_TIME)
+							gdFill(0x00);
+						if (mode == DISPLAY_TIME) {
+							mode = DISPLAY_SPECTRUM;
+							setDisplayTime(0);
+						} else {
+							mode = DISPLAY_TIME;
+						}
+						defMode = mode;
+						etm = EDIT_NOEDIT;
+					}
+					break;
+				case CMD_INPUT_0:
+				case CMD_INPUT_1:
+				case CMD_INPUT_2:
+				case CMD_INPUT_3:
+					setDisplayTime(3000);
+					if (mode != DISPLAY_GAIN)
+						gdFill(0x00);
+					mode = DISPLAY_GAIN;
+					break;
+				case CMD_STBY:
+					SMF_DDR &= ~MUTE;
+					SMF_PORT &= ~MUTE;
+					_delay_ms(50);
+					stdby = 1;
+					SMF_PORT &= ~STDBY;
+					SMF_PORT &= ~FAN;
+					GD_BACKLIGHT_PORT &= ~GD_BCKL;
 					gdFill(0x00);
-				mode = DISPLAY_GAIN;
-				break;
-			case CMD_STBY:
-				SMF_DDR &= ~MUTE;
-				SMF_PORT &= ~MUTE;
-				_delay_ms(50);
-				stdby = 1;
-				SMF_PORT &= ~STDBY;
-				SMF_PORT &= ~FAN;
-				GD_BACKLIGHT_PORT &= ~GD_BCKL;
-				gdFill(0x00);
-				mode = DISPLAY_TIME;
-				muteVolume();
-				saveParams();
-				eeprom_write_byte(eepromSpMode, spMode);
-			default:
-				break;
-			}
+					mode = DISPLAY_TIME;
+					muteVolume();
+					saveParams();
+					eeprom_write_byte(eepromSpMode, spMode);
+					break;
+				case CMD_TESTMODE:
+					setDisplayTime(20000);
+					if (mode != DISPLAY_TESTMODE)
+						gdFill(0x00);
+					mode = DISPLAY_TESTMODE;
+					showRC5Info(rc5buf);
+					break;
+				default:
+					break;
+				}
 
-			/* Execute command */
-			switch (command) {
-			case CMD_VOL_UP:
-				for (i = 0; i < cmdCnt; i++)
-					switch (mode) {
-					case DISPLAY_VOLUME:
-					case DISPLAY_BASS:
-					case DISPLAY_MIDDLE:
-					case DISPLAY_TREBLE:
-					case DISPLAY_PREAMP:
-					case DISPLAY_BALANCE:
-					case DISPLAY_GAIN:
-						incParam(curParam);
+				/* Execute command */
+				switch (command) {
+				case CMD_VOL_UP:
+					for (i = 0; i < cmdCnt; i++)
+						switch (mode) {
+						case DISPLAY_VOLUME:
+						case DISPLAY_BASS:
+						case DISPLAY_MIDDLE:
+						case DISPLAY_TREBLE:
+						case DISPLAY_PREAMP:
+						case DISPLAY_BALANCE:
+						case DISPLAY_GAIN:
+							incParam(curParam);
+							break;
+						case DISPLAY_EDIT_TIME:
+							setDisplayTime(30000);
+							incTime();
+							break;
+						default:
+							break;
+						}
 						break;
-					case DISPLAY_EDIT_TIME:
-						setDisplayTime(30000);
-						incTime();
+				case CMD_VOL_DOWN:
+					for (i = 0; i < cmdCnt; i++)
+						switch (mode) {
+						case DISPLAY_VOLUME:
+						case DISPLAY_BASS:
+						case DISPLAY_MIDDLE:
+						case DISPLAY_TREBLE:
+						case DISPLAY_PREAMP:
+						case DISPLAY_BALANCE:
+						case DISPLAY_GAIN:
+							decParam(curParam);
+							break;
+						case DISPLAY_EDIT_TIME:
+							setDisplayTime(3000);
+							decTime();
+							break;
+						default:
+							break;
+						}
 						break;
-					default:
-						break;
+				case CMD_MUTE:
+					switchMute();
+					break;
+				case CMD_LOUDNESS:
+					if (tdaIC == TDA7313_IC) {
+						switchLoudness();
 					}
 					break;
-			case CMD_VOL_DOWN:
-				for (i = 0; i < cmdCnt; i++)
-					switch (mode) {
-					case DISPLAY_VOLUME:
-					case DISPLAY_BASS:
-					case DISPLAY_MIDDLE:
-					case DISPLAY_TREBLE:
-					case DISPLAY_PREAMP:
-					case DISPLAY_BALANCE:
-					case DISPLAY_GAIN:
-						decParam(curParam);
-						break;
-					case DISPLAY_EDIT_TIME:
-						setDisplayTime(30000);
-						decTime();
-						break;
-					default:
-						break;
-					}
-					break;
-			case CMD_MUTE:
-				switchMute();
-				break;
-			case CMD_LOUDNESS:
-				if (tdaIC == TDA7313_IC) {
-					switchLoudness();
-				}
-				break;
-			case CMD_NEXT_INPUT:
-				setDisplayTime(3000);
-				if (mode != DISPLAY_GAIN)
-					gdFill(0x00);
-				else
-					nextChan();
-				mode = DISPLAY_GAIN;
-				curParam = &gain[chan];
-				break;
-			case CMD_EDIT_TIME:
-				setDisplayTime(30000);
-				if (mode != DISPLAY_EDIT_TIME)
-					gdFill(0x00);
-				mode = DISPLAY_EDIT_TIME;
-				editTime();
-				break;
-			case CMD_INPUT_0:
-				setChan(0);
-				curParam = &gain[chan];
-				break;
-			case CMD_INPUT_1:
-				setChan(1);
-				curParam = &gain[chan];
-				break;
-			case CMD_INPUT_2:
-				setChan(2);
-				curParam = &gain[chan];
-				break;
-			case CMD_INPUT_4:
-				if (tdaIC == TDA7439_IC) {
-					setChan(3);
+				case CMD_NEXT_INPUT:
+					setDisplayTime(3000);
+					if (mode != DISPLAY_GAIN)
+						gdFill(0x00);
+					else
+						nextChan();
+					mode = DISPLAY_GAIN;
 					curParam = &gain[chan];
+					break;
+				case CMD_EDIT_TIME:
+					setDisplayTime(30000);
+					if (mode != DISPLAY_EDIT_TIME)
+						gdFill(0x00);
+					mode = DISPLAY_EDIT_TIME;
+					editTime();
+					break;
+				case CMD_INPUT_0:
+					setChan(0);
+					curParam = &gain[chan];
+					break;
+				case CMD_INPUT_1:
+					setChan(1);
+					curParam = &gain[chan];
+					break;
+				case CMD_INPUT_2:
+					setChan(2);
+					curParam = &gain[chan];
+					break;
+				case CMD_INPUT_3:
+					if (tdaIC == TDA7439_IC) {
+						setChan(3);
+						curParam = &gain[chan];
+					}
+					break;
+				case CMD_SP_MODE:
+					setDisplayTime(100);
+					switchSpMode();
+					saveParams();
+					eeprom_write_byte(eepromSpMode, spMode);
+					break;
+				default:
+					break;
 				}
-				break;
-			case CMD_SP_MODE:
-				setDisplayTime(100);
-				switchSpMode();
-				saveParams();
-				eeprom_write_byte(eepromSpMode, spMode);
-				break;
-			default:
-				break;
 			}
 
 			/* Show result */
@@ -324,6 +358,12 @@ int main(void)
 				break;
 			case DISPLAY_LOUDNESS:
 				showBoolParam(!loud, loudnessLabel);
+				break;
+			case DISPLAY_TESTMODE:
+				if (rc5buf) {
+					setDisplayTime(20000);
+					showRC5Info(rc5buf);
+				}
 				break;
 			default:
 				break;
