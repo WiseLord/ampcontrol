@@ -102,12 +102,12 @@ ISR(INT1_vect)
 
 	if (rc5Cnt == 0 && (state == STATE_START1 || state == STATE_MID0)) {
 		/* If RC5 address is correct, send command to IR RC buffer */
+		rc5Buf = rc5Cmd;
 		if ((rc5Cmd & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr) {
 			if (rc5Cmd & RC5_TOGB_MASK)
 				togBitNow = 1;
 			else
 				togBitNow = 0;
-			uint16_t rc5CmdRaw = rc5Cmd;
 			rc5Cmd &= RC5_COMM_MASK;
 			if ((togBitNow != togBitPrev) ||
 			    ((rc5Timer > 200) &
@@ -124,7 +124,6 @@ ISR(INT1_vect)
 						break;
 					}
 				}
-				rc5Buf = rc5CmdRaw;
 			}
 			togBitPrev = togBitNow;
 		}
