@@ -20,6 +20,7 @@
 #define eepromLoudness	((void*)0x13)
 #define eepromChanCnt	((void*)0x14)
 #define eepromICSelect	((void*)0x15)
+#define eepromBCKL		((void*)0x16)
 
 /* Parameters min/max/step values */
 

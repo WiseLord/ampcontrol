@@ -38,6 +38,9 @@
 #define LOUDNESS_ON				0
 #define LOUDNESS_OFF			1
 
+#define BACKLIGHT_ON			0
+#define BACKLIGHT_OFF			1
+
 typedef struct {
 	int8_t value;
 	int8_t min;
@@ -59,6 +62,7 @@ uint8_t chan;
 uint8_t loud;
 uint8_t mute;
 uint8_t chanCnt;
+uint8_t backlight;
 
 uint8_t tdaIC;
 
@@ -76,6 +80,8 @@ void unmuteVolume(void);
 
 void switchMute(void);
 void switchLoudness(void);
+void switchBacklight(void);
+void setBacklight(int8_t backlight);
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel);
 void showParam(regParam *param);

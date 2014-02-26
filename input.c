@@ -5,7 +5,7 @@
 #include "input.h"
 #include "eeprom.h"
 
-#define CMD_COUNT	14
+#define CMD_COUNT	15
 
 volatile uint8_t cmdBuf = CMD_EMPTY;	/* Command buffer, cleared when read */
 volatile uint8_t encCnt = 0;			/* Counter for encoder */
@@ -223,7 +223,7 @@ ISR (TIMER2_COMP_vect) {
 			/* Place "long" command to buffer */
 			switch (btnPrev) {
 			case BTN_STDBY:
-				cmdBuf = CMD_STBY; /* Standby */
+				cmdBuf = CMD_BACKLIGHT; /* Backlight on/off*/
 				break;
 			case BTN_MENU:
 				cmdBuf = CMD_SP_MODE; /* Spectrum mode common/separate */

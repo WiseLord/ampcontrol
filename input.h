@@ -69,6 +69,8 @@ typedef enum {
 	CMD_EDIT_TIME,
 	CMD_SP_MODE,
 	CMD_LOUDNESS,
+	CMD_BACKLIGHT,
+
 	CMD_EMPTY,
 	CMD_TESTMODE,
 } command;

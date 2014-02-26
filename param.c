@@ -218,6 +218,14 @@ void setSwitch(int8_t gain)
 	I2CWrComm(TDA7313_ADDR, TDA7313_SW | (3 - gain) << 3 | loud << 2 | chan);
 }
 
+void setBacklight(int8_t backlight)
+{
+	if (backlight)
+		GD_BACKLIGHT_PORT |= GD_BCKL;
+	else
+		GD_BACKLIGHT_PORT &= ~GD_BCKL;
+}
+
 void setGain(int8_t val)
 {
 	switch (tdaIC) {
@@ -281,6 +289,15 @@ void switchLoudness(void)
 	setSwitch(gain[chan].value);
 }
 
+void switchBacklight(void)
+{
+	if (backlight == BACKLIGHT_ON)
+		backlight = BACKLIGHT_OFF;
+	else
+		backlight = BACKLIGHT_ON;
+	setBacklight(backlight);
+}
+
 void loadParams(void)
 {
 	uint8_t i;
@@ -297,6 +314,7 @@ void loadParams(void)
 	loud = eeprom_read_byte(eepromLoudness);
 	chanCnt = eeprom_read_byte(eepromChanCnt);
 	tdaIC = eeprom_read_byte(eepromICSelect);
+	backlight = eeprom_read_byte(eepromBCKL);
 
 	volume.set = setVolume;
 	bass.set = setBass;
@@ -326,6 +344,7 @@ void saveParams(void)
 	eeprom_write_byte(eepromChannel, chan);
 	eeprom_write_byte(eepromLoudness, loud);
 	eeprom_write_byte(eepromChanCnt, chanCnt);
+	eeprom_write_byte(eepromBCKL, backlight);
 }
 
 void incParam(regParam *param)

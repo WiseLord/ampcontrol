@@ -290,6 +290,9 @@ int main(void)
 						switchLoudness();
 					}
 					break;
+				case CMD_BACKLIGHT:
+					switchBacklight();
+					break;
 				case CMD_NEXT_INPUT:
 					setDisplayTime(3000);
 					if (mode != DISPLAY_GAIN)
@@ -395,7 +398,7 @@ int main(void)
 					SMF_DDR |= MUTE;
 					SMF_PORT |= MUTE;
 					SMF_PORT |= FAN;
-					GD_BACKLIGHT_PORT |= GD_BCKL;
+					setBacklight(backlight);
 					unmuteVolume();
 					mode = defMode;
 					break;
