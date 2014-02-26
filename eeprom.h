@@ -21,6 +21,7 @@
 #define eepromChanCnt	((void*)0x14)
 #define eepromICSelect	((void*)0x15)
 #define eepromBCKL		((void*)0x16)
+#define eepromEXT2		((void*)0x17)
 
 /* Parameters min/max/step values */
 

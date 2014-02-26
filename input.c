@@ -5,7 +5,7 @@
 #include "input.h"
 #include "eeprom.h"
 
-#define CMD_COUNT	15
+#define CMD_COUNT	16
 
 volatile uint8_t cmdBuf = CMD_EMPTY;	/* Command buffer, cleared when read */
 volatile uint8_t encCnt = 0;			/* Counter for encoder */

@@ -49,7 +49,7 @@ void hwInit(void)	/* Hardware initialization */
 	I2CInit();		/* I2C bus */
 	SMF_DDR |= (STDBY | FAN);
 	SMF_PORT &= ~(STDBY | MUTE | FAN);
-	EXT_DDR |= (EXT_1);
+	EXT_DDR |= (EXT_1 | EXT_2);
 	gdLoadFont(font_ks0066_ru_08, 1);
 	sei();
 	return;
@@ -334,6 +334,9 @@ int main(void)
 					saveParams();
 					eeprom_write_byte(eepromSpMode, spMode);
 					break;
+				case CMD_EXT2:
+					switchExt2();
+					saveParams();
 				default:
 					break;
 				}
