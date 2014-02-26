@@ -49,6 +49,7 @@ void hwInit(void)	/* Hardware initialization */
 	I2CInit();		/* I2C bus */
 	SMF_DDR |= (STDBY | FAN);
 	SMF_PORT &= ~(STDBY | MUTE | FAN);
+	EXT_DDR |= (EXT_1);
 	gdLoadFont(font_ks0066_ru_08, 1);
 	sei();
 	return;

@@ -243,6 +243,10 @@ void setChan(uint8_t ch)
 {
 	chan = ch;
 	setGain(gain[ch].value);
+	if (ch == 3)
+		EXT_PORT &= ~EXT_1;
+	else
+		EXT_PORT |= EXT_1;
 	switch (tdaIC) {
 	case TDA7313_IC:
 	case TDA7318_IC:

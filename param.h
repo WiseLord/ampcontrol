@@ -41,6 +41,12 @@
 #define BACKLIGHT_ON			0
 #define BACKLIGHT_OFF			1
 
+#define EXT_DDR					DDRC
+#define EXT_PORT				PORTC
+
+#define EXT_1					(1<<PC3)
+#define EXT_2					(1<<PC4)
+
 typedef struct {
 	int8_t value;
 	int8_t min;
