@@ -7,145 +7,135 @@
 #include "input.h"
 #include "eeprom.h"
 
-int8_t hour, minute, second, day, month, year, weekday;
+static int8_t time[7];
+static timeMode etm = NOEDIT;
 
-uint8_t bd2d(uint8_t temp)
+static void calcWeekDay(void)
 {
-	return (temp >> 4) * 10 + (temp & 0x0F);
+	uint8_t a, y, m;
+
+	a = (time[MONTH] > 2 ? 0 : 1);
+	y = 12 + time[YEAR] - a;
+	m = time[MONTH] + 12 * a - 2;
+
+	time[WEEK] = (time[DAY] + y + (y / 4) - 1 + ((31 * m) / 12)) % 7;
+	if (time[WEEK] == 0)
+		time[WEEK] = 7;
+
+	return;
 }
 
-uint8_t d2bd(uint8_t temp)
+static uint8_t daysInMonth()
 {
-	return ((temp / 10) << 4) + (temp % 10);
-}
-
-void calcWeekDay(void)
-{
-	int16_t a = (14 - month) / 12;
-	int16_t y = 2000 + year - a;
-	int16_t m = month + 12 * a - 2;
-	weekday = (7000 + (day + y + y / 4 - y / 100 + y / 400 + (31 * m) / 12)) % 7;
-	if (weekday == 0)
-		weekday = 7;
-}
-
-uint8_t daysInMonth()
-{
-	if (month == 2) {
-		if ((year & 0x03) == 0) {
-			return 29;
-		} else {
+	if (time[MONTH] == 2) {
+		if (time[YEAR] & 0x03) {
 			return 28;
+		} else {
+			return 29;
 		}
 	}
-	if (month == 4 || month == 6 || month == 9 || month == 11) {
+
+	if (time[MONTH] == 4 || time[MONTH] == 6 || time[MONTH] == 9 || time[MONTH] == 11) {
 		return 30;
 	}
+
 	return 31;
 }
 
-void getTime(void)
+static void getTime(void)
 {
 	uint8_t temp;
+	uint8_t i;
 
-	I2CRead(DS1307_ADDR, DS1307_HOURS, &temp);
-	hour = bd2d(temp);
-	I2CRead(DS1307_ADDR, DS1307_MINUTES, &temp);
-	minute = bd2d(temp);
-	I2CRead(DS1307_ADDR, DS1307_SECONDS, &temp);
-	second = bd2d(temp);
-
-	I2CRead(DS1307_ADDR, DS1307_DAY, &temp);
-	day = bd2d(temp);
-	I2CRead(DS1307_ADDR, DS1307_MONTH, &temp);
-	month = bd2d(temp);
-	I2CRead(DS1307_ADDR, DS1307_YEAR, &temp);
-	year = bd2d(temp);
-
-	I2CRead(DS1307_ADDR, DS1307_WEEKDAY, &temp);
-	weekday = bd2d(temp);
-}
-
-void setTime(void)
-{
-	if (day > daysInMonth())
-		day = daysInMonth();
-	I2CWrite(DS1307_ADDR, DS1307_HOURS, d2bd(hour));
-	I2CWrite(DS1307_ADDR, DS1307_MINUTES, d2bd(minute));
-	if (etm == EDIT_SECONDS)
-		I2CWrite(DS1307_ADDR, DS1307_SECONDS, d2bd(second));
-
-	I2CWrite(DS1307_ADDR, DS1307_DAY, d2bd(day));
-	I2CWrite(DS1307_ADDR, DS1307_MONTH, d2bd(month));
-	I2CWrite(DS1307_ADDR, DS1307_YEAR, d2bd(year));
-
-	if (etm >= EDIT_DAY) {
-		calcWeekDay();
-		I2CWrite(DS1307_ADDR, DS1307_WEEKDAY, d2bd(weekday));
+	for (i = SEC; i <= YEAR; i++) {
+		I2CRead(DS1307_ADDR, i, &temp);
+		time[i] = BD2D(temp);
 	}
+
+	return;
 }
 
-void showTime(uint8_t inv)
+static void setTime(void)
+{
+	uint8_t i;
+
+	if (time[DAY] > daysInMonth())
+		time[DAY] = daysInMonth();
+	if (etm >= DAY)
+		calcWeekDay();
+
+	for (i = SEC; i <= YEAR; i++) {
+		I2CWrite(DS1307_ADDR, i, D2BD(time[i]));
+	}
+
+	return;
+}
+
+static void drawTm(timeMode tm, const uint8_t *font)
+{
+	if (etm == tm)
+		gdLoadFont(font, 0);
+	else
+		gdLoadFont(font, 1);
+	gdWriteString(mkNumString(time[tm], 2, '0', 10));
+	gdLoadFont(font, 1);
+}
+
+void showTime()
 {
 	getTime();
 	gdSetXY(4, 0);
-	if (etm == EDIT_HOURS)
-		gdLoadFont(font_digits_32, 0);
-	else
-		gdLoadFont(font_digits_32, 1);
-	gdWriteString(mkNumString(hour, 2, '0', 10));
-	gdLoadFont(font_digits_32, 1);
+
+	drawTm(HOUR, font_digits_32);
 	gdWriteString((uint8_t*)"\x7F:\x7F");
-	if (etm == EDIT_MINUTES)
-		gdLoadFont(font_digits_32, 0);
-	else
-		gdLoadFont(font_digits_32, 1);
-	gdWriteString(mkNumString(minute, 2, '0', 10));
-	gdLoadFont(font_digits_32, 1);
+	drawTm(MIN, font_digits_32);
 	gdWriteString((uint8_t*)"\x7F:\x7F");
-	if (etm == EDIT_SECONDS)
-		gdLoadFont(font_digits_32, 0);
-	else
-		gdLoadFont(font_digits_32, 1);
-	gdWriteString(mkNumString(second, 2, '0', 10));
+	drawTm(SEC, font_digits_32);
 
 	gdSetXY(9, 4);
-	if (etm == EDIT_DAY)
-		gdLoadFont(font_ks0066_ru_24, 0);
-	else
-		gdLoadFont(font_ks0066_ru_24, 1);
-	gdWriteString(mkNumString(day, 2, '0', 10));
-	gdLoadFont(font_ks0066_ru_24, 1);
+
+	drawTm(DAY, font_ks0066_ru_24);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
-	if (etm == EDIT_MONTH)
-		gdLoadFont(font_ks0066_ru_24, 0);
-	else
-		gdLoadFont(font_ks0066_ru_24, 1);
-	gdWriteString(mkNumString(month, 2, '0', 10));
-	gdLoadFont(font_ks0066_ru_24, 1);
+	drawTm(MONTH, font_ks0066_ru_24);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
-	if (etm == EDIT_YEAR)
-		gdLoadFont(font_ks0066_ru_24, 0);
-	else
-		gdLoadFont(font_ks0066_ru_24, 1);
-	gdWriteString(mkNumString(2000 + year, 4, '0', 10));
+	gdWriteString((uint8_t*)"20");
+	drawTm(YEAR, font_ks0066_ru_24);
 
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(32, 7);
-	gdWriteStringEeprom(mondayLabel + 16 * (weekday % 7));
+	gdWriteStringEeprom(mondayLabel + 16 * (time[WEEK] % 7));
+
+	return;
+}
+
+void stopEditTime(void)
+{
+	etm = NOEDIT;
 
 	return;
 }
 
 void editTime(void)
 {
-	if (etm == EDIT_YEAR)
-	{
-		etm = EDIT_NOEDIT;
-		setDisplayTime(3000);
-	}
-	else
+	switch (etm) {
+	case NOEDIT:
+		etm = HOUR;
+		break;
+	case HOUR:
+	case MIN:
+		etm--;
+		break;
+	case SEC:
+		etm = DAY;
+		break;
+	case DAY:
+	case MONTH:
 		etm++;
+		break;
+	default:
+		etm = NOEDIT;
+		break;
+	}
 	showTime(0);
 }
 
@@ -153,80 +143,80 @@ void incTime(void)
 {
 	getTime();
 	switch (etm) {
-	case EDIT_HOURS:
-		hour++;
-		if (hour > 23)
-			hour = 0;
+	case HOUR:
+		time[HOUR]++;
+		if (time[HOUR] > 23)
+			time[HOUR] = 0;
 		break;
-	case EDIT_MINUTES:
-		minute++;
-		if (minute > 59)
-			minute = 0;
+	case MIN:
+		time[MIN]++;
+		if (time[MIN] > 59)
+			time[MIN] = 0;
 		break;
-	case EDIT_SECONDS:
-		second++;
-		if (second > 59)
-			second = 0;
+	case SEC:
+		time[SEC]++;
+		if (time[SEC] > 59)
+			time[SEC] = 0;
 		break;
-	case EDIT_DAY:
-		day++;
-		if (day > daysInMonth())
-			day = 1;
+	case DAY:
+		time[DAY]++;
+		if (time[DAY] > daysInMonth())
+			time[DAY] = 1;
 		break;
-	case EDIT_MONTH:
-		month++;
-		if (month > 12)
-			month = 1;
+	case MONTH:
+		time[MONTH]++;
+		if (time[MONTH] > 12)
+			time[MONTH] = 1;
 		break;
-	case EDIT_YEAR:
-		year++;
-		if (year > 99)
-			year = 0;
+	case YEAR:
+		time[YEAR]++;
+		if (time[YEAR] > 99)
+			time[YEAR] = 0;
 		break;
 	default:
 		break;
 	}
 	setTime();
-	showTime(0);
 }
 
 void decTime(void)
 {
 	getTime();
 	switch (etm) {
-	case EDIT_HOURS:
-		hour--;
-		if (hour < 0)
-			hour = 23;
+	case HOUR:
+		time[HOUR]--;
+		if (time[HOUR] < 0)
+			time[HOUR] = 23;
 		break;
-	case EDIT_MINUTES:
-		minute--;
-		if (minute < 0)
-			minute = 59;
+	case MIN:
+		time[MIN]--;
+		if (time[MIN] < 0)
+			time[MIN] = 59;
 		break;
-	case EDIT_SECONDS:
-		second--;
-		if (second < 0)
-			second = 59;
+	case SEC:
+		time[SEC]--;
+		if (time[SEC] < 0)
+			time[SEC] = 59;
 		break;
-	case EDIT_DAY:
-		day--;
-		if (day < 1)
-			day = daysInMonth();
+	case DAY:
+		time[DAY]--;
+		if (time[DAY] < 1)
+			time[DAY] = daysInMonth();
 		break;
-	case EDIT_MONTH:
-		month--;
-		if (month < 1)
-			month = 12;
+	case MONTH:
+		time[MONTH]--;
+		if (time[MONTH] < 1)
+			time[MONTH] = 12;
 		break;
-	case EDIT_YEAR:
-		year--;
-		if (year < 0)
-			year = 99;
+	case YEAR:
+		time[YEAR]--;
+		if (time[YEAR] < 0)
+			time[YEAR] = 99;
 		break;
 	default:
 		break;
 	}
 	setTime();
-	showTime(0);
+
+	return;
 }

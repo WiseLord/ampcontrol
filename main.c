@@ -25,7 +25,7 @@ typedef enum {
 	DISPLAY_EDIT_TIME,
 	DISPLAY_MUTE,
 	DISPLAY_LOUDNESS,
-	DISPLAY_TESTMODE,
+	DISPLAY_TESTMODE
 } displayMode;
 
 uint8_t spMode;
@@ -204,7 +204,7 @@ int main(void)
 							mode = DISPLAY_TIME;
 						}
 						defMode = mode;
-						etm = EDIT_NOEDIT;
+						stopEditTime();
 					}
 					break;
 				case CMD_INPUT_0:
@@ -276,7 +276,7 @@ int main(void)
 							decParam(curParam);
 							break;
 						case DISPLAY_EDIT_TIME:
-							setDisplayTime(3000);
+							setDisplayTime(30000);
 							decTime();
 							break;
 						default:
@@ -355,10 +355,10 @@ int main(void)
 				break;
 			case DISPLAY_TIME:
 				setDisplayTime(3000);
-				showTime(0);
+				showTime();
 				break;
 			case DISPLAY_EDIT_TIME:
-				showTime(0);
+				showTime();
 				break;
 			case DISPLAY_MUTE:
 				showBoolParam(mute, muteLabel);
@@ -383,17 +383,17 @@ int main(void)
 					mode = defMode;
 					saveParams();
 					eeprom_write_byte(eepromSpMode, spMode);
-					etm = EDIT_NOEDIT;
+					stopEditTime();
 				}
 				if (mode == DISPLAY_SPECTRUM) {
 					buf = getData();
 					gdSpectrum32(buf, spMode);
 				} else {
-					showTime(0);
+					showTime();
 				}
 			} else {
 				setDisplayTime(200);
-				showTime(0);
+				showTime();
 				switch (command) {
 				case CMD_STBY:
 					stdby = 0;
