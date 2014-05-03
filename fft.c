@@ -1,28 +1,17 @@
 #include "fft.h"
 #include <avr/pgmspace.h>
 
-/* For >> 14 shift in multShf() */
-//static const int16_t sinTable[] PROGMEM = {
-//		 0,   1605,   3196,   4755,   6269,   7722,   9101,  10393,
-//	 11584,  12664,  13621,  14448,  15135,  15677,  16068,  16304,
-//	 16383,  16304,  16068,  15677,  15135,  14448,  13621,  12664,
-//	 11584,  10393,   9101,   7722,   6269,   4755,   3196,   1605,
-//		 0,  -1605,  -3196,  -4755,  -6269,  -7722,  -9101, -10393,
-//	-11584, -12664, -13621, -14448, -15135, -15677, -16068, -16304,
-//	-16383, -16304, -16068, -15677, -15135, -14448, -13621, -12664,
-//	-11584, -10393,  -9101,  -7722,  -6269,  -4755,  -3196,  -1605,
-//};
+static const int16_t dbTable[N_DB] PROGMEM = {
+	   1,    1,    2,    2,    3,    4,    6,    8,
+	  10,   14,   18,   24,   33,   44,   59,   78,
+	 105,  140,  187,  250,  335,  448,  599,  801,
+	1071, 1432, 1915, 2561, 3425, 4580, 6125, 8191,
+};
 
-/* For >> 8 shift in multShf() */
-static const int16_t sinTable[] PROGMEM = {
+static const uint8_t sinTable[N_WAVE / 4 + 1] PROGMEM = {
 	   0,   25,   50,   74,   98,  120,  142,  162,
 	 180,  197,  212,  225,  236,  244,  250,  254,
-	 255,  254,  250,  244,  236,  225,  212,  197,
-	 180,  162,  142,  120,   98,   74,   50,   25,
-	   0,  -25,  -50,  -74,  -98, -121, -142, -162,
-	-181, -198, -213, -226, -237, -245, -251, -255,
-	-256, -255, -251, -245, -237, -226, -213, -198,
-	-181, -162, -142, -121,  -98,  -74,  -50,  -25,
+	 255
 };
 
 #define mshf_16( a, b)    \
@@ -46,12 +35,22 @@ __asm__ __volatile__ (    \
 prod;                     \
 })
 
-static const int16_t dbTable[] PROGMEM = {
-	   1,    1,    2,    2,    3,    4,    6,    8,
-	  10,   14,   18,   24,   33,   44,   59,   78,
-	 105,  140,  187,  250,  335,  448,  599,  801,
-	1071, 1432, 1915, 2561, 3425, 4580, 6125, 8191,
-};
+static int16_t sinTbl(uint8_t phi)
+{
+	int16_t ret;
+	uint8_t neg = 0;
+
+	if (phi >= N_WAVE / 2) {
+		phi -= N_WAVE / 2;
+		neg = 1;
+	}
+	if (phi >= N_WAVE / 4)
+		phi = N_WAVE / 2 - phi;
+
+	ret = pgm_read_byte(&sinTable[phi]);
+
+	return neg ? -ret : ret;
+}
 
 static inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 {
@@ -62,11 +61,8 @@ static inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 static inline void multShf(int16_t cos, int16_t sin,
 	int16_t x, int16_t y, int16_t *u, int16_t *v)
 {
-//	*u = ((int32_t)x * cos - (int32_t)y * sin) >> 8;
-//	*v = ((int32_t)y * cos + (int32_t)x * sin) >> 8;
-
-	*u = (mshf_16(x, cos) - mshf_16(y, sin));	// Hardcoded >> 8 bits,
-	*v = (mshf_16(y, cos) + mshf_16(x, sin));	// Use with 8-bits sinTable.
+	*u = (mshf_16(x, cos) - mshf_16(y, sin));
+	*v = (mshf_16(y, cos) + mshf_16(x, sin));
 }
 
 void fftRad4(int16_t *fr, int16_t *fi)
@@ -75,7 +71,7 @@ void fftRad4(int16_t *fr, int16_t *fi)
 	uint8_t i0, i1, i2, i3;
 	int16_t xr, yr, ur, vr, xi, yi, ui, vi, t;
 	int16_t cos1, sin1, cos2, sin2, cos3, sin3;
-	uint8_t m, m4, phI0, phI;
+	uint8_t m, m4, phi0, phi;
 	uint8_t r, i;
 
 	for (i0 = 0; i0 < FFT_SIZE; i0 += 4) {
@@ -98,17 +94,17 @@ void fftRad4(int16_t *fr, int16_t *fi)
 		m = (1 << ldm);
 		m4 = (m >> rdx);
 
-		phI0 =  N_WAVE / m;
-		phI  = 0;
+		phi0 = N_WAVE / m;
+		phi  = 0;
 
 		for (i = 0; i < m4; i++) {
-			sin1 = pgm_read_word(&sinTable[phI]);
-			sin2 = pgm_read_word(&sinTable[2 * phI]);
-			sin3 = pgm_read_word(&sinTable[3 * phI]);
+			sin1 = sinTbl(phi);
+			sin2 = sinTbl(2 * phi);
+			sin3 = sinTbl(3 * phi);
 
-			cos1 = pgm_read_word(&sinTable[phI + N_WAVE_Q]);
-			cos2 = pgm_read_word(&sinTable[2 * phI + N_WAVE_Q]);
-			cos3 = pgm_read_word(&sinTable[3 * phI + N_WAVE_Q]);
+			cos1 = sinTbl(phi + N_WAVE / 4);
+			cos2 = sinTbl(2 * phi + N_WAVE / 4);
+			cos3 = sinTbl(3 * phi + N_WAVE / 4);
 
 			for (r = 0; r < FFT_SIZE; r += m) {
 				i0 = i + r;
@@ -140,7 +136,7 @@ void fftRad4(int16_t *fr, int16_t *fi)
 				sumDif(xr, yr, &fr[i0], &fr[i2]);
 				sumDif(xi, yi, &fi[i0], &fi[i2]);
 			}
-			phI += phI0;
+			phi += phi0;
 		}
 	}
 	return;

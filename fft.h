@@ -7,7 +7,6 @@
 #define FFT_LOG2	6
 
 #define N_WAVE		64
-#define N_WAVE_Q	16 // N_WAVE / 4
 
 #define N_DB		32
 
