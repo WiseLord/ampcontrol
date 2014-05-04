@@ -97,62 +97,55 @@ ISR (TIMER2_COMP_vect) {
 	if (btnNow) {
 		if (btnNow == btnPrev) {
 			btnCnt++;
-		} else {
-			if (btnNow == BTN_TESTMODE || btnPrev == BTN_TESTMODE) {
-				btnCnt++;
-			} else {
-				btnCnt = 0;
-			}
-		}
-		if (btnPrev != BTN_TESTMODE || btnCnt < LONG_PRESS)
-			btnPrev = btnNow;
-	} else {
-		if (btnCnt > LONG_PRESS) {
-			/* Place "long" command to buffer */
-			switch (btnPrev) {
-			case BTN_STDBY:
-				cmdBuf = CMD_BACKLIGHT; /* Backlight on/off*/
-				break;
-			case BTN_MENU:
-				cmdBuf = CMD_SP_MODE; /* Spectrum mode common/separate */
-				break;
-			case BTN_MUTE:
-				cmdBuf = CMD_LOUDNESS; /* Loudness */
-				break;
-			case BTN_TIME:
-				cmdBuf = CMD_EDIT_TIME; /* Edit time */
-				break;
-			case BTN_INPUT:
-				cmdBuf = CMD_NEXT_INPUT; /* Switch input */
-				break;
-			case BTN_TESTMODE:
-				cmdBuf = CMD_TESTMODE;
-				break;
-			default:
-				break;
-			}
-		} else {
-			if (btnCnt > SHORT_PRESS) {
-				/* Place "short" command to buffer */
+			if (btnCnt == LONG_PRESS) {
+				/* Place "long" command to buffer */
 				switch (btnPrev) {
 				case BTN_STDBY:
-					cmdBuf = CMD_STBY; /* Standby */
+					cmdBuf = CMD_BACKLIGHT; /* Backlight on/off*/
 					break;
 				case BTN_MENU:
-					cmdBuf = CMD_MENU; /* Menu */
+					cmdBuf = CMD_SP_MODE; /* Spectrum mode common/separate */
 					break;
 				case BTN_MUTE:
-					cmdBuf = CMD_MUTE; /* Mute */
+					cmdBuf = CMD_LOUDNESS; /* Loudness */
 					break;
 				case BTN_TIME:
-					cmdBuf = CMD_TIME; /* Show time */
+					cmdBuf = CMD_EDIT_TIME; /* Edit time */
 					break;
 				case BTN_INPUT:
 					cmdBuf = CMD_NEXT_INPUT; /* Switch input */
 					break;
+				case BTN_TESTMODE:
+					cmdBuf = CMD_TESTMODE;
+					break;
 				default:
 					break;
 				}
+			}
+		} else {
+			btnPrev = btnNow;
+		}
+	} else {
+		if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS)) {
+			/* Place "short" command to buffer */
+			switch (btnPrev) {
+			case BTN_STDBY:
+				cmdBuf = CMD_STBY; /* Standby */
+				break;
+			case BTN_MENU:
+				cmdBuf = CMD_MENU; /* Menu */
+				break;
+			case BTN_MUTE:
+				cmdBuf = CMD_MUTE; /* Mute */
+				break;
+			case BTN_TIME:
+				cmdBuf = CMD_TIME; /* Show time */
+				break;
+			case BTN_INPUT:
+				cmdBuf = CMD_NEXT_INPUT; /* Switch input */
+				break;
+			default:
+				break;
 			}
 		}
 		/* Clear button counter */
