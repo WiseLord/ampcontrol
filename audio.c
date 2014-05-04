@@ -1,4 +1,4 @@
-#include "param.h"
+#include "audio.h"
 
 #include <avr/eeprom.h>
 #include <util/delay.h>
@@ -8,7 +8,7 @@
 #include "eeprom.h"
 #include "input.h"
 
-regParam *params[10] = {
+sndParam *params[10] = {
 	&volume,
 	&bass,
 	&middle,
@@ -84,7 +84,7 @@ void showBar(int8_t min, int8_t max, int8_t value)
 	}
 }
 
-void showParam(regParam *param)
+void showParam(sndParam *param)
 {
 	uint8_t mult = 8;
 
@@ -368,7 +368,7 @@ void saveParams(void)
 	eeprom_write_byte(eepromEXT2, ext2);
 }
 
-void incParam(regParam *param)
+void incParam(sndParam *param)
 {
 	param->value++;
 	if (param->value > param->max)
@@ -376,7 +376,7 @@ void incParam(regParam *param)
 	param->set(param->value);
 }
 
-void decParam(regParam *param)
+void decParam(sndParam *param)
 {
 	param->value--;
 	if (param->value < param->min)

@@ -9,7 +9,7 @@
 #include "adc.h"
 #include "input.h"
 #include "i2c.h"
-#include "param.h"
+#include "audio.h"
 #include "ds1307.h"
 
 typedef enum {
@@ -92,7 +92,7 @@ int main(void)
 
 	spMode  = eeprom_read_byte(eepromSpMode);
 
-	regParam *curParam = &volume;
+	sndParam *curParam = &volume;
 
 	loadParams();
 	muteVolume();

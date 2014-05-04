@@ -54,15 +54,15 @@ typedef struct {
 	uint8_t step;
 	void *label;
 	void (*set)(int8_t value);
-} regParam;
+} sndParam;
 
-regParam volume;
-regParam bass;
-regParam middle;
-regParam treble;
-regParam preamp;
-regParam balance;
-regParam gain[4];
+sndParam volume;
+sndParam bass;
+sndParam middle;
+sndParam treble;
+sndParam preamp;
+sndParam balance;
+sndParam gain[4];
 
 uint8_t chan;
 uint8_t loud;
@@ -76,8 +76,8 @@ uint8_t tdaIC;
 void loadParams(void);
 void saveParams(void);
 
-void incParam(regParam *param);
-void decParam(regParam *param);
+void incParam(sndParam *param);
+void decParam(sndParam *param);
 
 void nextChan(void);
 void setChan(uint8_t ch);
@@ -92,6 +92,6 @@ void switchExt2(void);
 void setBacklight(int8_t backlight);
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel);
-void showParam(regParam *param);
+void showParam(sndParam *param);
 
 #endif /* PARAM_H */
