@@ -3,7 +3,7 @@ TARG_B = ampcontrol_gd_b
 
 GD_SRCS = ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 
-SRCS = main.c $(GD_SRCS) fft.c adc.c input.c i2c.c audio.c ds1307.c
+SRCS = main.c $(GD_SRCS) fft.c adc.c input.c i2c.c audio.c ds1307.c rc5.c
 MCU = atmega16
 F_CPU = 16000000L
 

@@ -8,6 +8,7 @@
 #include "fft.h"
 #include "adc.h"
 #include "input.h"
+#include "rc5.h"
 #include "i2c.h"
 #include "audio.h"
 #include "ds1307.h"
@@ -55,26 +56,6 @@ void hwInit(void)	/* Hardware initialization */
 	return;
 }
 
-void showRC5Info(uint16_t rc5buf)
-{
-	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(0, 0);
-	gdWriteString((uint8_t*)"== RC5 test mode ==");
-	gdSetXY(0, 2);
-	gdWriteString((uint8_t*)"Raw = ");
-	gdWriteString(mkNumString(rc5buf, 14, '0', 2));
-	gdSetXY(0, 4);
-	gdWriteString((uint8_t*)"Tog. bit = ");
-	gdWriteString(mkNumString(((rc5buf & 0x0800) > 0), 1, '0', 16));
-	gdSetXY(0, 5);
-	gdWriteString((uint8_t*)"RC code = ");
-	gdWriteString(mkNumString((rc5buf & 0x07C0)>>6, 2, '0', 16));
-	gdSetXY(0, 6);
-	gdWriteString((uint8_t*)"Command = ");
-	gdWriteString(mkNumString(rc5buf & 0x003F, 2, '0', 16));
-
-}
-
 int main(void)
 {
 	hwInit();
@@ -83,8 +64,6 @@ int main(void)
 	uint8_t command = CMD_EMPTY;
 	uint8_t cmdCnt = 0;
 	uint8_t i;
-
-	uint16_t rc5buf;
 
 	displayMode mode = DISPLAY_TIME;
 	displayMode defMode = DISPLAY_SPECTRUM;
@@ -100,7 +79,6 @@ int main(void)
 	while (1) {
 		command = getCommand();
 		cmdCnt = getCmdCount();
-		rc5buf = getRC5Buf();
 
 		if (!stdby && (command != CMD_EMPTY || getDisplayTime())) {
 			if (mode != DISPLAY_TESTMODE) {
@@ -235,7 +213,7 @@ int main(void)
 					if (mode != DISPLAY_TESTMODE)
 						gdFill(0x00);
 					mode = DISPLAY_TESTMODE;
-					showRC5Info(rc5buf);
+					showRC5Info();
 					break;
 				default:
 					break;
@@ -367,10 +345,10 @@ int main(void)
 				showBoolParam(!loud, loudnessLabel);
 				break;
 			case DISPLAY_TESTMODE:
-				if (rc5buf) {
+//				if (rc5buf) {
 					setDisplayTime(20000);
-					showRC5Info(rc5buf);
-				}
+					showRC5Info();
+//				}
 				break;
 			default:
 				break;

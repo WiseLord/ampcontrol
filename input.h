@@ -3,25 +3,6 @@
 
 #include <inttypes.h>
 
-/* RC5 definitions */
-#define RC5_DDR			DDRD
-#define RC5_PIN			PIND
-#define RC5_PORT		PORTD
-
-#define RC5_DATA		(1<<PD3)
-
-#define RC5_SHORT_MIN	888		/* 444 microseconds */
-#define RC5_SHORT_MAX	2666	/* 1333 microseconds */
-#define RC5_LONG_MIN	2668	/* 1334 microseconds */
-#define RC5_LONG_MAX	4444	/* 2222 microseconds */
-
-#define RC5_STBT_MASK	0x3000
-#define RC5_TOGB_MASK	0x0800
-#define RC5_ADDR_MASK	0x07C0
-#define RC5_COMM_MASK	0x003F
-
-//#define RC5_ADDR		0x640
-
 /* Buttons definitions */
 #define BTN_DDR			DDRD
 #define BTN_PIN			PIND
@@ -73,32 +54,18 @@ typedef enum {
 	CMD_EXT2,
 
 	CMD_EMPTY,
-	CMD_TESTMODE,
+	CMD_TESTMODE
 } command;
 
 // Handling long press actions */
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
 
-typedef enum {
-	STATE_START1,
-	STATE_MID1,
-	STATE_MID0,
-	STATE_START0,
-	STATE_ERROR,
-	STATE_BEGIN,
-	STATE_END
-} rc5State;
-
 void setDisplayTime(uint16_t value);
 uint16_t getDisplayTime(void);
-
-void rc5Init();
-void rc5Reset();
 
 void btnInit(void);
 uint8_t getCommand(void);
 uint8_t getCmdCount(void);
-uint16_t getRC5Buf(void);
 
 #endif /* INPUT_H */

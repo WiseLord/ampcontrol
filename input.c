@@ -1,30 +1,15 @@
+#include "input.h"
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "input.h"
 #include "eeprom.h"
-
-#define CMD_COUNT	16
 
 volatile uint8_t cmdBuf = CMD_EMPTY;	/* Command buffer, cleared when read */
 volatile uint8_t encCnt = 0;			/* Counter for encoder */
 
-volatile uint16_t rc5Timer = 0;
-volatile uint16_t rc5Buf = 0;
-
-volatile uint16_t rc5Cmd;
-const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
-
-volatile uint8_t rcCode[CMD_COUNT];		/* Array with rc5 commands */
-
-uint8_t rc5Cnt;
-
-uint8_t rc5DeviceAddr;
-
 volatile uint16_t displayTime;
-
-rc5State state = STATE_BEGIN;
 
 void setDisplayTime(uint16_t value)
 {
@@ -34,103 +19,6 @@ void setDisplayTime(uint16_t value)
 uint16_t getDisplayTime(void)
 {
 	return displayTime;
-}
-
-void rc5Reset()
-{
-	rc5Cnt = 14;
-	rc5Cmd = 0;
-	state = STATE_BEGIN;
-}
-
-void rc5Init()
-{
-	MCUCR |= (1<<ISC10);	/* Set INT1 to trigger on any edge */
-	BTN_DDR &= ~(1<<PD3);	/* Set PD3 (INT1) to input */
-	TCCR1A = 0;				/* Reset Timer1 counter */
-	TCCR1B = (1<<CS11);		/* Set Timer1 prescaler to 8 (2MHz) */
-	GICR |= (1<<INT1);		/* Enable INT1 interrupt */
-
-	/* Load RC5 device address and commands from eeprom */
-	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-	uint8_t i;
-	for (i = 0; i < CMD_COUNT; i++) {
-		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
-	}
-	rc5Reset();
-}
-
-ISR(INT1_vect)
-{
-	uint16_t delay = TCNT1;
-
-	static uint8_t togBitNow = 0;
-	static uint8_t togBitPrev = 0;
-	uint8_t i;
-
-	/* event: 0 / 2 - short space/pulse, 4 / 6 - long space/pulse */
-	uint8_t event = (BTN_PIN & RC5_DATA) ? 2 : 0;
-
-	if (delay > RC5_LONG_MIN && delay < RC5_LONG_MAX)
-		event += 4;
-	else if (delay < RC5_SHORT_MIN || delay > RC5_SHORT_MAX)
-		rc5Reset();
-
-	if (state == STATE_BEGIN) {
-		rc5Cnt--;
-		rc5Cmd |= (1 << rc5Cnt);
-		state = STATE_MID1;
-		TCNT1 = 0;
-		return;
-	}
-
-	rc5State newstate = (trans[state] >> event) & 0x03;
-
-	if (newstate == state || state > STATE_START0) {
-		rc5Reset();
-		return;
-	}
-
-	state = newstate;
-
-	if (state == STATE_MID0)
-		rc5Cnt--;
-	else if (state == STATE_MID1) {
-		rc5Cnt--;
-		rc5Cmd |= 1 << rc5Cnt;
-	}
-
-	if (rc5Cnt == 0 && (state == STATE_START1 || state == STATE_MID0)) {
-		/* If RC5 address is correct, send command to IR RC buffer */
-		rc5Buf = rc5Cmd;
-		if ((rc5Cmd & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr) {
-			if (rc5Cmd & RC5_TOGB_MASK)
-				togBitNow = 1;
-			else
-				togBitNow = 0;
-			rc5Cmd &= RC5_COMM_MASK;
-			if ((togBitNow != togBitPrev) ||
-			    ((rc5Timer > 200) &
-			     (rc5Cmd == rcCode[CMD_VOL_UP] ||
-			      rc5Cmd == rcCode[CMD_VOL_DOWN])) ||
-			    (rc5Timer > 800)) {
-				encCnt++;
-				rc5Timer = 0;
-				cmdBuf = CMD_EMPTY;
-				for (i = 0; i < CMD_COUNT; i++) {
-					if (rc5Cmd == rcCode[i])
-					{
-						cmdBuf = i;
-						break;
-					}
-				}
-			}
-			togBitPrev = togBitNow;
-		}
-		rc5Reset();
-	}
-
-	TCNT1 = 0;
 }
 
 void btnInit(void)
@@ -274,8 +162,6 @@ ISR (TIMER2_COMP_vect) {
 	if (displayTime)
 		displayTime--;
 
-	if (rc5Timer < 1000)
-		rc5Timer++;
 	return;
 };
 
@@ -290,12 +176,5 @@ uint8_t getCmdCount(void)
 {
 	uint8_t ret = encCnt;
 	encCnt = 0;
-	return ret;
-}
-
-uint16_t getRC5Buf(void)
-{
-	uint16_t ret = rc5Buf;
-	rc5Buf = 0;
 	return ret;
 }
