@@ -1,5 +1,4 @@
-TARG_A = ampcontrol_gd_a
-TARG_B = ampcontrol_gd_b
+TARG = ampcontrol_gd
 
 GD_SRCS = ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 
@@ -12,8 +11,7 @@ CS = -fexec-charset=ks0066-ru
 OPTIMIZE = -Os -mcall-prologues
 CFLAGS = -g -Wall -Werror -lm $(OPTIMIZE) $(CS) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 LDFLAGS = -g -Wall -Werror -mmcu=$(MCU)
-OBJS_A = $(SRCS:.c=_a.o)
-OBJS_B = $(SRCS:.c=_b.o)
+OBJS = $(SRCS:.c=.o)
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
@@ -27,30 +25,20 @@ AD_MCU = -p m16
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
-all: $(TARG_A) $(TARG_B)
+all: $(TARG)
 
-$(TARG_A): $(OBJS_A)
-	$(CC) $(LDFLAGS) -o $@.elf  $(OBJS_A) -lm
+$(TARG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $@.elf  $(OBJS) -lm
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
 
-$(TARG_B): $(OBJS_B)
-	$(CC) $(LDFLAGS) -o $@.elf  $(OBJS_B) -lm
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
-
-%_a.o: %.c
+%.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
-%_b.o: %.c
-	$(CC) $(CFLAGS) -DCS_INVERTED=1 -c -o $@ $<
-
 clean:
-	rm -f $(TARG_A).{elf,bin} $(TARG_B).{elf,bin} $(OBJS_A) $(OBJS_B)
+	rm -f $(TARG).{elf,bin} $(OBJS)
 
-flash_a: $(TARG_A)
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:$(TARG_A).hex:i
-
-flash_b: $(TARG_B)
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:$(TARG_B).hex:i
+flash: $(TARG)
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:$(TARG).hex:i
 
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xd1:m

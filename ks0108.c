@@ -5,6 +5,7 @@
 
 const uint8_t *_font;
 static uint8_t _cs, _row, _col;
+static uint8_t csInv;		/* 0 for WG12864A, 1 for WG12864B */
 
 static fontParams fp;
 
@@ -13,13 +14,13 @@ static uint8_t dig[17];		/* Array for num->string convert */
 
 static inline void setPortCS()
 {
-#ifndef CS_INVERTED
-	GD_CHIP_PORT &= ~(GD_CS1 | GD_CS2);
-	GD_CHIP_PORT |= _cs;
-#else
-	GD_CHIP_PORT |= (GD_CS1 | GD_CS2);
-	GD_CHIP_PORT &= ~_cs;
-#endif
+	if (csInv) {
+		GD_CHIP_PORT |= (GD_CS1 | GD_CS2);
+		GD_CHIP_PORT &= ~_cs;
+	} else {
+		GD_CHIP_PORT &= ~(GD_CS1 | GD_CS2);
+		GD_CHIP_PORT |= _cs;
+	}
 	return;
 }
 
@@ -168,6 +169,29 @@ void gdFill(uint8_t data)
 	return;
 }
 
+void testDisplay() {
+	const uint8_t wrData[] = {0x55, 0xAA};
+	uint8_t rdData[] = {0, 0};
+	uint8_t i;
+
+	csInv = 0;
+
+	for (i = 0; i < 2; i++) {
+		gdWriteCommand(KS0108_SET_ADDRESS);
+		gdWriteCommand(KS0108_SET_PAGE);
+		gdWriteData(wrData[i]);
+
+		gdWriteCommand(KS0108_SET_ADDRESS);
+		gdWriteCommand(KS0108_SET_PAGE);
+		rdData[i] = gdReadData();
+	}
+
+	if (wrData[0] != rdData[0] || wrData[1] != rdData[1])
+		csInv = 1;
+
+	return;
+}
+
 void gdInit(void)
 {
 	/* Set control lines as outputs */
@@ -187,6 +211,8 @@ void gdInit(void)
 
 	/* Clear display  and reset addresses */
 	_cs = GD_CS1 | GD_CS2;
+
+	testDisplay();
 
 	gdWriteCommand(KS0108_DISPLAY_START_LINE);
 	gdWriteCommand(KS0108_SET_ADDRESS);
