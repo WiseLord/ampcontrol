@@ -44,9 +44,6 @@
 #define EXT_DDR					DDRC
 #define EXT_PORT				PORTC
 
-#define EXT_1					(1<<PC3)
-#define EXT_2					(1<<PC4)
-
 typedef struct {
 	int8_t value;
 	int8_t min;
@@ -69,7 +66,6 @@ uint8_t loud;
 uint8_t mute;
 uint8_t chanCnt;
 uint8_t backlight;
-uint8_t ext2;
 
 uint8_t tdaIC;
 
@@ -88,7 +84,6 @@ void unmuteVolume(void);
 void switchMute(void);
 void switchLoudness(void);
 void switchBacklight(void);
-void switchExt2(void);
 void setBacklight(int8_t backlight);
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel);

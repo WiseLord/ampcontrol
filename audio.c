@@ -227,14 +227,6 @@ void setBacklight(int8_t backlight)
 		GD_BACKLIGHT_PORT &= ~GD_BCKL;
 }
 
-void setExt2(int8_t ext2)
-{
-	if (ext2)
-		SMF_PORT |= EXT_2;
-	else
-		SMF_PORT &= ~EXT_2;
-}
-
 void setGain(int8_t val)
 {
 	switch (tdaIC) {
@@ -252,10 +244,6 @@ void setChan(uint8_t ch)
 {
 	chan = ch;
 	setGain(gain[ch].value);
-	if (ch == 3)
-		EXT_PORT &= ~EXT_1;
-	else
-		EXT_PORT |= EXT_1;
 	switch (tdaIC) {
 	case TDA7313_IC:
 	case TDA7318_IC:
@@ -311,12 +299,6 @@ void switchBacklight(void)
 	setBacklight(backlight);
 }
 
-void switchExt2(void)
-{
-	ext2 = !ext2;
-	setExt2(ext2);
-}
-
 void loadParams(void)
 {
 	uint8_t i;
@@ -334,7 +316,6 @@ void loadParams(void)
 	chanCnt = eeprom_read_byte(eepromChanCnt);
 	tdaIC = eeprom_read_byte(eepromICSelect);
 	backlight = eeprom_read_byte(eepromBCKL);
-	ext2 = eeprom_read_byte(eepromEXT2);
 
 	volume.set = setVolume;
 	bass.set = setBass;
@@ -365,7 +346,6 @@ void saveParams(void)
 	eeprom_write_byte(eepromLoudness, loud);
 	eeprom_write_byte(eepromChanCnt, chanCnt);
 	eeprom_write_byte(eepromBCKL, backlight);
-	eeprom_write_byte(eepromEXT2, ext2);
 }
 
 void incParam(sndParam *param)

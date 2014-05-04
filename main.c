@@ -12,6 +12,7 @@
 #include "i2c.h"
 #include "audio.h"
 #include "ds1307.h"
+#include "tea5767.h"
 
 typedef enum {
 	DISPLAY_SPECTRUM,
@@ -48,9 +49,9 @@ void hwInit(void)	/* Hardware initialization */
 	adcInit();		/* Analog-to-digital converter */
 	btnInit();		/* Buttons/encoder polling */
 	I2CInit();		/* I2C bus */
+	tea5767Init();
 	SMF_DDR |= (STDBY | FAN);
 	SMF_PORT &= ~(STDBY | MUTE | FAN);
-	EXT_DDR |= (EXT_1 | EXT_2);
 	gdLoadFont(font_ks0066_ru_08, 1);
 	sei();
 	return;
@@ -75,6 +76,21 @@ int main(void)
 
 	loadParams();
 	muteVolume();
+
+
+	uint8_t fmbuf[5];
+
+	uint32_t freq = 96000000;
+
+	tea5767SearchUp(freq, fmbuf);
+
+	do {
+		tea5767ReadStatus(fmbuf);
+	} while (!tea5767Ready(fmbuf));
+
+	freq = (tea5767FreqAvail(fmbuf)+25000)/50000*50000;
+	tea5767SetOptimalFreq(freq);
+	tea5767ReadStatus(fmbuf);
 
 	while (1) {
 		command = getCommand();
@@ -312,9 +328,6 @@ int main(void)
 					saveParams();
 					eeprom_write_byte(eepromSpMode, spMode);
 					break;
-				case CMD_EXT2:
-					switchExt2();
-					saveParams();
 				default:
 					break;
 				}
