@@ -89,4 +89,6 @@ void setBacklight(int8_t backlight);
 void showBoolParam(uint8_t value, const uint8_t *parLabel);
 void showParam(sndParam *param);
 
+void showBar(int8_t min, int8_t max, int8_t value);
+
 #endif /* PARAM_H */

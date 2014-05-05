@@ -78,17 +78,9 @@ int main(void)
 	muteVolume();
 
 	uint8_t bufFM[5];
-	uint32_t freqFM = 96000000;
+	uint32_t freqFM = 99500000;
 
-	tea5767Search(freqFM, bufFM, SEARCH_UP);
-
-	do {
-		tea5767ReadStatus(bufFM);
-	} while (!tea5767Ready(bufFM));
-
-	freqFM = tea5767FreqAvail(bufFM);
-	tea5767SetOptimalFreq(freqFM);
-	tea5767ReadStatus(bufFM);
+	tea5767SetFreq(freqFM);
 
 	while (1) {
 		command = getCommand();
@@ -170,10 +162,14 @@ int main(void)
 					}
 					break;
 				case CMD_MUTE:
-					setDisplayTime(2000);
-					if (mode != DISPLAY_MUTE)
-						gdFill(0x00);
-					mode = DISPLAY_MUTE;
+					setDisplayTime(3000);
+					tea5767Search(freqFM, bufFM, SEARCH_UP);
+					fineTune(&freqFM, bufFM);
+
+//					setDisplayTime(2000);
+//					if (mode != DISPLAY_MUTE)
+//						gdFill(0x00);
+//					mode = DISPLAY_MUTE;
 					break;
 				case CMD_LOUDNESS:
 					if (tdaIC == TDA7313_IC) {
@@ -184,20 +180,24 @@ int main(void)
 					}
 					break;
 				case CMD_TIME:
-					if (mode == DISPLAY_EDIT_TIME)
-						editTime();
-					else {
-						if (mode != DISPLAY_TIME)
-							gdFill(0x00);
-						if (mode == DISPLAY_TIME) {
-							mode = DISPLAY_SPECTRUM;
-							setDisplayTime(0);
-						} else {
-							mode = DISPLAY_TIME;
-						}
-						defMode = mode;
-						stopEditTime();
-					}
+					setDisplayTime(3000);
+					tea5767Search(freqFM, bufFM, SEARCH_DOWN);
+					fineTune(&freqFM, bufFM);
+
+//					if (mode == DISPLAY_EDIT_TIME)
+//						editTime();
+//					else {
+//						if (mode != DISPLAY_TIME)
+//							gdFill(0x00);
+//						if (mode == DISPLAY_TIME) {
+//							mode = DISPLAY_SPECTRUM;
+//							setDisplayTime(0);
+//						} else {
+//							mode = DISPLAY_TIME;
+//						}
+//						defMode = mode;
+//						stopEditTime();
+//					}
 					break;
 				case CMD_INPUT_0:
 				case CMD_INPUT_1:
@@ -276,12 +276,12 @@ int main(void)
 						}
 						break;
 				case CMD_MUTE:
-					switchMute();
+//					switchMute();
 					break;
 				case CMD_LOUDNESS:
-					if (tdaIC == TDA7313_IC) {
-						switchLoudness();
-					}
+//					if (tdaIC == TDA7313_IC) {
+//						switchLoudness();
+//					}
 					break;
 				case CMD_BACKLIGHT:
 					switchBacklight();
