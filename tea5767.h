@@ -62,6 +62,9 @@
 /* 5 register */
 #define TEA5767_RESERVED_MASK	0xFF	/* Not used */
 
+#define TEA5767_SEARCH_DOWN		0
+#define SEARCH_UP		1
+
 typedef struct {
 	uint8_t high_cut;
 	uint8_t st_noise;
@@ -88,6 +91,6 @@ void tea5767SetOptimalFreq (uint32_t freq);
 
 uint32_t tea5767FreqAvail(uint8_t *buf);
 
-void tea5767SearchUp(uint32_t freq, uint8_t *buf);
+void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction);
 
 #endif // TEA5767_H

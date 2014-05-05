@@ -82,7 +82,7 @@ int main(void)
 
 	uint32_t freq = 96000000;
 
-	tea5767SearchUp(freq, fmbuf);
+	tea5767Search(freq, fmbuf, SEARCH_UP);
 
 	do {
 		tea5767ReadStatus(fmbuf);

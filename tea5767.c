@@ -21,25 +21,13 @@ void tea5767Init(void)
 	HILO = 1;
 }
 
-void tea5767SetFreq(uint8_t hilo, uint32_t freq)
+static void tea5767loadBuf(uint8_t *buf, uint16_t div)
 {
-	uint8_t buf[5];
-	uint16_t div;
-	uint8_t i;
-
-	_delay_ms(25);
-
-	if (hilo)
-		div = (freq + 225000) >> 13;
-	else
-		div = (freq - 225000) >> 13;
-
 	buf[0] = (div >> 8) & 0x3F;
+
 	buf[1] = div & 0xff;
 
-	buf[2] = 0;
-	if (hilo)
-		buf[2] |= TEA5767_HLSI;
+	buf[2] = TEA5767_SSL_MID;
 
 	buf[3] = 0;
 	if (ctrl.high_cut)
@@ -58,6 +46,13 @@ void tea5767SetFreq(uint8_t hilo, uint32_t freq)
 		buf[4] |= TEA5767_DTC;
 	if (ctrl.pllref)
 		buf[4] |= TEA5767_PLLREF;
+}
+
+static void tea5767WriteI2C(uint8_t *buf)
+{
+	uint8_t i;
+
+	_delay_ms(25);
 
 	I2CStart();
 	I2CWriteByte(TEA5767_ADDR);
@@ -67,6 +62,27 @@ void tea5767SetFreq(uint8_t hilo, uint32_t freq)
 	I2CStop();
 
 	_delay_ms(25);
+
+}
+
+void tea5767SetFreq(uint8_t hilo, uint32_t freq)
+{
+	uint8_t buf[5];
+	uint16_t div;
+
+	if (hilo)
+		div = (freq + 225000) >> 13;
+	else
+		div = (freq - 225000) >> 13;
+
+	tea5767loadBuf(buf, div);
+
+	if (hilo)
+		buf[2] |= TEA5767_HLSI;
+
+	tea5767WriteI2C(buf);
+
+	return;
 }
 
 void tea5767ReadStatus(uint8_t *buf)
@@ -144,50 +160,19 @@ uint32_t tea5767CurFreq(uint8_t *buf)
 	return ((uint32_t)(((buf[0] & 0x3F) << 8) + buf[1]) << 13);
 }
 
-void tea5767SearchUp(uint32_t freq, uint8_t *buf)
+void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction)
 {
 	uint16_t div;
-	uint8_t i;
-
-	_delay_ms(25);
 
 	div = (freq + 100000 + 225000) >> 13;
 
-	buf[0] = (div >> 8) & 0x3F;
-	buf[1] = div & 0xff;
-
-	buf[2] = 0;
-	buf[2] |= TEA5767_HLSI;
-
-	buf[2] |= TEA5767_SSL_MID;
-	buf[2] |= TEA5767_SUD;
-
-	buf[3] = 0;
-	if (ctrl.high_cut)
-		buf[3] |= TEA5767_HCC;
-	if (ctrl.st_noise)
-		buf[3] |= TEA5767_SNC;
-	if (ctrl.soft_mute)
-		buf[3] |= TEA5767_SMUTE;
-	if (ctrl.japan_band)
-		buf[3] |= TEA5767_BL;
-	if (ctrl.xtal_freq)
-		buf[3] |= TEA5767_XTAL;
-
-	buf[4] = 0;
-	if (ctrl.deemph_75)
-		buf[4] |= TEA5767_DTC;
-	if (ctrl.pllref)
-		buf[4] |= TEA5767_PLLREF;
+	tea5767loadBuf(buf, div);
 
 	buf[0] |= TEA5767_SM;
+	if (direction == SEARCH_UP)
+		buf[2] |= TEA5767_SUD;
 
-	I2CStart();
-	I2CWriteByte(TEA5767_ADDR);
-	for (i = 0; i < 5; i++) {
-		I2CWriteByte(buf[i]);
-	}
-	I2CStop();
+	tea5767WriteI2C(buf);
 
-	_delay_ms(25);
+	return;
 }
