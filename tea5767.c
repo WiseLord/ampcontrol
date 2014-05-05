@@ -159,7 +159,7 @@ uint32_t tea5767FreqAvail(uint8_t *buf)
 	if (HILO)
 		ret -= 225000;
 	else
-		ret += 250000;
+		ret += 225000;
 	ret += 25000;
 	ret /= 50000;
 	ret *= 50000;
@@ -176,11 +176,15 @@ void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction)
 {
 	uint16_t div;
 
-	div = (freq + 100000 + 225000) >> 13;
+	if (direction == SEARCH_UP)
+		div = (freq + 100000 + 225000) >> 13;
+	else
+		div = (freq - 100000 + 225000) >> 13;
 
 	tea5767loadBuf(buf, div);
 
 	buf[0] |= TEA5767_SM;
+	buf[2] |= TEA5767_HLSI;
 	if (direction == SEARCH_UP)
 		buf[2] |= TEA5767_SUD;
 
