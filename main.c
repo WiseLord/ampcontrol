@@ -77,20 +77,18 @@ int main(void)
 	loadParams();
 	muteVolume();
 
+	uint8_t bufFM[5];
+	uint32_t freqFM = 96000000;
 
-	uint8_t fmbuf[5];
-
-	uint32_t freq = 96000000;
-
-	tea5767Search(freq, fmbuf, SEARCH_UP);
+	tea5767Search(freqFM, bufFM, SEARCH_UP);
 
 	do {
-		tea5767ReadStatus(fmbuf);
-	} while (!tea5767Ready(fmbuf));
+		tea5767ReadStatus(bufFM);
+	} while (!tea5767Ready(bufFM));
 
-	freq = (tea5767FreqAvail(fmbuf)+25000)/50000*50000;
-	tea5767SetOptimalFreq(freq);
-	tea5767ReadStatus(fmbuf);
+	freqFM = tea5767FreqAvail(bufFM);
+	tea5767SetOptimalFreq(freqFM);
+	tea5767ReadStatus(bufFM);
 
 	while (1) {
 		command = getCommand();

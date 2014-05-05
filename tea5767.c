@@ -149,10 +149,22 @@ void tea5767SetOptimalFreq (uint32_t freq)
 
 uint32_t tea5767FreqAvail(uint8_t *buf)
 {
-	if (HILO == 1)
-		return ((uint32_t)(((buf[0] & 0x3F) << 8) + buf[1]) << 13) - 225000;
+	uint32_t ret;
+
+	ret = buf[0];
+	ret &= 0x3F;
+	ret <<= 8;
+	ret += buf[1];
+	ret <<= 13;
+	if (HILO)
+		ret -= 225000;
 	else
-		return ((uint32_t)(((buf[0] & 0x3F) << 8) + buf[1]) << 13) + 225000;
+		ret += 250000;
+	ret += 25000;
+	ret /= 50000;
+	ret *= 50000;
+
+	return ret;
 }
 
 uint32_t tea5767CurFreq(uint8_t *buf)
