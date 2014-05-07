@@ -67,13 +67,12 @@ uint8_t mute;
 uint8_t chanCnt;
 uint8_t backlight;
 
-uint8_t tdaIC;
+uint8_t audioProc;
 
 void loadParams(void);
 void saveParams(void);
 
-void incParam(sndParam *param);
-void decParam(sndParam *param);
+void changeParam(sndParam *param, int8_t diff);
 
 void nextChan(void);
 void setChan(uint8_t ch);

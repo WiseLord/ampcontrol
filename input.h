@@ -8,14 +8,14 @@
 #define BTN_PIN			PIND
 #define BTN_PORT		PORTD
 
-#define BTN_MENU		(1<<PD7)
-#define BTN_INPUT		(1<<PD4)
-#define BTN_TIME		(1<<PD5)
-#define BTN_MUTE		(1<<PD6)
-#define BTN_STDBY		(1<<PD0)
+#define BTN_5		(1<<PD7)
+#define BTN_2		(1<<PD4)
+#define BTN_3		(1<<PD5)
+#define BTN_4		(1<<PD6)
+#define BTN_1		(1<<PD0)
 
-#define BTN_TESTMODE	(BTN_STDBY | BTN_MUTE | BTN_MENU)
-#define BTN_MASK		(BTN_MENU | BTN_INPUT | BTN_TIME | BTN_MUTE | BTN_STDBY)
+#define BTN_TESTMODE	(BTN_1 | BTN_4 | BTN_5)
+#define BTN_MASK		(BTN_1 | BTN_2 | BTN_3 | BTN_4 | BTN_5)
 
 /* Encoder definitions */
 #define ENC_DDR			DDRD
@@ -35,7 +35,23 @@
 #define MUTE	(1<<PC5)
 #define STDBY	(1<<PC6)
 
-typedef enum {
+enum {
+	CMD_BTN_1,
+	CMD_BTN_2,
+	CMD_BTN_3,
+	CMD_BTN_4,
+	CMD_BTN_5,
+	CMD_BTN_1_LONG,
+	CMD_BTN_2_LONG,
+	CMD_BTN_3_LONG,
+	CMD_BTN_4_LONG,
+	CMD_BTN_5_LONG,
+	CMD_BTN_TESTMODE,
+
+	CMD_ENC
+};
+
+enum {
 	CMD_STBY,
 	CMD_MUTE,
 	CMD_MENU,
@@ -54,17 +70,19 @@ typedef enum {
 
 	CMD_EMPTY,
 	CMD_TESTMODE
-} command;
+};
 
 // Handling long press actions */
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
 
-void setDisplayTime(uint16_t value);
-uint16_t getDisplayTime(void);
-
 void btnInit(void);
 uint8_t getCommand(void);
-uint8_t getCmdCount(void);
+void clearCommand(void);
+
+int8_t getEncCnt(void);
+
+void setDisplayTime(uint8_t value);
+uint8_t getDisplayTime(void);
 
 #endif /* INPUT_H */

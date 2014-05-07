@@ -88,7 +88,7 @@ void showParam(sndParam *param)
 {
 	uint8_t mult = 8;
 
-	if (tdaIC == TDA7313_IC || tdaIC == TDA7318_IC) {
+	if (audioProc == TDA7313_IC || audioProc == TDA7318_IC) {
 		if (param->label == volumeLabel
 		 || param->label == preampLabel
 		 || param->label == balanceLabel)
@@ -115,7 +115,7 @@ void setVolume(int8_t val)
 	int8_t spRearLeft = 0;
 	int8_t spRearRight = 0;
 
-	switch (tdaIC) {
+	switch (audioProc) {
 	case TDA7313_IC:
 	case TDA7318_IC:
 		I2CWrComm(TDA7313_ADDR, TDA7313_VOLUME | -val);
@@ -158,7 +158,7 @@ void setVolume(int8_t val)
 
 void setPreamp(int8_t val) /* For TDA7313 used as balance front/rear */
 {
-	switch (tdaIC) {
+	switch (audioProc) {
 	case TDA7313_IC:
 	case TDA7318_IC:
 		setVolume(volume.value);
@@ -178,7 +178,7 @@ int8_t setBMT(int8_t val)
 
 void setBass(int8_t val)
 {
-	switch (tdaIC) {
+	switch (audioProc) {
 	case TDA7313_IC:
 	case TDA7318_IC:
 		I2CWrComm(TDA7313_ADDR, TDA7313_BASS | setBMT(val));
@@ -191,7 +191,7 @@ void setBass(int8_t val)
 
 void setMiddle(int8_t val)
 {
-	switch (tdaIC) {
+	switch (audioProc) {
 	case TDA7313_IC:
 	case TDA7318_IC:
 		break;
@@ -203,7 +203,7 @@ void setMiddle(int8_t val)
 
 void setTreble(int8_t val)
 {
-	switch (tdaIC) {
+	switch (audioProc) {
 	case TDA7313_IC:
 	case TDA7318_IC:
 		I2CWrComm(TDA7313_ADDR, TDA7313_TREBLE | setBMT(val));
@@ -229,7 +229,7 @@ void setBacklight(int8_t backlight)
 
 void setGain(int8_t val)
 {
-	switch (tdaIC) {
+	switch (audioProc) {
 	case TDA7313_IC:
 	case TDA7318_IC:
 		setSwitch(val);
@@ -244,7 +244,7 @@ void setChan(uint8_t ch)
 {
 	chan = ch;
 	setGain(gain[ch].value);
-	switch (tdaIC) {
+	switch (audioProc) {
 	case TDA7313_IC:
 	case TDA7318_IC:
 		setSwitch(gain[chan].value);
@@ -314,7 +314,7 @@ void loadParams(void)
 	chan = eeprom_read_byte(eepromChannel);
 	loud = eeprom_read_byte(eepromLoudness);
 	chanCnt = eeprom_read_byte(eepromChanCnt);
-	tdaIC = eeprom_read_byte(eepromICSelect);
+	audioProc = eeprom_read_byte(eepromICSelect);
 	backlight = eeprom_read_byte(eepromBCKL);
 
 	volume.set = setVolume;
@@ -348,19 +348,13 @@ void saveParams(void)
 	eeprom_write_byte(eepromBCKL, backlight);
 }
 
-void incParam(sndParam *param)
+void changeParam(sndParam *param, int8_t diff)
 {
-	param->value++;
+	param->value += diff;
 	if (param->value > param->max)
 		param->value = param->max;
-	param->set(param->value);
-}
-
-void decParam(sndParam *param)
-{
-	param->value--;
-	if (param->value < param->min)
-		param->value = param->min;
+	if (param->value > param->max)
+		param->value = param->max;
 	param->set(param->value);
 }
 

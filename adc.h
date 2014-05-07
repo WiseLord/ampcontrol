@@ -8,6 +8,6 @@
 #define DC_CORR 128 /* Raw value from ADC when no signal */
 
 void adcInit();
-uint8_t *getData();
+uint8_t *getSpData();
 
 #endif /* ADC_H */

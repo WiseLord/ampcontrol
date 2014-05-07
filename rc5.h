@@ -19,7 +19,7 @@
 #define RC5_ADDR_MASK	0x07C0
 #define RC5_COMM_MASK	0x003F
 
-//#define RC5_ADDR		0x640
+#define RC5_BUF_EMPTY	0
 
 typedef enum {
 	STATE_START1,
@@ -31,8 +31,8 @@ typedef enum {
 	STATE_END
 } rc5State;
 
-void rc5Init();
-void incRC5Timer(void);
-void showRC5Info();
+void rc5Init(void);
+uint16_t getRC5Buf(void);
+void clearRC5Buf(void);
 
 #endif // RC5_H

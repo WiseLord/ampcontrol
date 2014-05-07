@@ -52,8 +52,8 @@
 #define KS0108_STA_BUSY				0x80	/* DB4 */
 
 /* Spectrum output mode */
-#define MODE_STEREO					0
-#define MODE_MIXED					1
+#define SP_MODE_STEREO				0
+#define SP_MODE_MIXED				1
 
 typedef struct {
 	uint8_t height;

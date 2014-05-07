@@ -42,7 +42,7 @@ static uint8_t daysInMonth()
 	return 31;
 }
 
-static void getTime(void)
+static int8_t *getTime(void)
 {
 	uint8_t temp;
 	uint8_t i;
@@ -52,7 +52,7 @@ static void getTime(void)
 		time[i] = BD2D(temp);
 	}
 
-	return;
+	return time;
 }
 
 static void setTime(void)
@@ -139,77 +139,49 @@ void editTime(void)
 	showTime(0);
 }
 
-void incTime(void)
+void changeTime(int diff)
 {
 	getTime();
 	switch (etm) {
 	case HOUR:
-		time[HOUR]++;
+		time[HOUR] += diff;
 		if (time[HOUR] > 23)
 			time[HOUR] = 0;
-		break;
-	case MIN:
-		time[MIN]++;
-		if (time[MIN] > 59)
-			time[MIN] = 0;
-		break;
-	case SEC:
-		time[SEC]++;
-		if (time[SEC] > 59)
-			time[SEC] = 0;
-		break;
-	case DAY:
-		time[DAY]++;
-		if (time[DAY] > daysInMonth())
-			time[DAY] = 1;
-		break;
-	case MONTH:
-		time[MONTH]++;
-		if (time[MONTH] > 12)
-			time[MONTH] = 1;
-		break;
-	case YEAR:
-		time[YEAR]++;
-		if (time[YEAR] > 99)
-			time[YEAR] = 0;
-		break;
-	default:
-		break;
-	}
-	setTime();
-}
-
-void decTime(void)
-{
-	getTime();
-	switch (etm) {
-	case HOUR:
-		time[HOUR]--;
 		if (time[HOUR] < 0)
 			time[HOUR] = 23;
 		break;
 	case MIN:
-		time[MIN]--;
+		time[MIN] += diff;
+		if (time[MIN] > 59)
+			time[MIN] = 0;
 		if (time[MIN] < 0)
 			time[MIN] = 59;
 		break;
 	case SEC:
-		time[SEC]--;
-		if (time[SEC] < 0)
-			time[SEC] = 59;
+		time[SEC] += diff;
+		if (time[SEC] > 59)
+			time[SEC] = 0;
+		if (time[MIN] < 0)
+			time[MIN] = 59;
 		break;
 	case DAY:
-		time[DAY]--;
+		time[DAY] += diff;
+		if (time[DAY] > daysInMonth())
+			time[DAY] = 1;
 		if (time[DAY] < 1)
 			time[DAY] = daysInMonth();
 		break;
 	case MONTH:
-		time[MONTH]--;
+		time[MONTH] += diff;
+		if (time[MONTH] > 12)
+			time[MONTH] = 1;
 		if (time[MONTH] < 1)
 			time[MONTH] = 12;
 		break;
 	case YEAR:
-		time[YEAR]--;
+		time[YEAR] += diff;
+		if (time[YEAR] > 99)
+			time[YEAR] = 0;
 		if (time[YEAR] < 0)
 			time[YEAR] = 99;
 		break;
@@ -217,6 +189,4 @@ void decTime(void)
 		break;
 	}
 	setTime();
-
-	return;
 }

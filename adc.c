@@ -97,7 +97,7 @@ static void slowFall()
 	return;
 }
 
-uint8_t *getData()
+uint8_t *getSpData()
 {
 	getValues();
 

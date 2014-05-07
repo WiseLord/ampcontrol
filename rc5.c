@@ -2,41 +2,35 @@
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/eeprom.h>
 
-#include "eeprom.h"
-#include "ks0108.h"
+static volatile uint8_t rc5Cnt;			/* RC5 bit counter */
+static volatile uint16_t rc5Cmd;		/* RC5 command */
+static volatile rc5State state;			/* Decoding process status */
 
-#define CMD_COUNT	16
+static volatile uint16_t rc5Buf = 0;	/* Last decoded RC5 command */
 
-volatile uint8_t rc5DeviceAddr;
-
-volatile uint8_t rc5Cnt;
-volatile uint16_t rc5Cmd;
-volatile rc5State state = STATE_BEGIN;
-
-const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
-
-volatile uint16_t rc5Buf = 0;
+static const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
 
 static void rc5Reset()
 {
 	rc5Cnt = 14;
 	rc5Cmd = 0;
 	state = STATE_BEGIN;
+
+	return;
 }
 
-void rc5Init()
+void rc5Init(void)
 {
-	MCUCR |= (1<<ISC10);	/* Set INT1 to trigger on any edge */
-	RC5_DDR &= ~RC5_DATA;	/* Set PD3 (INT1) to input */
-	TCCR1A = 0;				/* Reset Timer1 counter */
-	TCCR1B = (1<<CS11);		/* Set Timer1 prescaler to 8 (2MHz) */
-	GICR |= (1<<INT1);		/* Enable INT1 interrupt */
+	MCUCR |= (1<<ISC10);				/* Set INT1 to trigger on any edge */
+	RC5_DDR &= ~RC5_DATA;				/* Set PD3 (INT1) to input */
+	TCCR1A = 0;							/* Reset Timer1 counter */
+	TCCR1B = (1<<CS11);					/* Set Timer1 prescaler to 8 (2MHz) */
+	GICR |= (1<<INT1);					/* Enable INT1 interrupt */
 
-	/* Load RC5 device address and from eeprom */
-	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
 	rc5Reset();
+
+	return;
 }
 
 ISR(INT1_vect)
@@ -56,6 +50,7 @@ ISR(INT1_vect)
 		rc5Cmd |= (1 << rc5Cnt);
 		state = STATE_MID1;
 		TCNT1 = 0;
+
 		return;
 	}
 
@@ -63,6 +58,7 @@ ISR(INT1_vect)
 
 	if (newstate == state || state > STATE_START0) {
 		rc5Reset();
+
 		return;
 	}
 
@@ -81,23 +77,18 @@ ISR(INT1_vect)
 	}
 
 	TCNT1 = 0;
+
+	return;
 }
 
-void showRC5Info()
+uint16_t getRC5Buf(void)
 {
-	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(0, 0);
-	gdWriteString((uint8_t*)"== RC5 test mode ==");
-	gdSetXY(0, 2);
-	gdWriteString((uint8_t*)"Raw = ");
-	gdWriteString(mkNumString(rc5Buf, 14, '0', 2));
-	gdSetXY(0, 4);
-	gdWriteString((uint8_t*)"Tog. bit = ");
-	gdWriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
-	gdSetXY(0, 5);
-	gdWriteString((uint8_t*)"RC code = ");
-	gdWriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-	gdSetXY(0, 6);
-	gdWriteString((uint8_t*)"Command = ");
-	gdWriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
+	return rc5Buf;
+}
+
+void clearRC5Buf(void)
+{
+	rc5Buf = RC5_BUF_EMPTY;
+
+	return;
 }

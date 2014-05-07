@@ -22,7 +22,8 @@ typedef enum {
 void showTime();
 void stopEditTime(void);
 void editTime(void);
-void incTime(void);
-void decTime(void);
+//void incTime(void);
+//void decTime(void);
+void changeTime(int diff);
 
 #endif // DS1307_H

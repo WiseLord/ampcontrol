@@ -380,7 +380,7 @@ void gdSpectrum32(uint8_t *buf, uint8_t mode)
 		gdSetXY(0, i);
 		for (j = 0, k = 32; j < 32; j++, k++) {
 			switch (mode) {
-			case MODE_STEREO:
+			case SP_MODE_STEREO:
 				if (i < GD_ROWS / 2) {
 					val = buf[j];
 					row = 3 - val / 8;

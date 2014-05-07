@@ -32,6 +32,9 @@ all: $(TARG)
 $(TARG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.elf  $(OBJS) -lm
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
+	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
+	wc -c $@.bin
+	rm -f $@.bin
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
