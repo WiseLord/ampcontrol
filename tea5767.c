@@ -24,7 +24,7 @@ static void tea5767loadBuf(uint8_t *buf, uint16_t div)
 
 	buf[1] = div & 0xff;
 
-	buf[2] = TEA5767_SSL_LOW;
+	buf[2] = TEA5767_SSL_MID;
 
 	buf[3] = 0;
 	if (ctrl.high_cut)
@@ -156,27 +156,8 @@ void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction)
 	return;
 }
 
-void showRadio(uint32_t *freqFM)
-{
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(0, 0);
-	gdWriteString(mkNumString(*freqFM/1000000, 3, ' ', 10));
-	gdWriteChar('\x7F');
-	gdWriteChar('.');
-	gdWriteChar('\x7F');
-	gdWriteString(mkNumString(*freqFM/100000%10, 1, ' ', 10));
-	gdLoadFont(font_ks0066_ru_08, 1);
-//	showBar(0, 16, tea5767ADCLevel(bufFM));
-}
-
 void fineTune(uint32_t *freqFM, uint8_t *bufFM)
 {
-	gdFill(0x00);
-	do {
-		tea5767ReadStatus(bufFM);
-		showRadio(freqFM);
-	} while (!tea5767Ready(bufFM));
-
 	*freqFM = tea5767FreqAvail(bufFM);
 
 	if (*freqFM > 108000000)
@@ -185,7 +166,4 @@ void fineTune(uint32_t *freqFM, uint8_t *bufFM)
 		*freqFM = 108000000;
 
 	tea5767SetFreq(*freqFM);
-	tea5767ReadStatus(bufFM);
-
-	showRadio(freqFM);
 }

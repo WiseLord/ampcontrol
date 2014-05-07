@@ -82,6 +82,21 @@ void showRC5Info(uint16_t rc5Buf)
 	gdWriteString(mkNumString(BTN_PIN, 8, '0', 2));
 }
 
+void showRadio(uint8_t *buf)
+{
+	uint32_t freq = tea5767FreqAvail(buf);
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(0, 0);
+	gdWriteString((uint8_t*)"FM ");
+	gdWriteString(mkNumString(freq/1000000, 3, ' ', 10));
+	gdWriteChar('\x7F');
+	gdWriteChar('.');
+	gdWriteChar('\x7F');
+	gdWriteString(mkNumString(freq/100000%10, 1, ' ', 10));
+	gdLoadFont(font_ks0066_ru_08, 1);
+//	showBar(0, 16, tea5767ADCLevel(buf));
+}
+
 void powerOn(void)
 {
 	SMF_PORT |= STDBY;
@@ -119,16 +134,7 @@ int main(void)
 	uint8_t command = CMD_EMPTY;
 	int8_t encCnt = 0;
 
-
-
-
-	uint16_t rc5Buf = RC5_BUF_EMPTY;
-
-	uint8_t defMode = MODE_SPECTRUM;
-	uint8_t stdby = 1;
-
 	spMode  = eeprom_read_byte(eepromSpMode);
-
 
 	loadParams();
 	muteVolume();
@@ -172,11 +178,25 @@ int main(void)
 			case MODE_TREBLE:
 			case MODE_PREAMP:
 			case MODE_BALANCE:
-				if (dispMode == MODE_GAIN)
-					nextChan();
 				curSndParam = &gain[chan];
 				dispMode = MODE_GAIN;
 				setDisplayTime(3);
+				break;
+			}
+			break;
+		case CMD_BTN_3:
+			switch (dispMode) {
+			case MODE_FM_RADIO:
+				tea5767SetFreq(freqFM - 100000);
+				setDisplayTime(10);
+				break;
+			}
+			break;
+		case CMD_BTN_4:
+			switch (dispMode) {
+			case MODE_FM_RADIO:
+				tea5767SetFreq(freqFM + 100000);
+				setDisplayTime(10);
 				break;
 			}
 			break;
@@ -184,8 +204,6 @@ int main(void)
 			switch (dispMode) {
 			case MODE_VOLUME:
 				curSndParam = &bass;
-				dispMode = MODE_BASS;
-				break;
 			case MODE_BASS:
 				switch (audioProc) {
 				case TDA7313_IC:
@@ -221,6 +239,32 @@ int main(void)
 			}
 			setDisplayTime(3);
 			break;
+		case CMD_BTN_3_LONG:
+			switch (dispMode) {
+			case MODE_FM_RADIO:
+				tea5767Search(freqFM, bufFM, SEARCH_DOWN);
+				setDisplayTime(10);
+				break;
+			}
+			break;
+		case CMD_BTN_4_LONG:
+			switch (dispMode) {
+			case MODE_FM_RADIO:
+				tea5767Search(freqFM, bufFM, SEARCH_UP);
+				setDisplayTime(10);
+				break;
+			}
+			break;
+		case CMD_BTN_5_LONG:
+			switch (dispMode) {
+			case MODE_STANDBY:
+				break;
+			default:
+				dispMode = MODE_FM_RADIO;
+				setDisplayTime(10);
+				break;
+			}
+			break;
 		case CMD_ENC:
 			switch (dispMode) {
 			case MODE_SPECTRUM:
@@ -235,12 +279,6 @@ int main(void)
 			case MODE_BALANCE:
 			case MODE_GAIN:
 				changeParam(curSndParam, encCnt);
-//				if (encCnt > 0)
-//					for (i = 0; i < encCnt; i++)
-//						incParam(curSndParam);
-//				else
-//					for (i = 0; i < -encCnt; i++)
-//						decParam(curSndParam);
 				setDisplayTime(2);
 				break;
 			case MODE_TIME_EDIT:
@@ -251,10 +289,16 @@ int main(void)
 			break;
 		}
 
-		/* Reset active display mode when timer == 0 */
+		/* Exit to default mode and save params to EEPROM*/
 		if (getDisplayTime() == 0 && dispMode != MODE_STANDBY) {
+			if (dispModePrev != MODE_SPECTRUM) {
+				gdSetXY(0, 0);
+				eeprom_write_byte(eepromSpMode, spMode);
+				_delay_ms(1000);
+				saveParams();
+				eeprom_write_byte(eepromSpMode, spMode);
+			}
 			dispMode = MODE_SPECTRUM;
-			curSndParam = &volume;
 		}
 
 		/* Clear screen if mode has changed */
@@ -279,305 +323,17 @@ int main(void)
 		case MODE_GAIN:
 			showParam(curSndParam);
 			break;
+		case MODE_FM_RADIO:
+			tea5767ReadStatus(bufFM);
+			freqFM = tea5767FreqAvail(bufFM);
+			showRadio(bufFM);
+			if (tea5767Ready(bufFM))
+				fineTune(&freqFM, bufFM);
+			break;
 		}
 
 		/* Save current mode */
 		dispModePrev = dispMode;
-	}
-
-	while (1) {
-		command = getCommand();
-		clearCommand();
-		encCnt = getEncCnt();
-
-		if (stdby) {										// Standby mode
-			if (dispMode == MODE_TEST) {
-				if (rc5Buf != getRC5Buf() ||
-					~BTN_PIN & BTN_MASK ||
-					~ENC_PIN & ENC_AB)
-					setDisplayTime(10);
-				rc5Buf = getRC5Buf();
-				showRC5Info(rc5Buf);
-				if (!getDisplayTime()) {
-					gdFill(0x00);
-					dispMode = MODE_TIME;
-				}
-			} else {
-				setDisplayTime(200);
-				showTime();
-				switch (command) {
-				case CMD_TESTMODE:
-					if (dispMode != MODE_TEST)
-						gdFill(0x00);
-					dispMode = MODE_TEST;
-					setDisplayTime(10);
-					break;
-				case CMD_STBY:
-					stdby = 0;
-					SMF_PORT |= STDBY;
-					_delay_ms(50);
-					SMF_DDR |= MUTE;
-					SMF_PORT |= MUTE;
-					SMF_PORT |= FAN;
-					setBacklight(backlight);
-					unmuteVolume();
-					dispMode = defMode;
-					break;
-				}
-			}
-		} else if (command == CMD_EMPTY &&
-				   !getDisplayTime()) {						/* Inactive mode */
-			if (dispMode != defMode) {
-				gdFill(0x00);
-				dispMode = defMode;
-				saveParams();
-				eeprom_write_byte(eepromSpMode, spMode);
-				stopEditTime();
-			}
-			if (dispMode == MODE_SPECTRUM) {
-				spBuf = getSpData();
-				gdSpectrum32(spBuf, spMode);
-			} else {
-				showTime();
-			}
-		} else {											/* Active mode */
-			/* Change current mode */
-			switch (command) {
-			case CMD_MENU:
-				setDisplayTime(3);
-				switch (dispMode) {
-				case MODE_VOLUME:
-					if (dispMode != MODE_BASS)
-						gdFill(0x00);
-					dispMode = MODE_BASS;
-					curSndParam = &bass;
-					break;
-				case MODE_BASS:
-					switch (audioProc) {
-					case TDA7313_IC:
-					case TDA7318_IC:
-						if (dispMode != MODE_TREBLE)
-							gdFill(0x00);
-						dispMode = MODE_TREBLE;
-						curSndParam = &treble;
-						break;
-					default:
-						if (dispMode != MODE_MIDDLE)
-							gdFill(0x00);
-						dispMode = MODE_MIDDLE;
-						curSndParam = &middle;
-						break;
-					}
-					break;
-				case MODE_MIDDLE:
-					if (dispMode != MODE_TREBLE)
-						gdFill(0x00);
-					dispMode = MODE_TREBLE;
-					curSndParam = &treble;
-					break;
-				case MODE_TREBLE:
-					if (dispMode != MODE_PREAMP)
-						gdFill(0x00);
-					dispMode = MODE_PREAMP;
-					curSndParam = &preamp;
-					break;
-				case MODE_PREAMP:
-					if (dispMode != MODE_BALANCE)
-						gdFill(0x00);
-					dispMode = MODE_BALANCE;
-					curSndParam = &balance;
-					break;
-				case MODE_BALANCE:
-				case MODE_SPECTRUM:
-				case MODE_TIME:
-				case MODE_GAIN:
-					if (dispMode != MODE_VOLUME)
-						gdFill(0x00);
-					dispMode = MODE_VOLUME;
-					curSndParam = &volume;
-					break;
-				default:
-					break;
-				}
-				break;
-			case CMD_VOL_UP:
-			case CMD_VOL_DOWN:
-				setDisplayTime(2);
-				switch (dispMode) {
-				case MODE_SPECTRUM:
-				case MODE_TIME:
-					gdFill(0x00);
-					dispMode = MODE_VOLUME;
-					curSndParam = &volume;
-					break;
-				default:
-					break;
-				}
-				break;
-			case CMD_MUTE:
-				setDisplayTime(3);
-				tea5767Search(freqFM, bufFM, SEARCH_UP);
-				fineTune(&freqFM, bufFM);
-
-//					setDisplayTime(2);
-//					if (mode != DISPLAY_MUTE)
-//						gdFill(0x00);
-//					mode = DISPLAY_MUTE;
-				break;
-			case CMD_LOUDNESS:
-				if (audioProc == TDA7313_IC) {
-					setDisplayTime(2);
-					if (dispMode != MODE_LOUDNESS)
-						gdFill(0x00);
-					dispMode = MODE_LOUDNESS;
-				}
-				break;
-			case CMD_TIME:
-				setDisplayTime(3);
-				tea5767Search(freqFM, bufFM, SEARCH_DOWN);
-				fineTune(&freqFM, bufFM);
-
-//					if (mode == DISPLAY_EDIT_TIME)
-//						editTime();
-//					else {
-//						if (mode != DISPLAY_TIME)
-//							gdFill(0x00);
-//						if (mode == DISPLAY_TIME) {
-//							mode = DISPLAY_SPECTRUM;
-//							setDisplayTime(0);
-//						} else {
-//							mode = DISPLAY_TIME;
-//						}
-//						defMode = mode;
-//						stopEditTime();
-//					}
-				break;
-			case CMD_INPUT_0:
-			case CMD_INPUT_1:
-			case CMD_INPUT_2:
-			case CMD_INPUT_3:
-				setDisplayTime(3);
-				if (dispMode != MODE_GAIN)
-					gdFill(0x00);
-				dispMode = MODE_GAIN;
-				break;
-			case CMD_STBY:
-				SMF_DDR &= ~MUTE;
-				SMF_PORT &= ~MUTE;
-				_delay_ms(50);
-				stdby = 1;
-				SMF_PORT &= ~STDBY;
-				SMF_PORT &= ~FAN;
-				GD_BACKLIGHT_PORT &= ~GD_BCKL;
-				gdFill(0x00);
-				dispMode = MODE_TIME;
-				muteVolume();
-				saveParams();
-				eeprom_write_byte(eepromSpMode, spMode);
-				break;
-			}
-
-			/* Execute command */
-			switch (command) {
-			case CMD_VOL_UP:
-			case CMD_VOL_DOWN:
-				switch (dispMode) {
-				case MODE_VOLUME:
-				case MODE_BASS:
-				case MODE_MIDDLE:
-				case MODE_TREBLE:
-				case MODE_PREAMP:
-				case MODE_BALANCE:
-				case MODE_GAIN:
-					changeParam(curSndParam, encCnt);
-					break;
-				case MODE_TIME_EDIT:
-					setDisplayTime(30);
-					changeTime(encCnt);
-					break;
-				default:
-					break;
-				}
-				break;
-			case CMD_MUTE:
-//					switchMute();
-				break;
-			case CMD_LOUDNESS:
-//					if (tdaIC == TDA7313_IC) {
-//						switchLoudness();
-//					}
-				break;
-			case CMD_BACKLIGHT:
-				switchBacklight();
-				break;
-			case CMD_NEXT_INPUT:
-				setDisplayTime(3);
-				if (dispMode != MODE_GAIN)
-					gdFill(0x00);
-				else
-					nextChan();
-				dispMode = MODE_GAIN;
-				curSndParam = &gain[chan];
-				break;
-			case CMD_EDIT_TIME:
-				setDisplayTime(30);
-				if (dispMode != MODE_TIME_EDIT)
-					gdFill(0x00);
-				dispMode = MODE_TIME_EDIT;
-				editTime();
-				break;
-			case CMD_INPUT_0:
-				setChan(0);
-				curSndParam = &gain[chan];
-				break;
-			case CMD_INPUT_1:
-				setChan(1);
-				curSndParam = &gain[chan];
-				break;
-			case CMD_INPUT_2:
-				setChan(2);
-				curSndParam = &gain[chan];
-				break;
-			case CMD_INPUT_3:
-				if (audioProc == TDA7439_IC) {
-					setChan(3);
-					curSndParam = &gain[chan];
-				}
-				break;
-			case CMD_SP_MODE:
-				setDisplayTime(100);
-				switchSpMode();
-				saveParams();
-				eeprom_write_byte(eepromSpMode, spMode);
-				break;
-			}
-
-			/* Show result */
-			switch (dispMode) {
-			case MODE_VOLUME:
-			case MODE_BASS:
-			case MODE_MIDDLE:
-			case MODE_TREBLE:
-			case MODE_PREAMP:
-			case MODE_BALANCE:
-			case MODE_GAIN:
-				showParam(curSndParam);
-				break;
-			case MODE_TIME:
-				setDisplayTime(3);
-				showTime();
-				break;
-			case MODE_TIME_EDIT:
-				showTime();
-				break;
-			case MODE_MUTE:
-				showBoolParam(mute, muteLabel);
-				break;
-			case MODE_LOUDNESS:
-				showBoolParam(!loud, loudnessLabel);
-				break;
-			}
-		}
 	}
 
 	return 0;
