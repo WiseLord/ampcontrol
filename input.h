@@ -14,7 +14,7 @@
 #define BTN_4		(1<<PD6)
 #define BTN_1		(1<<PD0)
 
-#define BTN_TESTMODE	(BTN_1 | BTN_4 | BTN_5)
+#define BTN_TEST_INPUT	(BTN_1 | BTN_2)
 #define BTN_MASK		(BTN_1 | BTN_2 | BTN_3 | BTN_4 | BTN_5)
 
 /* Encoder definitions */
@@ -35,6 +35,9 @@
 #define MUTE	(1<<PC5)
 #define STDBY	(1<<PC6)
 
+/* RC5 support definitions */
+#define CMD_COUNT	15
+
 enum {
 	CMD_BTN_1,
 	CMD_BTN_2,
@@ -48,28 +51,27 @@ enum {
 	CMD_BTN_5_LONG,
 	CMD_BTN_TESTMODE,
 
-	CMD_ENC
+	CMD_BTN_EMPTY = 0xFF
 };
 
 enum {
-	CMD_STBY,
-	CMD_MUTE,
-	CMD_MENU,
-	CMD_VOL_UP,
-	CMD_VOL_DOWN,
-	CMD_INPUT_0,
-	CMD_INPUT_1,
-	CMD_INPUT_2,
-	CMD_INPUT_3,
-	CMD_NEXT_INPUT,
-	CMD_TIME,
-	CMD_EDIT_TIME,
-	CMD_SP_MODE,
-	CMD_LOUDNESS,
-	CMD_BACKLIGHT,
+	CMD_RC5_STBY,
+	CMD_RC5_MUTE,
+	CMD_RC5_MENU,
+	CMD_RC5_VOL_UP,
+	CMD_RC5_VOL_DOWN,
+	CMD_RC5_INPUT_0,
+	CMD_RC5_INPUT_1,
+	CMD_RC5_INPUT_2,
+	CMD_RC5_INPUT_3,
+	CMD_RC5_NEXT_INPUT,
+	CMD_RC5_TIME,
+	CMD_RC5_EDIT_TIME,
+	CMD_RC5_SP_MODE,
+	CMD_RC5_LOUDNESS,
+	CMD_RC5_BACKLIGHT,
 
-	CMD_EMPTY,
-	CMD_TESTMODE
+	CMD_RC5_EMPTY = 0xFF
 };
 
 // Handling long press actions */
@@ -77,10 +79,10 @@ enum {
 #define LONG_PRESS		600
 
 void btnInit(void);
-uint8_t getCommand(void);
-void clearCommand(void);
 
-int8_t getEncCnt(void);
+int8_t getEncoder(void);
+uint8_t getBtnCmd(void);
+uint8_t getRC5Cmd(void);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);

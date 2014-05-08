@@ -7,7 +7,7 @@ static volatile uint8_t rc5Cnt;			/* RC5 bit counter */
 static volatile uint16_t rc5Cmd;		/* RC5 command */
 static volatile rc5State state;			/* Decoding process status */
 
-static volatile uint16_t rc5Buf = 0;	/* Last decoded RC5 command */
+static volatile uint16_t rc5RawBuf = 0;	/* Last decoded RC5 command */
 
 static const uint8_t trans[4] = {0x01, 0x91, 0x9b, 0xfb};
 
@@ -72,7 +72,7 @@ ISR(INT1_vect)
 	}
 
 	if (rc5Cnt == 0 && (state == STATE_START1 || state == STATE_MID0)) {
-		rc5Buf = rc5Cmd;
+		rc5RawBuf = rc5Cmd;
 		rc5Reset();
 	}
 
@@ -81,14 +81,9 @@ ISR(INT1_vect)
 	return;
 }
 
-uint16_t getRC5Buf(void)
+uint16_t getRC5RawBuf(void)
 {
-	return rc5Buf;
-}
-
-void clearRC5Buf(void)
-{
-	rc5Buf = RC5_BUF_EMPTY;
-
-	return;
+	uint16_t ret = rc5RawBuf;
+//	rc5RawBuf = RC5_BUF_EMPTY;
+	return ret;
 }

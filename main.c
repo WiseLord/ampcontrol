@@ -131,8 +131,9 @@ int main(void)
 	uint8_t *spBuf;
 	sndParam *curSndParam = &volume;
 
-	uint8_t command = CMD_EMPTY;
 	int8_t encCnt = 0;
+	uint8_t btnCmd = CMD_BTN_EMPTY;
+	uint8_t rc5Cmd = CMD_BTN_EMPTY;
 
 	spMode  = eeprom_read_byte(eepromSpMode);
 
@@ -145,12 +146,35 @@ int main(void)
 	tea5767SetFreq(freqFM);
 
 	while (1) {
-		encCnt = getEncCnt();
-		command = getCommand();
-		clearCommand();
+		encCnt = getEncoder();
+		btnCmd = getBtnCmd();
+		rc5Cmd = getRC5Cmd();
+
+		gdLoadFont(font_ks0066_ru_08, 1);
+		gdSetXY(0, 0);
+		gdWriteString(mkNumString(rc5Cmd, 2, '0', 16));
+		_delay_ms(1);
+
+//		switch (rc5Cmd) {
+//		case CMD_RC5_STBY:
+//			switch (dispMode) {
+//			case MODE_STANDBY:
+//				powerOn();
+//				dispMode = MODE_SPECTRUM;
+//				break;
+//			case MODE_TEST:
+//				setDisplayTime(20);
+//				break;
+//			default:
+//				powerOff();
+//				dispMode = MODE_STANDBY;
+//				break;
+//			}
+//			break;
+//		}
 
 		/* Handle command */
-		switch (command) {
+		switch (btnCmd) {
 		case CMD_BTN_1:
 			switch (dispMode) {
 			case MODE_STANDBY:
@@ -168,16 +192,14 @@ int main(void)
 			break;
 		case CMD_BTN_2:
 			switch (dispMode) {
+			case MODE_STANDBY:
+				break;
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
 			case MODE_GAIN:
 				nextChan();
-			case MODE_SPECTRUM:
-			case MODE_TIME:
-			case MODE_VOLUME:
-			case MODE_BASS:
-			case MODE_MIDDLE:
-			case MODE_TREBLE:
-			case MODE_PREAMP:
-			case MODE_BALANCE:
+			default:
 				curSndParam = &gain[chan];
 				dispMode = MODE_GAIN;
 				setDisplayTime(3);
@@ -186,6 +208,9 @@ int main(void)
 			break;
 		case CMD_BTN_3:
 			switch (dispMode) {
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
 			case MODE_FM_RADIO:
 				tea5767SetFreq(freqFM - 100000);
 				setDisplayTime(10);
@@ -194,6 +219,9 @@ int main(void)
 			break;
 		case CMD_BTN_4:
 			switch (dispMode) {
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
 			case MODE_FM_RADIO:
 				tea5767SetFreq(freqFM + 100000);
 				setDisplayTime(10);
@@ -202,18 +230,24 @@ int main(void)
 			break;
 		case CMD_BTN_5:
 			switch (dispMode) {
+			case MODE_STANDBY:
+				break;
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
 			case MODE_VOLUME:
 				curSndParam = &bass;
+				dispMode = MODE_BASS;
+				break;
 			case MODE_BASS:
 				switch (audioProc) {
-				case TDA7313_IC:
-				case TDA7318_IC:
-					curSndParam = &treble;
-					dispMode = MODE_TREBLE;
-					break;
 				case TDA7439_IC:
 					curSndParam = &middle;
 					dispMode = MODE_MIDDLE;
+					break;
+				default:
+					curSndParam = &treble;
+					dispMode = MODE_TREBLE;
 					break;
 				}
 				break;
@@ -229,15 +263,26 @@ int main(void)
 				curSndParam = &balance;
 				dispMode = MODE_BALANCE;
 				break;
-			case MODE_BALANCE:
-			case MODE_SPECTRUM:
-			case MODE_TIME:
-			case MODE_GAIN:
+			default:
 				curSndParam = &volume;
 				dispMode = MODE_VOLUME;
 				break;
 			}
 			setDisplayTime(3);
+			break;
+		case CMD_BTN_1_LONG:
+			switch (dispMode) {
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
+			}
+			break;
+		case CMD_BTN_2_LONG:
+			switch (dispMode) {
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
+			}
 			break;
 		case CMD_BTN_3_LONG:
 			switch (dispMode) {
@@ -259,46 +304,69 @@ int main(void)
 			switch (dispMode) {
 			case MODE_STANDBY:
 				break;
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
 			default:
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(10);
 				break;
 			}
 			break;
-		case CMD_ENC:
+		case CMD_BTN_TESTMODE:
 			switch (dispMode) {
-			case MODE_SPECTRUM:
-			case MODE_TIME:
-				curSndParam = &volume;
-				dispMode = MODE_VOLUME;
-			case MODE_VOLUME:
-			case MODE_BASS:
-			case MODE_MIDDLE:
-			case MODE_TREBLE:
-			case MODE_PREAMP:
-			case MODE_BALANCE:
-			case MODE_GAIN:
-				changeParam(curSndParam, encCnt);
-				setDisplayTime(2);
+			case MODE_STANDBY:
+				dispMode = MODE_TEST;
+				setDisplayTime(20);
 				break;
-			case MODE_TIME_EDIT:
-				changeTime(encCnt);
+			case MODE_TEST:
 				setDisplayTime(20);
 				break;
 			}
 			break;
 		}
 
-		/* Exit to default mode and save params to EEPROM*/
-		if (getDisplayTime() == 0 && dispMode != MODE_STANDBY) {
-			if (dispModePrev != MODE_SPECTRUM) {
-				gdSetXY(0, 0);
-				eeprom_write_byte(eepromSpMode, spMode);
-				_delay_ms(1000);
-				saveParams();
-				eeprom_write_byte(eepromSpMode, spMode);
+		if (encCnt) {
+			switch (dispMode) {
+			case MODE_STANDBY:
+				break;
+			case MODE_TEST:
+				setDisplayTime(20);
+				break;
+			case MODE_TIME_EDIT:
+				changeTime(encCnt);
+				setDisplayTime(20);
+				break;
+			case MODE_SPECTRUM:
+			case MODE_TIME:
+				curSndParam = &volume;
+				dispMode = MODE_VOLUME;
+			default:
+				changeParam(curSndParam, encCnt);
+				setDisplayTime(2);
+				break;
 			}
-			dispMode = MODE_SPECTRUM;
+		}
+
+		/* Exit to default mode and save params to EEPROM*/
+		if (getDisplayTime() == 0) {
+			switch (dispMode) {
+			case MODE_STANDBY:
+				break;
+			case MODE_TEST:
+				dispMode = MODE_STANDBY;
+				break;
+			default:
+				if (dispModePrev != MODE_SPECTRUM) {
+					gdSetXY(0, 0);
+					eeprom_write_byte(eepromSpMode, spMode);
+					_delay_ms(1000);
+					saveParams();
+					eeprom_write_byte(eepromSpMode, spMode);
+				}
+				dispMode = MODE_SPECTRUM;
+				break;
+			}
 		}
 
 		/* Clear screen if mode has changed */
@@ -308,20 +376,14 @@ int main(void)
 		/* Show things */
 		switch (dispMode) {
 		case MODE_STANDBY:
-			showTime();
+//			showTime();
+			break;
+		case MODE_TEST:
+			showRC5Info(getRC5RawBuf());
 			break;
 		case MODE_SPECTRUM:
 			spBuf = getSpData();
 			gdSpectrum32(spBuf, spMode);
-			break;
-		case MODE_VOLUME:
-		case MODE_BASS:
-		case MODE_MIDDLE:
-		case MODE_TREBLE:
-		case MODE_PREAMP:
-		case MODE_BALANCE:
-		case MODE_GAIN:
-			showParam(curSndParam);
 			break;
 		case MODE_FM_RADIO:
 			tea5767ReadStatus(bufFM);
@@ -329,6 +391,9 @@ int main(void)
 			showRadio(bufFM);
 			if (tea5767Ready(bufFM))
 				fineTune(&freqFM, bufFM);
+			break;
+		default:
+			showParam(curSndParam);
 			break;
 		}
 

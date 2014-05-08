@@ -5,11 +5,18 @@
 #include <avr/eeprom.h>
 
 #include "eeprom.h"
+#include "rc5.h"
 
-static volatile uint8_t cmdBuf;		/* Command buffer, cleared when read */
-static volatile int8_t encCnt;		/* Counter for encoder */
+static volatile int8_t encCnt;
+static volatile uint8_t btnCmdBuf;
+static volatile uint8_t rc5CmdBuf;
 
 static volatile uint16_t displayTime;
+static volatile uint16_t rc5Timer;
+
+static volatile uint8_t rc5DeviceAddr;
+static volatile uint8_t rcCode[CMD_COUNT];	/* Array with rc5 commands */
+
 
 void btnInit(void)
 {
@@ -26,10 +33,19 @@ void btnInit(void)
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
-	cmdBuf = CMD_EMPTY;
-	encCnt = 0;
-}
+	/* Load RC5 device address and commands from eeprom */
+	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
+	uint8_t i;
+	for (i = 0; i < CMD_COUNT; i++) {
+		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
+	}
 
+	encCnt = 0;
+	btnCmdBuf = CMD_BTN_EMPTY;
+	rc5CmdBuf = CMD_RC5_EMPTY;
+}
+#include "ks0108.h"
+#include <util/delay.h>
 ISR (TIMER2_COMP_vect)
 {
 	static int16_t btnCnt = 0;		/* Buttons press duration value */
@@ -70,29 +86,29 @@ ISR (TIMER2_COMP_vect)
 */	}
 	encPrev = encNow;				/* Save current encoder state */
 
+	/* If button event has happened, place it to command buffer */
 	if (btnNow) {
 		if (btnNow == btnPrev) {
 			btnCnt++;
 			if (btnCnt == LONG_PRESS) {
-				/* Place "long" command to buffer */
 				switch (btnPrev) {
 				case BTN_1:
-					cmdBuf = CMD_BTN_1_LONG; /* Backlight on/off*/
+					btnCmdBuf = CMD_BTN_1_LONG;
 					break;
 				case BTN_2:
-					cmdBuf = CMD_BTN_2_LONG; /* Switch input */
+					btnCmdBuf = CMD_BTN_2_LONG;
 					break;
 				case BTN_3:
-					cmdBuf = CMD_BTN_3_LONG; /* Edit time */
+					btnCmdBuf = CMD_BTN_3_LONG;
 					break;
 				case BTN_4:
-					cmdBuf = CMD_BTN_4_LONG; /* Loudness */
+					btnCmdBuf = CMD_BTN_4_LONG;
 					break;
 				case BTN_5:
-					cmdBuf = CMD_BTN_5_LONG; /* Spectrum mode common/separate */
+					btnCmdBuf = CMD_BTN_5_LONG;
 					break;
-				case BTN_TESTMODE:
-					cmdBuf = CMD_TESTMODE;
+				case BTN_TEST_INPUT:
+					btnCmdBuf = CMD_BTN_TESTMODE;
 					break;
 				}
 			}
@@ -101,34 +117,102 @@ ISR (TIMER2_COMP_vect)
 		}
 	} else {
 		if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS)) {
-			/* Place "short" command to buffer */
 			switch (btnPrev) {
 			case BTN_1:
-				cmdBuf = CMD_BTN_1; /* Standby */
+				btnCmdBuf = CMD_BTN_1;
 				break;
 			case BTN_2:
-				cmdBuf = CMD_BTN_2; /* Switch input */
+				btnCmdBuf = CMD_BTN_2;
 				break;
 			case BTN_3:
-				cmdBuf = CMD_BTN_3; /* Show time */
+				btnCmdBuf = CMD_BTN_3;
 				break;
 			case BTN_4:
-				cmdBuf = CMD_BTN_4; /* Mute */
+				btnCmdBuf = CMD_BTN_4;
 				break;
 			case BTN_5:
-				cmdBuf = CMD_BTN_5; /* Menu */
+				btnCmdBuf = CMD_BTN_5;
 				break;
 			}
 		}
-		/* Clear button counter */
 		btnCnt = 0;
 	}
 
+	/* Place RC5 event to command buffer if enough RC5 timer ticks */
+	uint16_t rc5Cmd = getRC5RawBuf();
+//	static uint8_t togBitNow = 0;
+//	static uint8_t togBitPrev = 0;
+	uint8_t i;
+
+
+	rc5Cmd &= RC5_COMM_MASK;
+
+		for (i = 0; i < CMD_COUNT; i++) {
+			if (rc5Cmd == rcCode[i]) {
+				rc5CmdBuf = i;
+				break;
+			}
+		}
+
+/*
+	if ((rc5Cmd & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr) {
+		if (rc5Cmd & RC5_TOGB_MASK)
+			togBitNow = 1;
+		else
+			togBitNow = 0;
+		rc5Cmd &= RC5_COMM_MASK;
+		if ((togBitNow != togBitPrev) ||
+			((rc5Timer > 200) &
+			 (rc5Cmd == rcCode[CMD_RC5_VOL_UP] ||
+			  rc5Cmd == rcCode[CMD_RC5_VOL_DOWN])) ||
+			(rc5Timer > 800)) {
+			encCnt++;
+			rc5Timer = 0;
+			rc5CmdBuf = CMD_RC5_EMPTY;
+			for (i = 0; i < CMD_COUNT; i++) {
+				if (rc5Cmd == rcCode[i])
+				{
+					rc5CmdBuf = i;
+					break;
+				}
+			}
+		}
+		togBitPrev = togBitNow;
+	}
+*/
+
+	/* Timer of current display mode */
 	if (displayTime)
 		displayTime--;
 
+	/* Time from last IR command */
+	if (rc5Timer < 1000)
+		rc5Timer++;
 	return;
 };
+
+
+int8_t getEncoder(void)
+{
+	int8_t ret = encCnt;
+	encCnt = 0;
+	return ret;
+}
+
+uint8_t getBtnCmd(void)
+{
+	uint8_t ret = btnCmdBuf;
+	btnCmdBuf = CMD_BTN_EMPTY;
+	return ret;
+}
+
+uint8_t getRC5Cmd(void)
+{
+	uint8_t ret = rc5CmdBuf;
+	rc5CmdBuf = CMD_RC5_EMPTY;
+	return ret;
+}
+
 
 void setDisplayTime(uint8_t value)
 {
@@ -138,26 +222,5 @@ void setDisplayTime(uint8_t value)
 
 uint8_t getDisplayTime(void)
 {
-	return (displayTime + 1023) >> 10;
-}
-
-uint8_t getCommand(void)	/* Read command command buffer */
-{
-	uint8_t ret = cmdBuf;
-	return ret;
-}
-
-void clearCommand(void)		/* Clear command buffer */
-{
-	cmdBuf = CMD_EMPTY;
-	return;
-}
-
-int8_t getEncCnt(void)
-{
-	int8_t ret = encCnt;
-	if (ret)
-		cmdBuf = CMD_ENC;
-	encCnt = 0;
-	return ret;
+	return (displayTime | 0x3F) >> 10;
 }

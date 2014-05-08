@@ -32,7 +32,7 @@ typedef enum {
 } rc5State;
 
 void rc5Init(void);
-uint16_t getRC5Buf(void);
-void clearRC5Buf(void);
+
+uint16_t getRC5RawBuf(void);
 
 #endif // RC5_H
