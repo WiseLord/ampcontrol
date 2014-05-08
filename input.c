@@ -9,7 +9,7 @@
 
 static volatile int8_t encCnt;
 static volatile uint8_t btnCmdBuf;
-static volatile uint8_t rc5CmdBuf;
+static volatile uint16_t rc5SaveBuf;
 
 static volatile uint16_t displayTime;
 static volatile uint16_t rc5Timer;
@@ -41,8 +41,7 @@ void btnInit(void)
 	}
 
 	encCnt = 0;
-	btnCmdBuf = CMD_BTN_EMPTY;
-	rc5CmdBuf = CMD_RC5_EMPTY;
+	btnCmdBuf = CMD_EMPTY;
 }
 #include "ks0108.h"
 #include <util/delay.h>
@@ -139,39 +138,30 @@ ISR (TIMER2_COMP_vect)
 	}
 
 	/* Place RC5 event to command buffer if enough RC5 timer ticks */
-	uint16_t rc5Cmd = getRC5RawBuf();
-//	static uint8_t togBitNow = 0;
-//	static uint8_t togBitPrev = 0;
+	uint16_t rc5Buf = getRC5RawBuf();
+	if (rc5Buf != RC5_BUF_EMPTY)
+		rc5SaveBuf = rc5Buf;
+
+	static uint8_t togBitNow = 0;
+	static uint8_t togBitPrev = 0;
 	uint8_t i;
+	uint8_t rc5CmdBuf = CMD_EMPTY;
+	uint8_t rc5Cmd;
 
-
-	rc5Cmd &= RC5_COMM_MASK;
-
-		for (i = 0; i < CMD_COUNT; i++) {
-			if (rc5Cmd == rcCode[i]) {
-				rc5CmdBuf = i;
-				break;
-			}
-		}
-
-/*
-	if ((rc5Cmd & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr) {
-		if (rc5Cmd & RC5_TOGB_MASK)
+	if ((rc5Buf & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr) {
+		if (rc5Buf & RC5_TOGB_MASK)
 			togBitNow = 1;
 		else
 			togBitNow = 0;
-		rc5Cmd &= RC5_COMM_MASK;
-		if ((togBitNow != togBitPrev) ||
-			((rc5Timer > 200) &
-			 (rc5Cmd == rcCode[CMD_RC5_VOL_UP] ||
-			  rc5Cmd == rcCode[CMD_RC5_VOL_DOWN])) ||
-			(rc5Timer > 800)) {
-			encCnt++;
+
+		rc5Cmd = rc5Buf &= RC5_COMM_MASK;
+		if ((togBitNow != togBitPrev) || (rc5Timer > 1000) ||
+		    (rc5Cmd == rcCode[CMD_RC5_VOL_UP] ||
+		     rc5Cmd == rcCode[CMD_RC5_VOL_DOWN])) {
 			rc5Timer = 0;
-			rc5CmdBuf = CMD_RC5_EMPTY;
+			rc5CmdBuf = CMD_EMPTY;
 			for (i = 0; i < CMD_COUNT; i++) {
-				if (rc5Cmd == rcCode[i])
-				{
+				if (rc5Cmd == rcCode[i]) {
 					rc5CmdBuf = i;
 					break;
 				}
@@ -179,7 +169,10 @@ ISR (TIMER2_COMP_vect)
 		}
 		togBitPrev = togBitNow;
 	}
-*/
+
+	if (btnCmdBuf == CMD_EMPTY) {
+		btnCmdBuf = rc5CmdBuf;
+	}
 
 	/* Timer of current display mode */
 	if (displayTime)
@@ -202,17 +195,14 @@ int8_t getEncoder(void)
 uint8_t getBtnCmd(void)
 {
 	uint8_t ret = btnCmdBuf;
-	btnCmdBuf = CMD_BTN_EMPTY;
+	btnCmdBuf = CMD_EMPTY;
 	return ret;
 }
 
-uint8_t getRC5Cmd(void)
+uint16_t getRC5Buf(void)
 {
-	uint8_t ret = rc5CmdBuf;
-	rc5CmdBuf = CMD_RC5_EMPTY;
-	return ret;
+	return rc5SaveBuf;
 }
-
 
 void setDisplayTime(uint8_t value)
 {

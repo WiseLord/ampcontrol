@@ -84,6 +84,6 @@ ISR(INT1_vect)
 uint16_t getRC5RawBuf(void)
 {
 	uint16_t ret = rc5RawBuf;
-//	rc5RawBuf = RC5_BUF_EMPTY;
+	rc5RawBuf = RC5_BUF_EMPTY;
 	return ret;
 }

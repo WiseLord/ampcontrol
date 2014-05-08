@@ -39,22 +39,6 @@
 #define CMD_COUNT	15
 
 enum {
-	CMD_BTN_1,
-	CMD_BTN_2,
-	CMD_BTN_3,
-	CMD_BTN_4,
-	CMD_BTN_5,
-	CMD_BTN_1_LONG,
-	CMD_BTN_2_LONG,
-	CMD_BTN_3_LONG,
-	CMD_BTN_4_LONG,
-	CMD_BTN_5_LONG,
-	CMD_BTN_TESTMODE,
-
-	CMD_BTN_EMPTY = 0xFF
-};
-
-enum {
 	CMD_RC5_STBY,
 	CMD_RC5_MUTE,
 	CMD_RC5_MENU,
@@ -71,7 +55,19 @@ enum {
 	CMD_RC5_LOUDNESS,
 	CMD_RC5_BACKLIGHT,
 
-	CMD_RC5_EMPTY = 0xFF
+	CMD_BTN_1,
+	CMD_BTN_2,
+	CMD_BTN_3,
+	CMD_BTN_4,
+	CMD_BTN_5,
+	CMD_BTN_1_LONG,
+	CMD_BTN_2_LONG,
+	CMD_BTN_3_LONG,
+	CMD_BTN_4_LONG,
+	CMD_BTN_5_LONG,
+	CMD_BTN_TESTMODE,
+
+	CMD_EMPTY = 0xFF
 };
 
 // Handling long press actions */
@@ -83,6 +79,7 @@ void btnInit(void);
 int8_t getEncoder(void);
 uint8_t getBtnCmd(void);
 uint8_t getRC5Cmd(void);
+uint16_t getRC5Buf(void);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);

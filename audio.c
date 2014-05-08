@@ -353,8 +353,8 @@ void changeParam(sndParam *param, int8_t diff)
 	param->value += diff;
 	if (param->value > param->max)
 		param->value = param->max;
-	if (param->value > param->max)
-		param->value = param->max;
+	if (param->value < param->min)
+		param->value = param->min;
 	param->set(param->value);
 }
 

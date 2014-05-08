@@ -98,6 +98,8 @@ void showTime()
 	gdWriteString((uint8_t*)"\x7F.\x7F");
 	drawTm(MONTH, font_ks0066_ru_24);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
+	if (etm == YEAR)
+		gdLoadFont(font_ks0066_ru_24, 0);
 	gdWriteString((uint8_t*)"20");
 	drawTm(YEAR, font_ks0066_ru_24);
 
@@ -113,6 +115,13 @@ void stopEditTime(void)
 	etm = NOEDIT;
 
 	return;
+}
+
+uint8_t isETM(void)
+{
+	if (etm == NOEDIT)
+		return 0;
+	return 1;
 }
 
 void editTime(void)
@@ -158,11 +167,7 @@ void changeTime(int diff)
 			time[MIN] = 59;
 		break;
 	case SEC:
-		time[SEC] += diff;
-		if (time[SEC] > 59)
-			time[SEC] = 0;
-		if (time[MIN] < 0)
-			time[MIN] = 59;
+		time[SEC] = 0;
 		break;
 	case DAY:
 		time[DAY] += diff;
