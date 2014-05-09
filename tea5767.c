@@ -1,9 +1,6 @@
 #include "tea5767.h"
+
 #include "i2c.h"
-
-#include "ks0108.h"
-
-#include <util/delay.h>
 
 static tea5767Ctrl ctrl;
 
@@ -13,7 +10,7 @@ void tea5767Init(void)
 	ctrl.st_noise = 0;
 	ctrl.soft_mute = 1;
 	ctrl.deemph_75 = 1;
-	ctrl.japan_band = 1;
+	ctrl.japan_band = 0;
 	ctrl.pllref = 0;
 	ctrl.xtal_freq = 1;
 }
@@ -49,16 +46,12 @@ static void tea5767WriteI2C(uint8_t *buf)
 {
 	uint8_t i;
 
-	_delay_ms(25);
-
 	I2CStart();
 	I2CWriteByte(TEA5767_ADDR);
 	for (i = 0; i < 5; i++) {
 		I2CWriteByte(buf[i]);
 	}
 	I2CStop();
-
-	_delay_ms(25);
 
 }
 
@@ -82,15 +75,12 @@ void tea5767ReadStatus(uint8_t *buf)
 {
 	uint8_t i;
 
-	_delay_ms(25);
-
 	I2CStart();
 	I2CWriteByte(TEA5767_ADDR + 1);
 	for (i = 0; i < 5; i++)
 		I2CReadByte(&buf[i], 1);
 	I2CStop();
 
-	_delay_ms(25);
 }
 
 uint8_t tea5767ADCLevel(uint8_t *buf)
@@ -137,10 +127,10 @@ void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction)
 
 	if (direction == SEARCH_UP) {
 		div = (freq + 100000 + 225000) >> 13;
-		ctrl.japan_band = 0;
+//		ctrl.japan_band = 0;
 	} else {
 		div = (freq - 100000 + 225000) >> 13;
-		ctrl.japan_band = 1;
+//		ctrl.japan_band = 1;
 	}
 
 	tea5767loadBuf(buf, div);
@@ -160,10 +150,10 @@ void fineTune(uint32_t *freqFM, uint8_t *bufFM)
 {
 	*freqFM = tea5767FreqAvail(bufFM);
 
-	if (*freqFM > 108000000)
-		*freqFM = 76000000;
-	if (*freqFM < 76000000)
-		*freqFM = 108000000;
+	if (*freqFM > FM_FREQ_MAX)
+		*freqFM = FM_FREQ_MIN;
+	if (*freqFM < FM_FREQ_MIN)
+		*freqFM = FM_FREQ_MAX;
 
 	tea5767SetFreq(*freqFM);
 }

@@ -165,6 +165,13 @@ int main(void)
 			cmd = CMD_EMPTY;
 		}
 
+		/* Don't handle any command in standby mode except power on */
+		if (dispMode == MODE_STANDBY) {
+			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
+			    cmd != CMD_BTN_TESTMODE)
+				cmd = CMD_EMPTY;
+		}
+
 		/* Handle command */
 		switch (cmd) {
 		case CMD_BTN_1:
@@ -183,8 +190,6 @@ int main(void)
 		case CMD_BTN_2:
 		case CMD_RC5_NEXT_INPUT:
 			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
 			case MODE_GAIN:
 				nextChan();
 			default:
@@ -195,26 +200,48 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_3:
+		case CMD_RC5_TIME:
 			switch (dispMode) {
+			case MODE_TIME:
+			case MODE_TIME_EDIT:
+				editTime();
+				dispMode = MODE_TIME_EDIT;
+				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
+				if (isETM())
+					setDisplayTime(DISPLAY_TIME_TIME);
+				break;
 			case MODE_FM_RADIO:
-				tea5767SetFreq(freqFM - 100000);
-				setDisplayTime(10);
+				if (cmd != CMD_RC5_TIME) {
+					tea5767SetFreq(freqFM - 100000);
+					setDisplayTime(10);
+					break;
+				}
+			default:
+				stopEditTime();
+				dispMode = MODE_TIME;
+				setDisplayTime(DISPLAY_TIME_TIME);
 				break;
 			}
 			break;
 		case CMD_BTN_4:
+		case CMD_RC5_MUTE:
 			switch (dispMode) {
 			case MODE_FM_RADIO:
-				tea5767SetFreq(freqFM + 100000);
-				setDisplayTime(10);
+				if (cmd != CMD_RC5_MUTE) {
+					tea5767SetFreq(freqFM + 100000);
+					setDisplayTime(10);
+					break;
+				}
+			default:
+				switchMute();
+				dispMode = MODE_MUTE;
+				setDisplayTime(2);
 				break;
 			}
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
 			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
 			case MODE_VOLUME:
 				curSndParam = &bass;
 				dispMode = MODE_BASS;
@@ -252,17 +279,9 @@ int main(void)
 			break;
 		case CMD_BTN_1_LONG:
 		case CMD_RC5_BACKLIGHT:
-			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
-			default:
-				switchBacklight();
-			}
-			break;
+			switchBacklight();
 		case CMD_BTN_2_LONG:
 			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
 			default:
 				if (chan == chanCnt - 1) {
 					dispMode = MODE_FM_RADIO;
@@ -299,21 +318,8 @@ int main(void)
 				break;
 			}
 			break;
-		case CMD_RC5_MUTE:
-			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
-			default:
-				switchMute();
-				dispMode = MODE_MUTE;
-				setDisplayTime(2);
-				break;
-			}
-			break;
 		case CMD_RC5_LOUDNESS:
 			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
 			default:
 				if (audioProc == TDA7313_IC) {
 					switchLoudness();
@@ -328,8 +334,6 @@ int main(void)
 		case CMD_RC5_INPUT_2:
 		case CMD_RC5_INPUT_3:
 			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
 			default:
 				if (dispMode != MODE_FM_RADIO &&
 				    chan == chanCnt - 1 && cmd == CMD_RC5_INPUT_0 + chan) {
@@ -345,28 +349,8 @@ int main(void)
 				break;
 			}
 			break;
-		case CMD_RC5_TIME:
-			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
-				editTime();
-				dispMode = MODE_TIME_EDIT;
-				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-				if (isETM())
-					setDisplayTime(DISPLAY_TIME_TIME);
-				break;
-			default:
-				stopEditTime();
-				dispMode = MODE_TIME;
-				setDisplayTime(DISPLAY_TIME_TIME);
-				break;
-			}
 		case CMD_RC5_SP_MODE:
 			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
 			default:
 				switchSpMode();
 				saveParams();

@@ -8,14 +8,14 @@
 #include "rc5.h"
 
 static volatile int8_t encCnt;
-static volatile uint8_t btnCmdBuf;
+static volatile uint8_t cmdBuf;
 static volatile uint16_t rc5SaveBuf;
 
 static volatile uint16_t displayTime;
 static volatile uint16_t rc5Timer;
 
 static volatile uint8_t rc5DeviceAddr;
-static volatile uint8_t rcCode[CMD_COUNT];	/* Array with rc5 commands */
+static volatile uint8_t rcCode[RC5_CMD_COUNT];	/* Array with rc5 commands */
 
 
 void btnInit(void)
@@ -36,15 +36,25 @@ void btnInit(void)
 	/* Load RC5 device address and commands from eeprom */
 	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
 	uint8_t i;
-	for (i = 0; i < CMD_COUNT; i++) {
+	for (i = 0; i < RC5_CMD_COUNT; i++) {
 		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
 	}
 
 	encCnt = 0;
-	btnCmdBuf = CMD_EMPTY;
+	cmdBuf = CMD_EMPTY;
 }
-#include "ks0108.h"
-#include <util/delay.h>
+
+static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
+{
+	uint8_t i;
+
+	for (i = 0; i < RC5_CMD_COUNT; i++)
+		if (rc5Cmd == rcCode[i])
+			return i;
+
+	return CMD_EMPTY;
+}
+
 ISR (TIMER2_COMP_vect)
 {
 	static int16_t btnCnt = 0;		/* Buttons press duration value */
@@ -92,22 +102,22 @@ ISR (TIMER2_COMP_vect)
 			if (btnCnt == LONG_PRESS) {
 				switch (btnPrev) {
 				case BTN_1:
-					btnCmdBuf = CMD_BTN_1_LONG;
+					cmdBuf = CMD_BTN_1_LONG;
 					break;
 				case BTN_2:
-					btnCmdBuf = CMD_BTN_2_LONG;
+					cmdBuf = CMD_BTN_2_LONG;
 					break;
 				case BTN_3:
-					btnCmdBuf = CMD_BTN_3_LONG;
+					cmdBuf = CMD_BTN_3_LONG;
 					break;
 				case BTN_4:
-					btnCmdBuf = CMD_BTN_4_LONG;
+					cmdBuf = CMD_BTN_4_LONG;
 					break;
 				case BTN_5:
-					btnCmdBuf = CMD_BTN_5_LONG;
+					cmdBuf = CMD_BTN_5_LONG;
 					break;
 				case BTN_TEST_INPUT:
-					btnCmdBuf = CMD_BTN_TESTMODE;
+					cmdBuf = CMD_BTN_TESTMODE;
 					break;
 				}
 			}
@@ -118,24 +128,45 @@ ISR (TIMER2_COMP_vect)
 		if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS)) {
 			switch (btnPrev) {
 			case BTN_1:
-				btnCmdBuf = CMD_BTN_1;
+				cmdBuf = CMD_BTN_1;
 				break;
 			case BTN_2:
-				btnCmdBuf = CMD_BTN_2;
+				cmdBuf = CMD_BTN_2;
 				break;
 			case BTN_3:
-				btnCmdBuf = CMD_BTN_3;
+				cmdBuf = CMD_BTN_3;
 				break;
 			case BTN_4:
-				btnCmdBuf = CMD_BTN_4;
+				cmdBuf = CMD_BTN_4;
 				break;
 			case BTN_5:
-				btnCmdBuf = CMD_BTN_5;
+				cmdBuf = CMD_BTN_5;
 				break;
 			}
 		}
 		btnCnt = 0;
 	}
+
+
+
+//	if (rc5Now) {
+//		if (rc5Now == rc5Prev) {
+//			rc5Cnt++;
+//			if (rc5Cnt == LONG_PRESS) {
+//				// i
+//				rc5CmdBuf = _read_value;
+//			}
+//		} else {
+//			rc5Prev = rc5Now;
+//		}
+//	} else {
+//		if ((rc5Cnt > SHORT_PRESS) && (rc5Cnt < LONG_PRESS)) {
+//			// i + RC5_CMD_COUNT
+//			rc5CmdBuf = _read_value + RC5_CMD_COUNT;
+//		}
+//		btnCnt = 0;
+//	}
+
 
 	/* Place RC5 event to command buffer if enough RC5 timer ticks */
 	uint16_t rc5Buf = getRC5RawBuf();
@@ -144,7 +175,7 @@ ISR (TIMER2_COMP_vect)
 
 	static uint8_t togBitNow = 0;
 	static uint8_t togBitPrev = 0;
-	uint8_t i;
+
 	uint8_t rc5CmdBuf = CMD_EMPTY;
 	uint8_t rc5Cmd;
 
@@ -159,19 +190,13 @@ ISR (TIMER2_COMP_vect)
 		    (rc5Cmd == rcCode[CMD_RC5_VOL_UP] ||
 		     rc5Cmd == rcCode[CMD_RC5_VOL_DOWN])) {
 			rc5Timer = 0;
-			rc5CmdBuf = CMD_EMPTY;
-			for (i = 0; i < CMD_COUNT; i++) {
-				if (rc5Cmd == rcCode[i]) {
-					rc5CmdBuf = i;
-					break;
-				}
-			}
+			rc5CmdBuf = rc5CmdIndex(rc5Cmd);
 		}
 		togBitPrev = togBitNow;
 	}
 
-	if (btnCmdBuf == CMD_EMPTY) {
-		btnCmdBuf = rc5CmdBuf;
+	if (cmdBuf == CMD_EMPTY) {
+		cmdBuf = rc5CmdBuf;
 	}
 
 	/* Timer of current display mode */
@@ -194,8 +219,8 @@ int8_t getEncoder(void)
 
 uint8_t getBtnCmd(void)
 {
-	uint8_t ret = btnCmdBuf;
-	btnCmdBuf = CMD_EMPTY;
+	uint8_t ret = cmdBuf;
+	cmdBuf = CMD_EMPTY;
 	return ret;
 }
 

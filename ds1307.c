@@ -3,8 +3,8 @@
 #include <avr/pgmspace.h>
 
 #include "i2c.h"
+
 #include "ks0108.h"
-#include "input.h"
 #include "eeprom.h"
 
 static int8_t time[7];

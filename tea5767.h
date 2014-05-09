@@ -65,6 +65,9 @@
 #define SEARCH_DOWN				0
 #define SEARCH_UP				1
 
+#define FM_FREQ_MIN				87500000L
+#define FM_FREQ_MAX				108000000L
+
 typedef struct {
 	uint8_t high_cut;
 	uint8_t st_noise;

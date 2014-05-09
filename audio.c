@@ -1,12 +1,11 @@
 #include "audio.h"
 
 #include <avr/eeprom.h>
-#include <util/delay.h>
+
+#include "i2c.h"
 
 #include "ks0108.h"
-#include "i2c.h"
 #include "eeprom.h"
-#include "input.h"
 
 sndParam *params[10] = {
 	&volume,
