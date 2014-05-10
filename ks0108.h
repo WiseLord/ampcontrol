@@ -51,10 +51,6 @@
 #define KS0108_STA_DISP_OFF			0x20	/* DB5 */
 #define KS0108_STA_BUSY				0x80	/* DB4 */
 
-/* Spectrum output mode */
-#define SP_MODE_STEREO				0
-#define SP_MODE_MIXED				1
-
 typedef struct {
 	uint8_t height;
 	uint8_t ltsppos;
@@ -79,11 +75,9 @@ void gdLoadFont(const uint8_t *font, uint8_t color);
 
 void gdWriteChar(uint8_t code);
 void gdWriteString(uint8_t *string);
-void gdWriteStringProgmem(const uint8_t *string);
+//void gdWriteStringProgmem(const uint8_t *string);
 void gdWriteStringEeprom(const uint8_t *string);
 
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
-
-void gdSpectrum32(uint8_t *buf, uint8_t mode);
 
 #endif /* KS0108_H */

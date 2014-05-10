@@ -2,7 +2,6 @@
 #define EEPROM_H
 
 /* Parameters values */
-
 #define eepromVolume	((void*)0x00)
 #define eepromBass		((void*)0x01)
 #define eepromMiddle	((void*)0x02)
@@ -15,13 +14,11 @@
 #define eepromGain3		((void*)0x09)
 
 /* Parameters min/max/step values */
-
 #define eepromMinimums	((void*)0x10)
 #define eepromMaximums	((void*)0x20)
 #define eepromSteps		((void*)0x30)
 
 /*Some stored in EEPROM values */
-
 #define eepromRC5Addr	((void*)0x40)
 #define eepromSpMode	((void*)0x41)
 #define eepromChanCnt	((void*)0x42)
@@ -31,32 +28,9 @@
 #define eepromChannel	((void*)0x46)
 
 /* RC5 commands array */
-
 #define eepromRC5Cmd	((uint8_t*)0x50)
 
 /* Text labels (maximum 15 byte followed by \0) */
-
-#define volumeLabel		((uint8_t*)0x070)
-#define bassLabel		((uint8_t*)0x080)
-#define middleLabel		((uint8_t*)0x090)
-#define loudnessLabel	((uint8_t*)0x090)
-#define trebleLabel		((uint8_t*)0x0A0)
-#define preampLabel		((uint8_t*)0x0B0)
-#define balanceLabel	((uint8_t*)0x0C0)
-#define gainLabel0		((uint8_t*)0x0D0)
-#define gainLabel1		((uint8_t*)0x0E0)
-#define gainLabel2		((uint8_t*)0x0F0)
-#define gainLabel3		((uint8_t*)0x100)
-#define muteLabel		((uint8_t*)0x110)
-#define onLabel			((uint8_t*)0x120)
-#define offLabel		((uint8_t*)0x130)
-#define dbLabel			((uint8_t*)0x140)
-#define mondayLabel		((uint8_t*)0x150)
-#define thuesDayLabel	((uint8_t*)0x160)
-#define wednesdayLabel	((uint8_t*)0x170)
-#define thursdayLabel	((uint8_t*)0x180)
-#define fridayLabel		((uint8_t*)0x190)
-#define saturdayLabel	((uint8_t*)0x1A0)
-#define sundayLabel		((uint8_t*)0x1B0)
+#define labelsAddr		((uint8_t*)0x070)
 
 #endif // EEPROM_H

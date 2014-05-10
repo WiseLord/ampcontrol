@@ -13,12 +13,19 @@
 #include "audio.h"
 #include "ds1307.h"
 #include "tea5767.h"
+#include "display.h"
 
 #define DISPLAY_TIME_TEST		20
 #define DISPLAY_TIME_GAIN		3
 #define DISPLAY_TIME_TIME		3
 #define DISPLAY_TIME_TIME_EDIT	10
 #define DISPLAY_TIME_FM_RADIO	10
+#define DISPLAY_TIME_CHAN		2
+#define DISPLAY_TIME_AUDIO		3
+#define DISPLAY_TIME_TEST		20
+
+#define BACKLIGHT_ON			0
+#define BACKLIGHT_OFF			1
 
 enum {
 	MODE_STANDBY,
@@ -39,6 +46,12 @@ enum {
 };
 
 uint8_t spMode;
+uint8_t backlight;
+
+uint8_t rc5DeviceAddr;
+uint8_t rcCode[RC5_CMD_COUNT];	/* Array with rc5 commands */
+
+uint8_t *txtLabels[LABELS_COUNT];
 
 void switchSpMode()
 {
@@ -49,59 +62,82 @@ void switchSpMode()
 	return;
 }
 
+void loadLabels() {
+	uint8_t i;
+	for (i = 0; i < LABELS_COUNT; i++) {
+		txtLabels[i] = labelsAddr + 16 * i;
+	}
+}
+
 void hwInit(void)	/* Hardware initialization */
 {
-	_delay_ms(100);
-	gdInit();		/* Graphic display */
-	rc5Init();		/* IR Remote control */
-	adcInit();		/* Analog-to-digital converter */
-	btnInit();		/* Buttons/encoder polling */
-	I2CInit();		/* I2C bus */
+	uint8_t i;
+
+	/* Load RC5 device address and commands from eeprom */
+	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
+	for (i = 0; i < RC5_CMD_COUNT; i++) {
+		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
+	}
+
+	loadLabels();
+
+	gdInit();							/* Graphic display */
+	gdLoadFont(font_ks0066_ru_08, 1);
+	rc5Init();							/* IR Remote control */
+	adcInit();							/* Analog-to-digital converter */
+	btnInit(rcCode, rc5DeviceAddr);		/* Buttons/encoder polling */
+	I2CInit();							/* I2C bus */
 	tea5767Init();
+
+	etm = NOEDIT;
+
 	SMF_DDR |= (STDBY | FAN);
 	SMF_PORT &= ~(STDBY | MUTE | FAN);
-	gdLoadFont(font_ks0066_ru_08, 1);
+
 	sei();
 	return;
 }
 
-void showRC5Info(uint16_t rc5Buf)
+void setBacklight(int8_t backlight)
 {
-	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(0, 0);
-	gdWriteString((uint8_t*)"RC5 command");
-	gdSetXY(5, 1);
-	gdWriteString((uint8_t*)"Raw = ");
-	gdWriteString(mkNumString(rc5Buf, 14, '0', 2));
-	gdSetXY(5, 2);
-	gdWriteString((uint8_t*)"Tog = ");
-	gdWriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
-	gdSetXY(5, 3);
-	gdWriteString((uint8_t*)"Adr = ");
-	gdWriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-	gdSetXY(5, 4);
-	gdWriteString((uint8_t*)"Cmd = ");
-	gdWriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
-	gdSetXY(0, 6);
-	gdWriteString((uint8_t*)"Buttons/Encoder");
-	gdSetXY(5, 7);
-	gdWriteString(mkNumString(BTN_PIN, 8, '0', 2));
-	setBacklight(backlight);
+	if (backlight)
+		GD_BACKLIGHT_PORT |= GD_BCKL;
+	else
+		GD_BACKLIGHT_PORT &= ~GD_BCKL;
 }
 
-void showRadio(uint8_t *buf)
+void showParam(sndParam *param)
 {
-	uint32_t freq = tea5767FreqAvail(buf);
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(0, 0);
-	gdWriteString((uint8_t*)"FM ");
-	gdWriteString(mkNumString(freq/1000000, 3, ' ', 10));
-	gdWriteChar('\x7F');
-	gdWriteChar('.');
-	gdWriteChar('\x7F');
-	gdWriteString(mkNumString(freq/100000%10, 1, ' ', 10));
-	gdLoadFont(font_ks0066_ru_08, 1);
-//	showBar(0, 16, tea5767ADCLevel(buf));
+	uint8_t mult = 8;
+
+	if (audioProc == TDA7313_IC || audioProc == TDA7318_IC) {
+		if (param->label == txtLabels[LABEL_VOLUME]
+		 || param->label == txtLabels[LABEL_PREAMP]
+		 || param->label == txtLabels[LABEL_BALANCE])
+		{
+			mult = 10;
+		}
+		if (param->label == txtLabels[LABEL_GAIN_0]
+		 || param->label == txtLabels[LABEL_GAIN_1]
+		 || param->label == txtLabels[LABEL_GAIN_2]
+		 || param->label == txtLabels[LABEL_GAIN_3])
+		{
+			mult = 15;
+		}
+	}
+	showBar(param->min, param->max, param->value);
+	showParValue(((int16_t)(param->value) * param->step * mult + 4) >> 3);
+	showParLabel(param->label, txtLabels);
+}
+
+
+void switchBacklight(void)
+{
+	if (backlight == BACKLIGHT_ON)
+		backlight = BACKLIGHT_OFF;
+	else
+		backlight = BACKLIGHT_ON;
+	setBacklight(backlight);
 }
 
 void powerOn(void)
@@ -123,8 +159,10 @@ void powerOff(void)
 	SMF_PORT &= ~STDBY;
 	SMF_PORT &= ~FAN;
 	GD_BACKLIGHT_PORT &= ~GD_BCKL;
+	etm = NOEDIT;
 	muteVolume();
-	saveParams();
+	saveAudioParams();
+	eeprom_write_byte(eepromBCKL, backlight);
 	eeprom_write_byte(eepromSpMode, spMode);
 }
 
@@ -145,7 +183,8 @@ int main(void)
 
 	spMode  = eeprom_read_byte(eepromSpMode);
 
-	loadParams();
+	loadParams(txtLabels);
+	backlight = eeprom_read_byte(eepromBCKL);
 	muteVolume();
 
 	uint8_t bufFM[5];
@@ -201,42 +240,51 @@ int main(void)
 			break;
 		case CMD_BTN_3:
 		case CMD_RC5_TIME:
+		case CMD_RC5_CHAN_DOWN:
 			switch (dispMode) {
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
-				editTime();
-				dispMode = MODE_TIME_EDIT;
-				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-				if (isETM())
-					setDisplayTime(DISPLAY_TIME_TIME);
-				break;
 			case MODE_FM_RADIO:
 				if (cmd != CMD_RC5_TIME) {
 					tea5767SetFreq(freqFM - 100000);
-					setDisplayTime(10);
+					setDisplayTime(DISPLAY_TIME_FM_RADIO);
+					break;
+				}
+			case MODE_TIME:
+			case MODE_TIME_EDIT:
+				if (cmd != CMD_RC5_CHAN_DOWN) {
+					editTime();
+					dispMode = MODE_TIME_EDIT;
+					setDisplayTime(DISPLAY_TIME_TIME_EDIT);
+					if (!isETM())
+						setDisplayTime(DISPLAY_TIME_TIME);
 					break;
 				}
 			default:
-				stopEditTime();
-				dispMode = MODE_TIME;
-				setDisplayTime(DISPLAY_TIME_TIME);
+				if (cmd != CMD_RC5_CHAN_DOWN) {
+					stopEditTime();
+					dispMode = MODE_TIME;
+					setDisplayTime(DISPLAY_TIME_TIME);
+					break;
+				}
 				break;
 			}
 			break;
 		case CMD_BTN_4:
 		case CMD_RC5_MUTE:
+		case CMD_RC5_CHAN_UP:
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd != CMD_RC5_MUTE) {
 					tea5767SetFreq(freqFM + 100000);
-					setDisplayTime(10);
+					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
 			default:
-				switchMute();
-				dispMode = MODE_MUTE;
-				setDisplayTime(2);
-				break;
+				if (cmd != CMD_RC5_CHAN_UP) {
+					switchMute();
+					dispMode = MODE_MUTE;
+					setDisplayTime(DISPLAY_TIME_CHAN);
+					break;
+				}
 			}
 			break;
 		case CMD_BTN_5:
@@ -275,17 +323,18 @@ int main(void)
 				dispMode = MODE_VOLUME;
 				break;
 			}
-			setDisplayTime(3);
+			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case CMD_BTN_1_LONG:
 		case CMD_RC5_BACKLIGHT:
 			switchBacklight();
+			break;
 		case CMD_BTN_2_LONG:
 			switch (dispMode) {
 			default:
 				if (chan == chanCnt - 1) {
 					dispMode = MODE_FM_RADIO;
-					setDisplayTime(10);
+					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
 			}
@@ -294,7 +343,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				tea5767Search(freqFM, bufFM, SEARCH_DOWN);
-				setDisplayTime(10);
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				break;
 			}
 			break;
@@ -302,7 +351,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				tea5767Search(freqFM, bufFM, SEARCH_UP);
-				setDisplayTime(10);
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				break;
 			}
 			break;
@@ -314,7 +363,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_STANDBY:
 				dispMode = MODE_TEST;
-				setDisplayTime(20);
+				setDisplayTime(DISPLAY_TIME_TEST);
 				break;
 			}
 			break;
@@ -324,7 +373,7 @@ int main(void)
 				if (audioProc == TDA7313_IC) {
 					switchLoudness();
 					dispMode = MODE_LOUDNESS;
-					setDisplayTime(2);
+					setDisplayTime(DISPLAY_TIME_AUDIO);
 				}
 				break;
 			}
@@ -353,7 +402,8 @@ int main(void)
 			switch (dispMode) {
 			default:
 				switchSpMode();
-				saveParams();
+				saveAudioParams();
+				eeprom_write_byte(eepromBCKL, backlight);
 				eeprom_write_byte(eepromSpMode, spMode);
 			}
 			break;
@@ -375,7 +425,7 @@ int main(void)
 				break;
 			case MODE_TIME_EDIT:
 				changeTime(encCnt);
-				setDisplayTime(20);
+				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
 				break;
 			case MODE_SPECTRUM:
 			case MODE_TIME:
@@ -400,8 +450,8 @@ int main(void)
 			default:
 				if (dispModePrev != MODE_SPECTRUM) {
 					gdSetXY(0, 0);
-					eeprom_write_byte(eepromSpMode, spMode);
-					saveParams();
+					saveAudioParams();
+					eeprom_write_byte(eepromBCKL, backlight);
 					eeprom_write_byte(eepromSpMode, spMode);
 				}
 				dispMode = MODE_SPECTRUM;
@@ -416,18 +466,19 @@ int main(void)
 		/* Show things */
 		switch (dispMode) {
 		case MODE_STANDBY:
-			showTime();
+			showTime(txtLabels);
 			if (dispModePrev == MODE_TEST)
 				setBacklight(0);
 			break;
 		case MODE_TEST:
 			showRC5Info(rc5Buf);
+			setBacklight(backlight);
 			if (rc5Buf != rc5BufPrev)
-				setDisplayTime(20);
+				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
 			spBuf = getSpData();
-			gdSpectrum32(spBuf, spMode);
+			drawSpectrum(spBuf, spMode);
 			break;
 		case MODE_FM_RADIO:
 			tea5767ReadStatus(bufFM);
@@ -437,10 +488,10 @@ int main(void)
 				fineTune(&freqFM, bufFM);
 			break;
 		case MODE_MUTE:
-			showBoolParam(mute, muteLabel);
+			showBoolParam(mute, txtLabels[LABEL_MUTE], txtLabels);
 			break;
 		case MODE_LOUDNESS:
-			showBoolParam(!loud, loudnessLabel);
+			showBoolParam(!loud, txtLabels[LABEL_MIDDLE], txtLabels);
 			break;
 		case MODE_TIME:
 		case MODE_TIME_EDIT:

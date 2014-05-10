@@ -92,7 +92,7 @@ enum {
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
 
-void btnInit(void);
+void btnInit(uint8_t *code, uint8_t addr);
 
 int8_t getEncoder(void);
 uint8_t getBtnCmd(void);

@@ -4,7 +4,6 @@
 
 #include "i2c.h"
 
-#include "ks0108.h"
 #include "eeprom.h"
 
 sndParam *params[10] = {
@@ -20,92 +19,6 @@ sndParam *params[10] = {
 	&gain[3],
 };
 
-
-void showParLabel(const uint8_t *parLabel)
-{
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(0, 0);
-	gdWriteStringEeprom(parLabel);
-	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(116, 7);
-	gdWriteStringEeprom(dbLabel);
-}
-
-void showParValue(int8_t value)
-{
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(93, 4);
-	gdWriteString(mkNumString(value, 3, ' ', 10));
-	gdLoadFont(font_ks0066_ru_08, 1);
-}
-
-void showBoolParam(uint8_t value, const uint8_t *parLabel)
-{
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(0, 0);
-	gdWriteStringEeprom(parLabel);
-	gdSetXY(0, 4);
-	if (value)
-		gdWriteStringEeprom(onLabel);
-	else
-		gdWriteStringEeprom(offLabel);
-	gdLoadFont(font_ks0066_ru_08, 1);
-}
-
-void showBar(int8_t min, int8_t max, int8_t value)
-{
-	uint8_t i, j, data;
-
-	if (min + max) {
-		value = (int16_t)85 * (value - min) / (max - min);
-	} else {
-		value = (int16_t)42 * value / max;
-	}
-	for (j = 5; j <= 6; j++) {
-		gdSetXY(0, j);
-		for (i = 0; i < 85; i++) {
-			if (((min + max) && (value <= i)) || (!(min + max) &&
-				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
-				((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
-				if (j == 5) {
-					data = 0x80;
-				} else {
-					data = 0x01;
-				}
-			} else {
-				data = 0xFF;
-			}
-			if (i & 0x01) {
-				data = 0x00;
-			}
-			gdWriteData(data);
-		}
-	}
-}
-
-void showParam(sndParam *param)
-{
-	uint8_t mult = 8;
-
-	if (audioProc == TDA7313_IC || audioProc == TDA7318_IC) {
-		if (param->label == volumeLabel
-		 || param->label == preampLabel
-		 || param->label == balanceLabel)
-		{
-			mult = 10;
-		}
-		if (param->label == gainLabel0
-		 || param->label == gainLabel1
-		 || param->label == gainLabel2
-		 || param->label == gainLabel3)
-		{
-			mult = 15;
-		}
-	}
-	showBar(param->min, param->max, param->value);
-	showParValue(((int16_t)(param->value) * param->step * mult + 4) >> 3);
-	showParLabel(param->label);
-}
 
 void setVolume(int8_t val)
 {
@@ -218,14 +131,6 @@ void setSwitch(int8_t gain)
 	I2CWrComm(TDA7313_ADDR, TDA7313_SW | (3 - gain) << 3 | loud << 2 | chan);
 }
 
-void setBacklight(int8_t backlight)
-{
-	if (backlight)
-		GD_BACKLIGHT_PORT |= GD_BCKL;
-	else
-		GD_BACKLIGHT_PORT &= ~GD_BCKL;
-}
-
 void setGain(int8_t val)
 {
 	switch (audioProc) {
@@ -289,22 +194,13 @@ void switchLoudness(void)
 	setSwitch(gain[chan].value);
 }
 
-void switchBacklight(void)
-{
-	if (backlight == BACKLIGHT_ON)
-		backlight = BACKLIGHT_OFF;
-	else
-		backlight = BACKLIGHT_ON;
-	setBacklight(backlight);
-}
-
-void loadParams(void)
+void loadParams(uint8_t **txtLabels)
 {
 	uint8_t i;
 
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < SND_PARAM_COUNT; i++) {
 		params[i]->value = eeprom_read_byte(eepromVolume + i);
-		params[i]->label = volumeLabel + 16 * i;
+		params[i]->label = txtLabels[i];
 		params[i]->min = eeprom_read_byte(eepromMinimums + i);
 		params[i]->max = eeprom_read_byte(eepromMaximums + i);
 		params[i]->step = eeprom_read_byte(eepromSteps + i);
@@ -314,7 +210,6 @@ void loadParams(void)
 	loud = eeprom_read_byte(eepromLoudness);
 	chanCnt = eeprom_read_byte(eepromChanCnt);
 	audioProc = eeprom_read_byte(eepromICSelect);
-	backlight = eeprom_read_byte(eepromBCKL);
 
 	volume.set = setVolume;
 	bass.set = setBass;
@@ -334,17 +229,15 @@ void loadParams(void)
 	setTreble(treble.value);
 }
 
-void saveParams(void)
+void saveAudioParams(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < 10; i++) {
+	for (i = 0; i < SND_PARAM_COUNT; i++) {
 		eeprom_write_byte(eepromVolume + i, params[i]->value);
 	}
 	eeprom_write_byte(eepromChannel, chan);
 	eeprom_write_byte(eepromLoudness, loud);
-	eeprom_write_byte(eepromChanCnt, chanCnt);
-	eeprom_write_byte(eepromBCKL, backlight);
 }
 
 void changeParam(sndParam *param, int8_t diff)

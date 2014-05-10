@@ -4,7 +4,6 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "eeprom.h"
 #include "rc5.h"
 
 static volatile int8_t encCnt;
@@ -12,13 +11,11 @@ static volatile uint8_t cmdBuf;
 static volatile uint16_t rc5SaveBuf;
 
 static volatile uint16_t displayTime;
-static volatile uint16_t rc5Timer;
 
-static volatile uint8_t rc5DeviceAddr;
-static volatile uint8_t rcCode[RC5_CMD_COUNT];	/* Array with rc5 commands */
+static uint8_t rc5DeviceAddr;
+static uint8_t *rcCode;				/* Pointer to array with RC5 commands */
 
-
-void btnInit(void)
+void btnInit(uint8_t *code, uint8_t addr)
 {
 	/* Setup buttons and encoders as inputs with pull-up resistors */
 	BTN_DDR &= ~(BTN_MASK);
@@ -33,12 +30,8 @@ void btnInit(void)
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
-	/* Load RC5 device address and commands from eeprom */
-	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-	uint8_t i;
-	for (i = 0; i < RC5_CMD_COUNT; i++) {
-		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
-	}
+	rcCode = code;
+	rc5DeviceAddr = addr;
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;
@@ -58,6 +51,7 @@ static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
 ISR (TIMER2_COMP_vect)
 {
 	static int16_t btnCnt = 0;		/* Buttons press duration value */
+	static uint16_t rc5Timer;
 
 	/* Previous state */
 	static uint8_t encPrev = ENC_0;
@@ -146,27 +140,6 @@ ISR (TIMER2_COMP_vect)
 		}
 		btnCnt = 0;
 	}
-
-
-
-//	if (rc5Now) {
-//		if (rc5Now == rc5Prev) {
-//			rc5Cnt++;
-//			if (rc5Cnt == LONG_PRESS) {
-//				// i
-//				rc5CmdBuf = _read_value;
-//			}
-//		} else {
-//			rc5Prev = rc5Now;
-//		}
-//	} else {
-//		if ((rc5Cnt > SHORT_PRESS) && (rc5Cnt < LONG_PRESS)) {
-//			// i + RC5_CMD_COUNT
-//			rc5CmdBuf = _read_value + RC5_CMD_COUNT;
-//		}
-//		btnCnt = 0;
-//	}
-
 
 	/* Place RC5 event to command buffer if enough RC5 timer ticks */
 	uint16_t rc5Buf = getRC5RawBuf();

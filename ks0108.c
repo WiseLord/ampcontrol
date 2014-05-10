@@ -312,21 +312,21 @@ void gdWriteString(uint8_t *string)
 	return;
 }
 
-void gdWriteStringProgmem(const uint8_t *string)
-{
-	uint8_t i = 0, ch;
-	ch = pgm_read_byte(&string[i++]);
-	if (ch)
-		gdWriteChar(ch);
-	do {
-		ch = pgm_read_byte(&string[i++]);
-		if (ch) {
-			gdWriteChar(fp.ltsppos);
-			gdWriteChar(ch);
-		}
-	} while (ch);
-	return;
-}
+//void gdWriteStringProgmem(const uint8_t *string)
+//{
+//	uint8_t i = 0, ch;
+//	ch = pgm_read_byte(&string[i++]);
+//	if (ch)
+//		gdWriteChar(ch);
+//	do {
+//		ch = pgm_read_byte(&string[i++]);
+//		if (ch) {
+//			gdWriteChar(fp.ltsppos);
+//			gdWriteChar(ch);
+//		}
+//	} while (ch);
+//	return;
+//}
 
 void gdWriteStringEeprom(const uint8_t *string)
 {
@@ -369,46 +369,3 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 		dig[i] = sign;
 	return dig;
 }
-
-void gdSpectrum32(uint8_t *buf, uint8_t mode)
-{
-	uint8_t i, j, k;
-	int8_t row;
-	uint8_t data;
-	uint8_t val;
-	for (i = 0; i < GD_ROWS; i++) {
-		gdSetXY(0, i);
-		for (j = 0, k = 32; j < 32; j++, k++) {
-			switch (mode) {
-			case SP_MODE_STEREO:
-				if (i < GD_ROWS / 2) {
-					val = buf[j];
-					row = 3 - val / 8;
-				} else {
-					val = buf[k];
-					row = 7 - val / 8;
-				}
-				break;
-			default:
-				val = buf[j] + buf[k];
-				row = 7 - val / 8;
-				break;
-			}
-			data = 0xFF;
-			if (i == row)
-				data = 0xFF << (7 - val % 8);
-			else if (i < row)
-				data = 0x00;
-			if (j < 16)
-				_cs = GD_CS1;
-			else
-				_cs = GD_CS2;
-				gdWriteData(data);
-				gdWriteData(data);
-				gdWriteData(data);
-				gdWriteData(0x00);
-		}
-	}
-	return;
-}
-

@@ -4,7 +4,7 @@ GD_SRCS = ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 SP_SRCS = fft.c adc.c
 IN_SRCS = input.c rc5.c
 
-SRCS = main.c $(GD_SRCS) $(SP_SRCS) $(IN_SRCS) i2c.c audio.c ds1307.c tea5767.c
+SRCS = main.c display.c $(GD_SRCS) $(SP_SRCS) $(IN_SRCS) i2c.c audio.c ds1307.c tea5767.c
 MCU = atmega16
 F_CPU = 16000000L
 

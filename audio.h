@@ -38,9 +38,6 @@
 #define LOUDNESS_ON				0
 #define LOUDNESS_OFF			1
 
-#define BACKLIGHT_ON			0
-#define BACKLIGHT_OFF			1
-
 #define EXT_DDR					DDRC
 #define EXT_PORT				PORTC
 
@@ -49,7 +46,7 @@ typedef struct {
 	int8_t min;
 	int8_t max;
 	uint8_t step;
-	void *label;
+	uint8_t *label;
 	void (*set)(int8_t value);
 } sndParam;
 
@@ -61,16 +58,17 @@ sndParam preamp;
 sndParam balance;
 sndParam gain[4];
 
+#define SND_PARAM_COUNT			10
+
 uint8_t chan;
 uint8_t loud;
 uint8_t mute;
 uint8_t chanCnt;
-uint8_t backlight;
 
 uint8_t audioProc;
 
-void loadParams(void);
-void saveParams(void);
+void loadParams(uint8_t **txtLabels);
+void saveAudioParams(void);
 
 void changeParam(sndParam *param, int8_t diff);
 
@@ -84,10 +82,5 @@ void switchMute(void);
 void switchLoudness(void);
 void switchBacklight(void);
 void setBacklight(int8_t backlight);
-
-void showBoolParam(uint8_t value, const uint8_t *parLabel);
-void showParam(sndParam *param);
-
-void showBar(int8_t min, int8_t max, int8_t value);
 
 #endif /* PARAM_H */

@@ -1,14 +1,6 @@
 #include "ds1307.h"
 
-#include <avr/pgmspace.h>
-
 #include "i2c.h"
-
-#include "ks0108.h"
-#include "eeprom.h"
-
-static int8_t time[7];
-static timeMode etm = NOEDIT;
 
 static void calcWeekDay(void)
 {
@@ -42,7 +34,7 @@ static uint8_t daysInMonth()
 	return 31;
 }
 
-static int8_t *getTime(void)
+int8_t *getTime(void)
 {
 	uint8_t temp;
 	uint8_t i;
@@ -71,44 +63,6 @@ static void setTime(void)
 	return;
 }
 
-static void drawTm(timeMode tm, const uint8_t *font)
-{
-	if (etm == tm)
-		gdLoadFont(font, 0);
-	else
-		gdLoadFont(font, 1);
-	gdWriteString(mkNumString(time[tm], 2, '0', 10));
-	gdLoadFont(font, 1);
-}
-
-void showTime()
-{
-	getTime();
-	gdSetXY(4, 0);
-
-	drawTm(HOUR, font_digits_32);
-	gdWriteString((uint8_t*)"\x7F:\x7F");
-	drawTm(MIN, font_digits_32);
-	gdWriteString((uint8_t*)"\x7F:\x7F");
-	drawTm(SEC, font_digits_32);
-
-	gdSetXY(9, 4);
-
-	drawTm(DAY, font_ks0066_ru_24);
-	gdWriteString((uint8_t*)"\x7F.\x7F");
-	drawTm(MONTH, font_ks0066_ru_24);
-	gdWriteString((uint8_t*)"\x7F.\x7F");
-	if (etm == YEAR)
-		gdLoadFont(font_ks0066_ru_24, 0);
-	gdWriteString((uint8_t*)"20");
-	drawTm(YEAR, font_ks0066_ru_24);
-
-	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(32, 7);
-	gdWriteStringEeprom(mondayLabel + 16 * (time[WEEK] % 7));
-
-	return;
-}
 
 void stopEditTime(void)
 {
@@ -145,7 +99,6 @@ void editTime(void)
 		etm = NOEDIT;
 		break;
 	}
-	showTime(0);
 }
 
 void changeTime(int diff)

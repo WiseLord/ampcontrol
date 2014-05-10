@@ -9,7 +9,7 @@ void tea5767Init(void)
 	ctrl.high_cut = 0;
 	ctrl.st_noise = 0;
 	ctrl.soft_mute = 1;
-	ctrl.deemph_75 = 1;
+	ctrl.deemph_75 = 0;
 	ctrl.japan_band = 0;
 	ctrl.pllref = 0;
 	ctrl.xtal_freq = 1;
