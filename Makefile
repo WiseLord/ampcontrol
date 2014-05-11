@@ -1,4 +1,6 @@
-TARG = ampcontrol_gd
+TARG = ampcontrol_tda7439_gd
+
+AUDIOPROC = TDA7439
 
 GD_SRCS = ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 SP_SRCS = fft.c adc.c
@@ -36,9 +38,8 @@ $(TARG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.elf $(OBJS) -lm
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
 
-
 %.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -c -o $@ $<
 
 clean:
 	rm -f $(TARG).{elf,bin} $(OBJS)

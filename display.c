@@ -29,11 +29,12 @@ void showRC5Info(uint16_t rc5Buf)
 	gdWriteString(mkNumString(BTN_PIN, 8, '0', 2));
 }
 
-void showRadio(uint8_t *buf)
+void showRadio(uint8_t *buf, uint8_t num)
 {
 	uint16_t freq = tea5767FreqAvail(buf) / 10000;
 	uint8_t i;
 
+	/* Frequency value */
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
 	gdWriteString((uint8_t*)"FM ");
@@ -63,6 +64,14 @@ void showRadio(uint8_t *buf)
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
+
+	/* Station number */
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(100, 4);
+	if (num)
+		showParValue(num);
+	else
+		gdWriteString((uint8_t*)"--");
 }
 
 void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)

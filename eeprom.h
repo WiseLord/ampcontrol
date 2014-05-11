@@ -33,7 +33,7 @@
 #define eepromRC5Cmd	((uint8_t*)0x40)
 
 /* FM stations */
-#define tunerAddr		((uint8_t*)0x60)
+#define eepromStations	((uint16_t*)0x60)
 
 /* Text labels (maximum 15 byte followed by \0) */
 #define labelsAddr		((uint8_t*)0xE0)

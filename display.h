@@ -36,7 +36,7 @@ enum {
 };
 
 void showRC5Info(uint16_t rc5Buf);
-void showRadio(uint8_t *buf);
+void showRadio(uint8_t *buf, uint8_t num);
 void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels);
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 void showBar(int16_t min, int16_t max, int16_t value);
