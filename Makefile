@@ -5,6 +5,8 @@ SP_SRCS = fft.c adc.c
 IN_SRCS = input.c rc5.c
 
 SRCS = main.c display.c $(GD_SRCS) $(SP_SRCS) $(IN_SRCS) i2c.c audio.c ds1307.c tea5767.c
+
+
 MCU = atmega16
 F_CPU = 16000000L
 
@@ -13,7 +15,6 @@ CS = -fexec-charset=ks0066-ru
 OPTIMIZE = -Os -mcall-prologues
 CFLAGS = -g -Wall -Werror -lm $(OPTIMIZE) $(CS) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 LDFLAGS = -g -Wall -Werror -mmcu=$(MCU)
-OBJS = $(SRCS:.c=.o)
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
@@ -27,14 +28,14 @@ AD_MCU = -p m16
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
+OBJS = $(SRCS:.c=.o)
+
 all: $(TARG)
 
 $(TARG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@.elf  $(OBJS) -lm
+	$(CC) $(LDFLAGS) -o $@.elf $(OBJS) -lm
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
-	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
-	wc -c $@.bin
-	rm -f $@.bin
+
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
@@ -51,8 +52,5 @@ fuse:
 eeprom_tda7439:
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7439.bin:r
 
-eeprom_tda7313:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7313.bin:r
-
-eeprom_tda7318:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7318.bin:r
+eeprom_tda7313_tda7318:
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7313_tda7318.bin:r

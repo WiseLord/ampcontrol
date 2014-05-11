@@ -19,13 +19,15 @@
 #define DISPLAY_TIME_GAIN		3
 #define DISPLAY_TIME_TIME		3
 #define DISPLAY_TIME_TIME_EDIT	10
-#define DISPLAY_TIME_FM_RADIO	10
+#define DISPLAY_TIME_FM_RADIO	20
 #define DISPLAY_TIME_CHAN		2
 #define DISPLAY_TIME_AUDIO		3
 #define DISPLAY_TIME_TEST		20
 
 #define BACKLIGHT_ON			0
 #define BACKLIGHT_OFF			1
+
+#define EEPROM_SIZE				0x200
 
 enum {
 	MODE_STANDBY,
@@ -53,6 +55,8 @@ uint8_t rcCode[RC5_CMD_COUNT];	/* Array with rc5 commands */
 
 uint8_t *txtLabels[LABELS_COUNT];
 
+uint32_t freqFM;
+
 void switchSpMode()
 {
 	if (spMode == SP_MODE_STEREO)
@@ -64,9 +68,34 @@ void switchSpMode()
 
 void loadLabels() {
 	uint8_t i;
-	for (i = 0; i < LABELS_COUNT; i++) {
-		txtLabels[i] = labelsAddr + 16 * i;
+	uint8_t *addr;
+
+	addr = labelsAddr;
+	i = 0;
+
+	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {
+		if (eeprom_read_byte(addr) != '\0') {
+			txtLabels[i] = addr;
+			addr++;
+			i++;
+			while (eeprom_read_byte(addr) != '\0' &&
+			       addr < (uint8_t*)EEPROM_SIZE) {
+				addr++;
+			}
+		} else {
+			addr++;
+		}
 	}
+
+}
+
+uint32_t loadFMFreq(void *addr) {
+	return (uint32_t)eeprom_read_word(addr) * 10000;
+}
+
+void saveFMFreq(uint32_t freq, void *addr)
+{
+	eeprom_write_word(eepromFMFreq, freq/10000);
 }
 
 void hwInit(void)	/* Hardware initialization */
@@ -89,6 +118,8 @@ void hwInit(void)	/* Hardware initialization */
 	I2CInit();							/* I2C bus */
 	tea5767Init();
 
+	freqFM = loadFMFreq(eepromFMFreq);
+
 	etm = NOEDIT;
 
 	SMF_DDR |= (STDBY | FAN);
@@ -110,24 +141,32 @@ void showParam(sndParam *param)
 {
 	uint8_t mult = 8;
 
-	if (audioProc == TDA7313_IC || audioProc == TDA7318_IC) {
-		if (param->label == txtLabels[LABEL_VOLUME]
-		 || param->label == txtLabels[LABEL_PREAMP]
-		 || param->label == txtLabels[LABEL_BALANCE])
-		{
-			mult = 10;
-		}
-		if (param->label == txtLabels[LABEL_GAIN_0]
-		 || param->label == txtLabels[LABEL_GAIN_1]
-		 || param->label == txtLabels[LABEL_GAIN_2]
-		 || param->label == txtLabels[LABEL_GAIN_3])
-		{
-			mult = 15;
-		}
+#ifndef TDA7439
+	if (param->label == txtLabels[LABEL_VOLUME]
+	 || param->label == txtLabels[LABEL_PREAMP]
+	 || param->label == txtLabels[LABEL_BALANCE])
+	{
+		mult = 10;
 	}
+	if (param->label == txtLabels[LABEL_GAIN_0]
+	 || param->label == txtLabels[LABEL_GAIN_1]
+	 || param->label == txtLabels[LABEL_GAIN_2]
+	 || param->label == txtLabels[LABEL_GAIN_3])
+	{
+		mult = 15;
+	}
+#endif
 	showBar(param->min, param->max, param->value);
 	showParValue(((int16_t)(param->value) * param->step * mult + 4) >> 3);
 	showParLabel(param->label, txtLabels);
+}
+
+void saveParams(void)
+{
+	saveAudioParams();
+	eeprom_write_byte(eepromBCKL, backlight);
+	eeprom_write_byte(eepromSpMode, spMode);
+	saveFMFreq(freqFM, eepromFMFreq);
 }
 
 
@@ -161,9 +200,7 @@ void powerOff(void)
 	GD_BACKLIGHT_PORT &= ~GD_BCKL;
 	etm = NOEDIT;
 	muteVolume();
-	saveAudioParams();
-	eeprom_write_byte(eepromBCKL, backlight);
-	eeprom_write_byte(eepromSpMode, spMode);
+	saveParams();
 }
 
 int main(void)
@@ -188,7 +225,6 @@ int main(void)
 	muteVolume();
 
 	uint8_t bufFM[5];
-	uint32_t freqFM = 99500000;
 
 	tea5767SetFreq(freqFM);
 
@@ -231,6 +267,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_GAIN:
 				nextChan();
+				gdFill(0x00, 0b00000111);
 			default:
 				curSndParam = &gain[chan];
 				dispMode = MODE_GAIN;
@@ -295,18 +332,12 @@ int main(void)
 				dispMode = MODE_BASS;
 				break;
 			case MODE_BASS:
-				switch (audioProc) {
-				case TDA7439_IC:
-					curSndParam = &middle;
-					dispMode = MODE_MIDDLE;
-					break;
-				default:
-					curSndParam = &treble;
-					dispMode = MODE_TREBLE;
-					break;
-				}
+#ifdef TDA7439
+				curSndParam = &middle;
+				dispMode = MODE_MIDDLE;
 				break;
 			case MODE_MIDDLE:
+#endif
 				curSndParam = &treble;
 				dispMode = MODE_TREBLE;
 				break;
@@ -332,7 +363,7 @@ int main(void)
 		case CMD_BTN_2_LONG:
 			switch (dispMode) {
 			default:
-				if (chan == chanCnt - 1) {
+				if (chan == 0) {
 					dispMode = MODE_FM_RADIO;
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
@@ -367,30 +398,29 @@ int main(void)
 				break;
 			}
 			break;
+#ifdef TDA7313
 		case CMD_RC5_LOUDNESS:
-			switch (dispMode) {
-			default:
-				if (audioProc == TDA7313_IC) {
-					switchLoudness();
-					dispMode = MODE_LOUDNESS;
-					setDisplayTime(DISPLAY_TIME_AUDIO);
-				}
-				break;
-			}
+			switchLoudness();
+			dispMode = MODE_LOUDNESS;
+			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
+#endif
 		case CMD_RC5_INPUT_0:
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
+#ifndef TDA7313
 		case CMD_RC5_INPUT_3:
+#endif
 			switch (dispMode) {
 			default:
 				if (dispMode != MODE_FM_RADIO &&
-				    chan == chanCnt - 1 && cmd == CMD_RC5_INPUT_0 + chan) {
+				    chan == 0 && cmd == CMD_RC5_INPUT_0 + chan) {
 					curSndParam = &volume;
 					dispMode = MODE_FM_RADIO;
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				} else {
 					setChan(cmd - CMD_RC5_INPUT_0);
+					gdFill(0x00, 0b00000111);
 					curSndParam = &gain[chan];
 					dispMode = MODE_GAIN;
 					setDisplayTime(DISPLAY_TIME_GAIN);
@@ -402,9 +432,7 @@ int main(void)
 			switch (dispMode) {
 			default:
 				switchSpMode();
-				saveAudioParams();
-				eeprom_write_byte(eepromBCKL, backlight);
-				eeprom_write_byte(eepromSpMode, spMode);
+				saveParams();
 			}
 			break;
 		}
@@ -450,9 +478,7 @@ int main(void)
 			default:
 				if (dispModePrev != MODE_SPECTRUM) {
 					gdSetXY(0, 0);
-					saveAudioParams();
-					eeprom_write_byte(eepromBCKL, backlight);
-					eeprom_write_byte(eepromSpMode, spMode);
+					saveParams();
 				}
 				dispMode = MODE_SPECTRUM;
 				break;
@@ -461,7 +487,7 @@ int main(void)
 
 		/* Clear screen if mode has changed */
 		if (dispMode != dispModePrev)
-			gdFill(0x00);
+			gdFill(0x00, 0b11111111);
 
 		/* Show things */
 		switch (dispMode) {
@@ -495,7 +521,7 @@ int main(void)
 			break;
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
-			showTime(0);
+			showTime(txtLabels);
 			break;
 		default:
 			showParam(curSndParam);

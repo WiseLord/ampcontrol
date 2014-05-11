@@ -6,8 +6,8 @@ static tea5767Ctrl ctrl;
 
 void tea5767Init(void)
 {
-	ctrl.high_cut = 0;
-	ctrl.st_noise = 0;
+	ctrl.high_cut = 1;
+	ctrl.st_noise = 1;
 	ctrl.soft_mute = 1;
 	ctrl.deemph_75 = 0;
 	ctrl.japan_band = 0;
@@ -46,8 +46,7 @@ static void tea5767WriteI2C(uint8_t *buf)
 {
 	uint8_t i;
 
-	I2CStart();
-	I2CWriteByte(TEA5767_ADDR);
+	I2CStart(TEA5767_ADDR);
 	for (i = 0; i < 5; i++) {
 		I2CWriteByte(buf[i]);
 	}
@@ -75,8 +74,7 @@ void tea5767ReadStatus(uint8_t *buf)
 {
 	uint8_t i;
 
-	I2CStart();
-	I2CWriteByte(TEA5767_ADDR + 1);
+	I2CStart(TEA5767_ADDR | I2C_READ);
 	for (i = 0; i < 5; i++)
 		I2CReadByte(&buf[i], 1);
 	I2CStop();
@@ -150,10 +148,10 @@ void fineTune(uint32_t *freqFM, uint8_t *bufFM)
 {
 	*freqFM = tea5767FreqAvail(bufFM);
 
-	if (*freqFM > FM_FREQ_MAX)
-		*freqFM = FM_FREQ_MIN;
-	if (*freqFM < FM_FREQ_MIN)
-		*freqFM = FM_FREQ_MAX;
+	if (*freqFM > (uint32_t)FM_FREQ_MAX * 10000)
+		*freqFM = (uint32_t)FM_FREQ_MIN * 10000;
+	if (*freqFM < (uint32_t)FM_FREQ_MIN * 10000)
+		*freqFM = (uint32_t)FM_FREQ_MAX * 10000;
 
 	tea5767SetFreq(*freqFM);
 }

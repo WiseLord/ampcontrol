@@ -65,8 +65,8 @@
 #define SEARCH_DOWN				0
 #define SEARCH_UP				1
 
-#define FM_FREQ_MIN				87500000L
-#define FM_FREQ_MAX				108000000L
+#define FM_FREQ_MIN				8750
+#define FM_FREQ_MAX				10800
 
 typedef struct {
 	uint8_t high_cut;

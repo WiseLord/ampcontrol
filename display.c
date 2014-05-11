@@ -31,17 +31,38 @@ void showRC5Info(uint16_t rc5Buf)
 
 void showRadio(uint8_t *buf)
 {
-	uint32_t freq = tea5767FreqAvail(buf);
+	uint16_t freq = tea5767FreqAvail(buf) / 10000;
+	uint8_t i;
+
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
 	gdWriteString((uint8_t*)"FM ");
-	gdWriteString(mkNumString(freq/1000000, 3, ' ', 10));
+	gdWriteString(mkNumString(freq/100, 3, ' ', 10));
 	gdWriteChar('\x7F');
 	gdWriteChar('.');
 	gdWriteChar('\x7F');
-	gdWriteString(mkNumString(freq/100000%10, 1, ' ', 10));
+	gdWriteString(mkNumString(freq/10%10, 1, ' ', 10));
 	gdLoadFont(font_ks0066_ru_08, 1);
-//	showBar(0, 16, tea5767ADCLevel(buf));
+
+	/* Signal level */
+	gdSetXY (112, 0);
+	for (i = 0; i < 16; i+=2) {
+		if (i <= tea5767ADCLevel(buf))
+			gdWriteData(256 - (1<<(7 - i / 2)));
+		else
+			gdWriteData(0x80);
+		gdWriteData(0x00);
+	}
+
+	/* Stereo indicator */
+	gdSetXY(114, 2);
+	if (tea5767Stereo(buf))
+		gdWriteString((uint8_t*)"ST");
+	else
+		gdWriteString((uint8_t*)"  ");
+
+	/* Frequency scale */
+	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
 }
 
 void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
@@ -67,7 +88,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	gdLoadFont(font_ks0066_ru_08, 1);
 }
 
-void showBar(int8_t min, int8_t max, int8_t value)
+void showBar(int16_t min, int16_t max, int16_t value)
 {
 	uint8_t i, j, data;
 
@@ -141,7 +162,32 @@ void showTime(uint8_t **txtLabels)
 
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(32, 7);
-	gdWriteStringEeprom(txtLabels[LABEL_MONDAY] + 16 * (time[WEEK] % 7));
+
+	switch (time[WEEK]) {
+	case 1:
+		gdWriteStringEeprom(txtLabels[LABEL_THUESDAY]);
+		break;
+	case 2:
+		gdWriteStringEeprom(txtLabels[LABEL_WEDNESDAY]);
+		break;
+	case 3:
+		gdWriteStringEeprom(txtLabels[LABEL_THURSDAY]);
+		break;
+	case 4:
+		gdWriteStringEeprom(txtLabels[LABEL_FRIDAY]);
+		break;
+	case 5:
+		gdWriteStringEeprom(txtLabels[LABEL_SADURDAY]);
+		break;
+	case 6:
+		gdWriteStringEeprom(txtLabels[LABEL_SUNDAY]);
+		break;
+	case 7:
+		gdWriteStringEeprom(txtLabels[LABEL_MONDAY]);
+		break;
+	default:
+		break;
+	}
 
 	return;
 }

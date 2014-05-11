@@ -40,7 +40,11 @@ int8_t *getTime(void)
 	uint8_t i;
 
 	for (i = SEC; i <= YEAR; i++) {
-		I2CRead(DS1307_ADDR, i, &temp);
+		I2CStart(DS1307_ADDR);
+		I2CWriteByte(i);
+		I2CStart(DS1307_ADDR | I2C_READ);
+		I2CReadByte(&temp, I2C_NOACK);
+		I2CStop();
 		time[i] = BD2D(temp);
 	}
 
@@ -57,7 +61,10 @@ static void setTime(void)
 		calcWeekDay();
 
 	for (i = SEC; i <= YEAR; i++) {
-		I2CWrite(DS1307_ADDR, i, D2BD(time[i]));
+		I2CStart(DS1307_ADDR);
+		I2CWriteByte(i);
+		I2CWriteByte(D2BD(time[i]));
+		I2CStop();
 	}
 
 	return;

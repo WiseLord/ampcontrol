@@ -153,18 +153,19 @@ void gdWriteData(uint8_t data)
 	return;
 }
 
-void gdFill(uint8_t data)
+void gdFill(uint8_t data, uint8_t line_mask)
 {
 	uint8_t i, j;
 	uint8_t cs = _cs;
 
-	_cs = GD_CS1 | GD_CS2;
-	gdWriteCommand(KS0108_SET_ADDRESS + _col);
-	gdWriteCommand(KS0108_SET_PAGE + _row);
-
-	for (i = 0; i < GD_ROWS; i++)
-		for (j = 0; j < GD_COLS; j++)
-			gdWriteData(data);
+	for (i = 0; i < GD_ROWS; i++) {
+		gdSetXY(0, i);
+		if ((1<<i) & line_mask) {
+			for (j = 0; j < GD_COLS * 2; j++) {
+				gdWriteData(data);
+			}
+		}
+	}
 	_cs = cs;
 	return;
 }
@@ -219,7 +220,7 @@ void gdInit(void)
 	gdWriteCommand(KS0108_SET_PAGE);
 
 	fp.height = 1;
-	gdFill(0x00);
+	gdFill(0x00, 0b11111111);
 
 	gdWriteCommand(KS0108_DISPLAY_ON);
 

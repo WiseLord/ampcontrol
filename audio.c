@@ -24,61 +24,63 @@ void setVolume(int8_t val)
 {
 	int8_t spFrontLeft = 0;
 	int8_t spFrontRight = 0;
+
+#ifdef TDA7439
+	spFrontLeft = val;
+	spFrontRight = val;
+
+	if (balance.value > 0) {
+		spFrontLeft -= balance.value;
+		if (spFrontLeft < volume.min)
+			spFrontLeft = volume.min;
+	} else {
+		spFrontRight += balance.value;
+		if (spFrontRight < volume.min)
+			spFrontRight = volume.min;
+	}
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
+	I2CWriteByte(-spFrontRight);
+	I2CWriteByte(-spFrontLeft);
+	I2CStop();
+#else
 	int8_t spRearLeft = 0;
 	int8_t spRearRight = 0;
 
-	switch (audioProc) {
-	case TDA7313_IC:
-	case TDA7318_IC:
-		I2CWrComm(TDA7313_ADDR, TDA7313_VOLUME | -val);
-		if (balance.value > 0) {
-			spFrontRight -= balance.value;
-			spRearRight -= balance.value;
-		} else {
-			spFrontLeft += balance.value;
-			spRearLeft += balance.value;
-		}
-		if (preamp.value > 0) {
-			spRearLeft -= preamp.value;
-			spRearRight -= preamp.value;
-		} else {
-			spFrontLeft += preamp.value;
-			spFrontRight += preamp.value;
-		}
-		I2CWrComm(TDA7313_ADDR, TDA7313_SP_FRONT_LEFT | -spFrontLeft);
-		I2CWrComm(TDA7313_ADDR, TDA7313_SP_FRONT_RIGHT | -spFrontRight);
-		I2CWrComm(TDA7313_ADDR, TDA7313_SP_REAR_LEFT | -spRearLeft);
-		I2CWrComm(TDA7313_ADDR, TDA7313_SP_REAR_RIGHT | -spRearRight);
-		break;
-	default:
-		spFrontLeft = val;
-		spFrontRight = val;
-		if (balance.value > 0) {
-			spFrontLeft -= balance.value;
-			if (spFrontLeft < volume.min)
-				spFrontLeft = volume.min;
-		} else {
-			spFrontRight += balance.value;
-			if (spFrontRight < volume.min)
-				spFrontRight = volume.min;
-		}
-		I2CWrite(TDA7439_ADDR, TDA7439_VOLUME_LEFT, -spFrontLeft);
-		I2CWrite(TDA7439_ADDR, TDA7439_VOLUME_RIGHT, -spFrontRight);
-		break;
+	if (balance.value > 0) {
+		spFrontRight -= balance.value;
+		spRearRight -= balance.value;
+	} else {
+		spFrontLeft += balance.value;
+		spRearLeft += balance.value;
 	}
+	if (preamp.value > 0) {
+		spRearLeft -= preamp.value;
+		spRearRight -= preamp.value;
+	} else {
+		spFrontLeft += preamp.value;
+		spFrontRight += preamp.value;
+	}
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7313_VOLUME | -val);
+	I2CWriteByte(TDA7313_SP_FRONT_LEFT | -spFrontLeft);
+	I2CWriteByte(TDA7313_SP_FRONT_RIGHT | -spFrontRight);
+	I2CWriteByte(TDA7313_SP_REAR_LEFT | -spRearLeft);
+	I2CWriteByte(TDA7313_SP_REAR_RIGHT | -spRearRight);
+	I2CStop();
+#endif
 }
 
 void setPreamp(int8_t val) /* For TDA7313 used as balance front/rear */
 {
-	switch (audioProc) {
-	case TDA7313_IC:
-	case TDA7318_IC:
-		setVolume(volume.value);
-		break;
-	default:
-		I2CWrite(TDA7439_ADDR, TDA7439_PREAMP, -val);
-		break;
-	}
+#ifdef TDA7439
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7439_PREAMP);
+	I2CWriteByte(-val);
+	I2CStop();
+#else
+	setVolume(volume.value);
+#endif
 }
 
 int8_t setBMT(int8_t val)
@@ -90,73 +92,75 @@ int8_t setBMT(int8_t val)
 
 void setBass(int8_t val)
 {
-	switch (audioProc) {
-	case TDA7313_IC:
-	case TDA7318_IC:
-		I2CWrComm(TDA7313_ADDR, TDA7313_BASS | setBMT(val));
-		break;
-	default:
-		I2CWrite(TDA7439_ADDR, TDA7439_BASS, setBMT(val));
-		break;
-	}
+#ifdef TDA7439
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7439_BASS);
+	I2CWriteByte(setBMT(val));
+	I2CStop();
+#else
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7313_BASS | setBMT(val));
+	I2CStop();
+#endif
 }
 
 void setMiddle(int8_t val)
 {
-	switch (audioProc) {
-	case TDA7313_IC:
-	case TDA7318_IC:
-		break;
-	default:
-		I2CWrite(TDA7439_ADDR, TDA7439_MIDDLE, setBMT(val));
-		break;
-	}
+#ifdef TDA7439
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7439_MIDDLE);
+	I2CWriteByte(setBMT(val));
+	I2CStop();
+#endif
 }
 
 void setTreble(int8_t val)
 {
-	switch (audioProc) {
-	case TDA7313_IC:
-	case TDA7318_IC:
-		I2CWrComm(TDA7313_ADDR, TDA7313_TREBLE | setBMT(val));
-		break;
-	default:
-		I2CWrite(TDA7439_ADDR, TDA7439_TREBLE, setBMT(val));
-		break;
-	}
+#ifdef TDA7439
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7439_TREBLE);
+	I2CWriteByte(setBMT(val));
+	I2CStop();
+#else
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7313_TREBLE | setBMT(val));
+	I2CStop();
+#endif
 }
 
+#ifndef TDA7439
 void setSwitch(int8_t gain)
 {
-	I2CWrComm(TDA7313_ADDR, TDA7313_SW | (3 - gain) << 3 | loud << 2 | chan);
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7313_SW | (3 - gain) << 3 | loud << 2 | chan);
+	I2CStop();
 }
+#endif
 
 void setGain(int8_t val)
 {
-	switch (audioProc) {
-	case TDA7313_IC:
-	case TDA7318_IC:
-		setSwitch(val);
-		break;
-	default:
-		I2CWrite(TDA7439_ADDR, TDA7439_INPUT_GAIN, val);
-		break;
-	}
+#ifdef TDA7439
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7439_INPUT_GAIN);
+	I2CWriteByte(val);
+	I2CStop();
+#else
+	setSwitch(val);
+#endif
 }
 
 void setChan(uint8_t ch)
 {
 	chan = ch;
 	setGain(gain[ch].value);
-	switch (audioProc) {
-	case TDA7313_IC:
-	case TDA7318_IC:
-		setSwitch(gain[chan].value);
-		break;
-	default:
-		I2CWrite(TDA7439_ADDR, TDA7439_INPUT_SELECT, chanCnt - 1 - ch);
-		break;
-	}
+#ifdef TDA7439
+	I2CStart(AUDIOPROC_ADDR);
+	I2CWriteByte(TDA7439_INPUT_SELECT);
+	I2CWriteByte(CHAN_CNT - 1 - ch);
+	I2CStop();
+#else
+	setSwitch(gain[chan].value);
+#endif
 }
 
 void setBalance(int8_t val)
@@ -185,6 +189,7 @@ void switchMute(void)
 	}
 }
 
+#ifdef TDA7313
 void switchLoudness(void)
 {
 	if (loud == LOUDNESS_ON)
@@ -193,6 +198,7 @@ void switchLoudness(void)
 		loud = LOUDNESS_ON;
 	setSwitch(gain[chan].value);
 }
+#endif
 
 void loadParams(uint8_t **txtLabels)
 {
@@ -208,8 +214,6 @@ void loadParams(uint8_t **txtLabels)
 
 	chan = eeprom_read_byte(eepromChannel);
 	loud = eeprom_read_byte(eepromLoudness);
-	chanCnt = eeprom_read_byte(eepromChanCnt);
-	audioProc = eeprom_read_byte(eepromICSelect);
 
 	volume.set = setVolume;
 	bass.set = setBass;
@@ -236,8 +240,8 @@ void saveAudioParams(void)
 	for (i = 0; i < SND_PARAM_COUNT; i++) {
 		eeprom_write_byte(eepromVolume + i, params[i]->value);
 	}
-	eeprom_write_byte(eepromChannel, chan);
 	eeprom_write_byte(eepromLoudness, loud);
+	eeprom_write_byte(eepromChannel, chan);
 }
 
 void changeParam(sndParam *param, int8_t diff)
@@ -253,7 +257,7 @@ void changeParam(sndParam *param, int8_t diff)
 void nextChan(void)
 {
 	chan++;
-	if (chan >= chanCnt)
+	if (chan >= CHAN_CNT)
 		chan = 0;
 	setChan(chan);
 }

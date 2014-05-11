@@ -31,7 +31,7 @@ enum {
 	LABEL_WEDNESDAY,
 	LABEL_THURSDAY,
 	LABEL_FRIDAY,
-	LABEL_SADURDA,
+	LABEL_SADURDAY,
 	LABEL_SUNDAY
 };
 
@@ -39,7 +39,7 @@ void showRC5Info(uint16_t rc5Buf);
 void showRadio(uint8_t *buf);
 void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels);
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
-void showBar(int8_t min, int8_t max, int8_t value);
+void showBar(int16_t min, int16_t max, int16_t value);
 void showParValue(int8_t value);
 void drawTm(timeMode tm, const uint8_t *font);
 void showTime(uint8_t **txtLabels);

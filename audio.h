@@ -3,16 +3,21 @@
 
 #include <inttypes.h>
 
+#define AUDIOPROC_ADDR			0b10001000
+
 /* Integral circuits definitions */
+#if !defined(TDA7439) && !defined(TDA7313) && !defined(TDA7318)
+#define TDA7439
+#endif
 
-#define TDA7439_IC				0x00
-#define TDA7313_IC				0x01
-#define TDA7318_IC				0x02
+/* Number of input channels */
+#ifdef TDA7313
+#define CHAN_CNT				3
+#else
+#define CHAN_CNT				4
+#endif
 
-#define TDA7439_ADDR			0b10001000
-#define TDA7313_ADDR			0b10001000
-
-/* TDA7439 function selection */
+/* TDA7439 I2C function selection */
 #define TDA7439_INPUT_SELECT	0x00
 #define TDA7439_INPUT_GAIN		0x01
 #define TDA7439_PREAMP			0x02
@@ -21,8 +26,10 @@
 #define TDA7439_TREBLE			0x05
 #define TDA7439_VOLUME_RIGHT	0x06
 #define TDA7439_VOLUME_LEFT		0x07
+/* I2c autoincrement flag */
+#define TDA7439_AUTO_INC		0x10
 
-/* TDA7313 data bytes */
+/* TDA7313 (7318) data bytes */
 #define TDA7313_VOLUME	0x00
 #define TDA7313_SP_FRONT_LEFT	0x80
 #define TDA7313_SP_FRONT_RIGHT	0xA0
@@ -37,9 +44,6 @@
 
 #define LOUDNESS_ON				0
 #define LOUDNESS_OFF			1
-
-#define EXT_DDR					DDRC
-#define EXT_PORT				PORTC
 
 typedef struct {
 	int8_t value;
@@ -63,9 +67,6 @@ sndParam gain[4];
 uint8_t chan;
 uint8_t loud;
 uint8_t mute;
-uint8_t chanCnt;
-
-uint8_t audioProc;
 
 void loadParams(uint8_t **txtLabels);
 void saveAudioParams(void);

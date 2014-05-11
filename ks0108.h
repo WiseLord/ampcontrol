@@ -66,7 +66,7 @@ uint8_t gdReadData();
 void gdWriteCommand(uint8_t command);
 void gdWriteData(uint8_t data);
 
-void gdFill(uint8_t data);
+void gdFill(uint8_t data, uint8_t line_mask);
 void gdInit(void);
 
 void gdSetXY(uint8_t x, uint8_t y);

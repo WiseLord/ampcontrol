@@ -2,25 +2,6 @@
 
 #include <avr/io.h>
 
-void I2CInit(void)
-{
-	TWBR = 18;
-	TWSR = (1<<TWPS0);	/* Prescaler = 4, SCL=16000000/(16+2*18*4)=100000Hz */
-	TWCR |= (1<<TWEN);	/* Enable TWI */
-	return;
-}
-
-void I2CStart(void)
-{
-	uint8_t i = 0;
-	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTA);	/* Start */
-	while (!(TWCR & (1<<TWINT))) {				/* Wait for TWINT */
-		if (i++ > 250)	/* Avoid endless loop */
-			return;
-	}
-	return;
-}
-
 void I2CStop(void)
 {
 	uint8_t i = 0;
@@ -48,6 +29,28 @@ uint8_t I2CWriteByte(uint8_t data)
 	return 0;
 }
 
+void I2CInit(void)
+{
+	TWBR = 18;
+	TWSR = (1<<TWPS0);	/* Prescaler = 4, SCL=16000000/(16+2*18*4)=100000Hz */
+	TWCR |= (1<<TWEN);	/* Enable TWI */
+	return;
+}
+
+void I2CStart(uint8_t addr)
+{
+	uint8_t i = 0;
+	TWCR = (1<<TWINT) | (1<<TWEN) | (1<<TWSTA);	/* Start */
+	while (!(TWCR & (1<<TWINT))) {				/* Wait for TWINT */
+		if (i++ > 250)	/* Avoid endless loop */
+			return;
+	}
+
+	I2CWriteByte(addr);
+
+	return;
+}
+
 uint8_t I2CReadByte(uint8_t *data, uint8_t ack)
 {
 	uint8_t i = 0;
@@ -66,45 +69,5 @@ uint8_t I2CReadByte(uint8_t *data, uint8_t ack)
 		return 1;
 
 	*data = TWDR;
-	return 0;
-}
-
-uint8_t I2CWrite(uint8_t device, uint8_t address, uint8_t data)
-{
-	I2CStart();
-	if (I2CWriteByte(device))
-		return 1;
-	if (I2CWriteByte(address))
-		return 1;
-	if (I2CWriteByte(data))
-		return 1;
-	I2CStop();
-	return 0;
-}
-
-uint8_t I2CRead(uint8_t device, uint8_t address, uint8_t *data)
-{
-	I2CStart();
-	if (I2CWriteByte(device))
-		return 1;
-	if (I2CWriteByte(address))
-		return 1;
-	I2CStart();
-	if (I2CWriteByte(device + 1))
-		return 1;
-	if (I2CReadByte(data, 0))
-		return 1;
-	I2CStop();
-	return 0;
-}
-
-uint8_t I2CWrComm(uint8_t device, uint8_t command)
-{
-	I2CStart();
-	if (I2CWriteByte(device))
-		return 1;
-	if (I2CWriteByte(command))
-		return 1;
-	I2CStop();
 	return 0;
 }

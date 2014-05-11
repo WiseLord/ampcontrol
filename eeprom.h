@@ -19,18 +19,23 @@
 #define eepromSteps		((void*)0x30)
 
 /*Some stored in EEPROM values */
-#define eepromRC5Addr	((void*)0x40)
-#define eepromSpMode	((void*)0x41)
-#define eepromChanCnt	((void*)0x42)
-#define eepromICSelect	((void*)0x43)
-#define eepromBCKL		((void*)0x44)
-#define eepromLoudness	((void*)0x45)
-#define eepromChannel	((void*)0x46)
+#define eepromLoudness	((void*)0x0C)
+#define eepromChannel	((void*)0x0D)
+
+#define eepromSpMode	((void*)0x1C)
+#define eepromBCKL		((void*)0x1D)
+
+#define eepromFMFreq	((void*)0x2C)
+
+#define eepromRC5Addr	((void*)0x3C)
 
 /* RC5 commands array */
-#define eepromRC5Cmd	((uint8_t*)0x50)
+#define eepromRC5Cmd	((uint8_t*)0x40)
+
+/* FM stations */
+#define tunerAddr		((uint8_t*)0x60)
 
 /* Text labels (maximum 15 byte followed by \0) */
-#define labelsAddr		((uint8_t*)0x070)
+#define labelsAddr		((uint8_t*)0xE0)
 
 #endif // EEPROM_H
