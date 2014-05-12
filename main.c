@@ -61,10 +61,7 @@ uint16_t freqFM;
 
 void switchSpMode()
 {
-	if (spMode == SP_MODE_STEREO)
-		spMode = SP_MODE_MIXED;
-	else
-		spMode = SP_MODE_STEREO;
+	spMode = !spMode;
 	return;
 }
 
@@ -107,26 +104,27 @@ void scanStoredFreq(uint16_t freq, uint8_t direction)
 {
 	uint8_t i;
 	uint16_t freqCell;
+	uint16_t freqFound = freq;
 
-	if (direction) {
-		for (i = 0; i < FM_COUNT; i++) {
-			freqCell = eeprom_read_word(eepromStations + i);
-			if (freqCell > freq && freqCell != 0xFFFF) {
-				freq = freqCell;
-				break;
-			}
-		}
-	} else {
-		for (i = FM_COUNT - 1; i >=0; i--) {
-			freqCell = eeprom_read_word(eepromStations + i);
-			if (freqCell < freq && freqCell != 0xFFFF) {
-				freq = freqCell;
-				break;
+	for (i = 0; i < FM_COUNT; i++) {
+		freqCell = eeprom_read_word(eepromStations + i);
+		if (freqCell != 0xFFFF) {
+			if (direction) {
+				if (freqCell > freq) {
+					freqFound = freqCell;
+					break;
+				}
+			} else {
+				if (freqCell < freq) {
+					freqFound = freqCell;
+				} else {
+					break;
+				}
 			}
 		}
 	}
 
-	tea5767SetFreq(freq);
+	tea5767SetFreq(freqFound);
 }
 
 void loadStation(uint8_t num)
@@ -433,25 +431,16 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_3_LONG:
-			switch (dispMode) {
-			case MODE_FM_RADIO:
-				tea5767Search(freqFM, bufFM, SEARCH_DOWN);
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-				break;
-			}
-			break;
 		case CMD_BTN_4_LONG:
-			switch (dispMode) {
-			case MODE_FM_RADIO:
-				tea5767Search(freqFM, bufFM, SEARCH_UP);
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-				break;
-			}
-			break;
 		case CMD_BTN_5_LONG:
 		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
-				storeStation(freqFM);
+				if (cmd == CMD_BTN_3_LONG)
+					tea5767Search(freqFM, bufFM, SEARCH_DOWN);
+				else if (cmd == CMD_BTN_4_LONG)
+					tea5767Search(freqFM, bufFM, SEARCH_UP);
+				else
+					storeStation(freqFM);
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			}
 			break;

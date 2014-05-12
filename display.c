@@ -167,6 +167,7 @@ void showTime(uint8_t **txtLabels)
 	if (etm == YEAR)
 		gdLoadFont(font_ks0066_ru_24, 0);
 	gdWriteString((uint8_t*)"20");
+	gdWriteChar('\x7F');
 	drawTm(YEAR, font_ks0066_ru_24);
 
 	gdLoadFont(font_ks0066_ru_08, 1);

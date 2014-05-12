@@ -156,13 +156,17 @@ void gdWriteData(uint8_t data)
 void gdFill(uint8_t data)
 {
 	uint8_t i, j;
+	uint8_t cs = _cs;
 
-	gdSetXY(0, 0);
-	for (i = 0; i < GD_ROWS; i++) {
-		for (j = 0; j < GD_COLS * 2; j++) {
+	_cs = GD_CS1 | GD_CS2;
+	gdWriteCommand(KS0108_SET_ADDRESS + _col);
+	gdWriteCommand(KS0108_SET_PAGE + _row);
+
+	for (i = 0; i < GD_ROWS; i++)
+		for (j = 0; j < GD_COLS; j++)
 			gdWriteData(data);
-		}
-	}
+	_cs = cs;
+
 	return;
 }
 
