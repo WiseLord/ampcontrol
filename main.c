@@ -129,6 +129,14 @@ void scanStoredFreq(uint16_t freq, uint8_t direction)
 	tea5767SetFreq(freq);
 }
 
+void loadStation(uint8_t num)
+{
+	uint16_t freqCell = eeprom_read_word(eepromStations + num);
+
+	if (freqCell != 0xFFFF)
+		tea5767SetFreq(freqCell);
+}
+
 void storeStation(uint16_t freq)
 {
 	uint8_t i, j;
@@ -322,7 +330,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_GAIN:
 				nextChan();
-				gdFill(0x00, 0b00000111);
+				gdFill(0x00);
 			default:
 				curSndParam = &gain[chan];
 				dispMode = MODE_GAIN;
@@ -476,7 +484,7 @@ int main(void)
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				} else {
 					setChan(cmd - CMD_RC5_INPUT_0);
-					gdFill(0x00, 0b00000111);
+					gdFill(0x00);
 					curSndParam = &gain[chan];
 					dispMode = MODE_GAIN;
 					setDisplayTime(DISPLAY_TIME_GAIN);
@@ -491,26 +499,41 @@ int main(void)
 			break;
 		case CMD_RC5_FM_INC:
 		case CMD_RC5_FM_DEC:
+		case CMD_RC5_CHAN_UP:
+		case CMD_RC5_CHAN_DOWN:
 			if (chan == 0) {
 				if (dispMode == MODE_FM_RADIO) {
-					if (cmd == CMD_RC5_FM_INC)
+					switch (cmd) {
+					case CMD_RC5_FM_INC:
 						tea5767SetFreq(freqFM + 10);
-					else
+						break;
+					case CMD_RC5_FM_DEC:
 						tea5767SetFreq(freqFM - 10);
+						break;
+					case CMD_RC5_CHAN_UP:
+						scanStoredFreq(freqFM, SEARCH_UP);
+						break;
+					case CMD_RC5_CHAN_DOWN:
+						scanStoredFreq(freqFM, SEARCH_DOWN);
+						break;
+					}
 				}
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			}
 			break;
-		case CMD_RC5_CHAN_UP:
-		case CMD_RC5_CHAN_DOWN:
+		case CMD_RC5_1:
+		case CMD_RC5_2:
+		case CMD_RC5_3:
+		case CMD_RC5_4:
+		case CMD_RC5_5:
+		case CMD_RC5_6:
+		case CMD_RC5_7:
+		case CMD_RC5_8:
+		case CMD_RC5_9:
+		case CMD_RC5_0:
 			if (chan == 0) {
-				if (dispMode == MODE_FM_RADIO) {
-					if (cmd == CMD_RC5_CHAN_UP)
-						scanStoredFreq(freqFM, SEARCH_UP);
-					else
-						scanStoredFreq(freqFM, SEARCH_DOWN);
-				}
+				loadStation(cmd - CMD_RC5_1);
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			}
@@ -567,7 +590,7 @@ int main(void)
 
 		/* Clear screen if mode has changed */
 		if (dispMode != dispModePrev)
-			gdFill(0x00, 0b11111111);
+			gdFill(0x00);
 
 		/* Show things */
 		switch (dispMode) {

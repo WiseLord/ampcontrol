@@ -36,7 +36,7 @@
 #define STDBY	(1<<PC6)
 
 /* RC5 support definitions */
-#define RC5_CMD_COUNT	19
+#define RC5_CMD_COUNT	29
 
 enum {
 	CMD_RC5_STBY,
@@ -58,6 +58,16 @@ enum {
 	CMD_RC5_FM_DEC,
 	CMD_RC5_FM_INC,
 	CMD_RC5_FM_STORE,
+	CMD_RC5_1,
+	CMD_RC5_2,
+	CMD_RC5_3,
+	CMD_RC5_4,
+	CMD_RC5_5,
+	CMD_RC5_6,
+	CMD_RC5_7,
+	CMD_RC5_8,
+	CMD_RC5_9,
+	CMD_RC5_0,
 
 	CMD_BTN_1,
 	CMD_BTN_2,
