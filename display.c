@@ -10,7 +10,7 @@ void showRC5Info(uint16_t rc5Buf)
 {
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(0, 0);
-	gdWriteString((uint8_t*)"RC5 command");
+	gdWriteString((uint8_t*)"RC5:");
 	gdSetXY(5, 1);
 	gdWriteString((uint8_t*)"Raw = ");
 	gdWriteString(mkNumString(rc5Buf, 14, '0', 2));
@@ -24,25 +24,23 @@ void showRC5Info(uint16_t rc5Buf)
 	gdWriteString((uint8_t*)"Cmd = ");
 	gdWriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
 	gdSetXY(0, 6);
-	gdWriteString((uint8_t*)"Buttons/Encoder");
+	gdWriteString((uint8_t*)"Buttons:");
 	gdSetXY(5, 7);
 	gdWriteString(mkNumString(BTN_PIN, 8, '0', 2));
 }
 
 void showRadio(uint8_t *buf, uint8_t num)
 {
-	uint16_t freq = tea5767FreqAvail(buf) / 10000;
+	uint16_t freq = tea5767FreqAvail(buf);
 	uint8_t i;
 
 	/* Frequency value */
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
 	gdWriteString((uint8_t*)"FM ");
-	gdWriteString(mkNumString(freq/100, 3, ' ', 10));
-	gdWriteChar('\x7F');
-	gdWriteChar('.');
-	gdWriteChar('\x7F');
-	gdWriteString(mkNumString(freq/10%10, 1, ' ', 10));
+	gdWriteString(mkNumString(freq / 100, 3, ' ', 10));
+	gdWriteString((uint8_t*)"\x7F.\x7F");
+	gdWriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
 	gdLoadFont(font_ks0066_ru_08, 1);
 
 	/* Signal level */
@@ -57,7 +55,7 @@ void showRadio(uint8_t *buf, uint8_t num)
 
 	/* Stereo indicator */
 	gdSetXY(114, 2);
-	if (tea5767Stereo(buf))
+	if (TEA5767_BUF_STEREO(buf))
 		gdWriteString((uint8_t*)"ST");
 	else
 		gdWriteString((uint8_t*)"  ");
@@ -66,12 +64,14 @@ void showRadio(uint8_t *buf, uint8_t num)
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
 
 	/* Station number */
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(100, 4);
-	if (num)
+	if (num) {
 		showParValue(num);
-	else
-		gdWriteString((uint8_t*)"--");
+	} else {
+		gdLoadFont(font_ks0066_ru_24, 1);
+		gdSetXY(93, 4);
+		gdWriteString((uint8_t*)" --");
+		gdLoadFont(font_ks0066_ru_08, 1);
+	}
 }
 
 void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)

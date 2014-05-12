@@ -54,12 +54,12 @@ static void tea5767WriteI2C(uint8_t *buf)
 
 }
 
-void tea5767SetFreq(uint32_t freq)
+void tea5767SetFreq(uint16_t freq)
 {
 	uint8_t buf[5];
 	uint16_t div;
 
-	div = (freq + 225000) >> 13;
+	div = ((uint32_t)freq * 10000 + 225000) >> 13;
 
 	tea5767loadBuf(buf, div);
 
@@ -86,23 +86,7 @@ uint8_t tea5767ADCLevel(uint8_t *buf)
 	return (buf[3] & TEA5767_LEV_MASK) >> 4;
 }
 
-
-uint8_t tea5767Stereo(uint8_t *buf)
-{
-	return (buf[2] & TEA5767_STEREO) ? 1 : 0;
-}
-
-uint8_t tea5767Ready(uint8_t *buf)
-{
-	return (buf[0] & TEA5767_RF) ? 1 : 0;
-}
-
-uint8_t tea5767BlReached (uint8_t *buf)
-{
-	return (buf[0] & TEA5767_BLF) ? 1 : 0;
-}
-
-uint32_t tea5767FreqAvail(uint8_t *buf)
+uint16_t tea5767FreqAvail(uint8_t *buf)
 {
 	uint32_t ret;
 
@@ -114,20 +98,20 @@ uint32_t tea5767FreqAvail(uint8_t *buf)
 	ret -= 225000;
 	ret += 25000;
 	ret /= 50000;
-	ret *= 50000;
+	ret *= 5;
 
-	return ret;
+	return (uint16_t)ret;
 }
 
-void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction)
+void tea5767Search(uint16_t freq, uint8_t *buf, uint8_t direction)
 {
 	uint16_t div;
 
 	if (direction == SEARCH_UP) {
-		div = (freq + 100000 + 225000) >> 13;
+		div = ((uint32_t)freq * 10000 + 100000 + 225000) >> 13;
 //		ctrl.japan_band = 0;
 	} else {
-		div = (freq - 100000 + 225000) >> 13;
+		div = ((uint32_t)freq * 10000 - 100000 + 225000) >> 13;
 //		ctrl.japan_band = 1;
 	}
 
@@ -144,14 +128,14 @@ void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction)
 	return;
 }
 
-void fineTune(uint32_t *freqFM, uint8_t *bufFM)
+void fineTune(uint16_t *freqFM, uint8_t *bufFM)
 {
 	*freqFM = tea5767FreqAvail(bufFM);
 
-	if (*freqFM > (uint32_t)FM_FREQ_MAX * 10000)
-		*freqFM = (uint32_t)FM_FREQ_MIN * 10000;
-	if (*freqFM < (uint32_t)FM_FREQ_MIN * 10000)
-		*freqFM = (uint32_t)FM_FREQ_MAX * 10000;
+	if (*freqFM > (uint32_t)FM_FREQ_MAX)
+		*freqFM = (uint32_t)FM_FREQ_MIN;
+	if (*freqFM < (uint32_t)FM_FREQ_MIN)
+		*freqFM = (uint32_t)FM_FREQ_MAX;
 
 	tea5767SetFreq(*freqFM);
 }

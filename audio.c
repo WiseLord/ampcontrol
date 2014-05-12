@@ -192,10 +192,7 @@ void switchMute(void)
 #ifdef TDA7313
 void switchLoudness(void)
 {
-	if (loud == LOUDNESS_ON)
-		loud = LOUDNESS_OFF;
-	else
-		loud = LOUDNESS_ON;
+	loud = !loud;
 	setSwitch(gain[chan].value);
 }
 #endif

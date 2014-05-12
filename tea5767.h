@@ -62,11 +62,15 @@
 /* 5 register */
 #define TEA5767_RESERVED_MASK	0xFF	/* Not used */
 
+/* Common definitions */
 #define SEARCH_DOWN				0
 #define SEARCH_UP				1
 
 #define FM_FREQ_MIN				8750
 #define FM_FREQ_MAX				10800
+
+#define TEA5767_BUF_READY(buf)	(buf[0] & TEA5767_RF)
+#define TEA5767_BUF_STEREO(buf)	(buf[2] & TEA5767_STEREO)
 
 typedef struct {
 	uint8_t high_cut;
@@ -80,21 +84,15 @@ typedef struct {
 
 void tea5767Init(void);
 
-void tea5767SetFreq(uint32_t freq);
+void tea5767SetFreq(uint16_t freq);
 
 void tea5767ReadStatus(uint8_t *buf);
 
 uint8_t tea5767ADCLevel(uint8_t *buf);
 
-uint8_t tea5767Stereo(uint8_t *buf);
+uint16_t tea5767FreqAvail(uint8_t *buf);
 
-uint8_t tea5767Ready(uint8_t *buf);
-
-uint8_t tea5767BlReached (uint8_t *buf);
-
-uint32_t tea5767FreqAvail(uint8_t *buf);
-
-void tea5767Search(uint32_t freq, uint8_t *buf, uint8_t direction);
-void fineTune(uint32_t *freqFM, uint8_t *bufFM);
+void tea5767Search(uint16_t freq, uint8_t *buf, uint8_t direction);
+void fineTune(uint16_t *freqFM, uint8_t *bufFM);
 
 #endif // TEA5767_H

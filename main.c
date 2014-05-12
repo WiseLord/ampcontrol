@@ -57,7 +57,7 @@ uint8_t rcCode[RC5_CMD_COUNT];	/* Array with rc5 commands */
 
 uint8_t *txtLabels[LABELS_COUNT];
 
-uint32_t freqFM;
+uint16_t freqFM;
 
 void switchSpMode()
 {
@@ -68,7 +68,8 @@ void switchSpMode()
 	return;
 }
 
-void loadLabels() {
+void loadLabels()
+{
 	uint8_t i;
 	uint8_t *addr;
 
@@ -91,60 +92,71 @@ void loadLabels() {
 
 }
 
-//uint8_t findStationNum(uint16_t freq)
-//{
-//	uint8_t i;
+uint8_t stationNum(uint16_t freq)
+{
+	uint8_t i;
 
-//	for (i = 0; i < FM_COUNT; i++) {
-//		if (eeprom_read_word(eepromStations + i) == freq) {
-//			return i + 1;
-//		}
-//	}
+	for (i = 0; i < FM_COUNT; i++)
+		if (eeprom_read_word(eepromStations + i) == freq)
+			return i + 1;
 
-//	return 0;
-//}
+	return 0;
+}
 
-//void delStation(uint8_t num)
-//{
-//	uint8_t i;
-//	uint16_t freqNext;
+void scanStoredFreq(uint16_t freq, uint8_t direction)
+{
+	uint8_t i;
+	uint16_t freqCell;
 
-//	for (i = num - 1; i < FM_COUNT - 1; i++) {
-//		freqNext = eeprom_read_word(eepromStations + i + 1);
-//		if (freqNext == 0)
-//			return;
-//		eeprom_write_word(eepromStations + i, freqNext);
-//	}
-//	eeprom_write_word(eepromStations + FM_COUNT - 1, 0);
-//}
+	if (direction) {
+		for (i = 0; i < FM_COUNT; i++) {
+			freqCell = eeprom_read_word(eepromStations + i);
+			if (freqCell > freq && freqCell != 0xFFFF) {
+				freq = freqCell;
+				break;
+			}
+		}
+	} else {
+		for (i = FM_COUNT - 1; i >=0; i--) {
+			freqCell = eeprom_read_word(eepromStations + i);
+			if (freqCell < freq && freqCell != 0xFFFF) {
+				freq = freqCell;
+				break;
+			}
+		}
+	}
 
-//void addStation(uint16_t freq)
-//{
-//	uint16_t freqPrev, freqNext, freqCell;
-//	uint8_t i;
+	tea5767SetFreq(freq);
+}
 
-//	freqPrev = freq;
+void storeStation(uint16_t freq)
+{
+	uint8_t i, j;
+	uint16_t freqCell;
 
-//	for (i = 0; i < FM_COUNT; i++) {
-//		freqCell = eeprom_read_word(eepromStations + i);
-//		if (freqCell > freq) {
-//			freqNext = freqCell;
-//			eeprom_write_word(eepromStations + i, freqPrev);
-//			freqPrev = freqNext;
-//		}
-//	}
-//}
-
-//void processStation (uint16_t freq)
-//{
-//	uint8_t num = findStationNum(freq);
-
-//	if (num)
-//		delStation(num);
-//	else {
-//		addStation(freq);
-//	}
-//}
+	for (i = 0; i < FM_COUNT; i++) {
+		freqCell = eeprom_read_word(eepromStations + i);
+		if (freqCell < freq)
+			continue;
+		if (freqCell == freq) {
+			for (j = i; j < FM_COUNT; j++) {
+				if (i == FM_COUNT - 1)
+					freqCell = 0xFFFF;
+				else
+					freqCell = eeprom_read_word(eepromStations + j + 1);
+				eeprom_write_word(eepromStations + j, freqCell);
+			}
+			break;
+		} else {
+			for (j = i; j < FM_COUNT; j++) {
+				freqCell = eeprom_read_word(eepromStations + j);
+				eeprom_write_word(eepromStations + j, freq);
+				freq = freqCell;
+			}
+			break;
+		}
+	}
+}
 
 void hwInit(void)	/* Hardware initialization */
 {
@@ -166,7 +178,7 @@ void hwInit(void)	/* Hardware initialization */
 	I2CInit();							/* I2C bus */
 	tea5767Init();
 
-	freqFM = (uint32_t)eeprom_read_word(eepromFMFreq) * 10000;
+	freqFM = eeprom_read_word(eepromFMFreq);
 
 	etm = NOEDIT;
 
@@ -214,17 +226,12 @@ void saveParams(void)
 	saveAudioParams();
 	eeprom_write_byte(eepromBCKL, backlight);
 	eeprom_write_byte(eepromSpMode, spMode);
-	eeprom_write_word(eepromFMFreq, freqFM/10000);
+	eeprom_write_word(eepromFMFreq, freqFM);
 }
-
 
 void switchBacklight(void)
 {
-	if (backlight == BACKLIGHT_ON)
-		backlight = BACKLIGHT_OFF;
-	else
-		backlight = BACKLIGHT_ON;
-	setBacklight(backlight);
+	backlight = !backlight;
 }
 
 void powerOn(void)
@@ -328,7 +335,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd != CMD_RC5_TIME) {
-					tea5767SetFreq(freqFM - 100000);
+					tea5767SetFreq(freqFM - 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -357,7 +364,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd != CMD_RC5_MUTE) {
-					tea5767SetFreq(freqFM + 100000);
+					tea5767SetFreq(freqFM + 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -433,7 +440,11 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_5_LONG:
-//			processStation(freqFM/10000);
+		case CMD_RC5_FM_STORE:
+			if (dispMode == MODE_FM_RADIO) {
+				storeStation(freqFM);
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			}
 			break;
 		case CMD_BTN_TESTMODE:
 			switch (dispMode) {
@@ -478,18 +489,28 @@ int main(void)
 			saveParams();
 			dispMode = MODE_SPECTRUM;
 			break;
-		case CMD_RC5_CHAN_DOWN:
+		case CMD_RC5_FM_INC:
+		case CMD_RC5_FM_DEC:
 			if (chan == 0) {
-				if (dispMode == MODE_FM_RADIO)
-					tea5767SetFreq(freqFM - 100000);
+				if (dispMode == MODE_FM_RADIO) {
+					if (cmd == CMD_RC5_FM_INC)
+						tea5767SetFreq(freqFM + 10);
+					else
+						tea5767SetFreq(freqFM - 10);
+				}
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			}
 			break;
 		case CMD_RC5_CHAN_UP:
+		case CMD_RC5_CHAN_DOWN:
 			if (chan == 0) {
-				if (dispMode == MODE_FM_RADIO)
-					tea5767SetFreq(freqFM + 100000);
+				if (dispMode == MODE_FM_RADIO) {
+					if (cmd == CMD_RC5_CHAN_UP)
+						scanStoredFreq(freqFM, SEARCH_UP);
+					else
+						scanStoredFreq(freqFM, SEARCH_DOWN);
+				}
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			}
@@ -568,9 +589,8 @@ int main(void)
 		case MODE_FM_RADIO:
 			tea5767ReadStatus(bufFM);
 			freqFM = tea5767FreqAvail(bufFM);
-//			showRadio(bufFM, findStationNum(freqFM/10000));
-			showRadio(bufFM, 42);
-			if (tea5767Ready(bufFM))
+			showRadio(bufFM, stationNum(freqFM));
+			if (TEA5767_BUF_READY(bufFM))
 				fineTune(&freqFM, bufFM);
 			break;
 		case MODE_MUTE:
