@@ -240,6 +240,7 @@ void saveParams(void)
 void switchBacklight(void)
 {
 	backlight = !backlight;
+	setBacklight(backlight);
 }
 
 void powerOn(void)
