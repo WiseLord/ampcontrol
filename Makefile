@@ -1,13 +1,19 @@
-TARG = ampcontrol_tda7439_gd
-
 AUDIOPROC = TDA7439
+DISPLAY = KS0108
 
-GD_SRCS = ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
-SP_SRCS = fft.c adc.c
-IN_SRCS = input.c rc5.c
+TARG = ampcontrol_$(shell echo $(AUDIOPROC) | tr A-Z a-z)_$(shell echo $(DISPLAY) | tr A-Z a-z)
 
-SRCS = main.c display.c $(GD_SRCS) $(SP_SRCS) $(IN_SRCS) i2c.c audio.c ds1307.c tea5767.c
+SPECT_SRC = fft.c adc.c
+CTRL_SRC = input.c rc5.c
+FM_SRC = tea5767.c
 
+ifeq ($(DISPLAY), KS0108)
+  DISP_SRC = ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
+else ifeq ($(DISPLAY), KS0066)
+  DISP_SRC = ks0066.c
+endif
+
+SRCS = main.c eeprom.c display.c i2c.c ds1307.c audio.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(FM_SRC)
 
 MCU = atmega16
 F_CPU = 16000000L
@@ -39,9 +45,10 @@ $(TARG): $(OBJS)
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
 	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
 	wc -c $@.bin
+	rm -f $@.bin
 
 %.o: %.c
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -c -o $@ $<
 
 clean:
 	rm -f $(TARG).{elf,bin} $(OBJS)
@@ -52,8 +59,8 @@ flash: $(TARG)
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
 
-eeprom_tda7439:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7439.bin:r
+eeprom_en:
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_$(shell echo $(AUDIOPROC) | tr A-Z a-z)_en.bin:r
 
-eeprom_tda7313_tda7318:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_tda7313_tda7318.bin:r
+eeprom_ru:
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_$(shell echo $(AUDIOPROC) | tr A-Z a-z)_ru.bin:r

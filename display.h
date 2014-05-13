@@ -5,16 +5,53 @@
 
 #include "ds1307.h"
 
-/* Spectrum output mode */
-#define SP_MODE_STEREO		0
-#define SP_MODE_MIXED		1
+/* Graphics (ks0108-based) or character (ks0066-based) display selection  */
+#if !defined(KS0108) && !defined(KS0066)
+#define KS0108
+#endif
 
-#define LABELS_COUNT		22
+#ifdef KS0108
+#include "ks0108.h"
+#else
+#include "ks0066.h"
+#endif
+
+/* Spectrum output mode */
+#define SP_MODE_STEREO			0
+#define SP_MODE_MIXED			1
+
+/* Backlight port */
+#ifdef KS0108
+#define DISPLAY_BACKLIGHT_DDR	GD_BACKLIGHT_DDR
+#define DISPLAY_BACKLIGHT_PORT	GD_BACKLIGHT_PORT
+#define DISPLAY_BCKL			GD_BCKL
+#else
+#define DISPLAY_BACKLIGHT_DDR	LCD_BACKLIGHT_DDR
+#define DISPLAY_BACKLIGHT_PORT	LCD_BACKLIGHT_PORT
+#define DISPLAY_BCKL			LCD_BCKL
+#endif
+
+/* Timers fo different screens */
+#define DISPLAY_TIME_TEST		20
+#define DISPLAY_TIME_GAIN		3
+#define DISPLAY_TIME_TIME		3
+#define DISPLAY_TIME_TIME_EDIT	10
+#define DISPLAY_TIME_FM_RADIO	20
+#define DISPLAY_TIME_CHAN		2
+#define DISPLAY_TIME_AUDIO		3
+#define DISPLAY_TIME_TEST		20
+
+#define BACKLIGHT_ON			0
+#define BACKLIGHT_OFF			1
+
+/* Data stored in user characters */
+#define LCD_LEVELS				0
+#define LCD_BAR					1
 
 enum {
 	LABEL_VOLUME,
 	LABEL_BASS,
-	LABEL_MIDDLE, /* Also loudness */
+	LABEL_MIDDLE, /* Loudness label for TDA7313 */
 	LABEL_TREBLE,
 	LABEL_PREAMP,
 	LABEL_BALANCE,
@@ -34,6 +71,11 @@ enum {
 	LABEL_SADURDAY,
 	LABEL_SUNDAY
 };
+
+void displayInit();
+void clearDisplay();
+
+uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void showRC5Info(uint16_t rc5Buf);
 void showRadio(uint8_t *buf, uint8_t num);

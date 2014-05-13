@@ -4,30 +4,14 @@
 #include <avr/eeprom.h>
 
 #include "eeprom.h"
-#include "ks0108.h"
-#include "fft.h"
 #include "adc.h"
 #include "input.h"
 #include "rc5.h"
 #include "i2c.h"
 #include "audio.h"
-#include "ds1307.h"
 #include "tea5767.h"
+
 #include "display.h"
-
-#define DISPLAY_TIME_TEST		20
-#define DISPLAY_TIME_GAIN		3
-#define DISPLAY_TIME_TIME		3
-#define DISPLAY_TIME_TIME_EDIT	10
-#define DISPLAY_TIME_FM_RADIO	20
-#define DISPLAY_TIME_CHAN		2
-#define DISPLAY_TIME_AUDIO		3
-#define DISPLAY_TIME_TEST		20
-
-#define BACKLIGHT_ON			0
-#define BACKLIGHT_OFF			1
-
-#define EEPROM_SIZE				0x200
 
 #define FM_COUNT				64
 
@@ -49,46 +33,36 @@ enum {
 	MODE_TEST
 };
 
-uint8_t spMode;
-uint8_t backlight;
+uint8_t spMode;						/* Spectrum mode */
+uint8_t backlight;					/* Backlight status */
+uint8_t *txtLabels[LABELS_COUNT];	/* Array with text labels */
+uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
 
-uint8_t rc5DeviceAddr;
-uint8_t rcCode[RC5_CMD_COUNT];	/* Array with rc5 commands */
-
-uint8_t *txtLabels[LABELS_COUNT];
-
-uint16_t freqFM;
-
+/* Change spectrum mode */
 void switchSpMode()
 {
 	spMode = !spMode;
+
 	return;
 }
 
-void loadLabels()
+/* Turn on/off backlight */
+void setBacklight(int8_t backlight)
 {
-	uint8_t i;
-	uint8_t *addr;
-
-	addr = labelsAddr;
-	i = 0;
-
-	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {
-		if (eeprom_read_byte(addr) != '\0') {
-			txtLabels[i] = addr;
-			addr++;
-			i++;
-			while (eeprom_read_byte(addr) != '\0' &&
-			       addr < (uint8_t*)EEPROM_SIZE) {
-				addr++;
-			}
-		} else {
-			addr++;
-		}
-	}
-
+	if (backlight)
+		DISPLAY_BACKLIGHT_PORT |= DISPLAY_BCKL;
+	else
+		DISPLAY_BACKLIGHT_PORT &= ~DISPLAY_BCKL;
 }
 
+/* Change backlight status */
+void switchBacklight(void)
+{
+	backlight = !backlight;
+	setBacklight(backlight);
+}
+
+/* Finde station number (1..64) in EEPROM */
 uint8_t stationNum(uint16_t freq)
 {
 	uint8_t i;
@@ -100,6 +74,7 @@ uint8_t stationNum(uint16_t freq)
 	return 0;
 }
 
+/* Find nearest next/prev stored station */
 void scanStoredFreq(uint16_t freq, uint8_t direction)
 {
 	uint8_t i;
@@ -125,16 +100,22 @@ void scanStoredFreq(uint16_t freq, uint8_t direction)
 	}
 
 	tea5767SetFreq(freqFound);
+
+	return;
 }
 
+/* Load station by number */
 void loadStation(uint8_t num)
 {
 	uint16_t freqCell = eeprom_read_word(eepromStations + num);
 
 	if (freqCell != 0xFFFF)
 		tea5767SetFreq(freqCell);
+
+	return;
 }
 
+/* Save/delete station from eeprom */
 void storeStation(uint16_t freq)
 {
 	uint8_t i, j;
@@ -162,47 +143,11 @@ void storeStation(uint16_t freq)
 			break;
 		}
 	}
-}
 
-void hwInit(void)	/* Hardware initialization */
-{
-	uint8_t i;
-
-	/* Load RC5 device address and commands from eeprom */
-	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-	for (i = 0; i < RC5_CMD_COUNT; i++) {
-		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
-	}
-
-	loadLabels();
-
-	gdInit();							/* Graphic display */
-	gdLoadFont(font_ks0066_ru_08, 1);
-	rc5Init();							/* IR Remote control */
-	adcInit();							/* Analog-to-digital converter */
-	btnInit(rcCode, rc5DeviceAddr);		/* Buttons/encoder polling */
-	I2CInit();							/* I2C bus */
-	tea5767Init();
-
-	freqFM = eeprom_read_word(eepromFMFreq);
-
-	etm = NOEDIT;
-
-	SMF_DDR |= (STDBY | FAN);
-	SMF_PORT &= ~(STDBY | MUTE | FAN);
-
-	sei();
 	return;
 }
 
-void setBacklight(int8_t backlight)
-{
-	if (backlight)
-		GD_BACKLIGHT_PORT |= GD_BCKL;
-	else
-		GD_BACKLIGHT_PORT &= ~GD_BCKL;
-}
-
+/* Show audio parameter */
 void showParam(sndParam *param)
 {
 	uint8_t mult = 8;
@@ -227,6 +172,7 @@ void showParam(sndParam *param)
 	showParLabel(param->label, txtLabels);
 }
 
+/* Save data to EEPROM */
 void saveParams(void)
 {
 	saveAudioParams();
@@ -235,12 +181,7 @@ void saveParams(void)
 	eeprom_write_word(eepromFMFreq, freqFM);
 }
 
-void switchBacklight(void)
-{
-	backlight = !backlight;
-	setBacklight(backlight);
-}
-
+/* Handle leaving standby mode */
 void powerOn(void)
 {
 	SMF_PORT |= STDBY;
@@ -252,6 +193,7 @@ void powerOn(void)
 	unmuteVolume();
 }
 
+/* Handle entering standby mode */
 void powerOff(void)
 {
 	SMF_DDR &= ~MUTE;
@@ -259,10 +201,35 @@ void powerOff(void)
 	_delay_ms(50);
 	SMF_PORT &= ~STDBY;
 	SMF_PORT &= ~FAN;
-	GD_BACKLIGHT_PORT &= ~GD_BCKL;
+	DISPLAY_BACKLIGHT_PORT &= ~DISPLAY_BCKL;
 	etm = NOEDIT;
 	muteVolume();
 	saveParams();
+}
+
+/* Hardware initialization */
+void hwInit(void)
+{
+	loadLabels(txtLabels);			/* Load text labels from EEPROM */
+
+	displayInit();
+
+	rc5Init();						/* IR Remote control */
+	adcInit();						/* Analog-to-digital converter */
+	inputInit();					/* Buttons/encoder polling */
+	I2CInit();						/* I2C bus */
+	tea5767Init();					/* Tuner */
+
+	freqFM = eeprom_read_word(eepromFMFreq);
+
+	etm = NOEDIT;					/* Exit edit time mode */
+
+	SMF_DDR |= (STDBY | FAN);		/* Standby/Mute/Fan port */
+	SMF_PORT &= ~(STDBY | MUTE | FAN);
+
+	sei();							/* Gloabl interrupt enable */
+
+	return;
 }
 
 int main(void)
@@ -279,6 +246,7 @@ int main(void)
 	uint8_t cmd = CMD_EMPTY;
 	uint16_t rc5Buf = RC5_BUF_EMPTY;
 	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
+	uint8_t direction;
 
 	spMode  = eeprom_read_byte(eepromSpMode);
 
@@ -329,7 +297,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_GAIN:
 				nextChan();
-				gdFill(0x00);
+				clearDisplay();
 			default:
 				curSndParam = &gain[chan];
 				dispMode = MODE_GAIN;
@@ -465,22 +433,11 @@ int main(void)
 #ifndef TDA7313
 		case CMD_RC5_INPUT_3:
 #endif
-			switch (dispMode) {
-			default:
-				if (dispMode != MODE_FM_RADIO &&
-				    chan == 0 && cmd == CMD_RC5_INPUT_0 + chan) {
-					curSndParam = &volume;
-					dispMode = MODE_FM_RADIO;
-					setDisplayTime(DISPLAY_TIME_FM_RADIO);
-				} else {
-					setChan(cmd - CMD_RC5_INPUT_0);
-					gdFill(0x00);
-					curSndParam = &gain[chan];
-					dispMode = MODE_GAIN;
-					setDisplayTime(DISPLAY_TIME_GAIN);
-				}
-				break;
-			}
+			setChan(cmd - CMD_RC5_INPUT_0);
+			clearDisplay();
+			curSndParam = &gain[chan];
+			dispMode = MODE_GAIN;
+			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
 		case CMD_RC5_SP_MODE:
 			switchSpMode();
@@ -501,10 +458,13 @@ int main(void)
 						tea5767SetFreq(freqFM - 10);
 						break;
 					case CMD_RC5_CHAN_UP:
-						scanStoredFreq(freqFM, SEARCH_UP);
-						break;
 					case CMD_RC5_CHAN_DOWN:
-						scanStoredFreq(freqFM, SEARCH_DOWN);
+						direction = SEARCH_UP;
+						if (cmd == CMD_RC5_CHAN_DOWN)
+							direction = SEARCH_DOWN;
+						scanStoredFreq(freqFM, direction);
+						if (!stationNum(freqFM))
+							tea5767Search(freqFM, bufFM, direction);
 						break;
 					}
 				}
@@ -569,10 +529,8 @@ int main(void)
 				dispMode = MODE_STANDBY;
 				break;
 			default:
-				if (dispModePrev != MODE_SPECTRUM) {
-					gdSetXY(0, 0);
+				if (dispModePrev != MODE_SPECTRUM)
 					saveParams();
-				}
 				dispMode = MODE_SPECTRUM;
 				break;
 			}
@@ -580,7 +538,7 @@ int main(void)
 
 		/* Clear screen if mode has changed */
 		if (dispMode != dispModePrev)
-			gdFill(0x00);
+			clearDisplay();
 
 		/* Show things */
 		switch (dispMode) {

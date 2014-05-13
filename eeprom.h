@@ -1,6 +1,8 @@
 #ifndef EEPROM_H
 #define EEPROM_H
 
+#include <inttypes.h>
+
 /* Parameters values */
 #define eepromVolume	((void*)0x00)
 #define eepromBass		((void*)0x01)
@@ -38,4 +40,9 @@
 /* Text labels (maximum 15 byte followed by \0) */
 #define labelsAddr		((uint8_t*)0xE0)
 
-#endif // EEPROM_H
+#define EEPROM_SIZE				0x200
+#define LABELS_COUNT			22
+
+void loadLabels(uint8_t **txtLabels);
+
+#endif /* EEPROM_H */

@@ -5,6 +5,7 @@
 #include <avr/eeprom.h>
 
 #include "rc5.h"
+#include "eeprom.h"
 
 static volatile int8_t encCnt;
 static volatile uint8_t cmdBuf;
@@ -13,10 +14,12 @@ static volatile uint16_t rc5SaveBuf;
 static volatile uint16_t displayTime;
 
 static uint8_t rc5DeviceAddr;
-static uint8_t *rcCode;				/* Pointer to array with RC5 commands */
+static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
 
-void btnInit(uint8_t *code, uint8_t addr)
+void inputInit()
 {
+	uint8_t i;
+
 	/* Setup buttons and encoders as inputs with pull-up resistors */
 	BTN_DDR &= ~(BTN_MASK);
 	BTN_PORT |= BTN_MASK;
@@ -30,8 +33,11 @@ void btnInit(uint8_t *code, uint8_t addr)
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
-	rcCode = code;
-	rc5DeviceAddr = addr;
+	/* Load RC5 device address and commands from eeprom */
+	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
+	for (i = 0; i < RC5_CMD_COUNT; i++) {
+		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
+	}
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;

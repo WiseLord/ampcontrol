@@ -28,4 +28,4 @@ uint8_t isETM(void);
 void editTime(void);
 void changeTime(int diff);
 
-#endif // DS1307_H
+#endif /* DS1307_H */

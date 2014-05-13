@@ -1,5 +1,5 @@
-#ifndef PARAM_H
-#define PARAM_H
+#ifndef AUDIO_H
+#define AUDIO_H
 
 #include <inttypes.h>
 
@@ -84,4 +84,4 @@ void switchLoudness(void);
 void switchBacklight(void);
 void setBacklight(int8_t backlight);
 
-#endif /* PARAM_H */
+#endif /* AUDIO_H */

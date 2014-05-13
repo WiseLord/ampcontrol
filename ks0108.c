@@ -9,9 +9,6 @@ static uint8_t csInv;		/* 0 for WG12864A, 1 for WG12864B */
 
 static fontParams fp;
 
-static uint8_t dig[17];		/* Array for num->string convert */
-
-
 static inline void setPortCS()
 {
 	if (csInv) {
@@ -345,28 +342,3 @@ void gdWriteStringEeprom(const uint8_t *string)
 	return;
 }
 
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
-{
-	uint8_t numdiv;
-	uint8_t sign = lead;
-	if (number < 0) {
-		sign = '-';
-		number = -number;
-	}
-	int8_t i;
-	for (i = 0; i < width; i++)
-		dig[i] = lead;
-	dig[width] = '\0';
-	i = width - 1;
-	while (number > 0 || i == width - 1) {
-		numdiv = number % radix;
-		dig[i] = numdiv + 0x30;
-		if (numdiv >= 10)
-			dig[i] += 7;
-		i--;
-		number /= radix;
-	}
-	if (i >= 0)
-		dig[i] = sign;
-	return dig;
-}
