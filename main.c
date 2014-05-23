@@ -187,6 +187,7 @@ int main(void)
 					break;
 				}
 			default:
+				clearDisplay();
 				switchMute();
 				dispMode = MODE_MUTE;
 				setDisplayTime(DISPLAY_TIME_CHAN);
@@ -196,11 +197,13 @@ int main(void)
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
 			switch (dispMode) {
-			case MODE_VOLUME:
 			case MODE_BASS:
-#ifdef TDA7439
-			case MODE_MIDDLE:
+#if defined(TDA7313) || defined(TDA7318)
+				curSndParam++;	/* Skip not supported middle*/
+				dispMode++;
 #endif
+			case MODE_VOLUME:
+			case MODE_MIDDLE:
 			case MODE_TREBLE:
 			case MODE_PREAMP:
 				curSndParam++;
@@ -251,6 +254,7 @@ int main(void)
 			break;
 #ifdef TDA7313
 		case CMD_RC5_LOUDNESS:
+			clearDisplay();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -395,9 +399,11 @@ int main(void)
 		case MODE_MUTE:
 			showBoolParam(mute, txtLabels[LABEL_MUTE], txtLabels);
 			break;
+#if defined(TDA7313) || defined(TDA7318)
 		case MODE_LOUDNESS:
-			showBoolParam(!loud, txtLabels[LABEL_MIDDLE], txtLabels);
+			showBoolParam(!loud, txtLabels[LABEL_LOUDNESS], txtLabels);
 			break;
+#endif
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime(txtLabels);

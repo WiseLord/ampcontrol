@@ -397,21 +397,8 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 /* Show audio parameter */
 void showSndParam(sndParam *param, uint8_t **txtLabels)
 {
-	uint8_t mult = 8;
-
-#ifndef TDA7439
-	if (param->label == txtLabels[LABEL_VOLUME]
-	 || param->label == txtLabels[LABEL_PREAMP]
-	 || param->label == txtLabels[LABEL_BALANCE]) {
-		mult = 10;
-	}
-	if (param->label >= txtLabels[LABEL_GAIN_0] &&
-		param->label == txtLabels[LABEL_GAIN_3]) {
-		mult = 15;
-	}
-#endif
 	showBar(param->min, param->max, param->value);
-	showParValue(((int16_t)(param->value) * param->step * mult + 4) >> 3);
+	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
 	showParLabel(param->label, txtLabels);
 }
 

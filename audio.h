@@ -7,7 +7,7 @@
 
 /* Integral circuits definitions */
 #if !defined(TDA7439) && !defined(TDA7313) && !defined(TDA7318)
-#define TDA7439
+#define TDA7313
 #endif
 
 /* Number of input channels */
@@ -30,12 +30,12 @@
 #define TDA7439_AUTO_INC		0x10
 
 /* TDA7313 (7318) data bytes */
-#define TDA7313_VOLUME	0x00
+#define TDA7313_VOLUME			0x00
 #define TDA7313_SP_FRONT_LEFT	0x80
 #define TDA7313_SP_FRONT_RIGHT	0xA0
 #define TDA7313_SP_REAR_LEFT	0xC0
 #define TDA7313_SP_REAR_RIGHT	0xE0
-#define TDA7313_SW	0x40
+#define TDA7313_SW				0x40
 #define TDA7313_BASS			0x60
 #define TDA7313_TREBLE			0x70
 
@@ -57,8 +57,10 @@ typedef struct {
 enum {
 	SND_VOLUME,
 	SND_BASS,
-#ifdef TDA7439
+#if defined(TDA7439)
 	SND_MIDDLE,
+#else
+	SND_LOUDNESS,
 #endif
 	SND_TREBLE,
 #ifdef TDA7439

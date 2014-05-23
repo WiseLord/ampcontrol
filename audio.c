@@ -207,11 +207,13 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_BASS].set = setBass;
 #if defined(TDA7439)
 	sndPar[SND_MIDDLE].set = setMiddle;
+#endif
+	sndPar[SND_TREBLE].set = setTreble;
+#if defined(TDA7439)
 	sndPar[SND_PREAMP].set = setPreamp;
 #else
 	sndPar[SND_BALANCE_FR].set = setBalanceFrontRear;
 #endif
-	sndPar[SND_TREBLE].set = setTreble;
 	sndPar[SND_BALANCE].set = setBalance;
 
 	for (i = 0; i < 4; i++) {

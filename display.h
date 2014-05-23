@@ -53,9 +53,17 @@
 enum {
 	LABEL_VOLUME,
 	LABEL_BASS,
-	LABEL_MIDDLE, /* Loudness label for TDA7313 */
+#if defined(TDA7439)
+	LABEL_MIDDLE,
+#else
+	LABEL_LOUDNESS,
+#endif
 	LABEL_TREBLE,
+#if defined(TDA7439)
 	LABEL_PREAMP,
+#else
+	LABEL_BALANCE_FR,
+#endif
 	LABEL_BALANCE,
 	LABEL_GAIN_0,
 	LABEL_GAIN_1,
@@ -82,9 +90,7 @@ enum {
 
 	MODE_VOLUME,
 	MODE_BASS,
-#ifdef TDA7439
 	MODE_MIDDLE,
-#endif
 	MODE_TREBLE,
 	MODE_PREAMP,
 	MODE_BALANCE,
