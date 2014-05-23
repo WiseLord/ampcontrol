@@ -11,10 +11,10 @@
 #endif
 
 /* Number of input channels */
-#ifdef TDA7313
-#define CHAN_CNT				3
-#else
+#if defined(TDA7439) || defined(TDA7318)
 #define CHAN_CNT				4
+#elif defined(TDA7313)
+#define CHAN_CNT				3
 #endif
 
 /* TDA7439 I2C function selection */

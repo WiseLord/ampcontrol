@@ -9,11 +9,9 @@
 #include "rc5.h"
 #include "i2c.h"
 #include "audio.h"
-#include "tea5767.h"
 
 #include "display.h"
-
-#define FM_COUNT				64
+#include "tuner.h"
 
 enum {
 	MODE_STANDBY,
@@ -53,6 +51,8 @@ void setBacklight(int8_t backlight)
 		DISPLAY_BACKLIGHT_PORT |= DISPLAY_BCKL;
 	else
 		DISPLAY_BACKLIGHT_PORT &= ~DISPLAY_BCKL;
+
+	return;
 }
 
 /* Change backlight status */
@@ -60,89 +60,6 @@ void switchBacklight(void)
 {
 	backlight = !backlight;
 	setBacklight(backlight);
-}
-
-/* Finde station number (1..64) in EEPROM */
-uint8_t stationNum(uint16_t freq)
-{
-	uint8_t i;
-
-	for (i = 0; i < FM_COUNT; i++)
-		if (eeprom_read_word(eepromStations + i) == freq)
-			return i + 1;
-
-	return 0;
-}
-
-/* Find nearest next/prev stored station */
-void scanStoredFreq(uint16_t freq, uint8_t direction)
-{
-	uint8_t i;
-	uint16_t freqCell;
-	uint16_t freqFound = freq;
-
-	for (i = 0; i < FM_COUNT; i++) {
-		freqCell = eeprom_read_word(eepromStations + i);
-		if (freqCell != 0xFFFF) {
-			if (direction) {
-				if (freqCell > freq) {
-					freqFound = freqCell;
-					break;
-				}
-			} else {
-				if (freqCell < freq) {
-					freqFound = freqCell;
-				} else {
-					break;
-				}
-			}
-		}
-	}
-
-	tea5767SetFreq(freqFound);
-
-	return;
-}
-
-/* Load station by number */
-void loadStation(uint8_t num)
-{
-	uint16_t freqCell = eeprom_read_word(eepromStations + num);
-
-	if (freqCell != 0xFFFF)
-		tea5767SetFreq(freqCell);
-
-	return;
-}
-
-/* Save/delete station from eeprom */
-void storeStation(uint16_t freq)
-{
-	uint8_t i, j;
-	uint16_t freqCell;
-
-	for (i = 0; i < FM_COUNT; i++) {
-		freqCell = eeprom_read_word(eepromStations + i);
-		if (freqCell < freq)
-			continue;
-		if (freqCell == freq) {
-			for (j = i; j < FM_COUNT; j++) {
-				if (i == FM_COUNT - 1)
-					freqCell = 0xFFFF;
-				else
-					freqCell = eeprom_read_word(eepromStations + j + 1);
-				eeprom_write_word(eepromStations + j, freqCell);
-			}
-			break;
-		} else {
-			for (j = i; j < FM_COUNT; j++) {
-				freqCell = eeprom_read_word(eepromStations + j);
-				eeprom_write_word(eepromStations + j, freq);
-				freq = freqCell;
-			}
-			break;
-		}
-	}
 
 	return;
 }
@@ -155,15 +72,11 @@ void showParam(sndParam *param)
 #ifndef TDA7439
 	if (param->label == txtLabels[LABEL_VOLUME]
 	 || param->label == txtLabels[LABEL_PREAMP]
-	 || param->label == txtLabels[LABEL_BALANCE])
-	{
+	 || param->label == txtLabels[LABEL_BALANCE]) {
 		mult = 10;
 	}
-	if (param->label == txtLabels[LABEL_GAIN_0]
-	 || param->label == txtLabels[LABEL_GAIN_1]
-	 || param->label == txtLabels[LABEL_GAIN_2]
-	 || param->label == txtLabels[LABEL_GAIN_3])
-	{
+	if (param->label >= txtLabels[LABEL_GAIN_0] &&
+	    param->label == txtLabels[LABEL_GAIN_3]) {
 		mult = 15;
 	}
 #endif
@@ -191,6 +104,9 @@ void powerOn(void)
 	SMF_PORT |= FAN;
 	setBacklight(backlight);
 	unmuteVolume();
+#ifdef TUX032
+	tux032ExitStby();
+#endif
 }
 
 /* Handle entering standby mode */
@@ -205,6 +121,9 @@ void powerOff(void)
 	etm = NOEDIT;
 	muteVolume();
 	saveParams();
+#ifdef TUX032
+	tux032GoStby();
+#endif
 }
 
 /* Hardware initialization */
@@ -218,7 +137,7 @@ void hwInit(void)
 	adcInit();						/* Analog-to-digital converter */
 	inputInit();					/* Buttons/encoder polling */
 	I2CInit();						/* I2C bus */
-	tea5767Init();					/* Tuner */
+	tunerInit();					/* Tuner */
 
 	freqFM = eeprom_read_word(eepromFMFreq);
 
@@ -254,9 +173,7 @@ int main(void)
 	backlight = eeprom_read_byte(eepromBCKL);
 	muteVolume();
 
-	uint8_t bufFM[5];
-
-	tea5767SetFreq(freqFM);
+	tunerSetFreq(freqFM);
 
 	while (1) {
 		encCnt = getEncoder();
@@ -310,7 +227,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd != CMD_RC5_TIME) {
-					tea5767SetFreq(freqFM - 10);
+					tunerSetFreq(freqFM - 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -339,7 +256,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd != CMD_RC5_MUTE) {
-					tea5767SetFreq(freqFM + 10);
+					tunerSetFreq(freqFM + 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -404,9 +321,9 @@ int main(void)
 		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
 				if (cmd == CMD_BTN_3_LONG)
-					tea5767Search(freqFM, bufFM, SEARCH_DOWN);
+					tunerSearch(freqFM, SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
-					tea5767Search(freqFM, bufFM, SEARCH_UP);
+					tunerSearch(freqFM, SEARCH_UP);
 				else
 					storeStation(freqFM);
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -452,10 +369,10 @@ int main(void)
 				if (dispMode == MODE_FM_RADIO) {
 					switch (cmd) {
 					case CMD_RC5_FM_INC:
-						tea5767SetFreq(freqFM + 10);
+						tunerSetFreq(freqFM + 10);
 						break;
 					case CMD_RC5_FM_DEC:
-						tea5767SetFreq(freqFM - 10);
+						tunerSetFreq(freqFM - 10);
 						break;
 					case CMD_RC5_CHAN_UP:
 					case CMD_RC5_CHAN_DOWN:
@@ -464,7 +381,7 @@ int main(void)
 							direction = SEARCH_DOWN;
 						scanStoredFreq(freqFM, direction);
 						if (!stationNum(freqFM))
-							tea5767Search(freqFM, bufFM, direction);
+							tunerSearch(freqFM, direction);
 						break;
 					}
 				}
@@ -558,11 +475,11 @@ int main(void)
 			drawSpectrum(spBuf, spMode);
 			break;
 		case MODE_FM_RADIO:
-			tea5767ReadStatus(bufFM);
-			freqFM = tea5767FreqAvail(bufFM);
-			showRadio(bufFM, stationNum(freqFM));
-			if (TEA5767_BUF_READY(bufFM))
-				fineTune(&freqFM, bufFM);
+			tunerReadStatus();
+			freqFM = tunerFreqAvail();
+			showRadio(stationNum(freqFM));
+			if (tunerReady())
+				fineTune(&freqFM);
 			break;
 		case MODE_MUTE:
 			showBoolParam(mute, txtLabels[LABEL_MUTE], txtLabels);

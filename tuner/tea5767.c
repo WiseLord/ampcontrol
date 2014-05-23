@@ -1,6 +1,6 @@
 #include "tea5767.h"
 
-#include "i2c.h"
+#include "../i2c.h"
 
 static tea5767Ctrl ctrl;
 
@@ -126,16 +126,4 @@ void tea5767Search(uint16_t freq, uint8_t *buf, uint8_t direction)
 	tea5767WriteI2C(buf);
 
 	return;
-}
-
-void fineTune(uint16_t *freqFM, uint8_t *bufFM)
-{
-	*freqFM = tea5767FreqAvail(bufFM);
-
-	if (*freqFM > (uint32_t)FM_FREQ_MAX)
-		*freqFM = (uint32_t)FM_FREQ_MIN;
-	if (*freqFM < (uint32_t)FM_FREQ_MIN)
-		*freqFM = (uint32_t)FM_FREQ_MAX;
-
-	tea5767SetFreq(*freqFM);
 }

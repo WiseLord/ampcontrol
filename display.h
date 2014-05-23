@@ -7,13 +7,13 @@
 
 /* Graphics (ks0108-based) or character (ks0066-based) display selection  */
 #if !defined(KS0108) && !defined(KS0066)
-#define KS0108
+#define KS0066
 #endif
 
-#ifdef KS0108
-#include "ks0108.h"
-#else
-#include "ks0066.h"
+#if defined(KS0108)
+#include "display/ks0108.h"
+#elif defined(KS0066)
+#include "display/ks0066.h"
 #endif
 
 /* Spectrum output mode */
@@ -78,7 +78,7 @@ void clearDisplay();
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void showRC5Info(uint16_t rc5Buf);
-void showRadio(uint8_t *buf, uint8_t num);
+void showRadio(uint8_t num);
 void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels);
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 void showBar(int16_t min, int16_t max, int16_t value);

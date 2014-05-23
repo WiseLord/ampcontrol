@@ -62,7 +62,7 @@
 /* 5 register */
 #define TEA5767_RESERVED_MASK	0xFF	/* Not used */
 
-/* Common definitions */
+/* Status bytes */
 #define SEARCH_DOWN				0
 #define SEARCH_UP				1
 
@@ -93,6 +93,5 @@ uint8_t tea5767ADCLevel(uint8_t *buf);
 uint16_t tea5767FreqAvail(uint8_t *buf);
 
 void tea5767Search(uint16_t freq, uint8_t *buf, uint8_t direction);
-void fineTune(uint16_t *freqFM, uint8_t *bufFM);
 
 #endif // TEA5767_H

@@ -1,27 +1,28 @@
 #include "display.h"
 
 #include "audio.h"
-#include "tea5767.h"
 #include "eeprom.h"
 #include "input.h"
+
+#include "tuner.h"
 
 uint8_t backlight;
 uint8_t dig[17];		/* Array for num->string convert */
 
-#ifdef KS0066
+#if defined(KS0066)
 static uint8_t userSybmols = LCD_LEVELS;
 #endif
 
 void clearDisplay()
 {
-#ifdef KS0108
+#if defined(KS0108)
 	gdFill(0x00);
-#else
+#elif defined(KS0066)
 	lcdClear();
 #endif
 }
 
-#ifndef KS0108
+#if defined(KS0066)
 void lcdGenLevels(void)
 {
 	lcdWriteCommand(KS0066_SET_CGRAM);
@@ -68,10 +69,10 @@ void lcdGenBar(void)
 
 void displayInit()
 {
-#ifdef KS0108
+#if defined(KS0108)
 	gdInit();
 	gdLoadFont(font_ks0066_ru_08, 1);
-#else
+#elif defined(KS0066)
 	lcdInit();
 	lcdGenLevels();
 #endif
@@ -105,7 +106,7 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 
 void showRC5Info(uint16_t rc5Buf)
 {
-#ifdef KS0108
+#if defined(KS0108)
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(0, 0);
 	gdWriteString((uint8_t*)"RC5:");
@@ -125,7 +126,7 @@ void showRC5Info(uint16_t rc5Buf)
 	gdWriteString((uint8_t*)"Buttons:");
 	gdSetXY(5, 7);
 	gdWriteString(mkNumString(BTN_PIN, 8, '0', 2));
-#else
+#elif defined(KS0066)
 	lcdSetXY(0, 0);
 	lcdWriteString((uint8_t*)"R=");
 	lcdWriteString(mkNumString(rc5Buf, 14, '0', 2));
@@ -139,11 +140,11 @@ void showRC5Info(uint16_t rc5Buf)
 #endif
 }
 
-void showRadio(uint8_t *buf, uint8_t num)
+void showRadio(uint8_t num)
 {
-	uint16_t freq = tea5767FreqAvail(buf);
+	uint16_t freq = tunerFreqAvail();
 
-#ifdef KS0108
+#if defined(KS0108)
 	uint8_t i;
 
 	/* Frequency value */
@@ -158,7 +159,7 @@ void showRadio(uint8_t *buf, uint8_t num)
 	/* Signal level */
 	gdSetXY (112, 0);
 	for (i = 0; i < 16; i+=2) {
-		if (i <= tea5767ADCLevel(buf))
+		if (i <= tunerLevel())
 			gdWriteData(256 - (1<<(7 - i / 2)));
 		else
 			gdWriteData(0x80);
@@ -167,7 +168,7 @@ void showRadio(uint8_t *buf, uint8_t num)
 
 	/* Stereo indicator */
 	gdSetXY(114, 2);
-	if (TEA5767_BUF_STEREO(buf))
+	if (tunerStereo())
 		gdWriteString((uint8_t*)"ST");
 	else
 		gdWriteString((uint8_t*)"  ");
@@ -184,7 +185,7 @@ void showRadio(uint8_t *buf, uint8_t num)
 		gdWriteString((uint8_t*)" --");
 		gdLoadFont(font_ks0066_ru_08, 1);
 	}
-#else
+#elif defined(KS0066)
 	uint8_t lev;
 
 	/* Frequency value */
@@ -196,14 +197,14 @@ void showRadio(uint8_t *buf, uint8_t num)
 
 	/* Stereo indicator */
 	lcdSetXY(9, 0);
-	if (TEA5767_BUF_STEREO(buf))
+	if (tunerStereo())
 		lcdWriteString((uint8_t*)"\x06");
 	else
 		lcdWriteString((uint8_t*)" ");
 
 	/* Signal level */
 	lcdSetXY(11, 0);
-	lev = tea5767ADCLevel(buf) * 2 / 5;
+	lev = tunerLevel() * 2 / 5;
 	if (lev < 3) {
 		lcdWriteData(lev);
 		lcdWriteData(0x00);
@@ -211,7 +212,6 @@ void showRadio(uint8_t *buf, uint8_t num)
 		lcdWriteData(0x03);
 		lcdWriteData(lev - 3);
 	}
-
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
@@ -228,14 +228,14 @@ void showRadio(uint8_t *buf, uint8_t num)
 
 void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 {
-#ifdef KS0108
+#if defined(KS0108)
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
 	gdWriteStringEeprom(parLabel);
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(116, 7);
 	gdWriteStringEeprom(txtLabels[LABEL_DB]);
-#else
+#elif defined (KS0066)
 	lcdSetXY(0, 0);
 	lcdWriteStringEeprom(parLabel);
 	lcdSetXY(14, 0);
@@ -245,7 +245,7 @@ void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {
-#ifdef KS0108
+#if defined(KS0108)
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
 	gdWriteStringEeprom(parLabel);
@@ -255,7 +255,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	else
 		gdWriteStringEeprom(txtLabels[LABEL_OFF]);
 	gdLoadFont(font_ks0066_ru_08, 1);
-#else
+#elif defined(KS0066)
 	lcdSetXY(0, 0);
 	lcdWriteStringEeprom(parLabel);
 	lcdSetXY(1, 1);
@@ -268,7 +268,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 
 void showBar(int16_t min, int16_t max, int16_t value)
 {
-#ifdef KS0108
+#if defined(KS0108)
 	uint8_t data;
 	uint8_t i, j;
 
@@ -297,7 +297,7 @@ void showBar(int16_t min, int16_t max, int16_t value)
 			gdWriteData(data);
 		}
 	}
-#else
+#elif defined(KS0066)
 	uint8_t i;
 
 	if (userSybmols != LCD_BAR) {
@@ -363,12 +363,12 @@ void showBar(int16_t min, int16_t max, int16_t value)
 
 void showParValue(int8_t value)
 {
-#ifdef KS0108
+#if defined(KS0108)
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(93, 4);
 	gdWriteString(mkNumString(value, 3, ' ', 10));
 	gdLoadFont(font_ks0066_ru_08, 1);
-#else
+#elif defined(KS0066)
 	lcdSetXY(11, 0);
 	lcdWriteString(mkNumString(value, 3, ' ', 10));
 #endif
@@ -377,21 +377,20 @@ void showParValue(int8_t value)
 
 void drawTm(timeMode tm, const uint8_t *font)
 {
-#ifdef KS0108
+#if defined(KS0108)
 	if (etm == tm)
 		gdLoadFont(font, 0);
 	else
 		gdLoadFont(font, 1);
 	gdWriteString(mkNumString(time[tm], 2, '0', 10));
 	gdLoadFont(font, 1);
-#else
 #endif
 }
 
 void showTime(uint8_t **txtLabels)
 {
 	getTime();
-#ifdef KS0108
+#if defined(KS0108)
 	gdSetXY(4, 0);
 
 	drawTm(HOUR, font_digits_32);
@@ -440,7 +439,7 @@ void showTime(uint8_t **txtLabels)
 	default:
 		break;
 	}
-#else
+#elif defined(KS0066)
 	lcdSetXY(0, 0);
 
 	lcdWriteString(mkNumString(time[HOUR], 2, '0', 10));
@@ -517,7 +516,7 @@ void showTime(uint8_t **txtLabels)
 
 void drawSpectrum(uint8_t *buf, uint8_t mode)
 {
-#ifdef KS0108
+#if defined(KS0108)
 	uint8_t i, j, k;
 	int8_t row;
 	uint8_t data;
@@ -551,7 +550,7 @@ void drawSpectrum(uint8_t *buf, uint8_t mode)
 				gdWriteData(0x00);
 		}
 	}
-#else
+#elif defined(KS0066)
 	uint8_t i;
 	uint8_t lcdBuf[16];
 

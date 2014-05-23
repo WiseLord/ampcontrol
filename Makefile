@@ -1,19 +1,33 @@
 AUDIOPROC = TDA7439
 DISPLAY = KS0108
+TUNER = TEA5767
 
-TARG = ampcontrol_$(shell echo $(AUDIOPROC) | tr A-Z a-z)_$(shell echo $(DISPLAY) | tr A-Z a-z)
+# Lowercase argument
+lc = $(shell echo $1 | tr A-Z a-z)
+
+# Fimware file base name
+TARG = ampcontrol_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
+# EEPROM file base name
+EEPROM = eeprom_$(call lc,$(AUDIOPROC))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
-FM_SRC = tea5767.c
+TUNER_SRC = tuner/tea5767.c
 
 ifeq ($(DISPLAY), KS0108)
-  DISP_SRC = ks0108.c font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
+  FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
+  DISP_SRC = $(addprefix display/, ks0108.c $(FONTS))
 else ifeq ($(DISPLAY), KS0066)
-  DISP_SRC = ks0066.c
+  DISP_SRC = display/ks0066.c
 endif
 
-SRCS = main.c eeprom.c display.c i2c.c ds1307.c audio.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(FM_SRC)
+ifeq ($(TUNER), TEA5767)
+  TUNER_SRC = tuner/tea5767.c
+else ifeq ($(TUNER), TUX032)
+TUNER_SRC = tuner/tux032.c
+endif
+
+SRCS = main.c eeprom.c display.c i2c.c ds1307.c audio.c tuner.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(TUNER_SRC)
 
 MCU = atmega16
 F_CPU = 16000000L
@@ -42,25 +56,24 @@ all: $(TARG)
 
 $(TARG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.elf $(OBJS) -lm
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf $@.hex
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf flash/$@.hex
 	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
-	wc -c $@.bin
-	rm -f $@.bin
+	echo; wc -c $@.bin; echo; rm -f $@.bin
 
 %.o: %.c
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
 
 clean:
 	rm -f $(TARG).{elf,bin} $(OBJS)
 
 flash: $(TARG)
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:$(TARG).hex:i
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:flash/$(TARG).hex:i
 
 fuse:
-	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xd1:m
+	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xc1:m
 
 eeprom_en:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_$(shell echo $(AUDIOPROC) | tr A-Z a-z)_en.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_en.bin:r
 
 eeprom_ru:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom_$(shell echo $(AUDIOPROC) | tr A-Z a-z)_ru.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_ru.bin:r
