@@ -54,24 +54,37 @@ typedef struct {
 	void (*set)(int8_t value);
 } sndParam;
 
-sndParam volume;
-sndParam bass;
-sndParam middle;
-sndParam treble;
-sndParam preamp;
-sndParam balance;
-sndParam gain[4];
+enum {
+	SND_VOLUME,
+	SND_BASS,
+#ifdef TDA7439
+	SND_MIDDLE,
+#endif
+	SND_TREBLE,
+#ifdef TDA7439
+	SND_PREAMP,
+#else
+	SND_BALANCE_FR,
+#endif
+	SND_BALANCE,
+	SND_GAIN0,
+	SND_GAIN1,
+	SND_GAIN2,
+	SND_GAIN3
+};
 
 #define SND_PARAM_COUNT			10
+
+sndParam sndPar[SND_PARAM_COUNT];
 
 uint8_t chan;
 uint8_t loud;
 uint8_t mute;
 
-void loadParams(uint8_t **txtLabels);
+void loadAudioParams(uint8_t **txtLabels);
 void saveAudioParams(void);
 
-void changeParam(sndParam *param, int8_t diff);
+void changeParam(sndParam *sndPar, int8_t diff);
 
 void nextChan(void);
 void setChan(uint8_t ch);
@@ -81,7 +94,5 @@ void unmuteVolume(void);
 
 void switchMute(void);
 void switchLoudness(void);
-void switchBacklight(void);
-void setBacklight(int8_t backlight);
 
 #endif /* AUDIO_H */

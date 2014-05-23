@@ -6,20 +6,6 @@
 
 #include "eeprom.h"
 
-sndParam *params[10] = {
-	&volume,
-	&bass,
-	&middle,
-	&treble,
-	&preamp,
-	&balance,
-	&gain[0],
-	&gain[1],
-	&gain[2],
-	&gain[3],
-};
-
-
 void setVolume(int8_t val)
 {
 	int8_t spFrontLeft = 0;
@@ -29,14 +15,14 @@ void setVolume(int8_t val)
 	spFrontLeft = val;
 	spFrontRight = val;
 
-	if (balance.value > 0) {
-		spFrontLeft -= balance.value;
-		if (spFrontLeft < volume.min)
-			spFrontLeft = volume.min;
+	if (sndPar[SND_BALANCE].value > 0) {
+		spFrontLeft -= sndPar[SND_BALANCE].value;
+		if (spFrontLeft < sndPar[SND_VOLUME].min)
+			spFrontLeft = sndPar[SND_VOLUME].min;
 	} else {
-		spFrontRight += balance.value;
-		if (spFrontRight < volume.min)
-			spFrontRight = volume.min;
+		spFrontRight += sndPar[SND_BALANCE].value;
+		if (spFrontRight < sndPar[SND_VOLUME].min)
+			spFrontRight = sndPar[SND_VOLUME].min;
 	}
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
@@ -47,19 +33,19 @@ void setVolume(int8_t val)
 	int8_t spRearLeft = 0;
 	int8_t spRearRight = 0;
 
-	if (balance.value > 0) {
-		spFrontRight -= balance.value;
-		spRearRight -= balance.value;
+	if (sndPar[SND_BALANCE].value > 0) {
+		spFrontRight -= sndPar[SND_BALANCE].value;
+		spRearRight -= sndPar[SND_BALANCE].value;
 	} else {
-		spFrontLeft += balance.value;
-		spRearLeft += balance.value;
+		spFrontLeft += sndPar[SND_BALANCE].value;
+		spRearLeft += sndPar[SND_BALANCE].value;
 	}
-	if (preamp.value > 0) {
-		spRearLeft -= preamp.value;
-		spRearRight -= preamp.value;
+	if (sndPar[SND_BALANCE_FR].value > 0) {
+		spRearLeft -= sndPar[SND_BALANCE_FR].value;
+		spRearRight -= sndPar[SND_BALANCE_FR].value;
 	} else {
-		spFrontLeft += preamp.value;
-		spFrontRight += preamp.value;
+		spFrontLeft += sndPar[SND_BALANCE_FR].value;
+		spFrontRight += sndPar[SND_BALANCE_FR].value;
 	}
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7313_VOLUME | -val);
@@ -71,17 +57,22 @@ void setVolume(int8_t val)
 #endif
 }
 
-void setPreamp(int8_t val) /* For TDA7313 used as balance front/rear */
-{
 #ifdef TDA7439
+void setPreamp(int8_t val)
+{
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_PREAMP);
 	I2CWriteByte(-val);
 	I2CStop();
-#else
-	setVolume(volume.value);
-#endif
 }
+#endif
+
+#if defined(TDA7313) || defined(TDA7318)
+void setBalanceFrontRear(int8_t val)
+{
+	setVolume(sndPar[SND_VOLUME].value);
+}
+#endif
 
 int8_t setBMT(int8_t val)
 {
@@ -104,15 +95,15 @@ void setBass(int8_t val)
 #endif
 }
 
+#ifdef TDA7439
 void setMiddle(int8_t val)
 {
-#ifdef TDA7439
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_MIDDLE);
 	I2CWriteByte(setBMT(val));
 	I2CStop();
-#endif
 }
+#endif
 
 void setTreble(int8_t val)
 {
@@ -152,31 +143,31 @@ void setGain(int8_t val)
 void setChan(uint8_t ch)
 {
 	chan = ch;
-	setGain(gain[ch].value);
+	setGain(sndPar[SND_GAIN0 + ch].value);
 #ifdef TDA7439
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_INPUT_SELECT);
 	I2CWriteByte(CHAN_CNT - 1 - ch);
 	I2CStop();
 #else
-	setSwitch(gain[chan].value);
+	setSwitch(sndPar[SND_GAIN0 + chan].value);
 #endif
 }
 
 void setBalance(int8_t val)
 {
-	setVolume(volume.value);
+	setVolume(sndPar[SND_VOLUME].value);
 }
 
 void muteVolume(void)
 {
-	setVolume(volume.min);
+	setVolume(sndPar[SND_VOLUME].min);
 	mute = MUTE_ON;
 }
 
 void unmuteVolume(void)
 {
-	setVolume(volume.value);
+	setVolume(sndPar[SND_VOLUME].value);
 	mute = MUTE_OFF;
 }
 
@@ -193,41 +184,49 @@ void switchMute(void)
 void switchLoudness(void)
 {
 	loud = !loud;
-	setSwitch(gain[chan].value);
+	setSwitch(sndPar[SND_GAIN0 + chan].value);
 }
 #endif
 
-void loadParams(uint8_t **txtLabels)
+void loadAudioParams(uint8_t **txtLabels)
 {
 	uint8_t i;
 
 	for (i = 0; i < SND_PARAM_COUNT; i++) {
-		params[i]->value = eeprom_read_byte(eepromVolume + i);
-		params[i]->label = txtLabels[i];
-		params[i]->min = eeprom_read_byte(eepromMinimums + i);
-		params[i]->max = eeprom_read_byte(eepromMaximums + i);
-		params[i]->step = eeprom_read_byte(eepromSteps + i);
+		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
+		sndPar[i].label = txtLabels[i];
+		sndPar[i].min = eeprom_read_byte(eepromMinimums + i);
+		sndPar[i].max = eeprom_read_byte(eepromMaximums + i);
+		sndPar[i].step = eeprom_read_byte(eepromSteps + i);
 	}
 
 	chan = eeprom_read_byte(eepromChannel);
 	loud = eeprom_read_byte(eepromLoudness);
 
-	volume.set = setVolume;
-	bass.set = setBass;
-	middle.set = setMiddle;
-	treble.set = setTreble;
-	balance.set = setBalance;
-	preamp.set = setPreamp;
+	sndPar[SND_VOLUME].set = setVolume;
+	sndPar[SND_BASS].set = setBass;
+#if defined(TDA7439)
+	sndPar[SND_MIDDLE].set = setMiddle;
+	sndPar[SND_PREAMP].set = setPreamp;
+#else
+	sndPar[SND_BALANCE_FR].set = setBalanceFrontRear;
+#endif
+	sndPar[SND_TREBLE].set = setTreble;
+	sndPar[SND_BALANCE].set = setBalance;
 
 	for (i = 0; i < 4; i++) {
-		gain[i].set = setGain;
+		sndPar[SND_GAIN0 + i].set = setGain;
 	}
 
 	setChan(chan);
-	setPreamp(preamp.value);
-	setBass(bass.value);
-	setMiddle(middle.value);
-	setTreble(treble.value);
+	setBass(sndPar[SND_BASS].value);
+#ifdef TDA7439
+	setPreamp(sndPar[SND_PREAMP].value);
+	setMiddle(sndPar[SND_MIDDLE].value);
+#else
+	setBalanceFrontRear(0);
+#endif
+	setTreble(sndPar[SND_TREBLE].value);
 }
 
 void saveAudioParams(void)
@@ -235,7 +234,7 @@ void saveAudioParams(void)
 	uint8_t i;
 
 	for (i = 0; i < SND_PARAM_COUNT; i++) {
-		eeprom_write_byte(eepromVolume + i, params[i]->value);
+		eeprom_write_byte(eepromVolume + i, sndPar[i].value);
 	}
 	eeprom_write_byte(eepromLoudness, loud);
 	eeprom_write_byte(eepromChannel, chan);

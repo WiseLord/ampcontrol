@@ -165,3 +165,15 @@ void storeStation(uint16_t freq)
 
 	return;
 }
+
+void loadTunerParams(uint16_t *freq)
+{
+	*freq = eeprom_read_word(eepromFMFreq);
+}
+
+void saveTunerParams(uint16_t freq)
+{
+	eeprom_write_word(eepromFMFreq, freq);
+
+	return;
+}

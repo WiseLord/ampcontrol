@@ -1,17 +1,36 @@
 #include "display.h"
 
-#include "audio.h"
+#include <avr/pgmspace.h>
+#include <avr/eeprom.h>
+
 #include "eeprom.h"
 #include "input.h"
 
 #include "tuner.h"
 
-uint8_t backlight;
-uint8_t dig[17];		/* Array for num->string convert */
+uint8_t backlight;										/* Backlight */
+uint8_t spMode;											/* Spectrum mode */
+uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
 
 #if defined(KS0066)
 static uint8_t userSybmols = LCD_LEVELS;
 #endif
+
+void writeStringEeprom(const uint8_t *string)
+{
+	uint8_t i = 0;
+
+	for (i = 0; i < STR_BUFSIZE; i++)
+		strbuf[i] = eeprom_read_byte(&string[i]);
+
+#if defined(KS0108)
+	gdWriteString(strbuf);
+#elif defined(KS0066)
+	lcdWriteString(strbuf);
+#endif
+
+	return;
+}
 
 void clearDisplay()
 {
@@ -88,20 +107,146 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 	}
 	int8_t i;
 	for (i = 0; i < width; i++)
-		dig[i] = lead;
-	dig[width] = '\0';
+		strbuf[i] = lead;
+	strbuf[width] = '\0';
 	i = width - 1;
 	while (number > 0 || i == width - 1) {
 		numdiv = number % radix;
-		dig[i] = numdiv + 0x30;
+		strbuf[i] = numdiv + 0x30;
 		if (numdiv >= 10)
-			dig[i] += 7;
+			strbuf[i] += 7;
 		i--;
 		number /= radix;
 	}
 	if (i >= 0)
-		dig[i] = sign;
-	return dig;
+		strbuf[i] = sign;
+	return strbuf;
+}
+
+
+void showBar(int16_t min, int16_t max, int16_t value)
+{
+#if defined(KS0108)
+	uint8_t data;
+	uint8_t i, j;
+
+	if (min + max) {
+		value = (int16_t)85 * (value - min) / (max - min);
+	} else {
+		value = (int16_t)42 * value / max;
+	}
+	for (j = 5; j <= 6; j++) {
+		gdSetXY(0, j);
+		for (i = 0; i < 85; i++) {
+			if (((min + max) && (value <= i)) || (!(min + max) &&
+				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
+				((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
+				if (j == 5) {
+					data = 0x80;
+				} else {
+					data = 0x01;
+				}
+			} else {
+				data = 0xFF;
+			}
+			if (i & 0x01) {
+				data = 0x00;
+			}
+			gdWriteData(data);
+		}
+	}
+#elif defined(KS0066)
+	uint8_t i;
+
+	if (userSybmols != LCD_BAR) {
+		lcdGenBar();
+		userSybmols = LCD_BAR;
+	}
+
+	lcdSetXY(0, 1);
+
+	if (min + max) {
+		value = (int16_t)48 * (value - min) / (max - min);
+		for (i = 0; i < 16; i++) {
+			if (value / 3 > i) {
+				lcdWriteData(0x03);
+			} else {
+				if (value / 3 < i) {
+					lcdWriteData(0x00);
+				} else {
+					lcdWriteData(value % 3);
+				}
+			}
+		}
+	} else {
+		value = (int16_t)23 * value / max;
+		if (value >= 0) {
+			value++;
+			for (i = 0; i < 7; i++) {
+				lcdWriteData(0x00);
+			}
+			lcdWriteData(0x05);
+			for (i = 0; i < 8; i++) {
+				if (value / 3 > i) {
+					lcdWriteData(0x03);
+				} else {
+					if (value / 3 < i) {
+						lcdWriteData(0x00);
+					} else {
+						lcdWriteData(value % 3);
+					}
+				}
+			}
+		} else {
+			value += 23;
+			for (i = 0; i < 8; i++) {
+				if (value / 3 > i) {
+					lcdWriteData(0x00);
+				} else {
+					if (value / 3 < i) {
+						lcdWriteData(0x03);
+					} else {
+						lcdWriteData(value % 3 + 3);
+					}
+				}
+			}
+			lcdWriteData(0x01);
+			for (i = 0; i < 7; i++) {
+				lcdWriteData(0x00);
+			}
+		}
+	}
+#endif
+}
+
+void showParValue(int8_t value)
+{
+#if defined(KS0108)
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(93, 4);
+	gdWriteString(mkNumString(value, 3, ' ', 10));
+	gdLoadFont(font_ks0066_ru_08, 1);
+#elif defined(KS0066)
+	lcdSetXY(11, 0);
+	lcdWriteString(mkNumString(value, 3, ' ', 10));
+#endif
+}
+
+void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
+{
+#if defined(KS0108)
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(0, 0);
+	writeStringEeprom(parLabel);
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(116, 7);
+	writeStringEeprom(txtLabels[LABEL_DB]);
+#elif defined (KS0066)
+	lcdSetXY(0, 0);
+	writeStringEeprom(parLabel);
+	lcdSetXY(14, 0);
+	writeStringEeprom(txtLabels[LABEL_DB]);
+#endif
 }
 
 void showRC5Info(uint16_t rc5Buf)
@@ -226,154 +371,49 @@ void showRadio(uint8_t num)
 #endif
 }
 
-void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
-{
-#if defined(KS0108)
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(0, 0);
-	gdWriteStringEeprom(parLabel);
-	gdLoadFont(font_ks0066_ru_08, 1);
-	gdSetXY(116, 7);
-	gdWriteStringEeprom(txtLabels[LABEL_DB]);
-#elif defined (KS0066)
-	lcdSetXY(0, 0);
-	lcdWriteStringEeprom(parLabel);
-	lcdSetXY(14, 0);
-	lcdWriteStringEeprom(txtLabels[LABEL_DB]);
-#endif
-}
-
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {
 #if defined(KS0108)
 	gdLoadFont(font_ks0066_ru_24, 1);
 	gdSetXY(0, 0);
-	gdWriteStringEeprom(parLabel);
+	writeStringEeprom(parLabel);
 	gdSetXY(0, 4);
 	if (value)
-		gdWriteStringEeprom(txtLabels[LABEL_ON]);
+		writeStringEeprom(txtLabels[LABEL_ON]);
 	else
-		gdWriteStringEeprom(txtLabels[LABEL_OFF]);
+		writeStringEeprom(txtLabels[LABEL_OFF]);
 	gdLoadFont(font_ks0066_ru_08, 1);
 #elif defined(KS0066)
 	lcdSetXY(0, 0);
-	lcdWriteStringEeprom(parLabel);
+	writeStringEeprom(parLabel);
 	lcdSetXY(1, 1);
 	if (value)
-		lcdWriteStringEeprom(txtLabels[LABEL_ON]);
+		writeStringEeprom(txtLabels[LABEL_ON]);
 	else
-		lcdWriteStringEeprom(txtLabels[LABEL_OFF]);
+		writeStringEeprom(txtLabels[LABEL_OFF]);
 #endif
 }
 
-void showBar(int16_t min, int16_t max, int16_t value)
+/* Show audio parameter */
+void showSndParam(sndParam *param, uint8_t **txtLabels)
 {
-#if defined(KS0108)
-	uint8_t data;
-	uint8_t i, j;
+	uint8_t mult = 8;
 
-	if (min + max) {
-		value = (int16_t)85 * (value - min) / (max - min);
-	} else {
-		value = (int16_t)42 * value / max;
+#ifndef TDA7439
+	if (param->label == txtLabels[LABEL_VOLUME]
+	 || param->label == txtLabels[LABEL_PREAMP]
+	 || param->label == txtLabels[LABEL_BALANCE]) {
+		mult = 10;
 	}
-	for (j = 5; j <= 6; j++) {
-		gdSetXY(0, j);
-		for (i = 0; i < 85; i++) {
-			if (((min + max) && (value <= i)) || (!(min + max) &&
-				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
-				((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
-				if (j == 5) {
-					data = 0x80;
-				} else {
-					data = 0x01;
-				}
-			} else {
-				data = 0xFF;
-			}
-			if (i & 0x01) {
-				data = 0x00;
-			}
-			gdWriteData(data);
-		}
-	}
-#elif defined(KS0066)
-	uint8_t i;
-
-	if (userSybmols != LCD_BAR) {
-		lcdGenBar();
-		userSybmols = LCD_BAR;
-	}
-
-	lcdSetXY(0, 1);
-
-	if (min + max) {
-		value = (int16_t)48 * (value - min) / (max - min);
-		for (i = 0; i < 16; i++) {
-			if (value / 3 > i) {
-				lcdWriteData(0x03);
-			} else {
-				if (value / 3 < i) {
-					lcdWriteData(0x00);
-				} else {
-					lcdWriteData(value % 3);
-				}
-			}
-		}
-	} else {
-		value = (int16_t)23 * value / max;
-		if (value >= 0) {
-			value++;
-			for (i = 0; i < 7; i++) {
-				lcdWriteData(0x00);
-			}
-			lcdWriteData(0x05);
-			for (i = 0; i < 8; i++) {
-				if (value / 3 > i) {
-					lcdWriteData(0x03);
-				} else {
-					if (value / 3 < i) {
-						lcdWriteData(0x00);
-					} else {
-						lcdWriteData(value % 3);
-					}
-				}
-			}
-		} else {
-			value += 23;
-			for (i = 0; i < 8; i++) {
-				if (value / 3 > i) {
-					lcdWriteData(0x00);
-				} else {
-					if (value / 3 < i) {
-						lcdWriteData(0x03);
-					} else {
-						lcdWriteData(value % 3 + 3);
-					}
-				}
-			}
-			lcdWriteData(0x01);
-			for (i = 0; i < 7; i++) {
-				lcdWriteData(0x00);
-			}
-		}
+	if (param->label >= txtLabels[LABEL_GAIN_0] &&
+		param->label == txtLabels[LABEL_GAIN_3]) {
+		mult = 15;
 	}
 #endif
+	showBar(param->min, param->max, param->value);
+	showParValue(((int16_t)(param->value) * param->step * mult + 4) >> 3);
+	showParLabel(param->label, txtLabels);
 }
-
-void showParValue(int8_t value)
-{
-#if defined(KS0108)
-	gdLoadFont(font_ks0066_ru_24, 1);
-	gdSetXY(93, 4);
-	gdWriteString(mkNumString(value, 3, ' ', 10));
-	gdLoadFont(font_ks0066_ru_08, 1);
-#elif defined(KS0066)
-	lcdSetXY(11, 0);
-	lcdWriteString(mkNumString(value, 3, ' ', 10));
-#endif
-}
-
 
 void drawTm(timeMode tm, const uint8_t *font)
 {
@@ -414,31 +454,6 @@ void showTime(uint8_t **txtLabels)
 	gdLoadFont(font_ks0066_ru_08, 1);
 	gdSetXY(32, 7);
 
-	switch (time[WEEK]) {
-	case 1:
-		gdWriteStringEeprom(txtLabels[LABEL_THUESDAY]);
-		break;
-	case 2:
-		gdWriteStringEeprom(txtLabels[LABEL_WEDNESDAY]);
-		break;
-	case 3:
-		gdWriteStringEeprom(txtLabels[LABEL_THURSDAY]);
-		break;
-	case 4:
-		gdWriteStringEeprom(txtLabels[LABEL_FRIDAY]);
-		break;
-	case 5:
-		gdWriteStringEeprom(txtLabels[LABEL_SADURDAY]);
-		break;
-	case 6:
-		gdWriteStringEeprom(txtLabels[LABEL_SUNDAY]);
-		break;
-	case 7:
-		gdWriteStringEeprom(txtLabels[LABEL_MONDAY]);
-		break;
-	default:
-		break;
-	}
 #elif defined(KS0066)
 	lcdSetXY(0, 0);
 
@@ -457,32 +472,33 @@ void showTime(uint8_t **txtLabels)
 	lcdWriteString(mkNumString(2000 + time[YEAR], 4, '0', 10));
 
 	lcdSetXY(0, 1);
+#endif
+
 	switch (time[WEEK]) {
 	case 1:
-		lcdWriteStringEeprom(txtLabels[LABEL_THUESDAY]);
+		writeStringEeprom(txtLabels[LABEL_THUESDAY]);
 		break;
 	case 2:
-		lcdWriteStringEeprom(txtLabels[LABEL_WEDNESDAY]);
+		writeStringEeprom(txtLabels[LABEL_WEDNESDAY]);
 		break;
 	case 3:
-		lcdWriteStringEeprom(txtLabels[LABEL_THURSDAY]);
+		writeStringEeprom(txtLabels[LABEL_THURSDAY]);
 		break;
 	case 4:
-		lcdWriteStringEeprom(txtLabels[LABEL_FRIDAY]);
+		writeStringEeprom(txtLabels[LABEL_FRIDAY]);
 		break;
 	case 5:
-		lcdWriteStringEeprom(txtLabels[LABEL_SADURDAY]);
+		writeStringEeprom(txtLabels[LABEL_SADURDAY]);
 		break;
 	case 6:
-		lcdWriteStringEeprom(txtLabels[LABEL_SUNDAY]);
+		writeStringEeprom(txtLabels[LABEL_SUNDAY]);
 		break;
 	case 7:
-		lcdWriteStringEeprom(txtLabels[LABEL_MONDAY]);
-		break;
-	default:
+		writeStringEeprom(txtLabels[LABEL_MONDAY]);
 		break;
 	}
 
+#if defined(KS0066)
 	if (etm == NOEDIT) {
 		lcdWriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
 	} else {
@@ -514,7 +530,7 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
-void drawSpectrum(uint8_t *buf, uint8_t mode)
+void drawSpectrum(uint8_t *buf)
 {
 #if defined(KS0108)
 	uint8_t i, j, k;
@@ -524,7 +540,7 @@ void drawSpectrum(uint8_t *buf, uint8_t mode)
 	gdSetXY(0, 0);
 	for (i = 0; i < GD_ROWS; i++) {
 		for (j = 0, k = 32; j < 32; j++, k++) {
-			switch (mode) {
+			switch (spMode) {
 			case SP_MODE_STEREO:
 				if (i < GD_ROWS / 2) {
 					val = buf[j];
@@ -584,3 +600,45 @@ void drawSpectrum(uint8_t *buf, uint8_t mode)
 	return;
 }
 
+void loadDispParams(void)
+{
+	backlight = eeprom_read_byte(eepromBCKL);
+	setBacklight(backlight);
+	spMode  = eeprom_read_byte(eepromSpMode);
+
+	return;
+}
+
+void saveDisplayParams(void)
+{
+	eeprom_write_byte(eepromBCKL, backlight);
+	eeprom_write_byte(eepromSpMode, spMode);
+}
+
+/* Turn on/off backlight */
+void setBacklight(int8_t backlight)
+{
+	if (backlight)
+		DISPLAY_BACKLIGHT_PORT |= DISPLAY_BCKL;
+	else
+		DISPLAY_BACKLIGHT_PORT &= ~DISPLAY_BCKL;
+
+	return;
+}
+
+/* Change backlight status */
+void switchBacklight(void)
+{
+	backlight = !backlight;
+	setBacklight(backlight);
+
+	return;
+}
+
+/* Change spectrum mode */
+void switchSpMode()
+{
+	spMode = !spMode;
+
+	return;
+}

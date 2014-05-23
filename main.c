@@ -1,97 +1,27 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
-#include <avr/eeprom.h>
 
 #include "eeprom.h"
 #include "adc.h"
 #include "input.h"
 #include "rc5.h"
 #include "i2c.h"
-#include "audio.h"
 
+#include "audio.h"
 #include "display.h"
 #include "tuner.h"
 
-enum {
-	MODE_STANDBY,
-	MODE_SPECTRUM,
-	MODE_FM_RADIO,
-	MODE_VOLUME,
-	MODE_BASS,
-	MODE_MIDDLE,
-	MODE_TREBLE,
-	MODE_PREAMP,
-	MODE_GAIN,
-	MODE_BALANCE,
-	MODE_TIME,
-	MODE_TIME_EDIT,
-	MODE_MUTE,
-	MODE_LOUDNESS,
-	MODE_TEST
-};
-
-uint8_t spMode;						/* Spectrum mode */
-uint8_t backlight;					/* Backlight status */
-uint8_t *txtLabels[LABELS_COUNT];	/* Array with text labels */
+uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
-
-/* Change spectrum mode */
-void switchSpMode()
-{
-	spMode = !spMode;
-
-	return;
-}
-
-/* Turn on/off backlight */
-void setBacklight(int8_t backlight)
-{
-	if (backlight)
-		DISPLAY_BACKLIGHT_PORT |= DISPLAY_BCKL;
-	else
-		DISPLAY_BACKLIGHT_PORT &= ~DISPLAY_BCKL;
-
-	return;
-}
-
-/* Change backlight status */
-void switchBacklight(void)
-{
-	backlight = !backlight;
-	setBacklight(backlight);
-
-	return;
-}
-
-/* Show audio parameter */
-void showParam(sndParam *param)
-{
-	uint8_t mult = 8;
-
-#ifndef TDA7439
-	if (param->label == txtLabels[LABEL_VOLUME]
-	 || param->label == txtLabels[LABEL_PREAMP]
-	 || param->label == txtLabels[LABEL_BALANCE]) {
-		mult = 10;
-	}
-	if (param->label >= txtLabels[LABEL_GAIN_0] &&
-	    param->label == txtLabels[LABEL_GAIN_3]) {
-		mult = 15;
-	}
-#endif
-	showBar(param->min, param->max, param->value);
-	showParValue(((int16_t)(param->value) * param->step * mult + 4) >> 3);
-	showParLabel(param->label, txtLabels);
-}
 
 /* Save data to EEPROM */
 void saveParams(void)
 {
 	saveAudioParams();
-	eeprom_write_byte(eepromBCKL, backlight);
-	eeprom_write_byte(eepromSpMode, spMode);
-	eeprom_write_word(eepromFMFreq, freqFM);
+	saveDisplayParams();
+	saveTunerParams(freqFM);
+
+	return;
 }
 
 /* Handle leaving standby mode */
@@ -102,11 +32,13 @@ void powerOn(void)
 	SMF_DDR |= MUTE;
 	SMF_PORT |= MUTE;
 	SMF_PORT |= FAN;
-	setBacklight(backlight);
+	loadDispParams();
 	unmuteVolume();
 #ifdef TUX032
 	tux032ExitStby();
 #endif
+
+	return;
 }
 
 /* Handle entering standby mode */
@@ -124,6 +56,8 @@ void powerOff(void)
 #ifdef TUX032
 	tux032GoStby();
 #endif
+
+	return;
 }
 
 /* Hardware initialization */
@@ -138,8 +72,6 @@ void hwInit(void)
 	inputInit();					/* Buttons/encoder polling */
 	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
-
-	freqFM = eeprom_read_word(eepromFMFreq);
 
 	etm = NOEDIT;					/* Exit edit time mode */
 
@@ -158,8 +90,7 @@ int main(void)
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = MODE_STANDBY;
 
-	uint8_t *spBuf;
-	sndParam *curSndParam = &volume;
+	sndParam *curSndParam = &sndPar[SND_VOLUME];
 
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_EMPTY;
@@ -167,10 +98,10 @@ int main(void)
 	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
 	uint8_t direction;
 
-	spMode  = eeprom_read_byte(eepromSpMode);
+	loadDispParams();
+	loadAudioParams(txtLabels);
+	loadTunerParams(&freqFM);
 
-	loadParams(txtLabels);
-	backlight = eeprom_read_byte(eepromBCKL);
 	muteVolume();
 
 	tunerSetFreq(freqFM);
@@ -216,7 +147,7 @@ int main(void)
 				nextChan();
 				clearDisplay();
 			default:
-				curSndParam = &gain[chan];
+				curSndParam = &sndPar[SND_GAIN0 + chan];
 				dispMode = MODE_GAIN;
 				setDisplayTime(DISPLAY_TIME_GAIN);
 				break;
@@ -225,29 +156,24 @@ int main(void)
 		case CMD_BTN_3:
 		case CMD_RC5_TIME:
 			switch (dispMode) {
+			case MODE_TIME:
+			case MODE_TIME_EDIT:
+				editTime();
+				dispMode = MODE_TIME_EDIT;
+				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
+				if (!isETM())
+					setDisplayTime(DISPLAY_TIME_TIME);
+				break;
 			case MODE_FM_RADIO:
-				if (cmd != CMD_RC5_TIME) {
+				if (cmd == CMD_BTN_3) {
 					tunerSetFreq(freqFM - 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
-				if (cmd != CMD_RC5_CHAN_DOWN) {
-					editTime();
-					dispMode = MODE_TIME_EDIT;
-					setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-					if (!isETM())
-						setDisplayTime(DISPLAY_TIME_TIME);
-					break;
-				}
 			default:
-				if (cmd != CMD_RC5_CHAN_DOWN) {
-					stopEditTime();
-					dispMode = MODE_TIME;
-					setDisplayTime(DISPLAY_TIME_TIME);
-					break;
-				}
+				stopEditTime();
+				dispMode = MODE_TIME;
+				setDisplayTime(DISPLAY_TIME_TIME);
 				break;
 			}
 			break;
@@ -255,47 +181,33 @@ int main(void)
 		case CMD_RC5_MUTE:
 			switch (dispMode) {
 			case MODE_FM_RADIO:
-				if (cmd != CMD_RC5_MUTE) {
+				if (cmd == CMD_BTN_4) {
 					tunerSetFreq(freqFM + 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
 			default:
-				if (cmd != CMD_RC5_CHAN_UP) {
-					switchMute();
-					dispMode = MODE_MUTE;
-					setDisplayTime(DISPLAY_TIME_CHAN);
-					break;
-				}
+				switchMute();
+				dispMode = MODE_MUTE;
+				setDisplayTime(DISPLAY_TIME_CHAN);
+				break;
 			}
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
 			switch (dispMode) {
 			case MODE_VOLUME:
-				curSndParam = &bass;
-				dispMode = MODE_BASS;
-				break;
 			case MODE_BASS:
 #ifdef TDA7439
-				curSndParam = &middle;
-				dispMode = MODE_MIDDLE;
-				break;
 			case MODE_MIDDLE:
 #endif
-				curSndParam = &treble;
-				dispMode = MODE_TREBLE;
-				break;
 			case MODE_TREBLE:
-				curSndParam = &preamp;
-				dispMode = MODE_PREAMP;
-				break;
 			case MODE_PREAMP:
-				curSndParam = &balance;
-				dispMode = MODE_BALANCE;
+				curSndParam++;
+				dispMode++;
 				break;
 			default:
-				curSndParam = &volume;
+				curSndParam = &sndPar[SND_VOLUME];
 				dispMode = MODE_VOLUME;
 				break;
 			}
@@ -352,7 +264,7 @@ int main(void)
 #endif
 			setChan(cmd - CMD_RC5_INPUT_0);
 			clearDisplay();
-			curSndParam = &gain[chan];
+			curSndParam = &sndPar[SND_GAIN0 + chan];
 			dispMode = MODE_GAIN;
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
@@ -428,7 +340,7 @@ int main(void)
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
-				curSndParam = &volume;
+				curSndParam = &sndPar[SND_VOLUME];
 				dispMode = MODE_VOLUME;
 			default:
 				changeParam(curSndParam, encCnt);
@@ -466,13 +378,12 @@ int main(void)
 			break;
 		case MODE_TEST:
 			showRC5Info(rc5Buf);
-			setBacklight(backlight);
+			setBacklight(BACKLIGHT_ON);
 			if (rc5Buf != rc5BufPrev)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
-			spBuf = getSpData();
-			drawSpectrum(spBuf, spMode);
+			drawSpectrum(getSpData());
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();
@@ -492,7 +403,7 @@ int main(void)
 			showTime(txtLabels);
 			break;
 		default:
-			showParam(curSndParam);
+			showSndParam(curSndParam, txtLabels);
 			break;
 		}
 

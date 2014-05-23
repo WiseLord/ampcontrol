@@ -5,7 +5,7 @@
 
 /* Tuner type selection */
 #if !defined(TEA5767) && !defined(TUX032)
-#define TUX032
+#define TEA5767
 #endif
 
 #if defined(TEA5767)
@@ -46,5 +46,8 @@ uint8_t stationNum(uint16_t freq);
 void scanStoredFreq(uint16_t freq, uint8_t direction);
 void loadStation(uint8_t num);
 void storeStation(uint16_t freq);
+
+void loadTunerParams(uint16_t *freq);
+void saveTunerParams(uint16_t freq);
 
 #endif /* TUNER_H */

@@ -155,37 +155,14 @@ void lcdInit(void)
 void lcdSetXY(uint8_t x, uint8_t y)
 {
 	lcdWriteCommand(KS0066_SET_DDRAM | (KS0066_LINE_WIDTH * y + x));
+
 	return;
 }
 
 void lcdWriteString(uint8_t *string)
 {
-	while(*string) {
+	while(*string)
 		lcdWriteData(*string++);
-	}
-	return;
-}
 
-void lcWriteStringProgmem(const uint8_t *string)
-{
-	uint8_t i = 0, ch;
-	do {
-		ch = pgm_read_byte(&string[i++]);
-		if (ch) {
-			lcdWriteData(ch);
-		}
-	} while (ch);
-	return;
-}
-
-void lcdWriteStringEeprom(const uint8_t *string)
-{
-	uint8_t i = 0, ch;
-	do {
-		ch = eeprom_read_byte(&string[i++]);
-		if (ch) {
-			lcdWriteData(ch);
-		}
-	} while (ch);
 	return;
 }

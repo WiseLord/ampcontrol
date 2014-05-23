@@ -1,7 +1,6 @@
 #include "ks0108.h"
 
 #include <avr/pgmspace.h>
-#include <avr/eeprom.h>
 
 const uint8_t *_font;
 static uint8_t _cs, _row, _col;
@@ -307,38 +306,6 @@ void gdWriteString(uint8_t *string)
 		gdWriteChar(fp.ltsppos);
 		gdWriteChar(*string++);
 	}
+
 	return;
 }
-
-//void gdWriteStringProgmem(const uint8_t *string)
-//{
-//	uint8_t i = 0, ch;
-//	ch = pgm_read_byte(&string[i++]);
-//	if (ch)
-//		gdWriteChar(ch);
-//	do {
-//		ch = pgm_read_byte(&string[i++]);
-//		if (ch) {
-//			gdWriteChar(fp.ltsppos);
-//			gdWriteChar(ch);
-//		}
-//	} while (ch);
-//	return;
-//}
-
-void gdWriteStringEeprom(const uint8_t *string)
-{
-	uint8_t i = 0, ch;
-	ch = eeprom_read_byte(&string[i++]);
-	if (ch)
-		gdWriteChar(ch);
-	do {
-		ch = eeprom_read_byte(&string[i++]);
-		if (ch) {
-			gdWriteChar(fp.ltsppos);
-			gdWriteChar(ch);
-		}
-	} while (ch);
-	return;
-}
-

@@ -69,7 +69,5 @@ void lcdInit(void);
 
 void lcdSetXY(uint8_t x, uint8_t y);
 void lcdWriteString(uint8_t *string);
-void lcdWriteStringProgmem(const uint8_t *string);
-void lcdWriteStringEeprom(const uint8_t *string);
 
 #endif /* KS0066_H */

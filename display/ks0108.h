@@ -75,7 +75,5 @@ void gdLoadFont(const uint8_t *font, uint8_t color);
 
 void gdWriteChar(uint8_t code);
 void gdWriteString(uint8_t *string);
-//void gdWriteStringProgmem(const uint8_t *string);
-void gdWriteStringEeprom(const uint8_t *string);
 
 #endif /* KS0108_H */
