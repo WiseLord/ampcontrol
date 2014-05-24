@@ -26,6 +26,7 @@
 
 #define eepromSpMode	((void*)0x1C)
 #define eepromBCKL		((void*)0x1D)
+#define eepromDisplay	((void*)0x1E)
 
 #define eepromFMFreq	((void*)0x2C)
 

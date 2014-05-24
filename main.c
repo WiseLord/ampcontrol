@@ -88,7 +88,7 @@ int main(void)
 	hwInit();
 
 	uint8_t dispMode = MODE_STANDBY;
-	uint8_t dispModePrev = MODE_STANDBY;
+	uint8_t dispModePrev = dispMode;
 
 	sndParam *curSndParam = sndParAddr(SND_VOLUME);
 
@@ -102,9 +102,8 @@ int main(void)
 	loadAudioParams(txtLabels);
 	loadTunerParams(&freqFM);
 
-	muteVolume();
-
 	tunerSetFreq(freqFM);
+	powerOff();
 
 	while (1) {
 		encCnt = getEncoder();
@@ -221,14 +220,21 @@ int main(void)
 			switchBacklight();
 			break;
 		case CMD_BTN_2_LONG:
-			switch (dispMode) {
-			default:
+		case CMD_RC5_DISPLAY:
+			switch (getDefDisplay()) {
+			case MODE_SPECTRUM:
 				if (getChan() == 0) {
-					dispMode = MODE_FM_RADIO;
-					setDisplayTime(DISPLAY_TIME_FM_RADIO);
+					setDefDisplay(MODE_FM_RADIO);
 					break;
 				}
+			case MODE_FM_RADIO:
+				setDefDisplay(MODE_TIME);
+				break;
+			default:
+				setDefDisplay(MODE_SPECTRUM);
+				break;
 			}
+			dispMode = getDefDisplay();
 			break;
 		case CMD_BTN_3_LONG:
 		case CMD_BTN_4_LONG:
@@ -274,8 +280,8 @@ int main(void)
 			break;
 		case CMD_RC5_SP_MODE:
 			switchSpMode();
-			saveParams();
 			dispMode = MODE_SPECTRUM;
+			setDisplayTime(DISPLAY_SPECTRUM);
 			break;
 		case CMD_RC5_FM_INC:
 		case CMD_RC5_FM_DEC:
@@ -362,9 +368,11 @@ int main(void)
 				dispMode = MODE_STANDBY;
 				break;
 			default:
-				if (dispModePrev != MODE_SPECTRUM)
+				if (dispModePrev != dispMode)
 					saveParams();
-				dispMode = MODE_SPECTRUM;
+				dispMode = getDefDisplay();
+				if (dispMode == MODE_FM_RADIO && getChan())
+					dispMode = MODE_SPECTRUM;
 				break;
 			}
 		}

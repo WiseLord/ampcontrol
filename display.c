@@ -12,6 +12,20 @@ uint8_t backlight;										/* Backlight */
 uint8_t spMode;											/* Spectrum mode */
 uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
 
+uint8_t defDisplay = MODE_SPECTRUM;						/* Default display */
+
+uint8_t getDefDisplay()
+{
+	return defDisplay;
+}
+
+void setDefDisplay(uint8_t value)
+{
+	defDisplay = value;
+
+	return;
+}
+
 #if defined(KS0066)
 static uint8_t userSybmols = LCD_LEVELS;
 #endif
@@ -591,6 +605,7 @@ void loadDispParams(void)
 	backlight = eeprom_read_byte(eepromBCKL);
 	setBacklight(backlight);
 	spMode  = eeprom_read_byte(eepromSpMode);
+	defDisplay = eeprom_read_byte(eepromDisplay);
 
 	return;
 }
@@ -599,6 +614,7 @@ void saveDisplayParams(void)
 {
 	eeprom_write_byte(eepromBCKL, backlight);
 	eeprom_write_byte(eepromSpMode, spMode);
+	eeprom_write_byte(eepromDisplay, defDisplay);
 }
 
 /* Turn on/off backlight */

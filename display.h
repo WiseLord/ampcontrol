@@ -37,13 +37,13 @@
 #define DISPLAY_TIME_GAIN		3
 #define DISPLAY_TIME_TIME		3
 #define DISPLAY_TIME_TIME_EDIT	10
-#define DISPLAY_TIME_FM_RADIO	20
+#define DISPLAY_TIME_FM_RADIO	5
 #define DISPLAY_TIME_CHAN		2
 #define DISPLAY_TIME_AUDIO		3
-#define DISPLAY_TIME_TEST		20
+#define DISPLAY_SPECTRUM		3
 
-#define BACKLIGHT_ON			0
-#define BACKLIGHT_OFF			1
+#define BACKLIGHT_ON			1
+#define BACKLIGHT_OFF			0
 
 /* Data stored in user characters */
 #define LCD_LEVELS				0
@@ -110,6 +110,9 @@ enum {
 #define STR_PGM			2
 
 #define STR_BUFSIZE		16
+
+uint8_t getDefDisplay();
+void setDefDisplay(uint8_t value);
 
 void displayInit();
 void clearDisplay();
