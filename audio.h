@@ -7,7 +7,7 @@
 
 /* Integral circuits definitions */
 #if !defined(TDA7439) && !defined(TDA7313) && !defined(TDA7318)
-#define TDA7313
+#define TDA7439
 #endif
 
 /* Number of input channels */
@@ -77,24 +77,27 @@ enum {
 
 #define SND_PARAM_COUNT			10
 
-sndParam sndPar[SND_PARAM_COUNT];
-
-uint8_t chan;
-uint8_t loud;
-uint8_t mute;
-
-void loadAudioParams(uint8_t **txtLabels);
-void saveAudioParams(void);
+sndParam *sndParAddr(uint8_t index);
+uint8_t getChan();
+uint8_t getMute();
+#ifdef TDA7313
+uint8_t getLoudness();
+#endif
 
 void changeParam(sndParam *sndPar, int8_t diff);
 
-void nextChan(void);
 void setChan(uint8_t ch);
+void nextChan(void);
 
 void muteVolume(void);
 void unmuteVolume(void);
 
 void switchMute(void);
+#ifdef TDA7313
 void switchLoudness(void);
+#endif
+
+void loadAudioParams(uint8_t **txtLabels);
+void saveAudioParams(void);
 
 #endif /* AUDIO_H */

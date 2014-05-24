@@ -50,7 +50,7 @@ void powerOff(void)
 	SMF_PORT &= ~STDBY;
 	SMF_PORT &= ~FAN;
 	DISPLAY_BACKLIGHT_PORT &= ~DISPLAY_BCKL;
-	etm = NOEDIT;
+	stopEditTime();
 	muteVolume();
 	saveParams();
 #ifdef TUX032
@@ -73,7 +73,7 @@ void hwInit(void)
 	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
 
-	etm = NOEDIT;					/* Exit edit time mode */
+	stopEditTime();					/* Exit edit time mode */
 
 	SMF_DDR |= (STDBY | FAN);		/* Standby/Mute/Fan port */
 	SMF_PORT &= ~(STDBY | MUTE | FAN);
@@ -90,7 +90,7 @@ int main(void)
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = MODE_STANDBY;
 
-	sndParam *curSndParam = &sndPar[SND_VOLUME];
+	sndParam *curSndParam = sndParAddr(SND_VOLUME);
 
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_EMPTY;
@@ -147,7 +147,7 @@ int main(void)
 				nextChan();
 				clearDisplay();
 			default:
-				curSndParam = &sndPar[SND_GAIN0 + chan];
+				curSndParam = sndParAddr(SND_GAIN0 + getChan());
 				dispMode = MODE_GAIN;
 				setDisplayTime(DISPLAY_TIME_GAIN);
 				break;
@@ -210,7 +210,7 @@ int main(void)
 				dispMode++;
 				break;
 			default:
-				curSndParam = &sndPar[SND_VOLUME];
+				curSndParam = sndParAddr(SND_VOLUME);
 				dispMode = MODE_VOLUME;
 				break;
 			}
@@ -223,7 +223,7 @@ int main(void)
 		case CMD_BTN_2_LONG:
 			switch (dispMode) {
 			default:
-				if (chan == 0) {
+				if (getChan() == 0) {
 					dispMode = MODE_FM_RADIO;
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
@@ -268,7 +268,7 @@ int main(void)
 #endif
 			setChan(cmd - CMD_RC5_INPUT_0);
 			clearDisplay();
-			curSndParam = &sndPar[SND_GAIN0 + chan];
+			curSndParam = sndParAddr(SND_GAIN0 + getChan());
 			dispMode = MODE_GAIN;
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
@@ -281,7 +281,7 @@ int main(void)
 		case CMD_RC5_FM_DEC:
 		case CMD_RC5_CHAN_UP:
 		case CMD_RC5_CHAN_DOWN:
-			if (chan == 0) {
+			if (getChan() == 0) {
 				if (dispMode == MODE_FM_RADIO) {
 					switch (cmd) {
 					case CMD_RC5_FM_INC:
@@ -315,7 +315,7 @@ int main(void)
 		case CMD_RC5_8:
 		case CMD_RC5_9:
 		case CMD_RC5_0:
-			if (chan == 0) {
+			if (getChan() == 0) {
 				loadStation(cmd - CMD_RC5_1);
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -344,7 +344,7 @@ int main(void)
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
-				curSndParam = &sndPar[SND_VOLUME];
+				curSndParam = sndParAddr(SND_VOLUME);
 				dispMode = MODE_VOLUME;
 			default:
 				changeParam(curSndParam, encCnt);
@@ -397,11 +397,11 @@ int main(void)
 				fineTune(&freqFM);
 			break;
 		case MODE_MUTE:
-			showBoolParam(mute, txtLabels[LABEL_MUTE], txtLabels);
+			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
 			break;
-#if defined(TDA7313) || defined(TDA7318)
+#ifdef TDA7313
 		case MODE_LOUDNESS:
-			showBoolParam(!loud, txtLabels[LABEL_LOUDNESS], txtLabels);
+			showBoolParam(!getLoudness(), txtLabels[LABEL_LOUDNESS], txtLabels);
 			break;
 #endif
 		case MODE_TIME:

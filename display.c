@@ -16,7 +16,7 @@ uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
 static uint8_t userSybmols = LCD_LEVELS;
 #endif
 
-void writeStringEeprom(const uint8_t *string)
+static void writeStringEeprom(const uint8_t *string)
 {
 	uint8_t i = 0;
 
@@ -32,17 +32,8 @@ void writeStringEeprom(const uint8_t *string)
 	return;
 }
 
-void clearDisplay()
-{
-#if defined(KS0108)
-	gdFill(0x00);
-#elif defined(KS0066)
-	lcdClear();
-#endif
-}
-
 #if defined(KS0066)
-void lcdGenLevels(void)
+static void lcdGenLevels(void)
 {
 	lcdWriteCommand(KS0066_SET_CGRAM);
 
@@ -58,7 +49,7 @@ void lcdGenLevels(void)
 		}
 	}
 }
-void lcdGenBar(void)
+static void lcdGenBar(void)
 {
 	lcdWriteCommand(KS0066_SET_CGRAM);
 
@@ -97,6 +88,15 @@ void displayInit()
 #endif
 }
 
+void clearDisplay()
+{
+#if defined(KS0108)
+	gdFill(0x00);
+#elif defined(KS0066)
+	lcdClear();
+#endif
+}
+
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 {
 	uint8_t numdiv;
@@ -123,8 +123,7 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 	return strbuf;
 }
 
-
-void showBar(int16_t min, int16_t max, int16_t value)
+static void showBar(int16_t min, int16_t max, int16_t value)
 {
 #if defined(KS0108)
 	uint8_t data;
@@ -219,7 +218,7 @@ void showBar(int16_t min, int16_t max, int16_t value)
 #endif
 }
 
-void showParValue(int8_t value)
+static void showParValue(int8_t value)
 {
 #if defined(KS0108)
 	gdLoadFont(font_ks0066_ru_24, 1);
@@ -232,7 +231,7 @@ void showParValue(int8_t value)
 #endif
 }
 
-void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
+static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 {
 #if defined(KS0108)
 	gdLoadFont(font_ks0066_ru_24, 1);
@@ -402,21 +401,21 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 	showParLabel(param->label, txtLabels);
 }
 
-void drawTm(timeMode tm, const uint8_t *font)
-{
 #if defined(KS0108)
-	if (etm == tm)
+static void drawTm(timeMode tm, const uint8_t *font)
+{
+	if (getEtm() == tm)
 		gdLoadFont(font, 0);
 	else
 		gdLoadFont(font, 1);
-	gdWriteString(mkNumString(time[tm], 2, '0', 10));
+	gdWriteString(mkNumString(getTime(tm), 2, '0', 10));
 	gdLoadFont(font, 1);
-#endif
 }
+#endif
 
 void showTime(uint8_t **txtLabels)
 {
-	getTime();
+	readTime();
 #if defined(KS0108)
 	gdSetXY(4, 0);
 
@@ -432,7 +431,7 @@ void showTime(uint8_t **txtLabels)
 	gdWriteString((uint8_t*)"\x7F.\x7F");
 	drawTm(MONTH, font_ks0066_ru_24);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
-	if (etm == YEAR)
+	if (getEtm() == YEAR)
 		gdLoadFont(font_ks0066_ru_24, 0);
 	gdWriteString((uint8_t*)"20");
 	gdWriteChar('\x7F');
@@ -444,24 +443,24 @@ void showTime(uint8_t **txtLabels)
 #elif defined(KS0066)
 	lcdSetXY(0, 0);
 
-	lcdWriteString(mkNumString(time[HOUR], 2, '0', 10));
+	lcdWriteString(mkNumString(getTime(HOUR), 2, '0', 10));
 	lcdWriteData(':');
-	lcdWriteString(mkNumString(time[MIN], 2, '0', 10));
+	lcdWriteString(mkNumString(getTime(MIN), 2, '0', 10));
 	lcdWriteData(':');
-	lcdWriteString(mkNumString(time[SEC], 2, '0', 10));
+	lcdWriteString(mkNumString(getTime(SEC), 2, '0', 10));
 
 	lcdSetXY(11, 0);
-	lcdWriteString(mkNumString(time[DAY], 2, '0', 10));
+	lcdWriteString(mkNumString(getTime(DAY), 2, '0', 10));
 	lcdWriteData('.');
-	lcdWriteString(mkNumString(time[MONTH], 2, '0', 10));
+	lcdWriteString(mkNumString(getTime(MONTH), 2, '0', 10));
 
 	lcdSetXY(12, 1);
-	lcdWriteString(mkNumString(2000 + time[YEAR], 4, '0', 10));
+	lcdWriteString(mkNumString(2000 + getTime(YEAR), 4, '0', 10));
 
 	lcdSetXY(0, 1);
 #endif
 
-	switch (time[WEEK]) {
+	switch (getTime(WEEK)) {
 	case 1:
 		writeStringEeprom(txtLabels[LABEL_THUESDAY]);
 		break;
@@ -486,10 +485,10 @@ void showTime(uint8_t **txtLabels)
 	}
 
 #if defined(KS0066)
-	if (etm == NOEDIT) {
+	if (getEtm() == NOEDIT) {
 		lcdWriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
 	} else {
-		switch (etm) {
+		switch (getEtm()) {
 		case HOUR:
 			lcdSetXY(1, 0);
 			break;

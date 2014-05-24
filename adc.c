@@ -5,10 +5,10 @@
 #include "adc.h"
 #include "fft.h"
 
-int16_t f_l[FFT_SIZE];	/* Real values for left channel */
-int16_t f_r[FFT_SIZE];	/* Real values for right channel */
-int16_t f_i[FFT_SIZE];	/* Imaginary values */
-uint8_t buf[FFT_SIZE];	/* Previous fft results: both left and right */
+static int16_t f_l[FFT_SIZE];	/* Real values for left channel */
+static int16_t f_r[FFT_SIZE];	/* Real values for right channel */
+static int16_t f_i[FFT_SIZE];	/* Imaginary values */
+static uint8_t buf[FFT_SIZE];	/* Previous fft results: both left and right */
 
 static const uint8_t hannTable[] PROGMEM = {
 	  0,   1,   3,   6,  10,  16,  22,  30,
@@ -34,6 +34,7 @@ void adcInit()
 ISR (TIMER0_COMP_vect)
 {
 	ADCSRA |= 1<<ADSC;
+
 	return;
 };
 
@@ -41,10 +42,11 @@ static uint8_t revBits(uint8_t x)
 {
 	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);	/* 00abcdef => 00badcfe */
 	x = (x & 0x0C) | swap(x & 0x33);			/* 00badcfe => 00fedcba */
+
 	return x;
 }
 
-void getValues()
+static void getValues()
 {
 	uint8_t i = 0, j;
 	int16_t hv;
@@ -77,6 +79,7 @@ void getValues()
 	} while (i < FFT_SIZE);
 
 	TIMSK &= ~(1<<OCIE0);				/* Disable compare/match interrupt */
+
 	return;
 }
 
@@ -94,6 +97,7 @@ static void slowFall()
 		else
 			buf[j] = f_r[i];
 	}
+
 	return;
 }
 
@@ -108,5 +112,6 @@ uint8_t *getSpData()
 	cplx2dB(f_r, f_i);
 
 	slowFall();
+
 	return buf;
 }

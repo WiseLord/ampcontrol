@@ -3,10 +3,39 @@
 #include <avr/eeprom.h>
 
 #include "i2c.h"
-
 #include "eeprom.h"
 
-void setVolume(int8_t val)
+static sndParam sndPar[SND_PARAM_COUNT];
+
+static uint8_t chan;
+static uint8_t mute;
+#ifdef TDA7313
+static uint8_t loud;
+#endif
+
+sndParam *sndParAddr(uint8_t index)
+{
+	return &sndPar[index];
+}
+
+uint8_t getChan()
+{
+	return chan;
+}
+
+uint8_t getMute()
+{
+	return mute;
+}
+
+#ifdef TDA7313
+uint8_t getLoudness()
+{
+	return loud;
+}
+#endif
+
+static void setVolume(int8_t val)
 {
 	int8_t spFrontLeft = 0;
 	int8_t spFrontRight = 0;
@@ -58,7 +87,7 @@ void setVolume(int8_t val)
 }
 
 #ifdef TDA7439
-void setPreamp(int8_t val)
+static void setPreamp(int8_t val)
 {
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_PREAMP);
@@ -68,67 +97,71 @@ void setPreamp(int8_t val)
 #endif
 
 #if defined(TDA7313) || defined(TDA7318)
-void setBalanceFrontRear(int8_t val)
+static void setBalanceFrontRear(int8_t val)
 {
 	setVolume(sndPar[SND_VOLUME].value);
 }
 #endif
 
-int8_t setBMT(int8_t val)
+static int8_t calcBMT(int8_t val)
 {
 	if (val > 0)
 		return 15 - val;
 	return 7 + val;
 }
 
-void setBass(int8_t val)
+static void setBass(int8_t val)
 {
 #ifdef TDA7439
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_BASS);
-	I2CWriteByte(setBMT(val));
+	I2CWriteByte(calcBMT(val));
 	I2CStop();
 #else
 	I2CStart(AUDIOPROC_ADDR);
-	I2CWriteByte(TDA7313_BASS | setBMT(val));
+	I2CWriteByte(TDA7313_BASS | calcBMT(val));
 	I2CStop();
 #endif
 }
 
 #ifdef TDA7439
-void setMiddle(int8_t val)
+static void setMiddle(int8_t val)
 {
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_MIDDLE);
-	I2CWriteByte(setBMT(val));
+	I2CWriteByte(calcBMT(val));
 	I2CStop();
 }
 #endif
 
-void setTreble(int8_t val)
+static void setTreble(int8_t val)
 {
 #ifdef TDA7439
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7439_TREBLE);
-	I2CWriteByte(setBMT(val));
+	I2CWriteByte(calcBMT(val));
 	I2CStop();
 #else
 	I2CStart(AUDIOPROC_ADDR);
-	I2CWriteByte(TDA7313_TREBLE | setBMT(val));
+	I2CWriteByte(TDA7313_TREBLE | calcBMT(val));
 	I2CStop();
 #endif
 }
 
-#ifndef TDA7439
-void setSwitch(int8_t gain)
+#if defined(TDA7313) || defined(TDA7318)
+static void setSwitch(int8_t gain)
 {
 	I2CStart(AUDIOPROC_ADDR);
-	I2CWriteByte(TDA7313_SW | (3 - gain) << 3 | loud << 2 | chan);
+#ifdef TDA7313
+	I2CWriteByte(TDA7313_SW | (CHAN_CNT - gain) << 3 | loud << 2 | chan);
+#else
+	I2CWriteByte(TDA7313_SW | (CHAN_CNT - gain) << 3 | chan);
+#endif
 	I2CStop();
 }
 #endif
 
-void setGain(int8_t val)
+static void setGain(int8_t val)
 {
 #ifdef TDA7439
 	I2CStart(AUDIOPROC_ADDR);
@@ -154,7 +187,15 @@ void setChan(uint8_t ch)
 #endif
 }
 
-void setBalance(int8_t val)
+void nextChan(void)
+{
+	chan++;
+	if (chan >= CHAN_CNT)
+		chan = 0;
+	setChan(chan);
+}
+
+static void setBalance(int8_t val)
 {
 	setVolume(sndPar[SND_VOLUME].value);
 }
@@ -201,7 +242,9 @@ void loadAudioParams(uint8_t **txtLabels)
 	}
 
 	chan = eeprom_read_byte(eepromChannel);
+#ifdef TDA7313
 	loud = eeprom_read_byte(eepromLoudness);
+#endif
 
 	sndPar[SND_VOLUME].set = setVolume;
 	sndPar[SND_BASS].set = setBass;
@@ -238,7 +281,9 @@ void saveAudioParams(void)
 	for (i = 0; i < SND_PARAM_COUNT; i++) {
 		eeprom_write_byte(eepromVolume + i, sndPar[i].value);
 	}
+#ifdef TDA7313
 	eeprom_write_byte(eepromLoudness, loud);
+#endif
 	eeprom_write_byte(eepromChannel, chan);
 }
 
@@ -250,12 +295,4 @@ void changeParam(sndParam *param, int8_t diff)
 	if (param->value < param->min)
 		param->value = param->min;
 	param->set(param->value);
-}
-
-void nextChan(void)
-{
-	chan++;
-	if (chan >= CHAN_CNT)
-		chan = 0;
-	setChan(chan);
 }

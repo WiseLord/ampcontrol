@@ -2,6 +2,19 @@
 
 #include "i2c.h"
 
+static int8_t time[7];
+static timeMode etm;
+
+int8_t getTime(timeMode tm)
+{
+	return time[tm];
+}
+
+timeMode getEtm()
+{
+	return etm;
+}
+
 static void calcWeekDay(void)
 {
 	uint8_t a, y, m;
@@ -34,7 +47,7 @@ static uint8_t daysInMonth()
 	return 31;
 }
 
-int8_t *getTime(void)
+int8_t *readTime(void)
 {
 	uint8_t temp;
 	uint8_t i;
@@ -51,7 +64,7 @@ int8_t *getTime(void)
 	return time;
 }
 
-static void setTime(void)
+static void writeTime(void)
 {
 	uint8_t i;
 
@@ -110,7 +123,7 @@ void editTime(void)
 
 void changeTime(int diff)
 {
-	getTime();
+	readTime();
 	switch (etm) {
 	case HOUR:
 		time[HOUR] += diff;
@@ -153,5 +166,5 @@ void changeTime(int diff)
 	default:
 		break;
 	}
-	setTime();
+	writeTime();
 }

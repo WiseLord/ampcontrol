@@ -19,10 +19,10 @@ typedef enum {
 	NOEDIT = 7
 } timeMode;
 
-timeMode etm;
-int8_t time[7];
+int8_t getTime(timeMode tm);
+timeMode getEtm();
 
-int8_t *getTime(void);
+int8_t *readTime(void);
 void stopEditTime(void);
 uint8_t isETM(void);
 void editTime(void);
