@@ -6,31 +6,31 @@
 
 #define swap(x) (__builtin_avr_swap(x))		/*  Swaps nibbles in byte */
 
-static void writeStrob()
+static void ks0066writeStrob()
 {
 	asm("nop");	/* 40ns */
-	LCD_CONTROL_PORT |= LCD_E;
+	KS0066_CTRL_PORT |= KS0066_E;
 	asm("nop");	/* 230ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
-	LCD_CONTROL_PORT &= ~LCD_E;
+	KS0066_CTRL_PORT &= ~KS0066_E;
 
 	return;
 }
 
-static uint8_t readStrob()
+static uint8_t ks0066readStrob()
 {
 	uint8_t pin;
 
 	asm("nop");	/* 40ns */
-	LCD_CONTROL_PORT |= LCD_E;
+	KS0066_CTRL_PORT |= KS0066_E;
 	asm("nop");	/* 230ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
-	pin = LCD_DATA_PIN;
-	LCD_CONTROL_PORT &= ~LCD_E;
+	pin = KS0066_DATA_PIN;
+	KS0066_CTRL_PORT &= ~KS0066_E;
 #ifdef LCD_4BIT_MODE
 	asm("nop");	/* 230ns */
 	asm("nop");
@@ -49,20 +49,20 @@ static uint8_t readStrob()
 	return pin;
 }
 
-static void waitWhileBusy()
+static void ks0066waitWhileBusy()
 {
 	uint8_t i = 0;
 
-	LCD_CONTROL_PORT &= ~LCD_RS;
-	LCD_CONTROL_PORT |= LCD_RW;
+	KS0066_CTRL_PORT &= ~KS0066_RS;
+	KS0066_CTRL_PORT |= KS0066_RW;
 
 #ifdef LCD_4BIT_MODE
 	LCD_DATA_DDR &= 0x0F;
 #else
-	LCD_DATA_DDR = 0x00;
+	KS0066_DATA_DDR = 0x00;
 #endif
 
-	while (readStrob() & KS0066_STA_BUSY) {
+	while (ks0066readStrob() & KS0066_STA_BUSY) {
 		if (i++ > 200)	/* Avoid endless loop */
 			return;
 	}
@@ -70,11 +70,11 @@ static void waitWhileBusy()
 	return;
 }
 
-void lcdWriteCommand(uint8_t command)
+void ks0066WriteCommand(uint8_t command)
 {
-	waitWhileBusy();
+	ks0066waitWhileBusy();
 
-	LCD_CONTROL_PORT &= ~(LCD_RS | LCD_RW);
+	KS0066_CTRL_PORT &= ~(KS0066_RS | KS0066_RW);
 
 #ifdef LCD_4BIT_MODE
 	LCD_DATA_DDR |= 0xF0;
@@ -84,21 +84,21 @@ void lcdWriteCommand(uint8_t command)
 	LCD_DATA_PORT &= 0x0F;
 	LCD_DATA_PORT |= (swap(command) & 0xF0);
 #else
-	LCD_DATA_DDR |= 0xFF;
-	LCD_DATA_PORT = command;
+	KS0066_DATA_DDR |= 0xFF;
+	KS0066_DATA_PORT = command;
 #endif
 
-	writeStrob();
+	ks0066writeStrob();
 
 	return;
 }
 
-void lcdWriteData(uint8_t data)
+void ks0066WriteData(uint8_t data)
 {
-	waitWhileBusy();
+	ks0066waitWhileBusy();
 
-	LCD_CONTROL_PORT &= ~LCD_RW;
-	LCD_CONTROL_PORT |= LCD_RS;
+	KS0066_CTRL_PORT &= ~KS0066_RW;
+	KS0066_CTRL_PORT |= KS0066_RS;
 
 #ifdef LCD_4BIT_MODE
 	LCD_DATA_DDR |= 0xF0;
@@ -108,61 +108,61 @@ void lcdWriteData(uint8_t data)
 	LCD_DATA_PORT &= 0x0F;
 	LCD_DATA_PORT |= (swap(data) & 0xF0);
 #else
-	LCD_DATA_DDR |= 0xFF;
-	LCD_DATA_PORT = data;
+	KS0066_DATA_DDR |= 0xFF;
+	KS0066_DATA_PORT = data;
 #endif
 
-	writeStrob();
+	ks0066writeStrob();
 
 	return;
 }
 
-void lcdClear(void)
+void ks0066Clear(void)
 {
-	lcdWriteCommand(KS0066_CLEAR);
+	ks0066WriteCommand(KS0066_CLEAR);
 	_delay_ms(2);
 
 	return;
 }
 
-void lcdInit(void)
+void ks0066Init(void)
 {
-	LCD_DATA_DDR |= 0xFF;
-	LCD_CONTROL_DDR |= LCD_RS | LCD_RW | LCD_E;
+	KS0066_DATA_DDR |= 0xFF;
+	KS0066_CTRL_DDR |= KS0066_RS | KS0066_RW | KS0066_E;
 
-	LCD_DATA_PORT |= KS0066_INIT_DATA;
-	LCD_CONTROL_PORT &= ~(LCD_RS | LCD_RW);
+	KS0066_DATA_PORT |= KS0066_INIT_DATA;
+	KS0066_CTRL_PORT &= ~(KS0066_RS | KS0066_RW);
 	_delay_ms(20);
-	writeStrob();
+	ks0066writeStrob();
 	_delay_ms(5);
-	writeStrob();
+	ks0066writeStrob();
 	_delay_us(120);
-	writeStrob();
+	ks0066writeStrob();
 
 #ifdef LCD_4BIT_MODE
 	lcdWriteCommand(KS0066_FUNCTION | KS0066_4BIT | KS0066_2LINES);
 #else
-	lcdWriteCommand(KS0066_FUNCTION | KS0066_8BIT | KS0066_2LINES);
+	ks0066WriteCommand(KS0066_FUNCTION | KS0066_8BIT | KS0066_2LINES);
 #endif
-	lcdWriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
-	lcdWriteCommand(KS0066_CLEAR);
+	ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
+	ks0066WriteCommand(KS0066_CLEAR);
 	_delay_ms(2);
-	lcdWriteCommand(KS0066_SET_MODE | KS0066_INC_ADDR);
+	ks0066WriteCommand(KS0066_SET_MODE | KS0066_INC_ADDR);
 
 	return;
 }
 
-void lcdSetXY(uint8_t x, uint8_t y)
+void ks0066SetXY(uint8_t x, uint8_t y)
 {
-	lcdWriteCommand(KS0066_SET_DDRAM | (KS0066_LINE_WIDTH * y + x));
+	ks0066WriteCommand(KS0066_SET_DDRAM | (KS0066_LINE_WIDTH * y + x));
 
 	return;
 }
 
-void lcdWriteString(uint8_t *string)
+void ks0066WriteString(uint8_t *string)
 {
 	while(*string)
-		lcdWriteData(*string++);
+		ks0066WriteData(*string++);
 
 	return;
 }

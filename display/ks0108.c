@@ -8,165 +8,165 @@ static uint8_t csInv;		/* 0 for WG12864A, 1 for WG12864B */
 
 static fontParams fp;
 
-static inline void setPortCS()
+static inline void ks0108SetPortCS()
 {
 	if (csInv) {
-		GD_CHIP_PORT |= (GD_CS1 | GD_CS2);
-		GD_CHIP_PORT &= ~_cs;
+		KS0108_CHIP_PORT |= (KS0108_CS1 | KS0108_CS2);
+		KS0108_CHIP_PORT &= ~_cs;
 	} else {
-		GD_CHIP_PORT &= ~(GD_CS1 | GD_CS2);
-		GD_CHIP_PORT |= _cs;
+		KS0108_CHIP_PORT &= ~(KS0108_CS1 | KS0108_CS2);
+		KS0108_CHIP_PORT |= _cs;
 	}
 	return;
 }
 
-static void writeStrob()
+static void ks0108WriteStrob()
 {
 	asm("nop");	/* 120ns */
 	asm("nop");
-	GD_CONTROL_PORT |= GD_E;
+	KS0108_CTRL_PORT |= KS0108_E;
 	asm("nop");	/* 360ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
 	asm("nop");
 	asm("nop");
-	GD_CONTROL_PORT &= ~GD_E;
+	KS0108_CTRL_PORT &= ~KS0108_E;
 
 	return;
 }
 
-static uint8_t readStrob()
+static uint8_t ks0108ReadStrob()
 {
 	uint8_t pin;
 
 	asm("nop");	/* 120ns */
 	asm("nop");
-	GD_CONTROL_PORT |= GD_E;
+	KS0108_CTRL_PORT |= KS0108_E;
 	asm("nop");	/* 300ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
 	asm("nop");
-	pin = GD_DATA_PIN;
-	GD_CONTROL_PORT &= ~GD_E;
+	pin = KS0108_DATA_PIN;
+	KS0108_CTRL_PORT &= ~KS0108_E;
 
 	return pin;
 }
 
-uint8_t gdReadStatus()
+uint8_t ks0108ReadStatus()
 {
 	uint8_t status;
 
-	GD_DATA_DDR = 0x00;
+	KS0108_DATA_DDR = 0x00;
 
-	setPortCS();
+	ks0108SetPortCS();
 
-	GD_CONTROL_PORT |= GD_RW;
-	GD_CONTROL_PORT &= ~GD_DI;
+	KS0108_CTRL_PORT |= KS0108_RW;
+	KS0108_CTRL_PORT &= ~KS0108_DI;
 
-	status = readStrob();
+	status = ks0108ReadStrob();
 
 	return status;
 }
 
-void waitWhile(uint8_t status)
+void ks0108WaitWhile(uint8_t status)
 {
 	uint8_t i = 0;
-	while(gdReadStatus() & status) {
+	while(ks0108ReadStatus() & status) {
 		if (i++ > 200)	/* Avoid endless loop */
 			return;
 	}
 	return;
 }
 
-uint8_t gdReadData()
+uint8_t ks0108ReadData()
 {
 	uint8_t data;
 
-	waitWhile(KS0108_STA_BUSY);
-	GD_CONTROL_PORT |= GD_DI;
+	ks0108WaitWhile(KS0108_STA_BUSY);
+	KS0108_CTRL_PORT |= KS0108_DI;
 
-	writeStrob();
+	ks0108WriteStrob();
 
-	waitWhile(KS0108_STA_BUSY);
-	GD_CONTROL_PORT |= GD_DI;
+	ks0108WaitWhile(KS0108_STA_BUSY);
+	KS0108_CTRL_PORT |= KS0108_DI;
 
-	data = readStrob();
+	data = ks0108ReadStrob();
 
 	return data;
 }
 
-void gdWriteCommand(uint8_t command)
+void ks0108WriteCommand(uint8_t command)
 {
-	waitWhile(KS0108_STA_BUSY);
+	ks0108WaitWhile(KS0108_STA_BUSY);
 
-	GD_DATA_DDR = 0xFF;
+	KS0108_DATA_DDR = 0xFF;
 
-	setPortCS();
+	ks0108SetPortCS();
 
-	GD_CONTROL_PORT &= ~GD_RW;
-	GD_CONTROL_PORT &= ~GD_DI;
+	KS0108_CTRL_PORT &= ~KS0108_RW;
+	KS0108_CTRL_PORT &= ~KS0108_DI;
 
-	GD_DATA_PORT = command;
+	KS0108_DATA_PORT = command;
 
-	writeStrob();
+	ks0108WriteStrob();
 
 	return;
 }
 
-void gdWriteData(uint8_t data)
+void ks0108WriteData(uint8_t data)
 {
-	waitWhile(KS0108_STA_BUSY);
+	ks0108WaitWhile(KS0108_STA_BUSY);
 
-	GD_DATA_DDR = 0xFF;
+	KS0108_DATA_DDR = 0xFF;
 
-	setPortCS();
+	ks0108SetPortCS();
 
-	GD_CONTROL_PORT &= ~GD_RW;
-	GD_CONTROL_PORT |= GD_DI;
+	KS0108_CTRL_PORT &= ~KS0108_RW;
+	KS0108_CTRL_PORT |= KS0108_DI;
 
-	GD_DATA_PORT = data;
+	KS0108_DATA_PORT = data;
 
-	writeStrob();
+	ks0108WriteStrob();
 
 	if (++_col == 64) {
 		_col = 0;
 
-		if (_cs & GD_CS2)
+		if (_cs & KS0108_CS2)
 			_row += fp.height;
-		if (_row == GD_ROWS)
+		if (_row == KS0108_ROWS)
 			_row = 0;
 
-		if (_cs == GD_CS1)
-			_cs = GD_CS2;
-		else if (_cs == GD_CS2)
-			_cs = GD_CS1;
+		if (_cs == KS0108_CS1)
+			_cs = KS0108_CS2;
+		else if (_cs == KS0108_CS2)
+			_cs = KS0108_CS1;
 
-		gdWriteCommand(KS0108_SET_ADDRESS);
-		gdWriteCommand(KS0108_SET_PAGE + _row);
+		ks0108WriteCommand(KS0108_SET_ADDRESS);
+		ks0108WriteCommand(KS0108_SET_PAGE + _row);
 	}
 	return;
 }
 
-void gdFill(uint8_t data)
+void ks0108Fill(uint8_t data)
 {
 	uint8_t i, j;
 	uint8_t cs = _cs;
 
-	_cs = GD_CS1 | GD_CS2;
-	gdWriteCommand(KS0108_SET_ADDRESS + _col);
-	gdWriteCommand(KS0108_SET_PAGE + _row);
+	_cs = KS0108_CS1 | KS0108_CS2;
+	ks0108WriteCommand(KS0108_SET_ADDRESS + _col);
+	ks0108WriteCommand(KS0108_SET_PAGE + _row);
 
-	for (i = 0; i < GD_ROWS; i++)
-		for (j = 0; j < GD_COLS; j++)
-			gdWriteData(data);
+	for (i = 0; i < KS0108_ROWS; i++)
+		for (j = 0; j < KS0108_COLS; j++)
+			ks0108WriteData(data);
 	_cs = cs;
 
 	return;
 }
 
-void testDisplay() {
+void ks0108TestDisplay() {
 	const uint8_t wrData[] = {0x55, 0xAA};
 	uint8_t rdData[] = {0, 0};
 	uint8_t i;
@@ -174,13 +174,13 @@ void testDisplay() {
 	csInv = 0;
 
 	for (i = 0; i < 2; i++) {
-		gdWriteCommand(KS0108_SET_ADDRESS);
-		gdWriteCommand(KS0108_SET_PAGE);
-		gdWriteData(wrData[i]);
+		ks0108WriteCommand(KS0108_SET_ADDRESS);
+		ks0108WriteCommand(KS0108_SET_PAGE);
+		ks0108WriteData(wrData[i]);
 
-		gdWriteCommand(KS0108_SET_ADDRESS);
-		gdWriteCommand(KS0108_SET_PAGE);
-		rdData[i] = gdReadData();
+		ks0108WriteCommand(KS0108_SET_ADDRESS);
+		ks0108WriteCommand(KS0108_SET_PAGE);
+		rdData[i] = ks0108ReadData();
 	}
 
 	if (wrData[0] != rdData[0] || wrData[1] != rdData[1])
@@ -189,63 +189,63 @@ void testDisplay() {
 	return;
 }
 
-void gdInit(void)
+void ks0108Init(void)
 {
 	/* Set control lines as outputs */
-	GD_CONTROL_DDR |= GD_DI | GD_RW | GD_E;
-	GD_CHIP_DDR |= GD_CS1 | GD_CS2 | GD_RES;
+	KS0108_CTRL_DDR |= KS0108_DI | KS0108_RW | KS0108_E;
+	KS0108_CHIP_DDR |= KS0108_CS1 | KS0108_CS2 | KS0108_RES;
 
-	GD_BACKLIGHT_DDR |= GD_BCKL;
-	GD_BACKLIGHT_PORT &= ~GD_BCKL; /* Turn off backlight */
+	KS0108_BCKL_DDR |= KS0108_BCKL;
+	KS0108_BCKL_PORT &= ~KS0108_BCKL; /* Turn off backlight */
 
 	/* Reset */
-	GD_CHIP_PORT &= ~(GD_RES);
+	KS0108_CHIP_PORT &= ~(KS0108_RES);
 	asm("nop");
 	asm("nop");
-	GD_CHIP_PORT |= GD_RES;
+	KS0108_CHIP_PORT |= KS0108_RES;
 	asm("nop");
 	asm("nop");
 
 	/* Clear display  and reset addresses */
-	_cs = GD_CS1 | GD_CS2;
+	_cs = KS0108_CS1 | KS0108_CS2;
 
-	testDisplay();
+	ks0108TestDisplay();
 
-	gdWriteCommand(KS0108_DISPLAY_START_LINE);
-	gdWriteCommand(KS0108_SET_ADDRESS);
-	gdWriteCommand(KS0108_SET_PAGE);
+	ks0108WriteCommand(KS0108_DISPLAY_START_LINE);
+	ks0108WriteCommand(KS0108_SET_ADDRESS);
+	ks0108WriteCommand(KS0108_SET_PAGE);
 
 	fp.height = 1;
-	gdFill(0x00);
+	ks0108Fill(0x00);
 
-	gdWriteCommand(KS0108_DISPLAY_ON);
+	ks0108WriteCommand(KS0108_DISPLAY_ON);
 
 	_row = 0;
 	_col = 0;
-	_cs = GD_CS2;
+	_cs = KS0108_CS2;
 
 	return;
 }
 
-void gdSetXY(uint8_t x, uint8_t y)
+void ks0108SetXY(uint8_t x, uint8_t y)
 {
-	if (x > ((GD_COLS << 1) - 1))
+	if (x > ((KS0108_COLS << 1) - 1))
 		y += fp.height;
 
-	if ((x & ((GD_COLS << 1) - 1)) < GD_COLS)
-		_cs = GD_CS1;
+	if ((x & ((KS0108_COLS << 1) - 1)) < KS0108_COLS)
+		_cs = KS0108_CS1;
 	else
-		_cs = GD_CS2;
+		_cs = KS0108_CS2;
 
-	_col = x & (GD_COLS - 1);
-	_row = y & (GD_ROWS - 1);
+	_col = x & (KS0108_COLS - 1);
+	_row = y & (KS0108_ROWS - 1);
 
-	gdWriteCommand(KS0108_SET_ADDRESS + _col);
-	gdWriteCommand(KS0108_SET_PAGE + _row);
+	ks0108WriteCommand(KS0108_SET_ADDRESS + _col);
+	ks0108WriteCommand(KS0108_SET_PAGE + _row);
 
 }
 
-void gdLoadFont(const uint8_t *font, uint8_t color)
+void ks0108LoadFont(const uint8_t *font, uint8_t color)
 {
 	_font = font + 5;
 	fp.height = pgm_read_byte(font);
@@ -256,14 +256,14 @@ void gdLoadFont(const uint8_t *font, uint8_t color)
 	fp.color = color;
 }
 
-void gdWriteChar(uint8_t code)
+void ks0108WriteChar(uint8_t code)
 {
 	/* Store current position before writing to display */
 	uint8_t cs = _cs;
 	uint8_t row = _row;
 	uint8_t col = _col;
-	if (cs == GD_CS2)
-		col += GD_COLS;
+	if (cs == KS0108_CS2)
+		col += KS0108_COLS;
 
 	uint8_t i, j;
 
@@ -283,28 +283,28 @@ void gdWriteChar(uint8_t code)
 	oft += fp.ccnt;
 
 	for (j = 0; j < fp.height; j++) {
-		gdSetXY(col, row + j);
+		ks0108SetXY(col, row + j);
 		for (i = 0; i < swd; i++) {
 			pgmData = pgm_read_byte(_font + oft + (swd * j) + i);
 			if (fp.color)
-				gdWriteData(pgmData);
+				ks0108WriteData(pgmData);
 			else
-				gdWriteData(~pgmData);
+				ks0108WriteData(~pgmData);
 		}
 	}
 
-	gdSetXY(col + swd, row);
+	ks0108SetXY(col + swd, row);
 
 	return;
 }
 
-void gdWriteString(uint8_t *string)
+void ks0108WriteString(uint8_t *string)
 {
 	if (*string)
-		gdWriteChar(*string++);
+		ks0108WriteChar(*string++);
 	while(*string) {
-		gdWriteChar(fp.ltsppos);
-		gdWriteChar(*string++);
+		ks0108WriteChar(fp.ltsppos);
+		ks0108WriteChar(*string++);
 	}
 
 	return;

@@ -7,24 +7,17 @@
 /* #define LCD_4BIT_MODE */
 
 /* Data port */
-#define LCD_DATA_PORT				PORTB
-#define LCD_DATA_DDR				DDRB
-#define LCD_DATA_PIN				PINB
+#define KS0066_DATA_PORT			PORTB
+#define KS0066_DATA_DDR				DDRB
+#define KS0066_DATA_PIN				PINB
 
 /* Control port */
-#define LCD_CONTROL_PORT			PORTA
-#define LCD_CONTROL_DDR				DDRA
+#define KS0066_CTRL_PORT			PORTA
+#define KS0066_CTRL_DDR				DDRA
 
-#define LCD_E						(1<<PA4)
-#define LCD_RW						(1<<PA3)
-#define LCD_RS						(1<<PA2)
-
-/* Backlight port */
-#define LCD_BACKLIGHT_DDR			DDRC
-#define LCD_BACKLIGHT_PORT			PORTC
-
-#define LCD_BCKL					(1<<PC7)
-
+#define KS0066_E					(1<<PA4)
+#define KS0066_RW					(1<<PA3)
+#define KS0066_RS					(1<<PA2)
 
 #define KS0066_INIT_DATA			0x30
 
@@ -61,13 +54,13 @@
 
 #define KS0066_STA_BUSY				0x80
 
-void lcdWriteCommand(uint8_t command);
-void lcdWriteData(uint8_t data);
+void ks0066WriteCommand(uint8_t command);
+void ks0066WriteData(uint8_t data);
 
-void lcdClear(void);
-void lcdInit(void);
+void ks0066Clear(void);
+void ks0066Init(void);
 
-void lcdSetXY(uint8_t x, uint8_t y);
-void lcdWriteString(uint8_t *string);
+void ks0066SetXY(uint8_t x, uint8_t y);
+void ks0066WriteString(uint8_t *string);
 
 #endif /* KS0066_H */

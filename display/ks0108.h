@@ -7,36 +7,36 @@
 #include "fonts.h"
 
 /* Data port */
-#define GD_DATA_PORT				PORTB
-#define GD_DATA_DDR					DDRB
-#define GD_DATA_PIN					PINB
+#define KS0108_DATA_PORT			PORTB
+#define KS0108_DATA_DDR				DDRB
+#define KS0108_DATA_PIN				PINB
 
 /* Control port */
-#define GD_CONTROL_PORT				PORTA
-#define GD_CONTROL_DDR				DDRA
+#define KS0108_CTRL_PORT			PORTA
+#define KS0108_CTRL_DDR				DDRA
 
-#define GD_E						(1<<PA4)
-#define GD_RW						(1<<PA3)
-#define GD_DI						(1<<PA2)
+#define KS0108_E					(1<<PA4)
+#define KS0108_RW					(1<<PA3)
+#define KS0108_DI					(1<<PA2)
 
 /* Chip select/reset port */
-#define GD_CHIP_PORT				PORTA
-#define GD_CHIP_DDR					DDRA
+#define KS0108_CHIP_PORT			PORTA
+#define KS0108_CHIP_DDR				DDRA
 
-#define GD_RES						(1<<PA7)
-#define GD_CS2						(1<<PA6)
-#define GD_CS1						(1<<PA5)
+#define KS0108_RES					(1<<PA7)
+#define KS0108_CS2					(1<<PA6)
+#define KS0108_CS1					(1<<PA5)
 
 /* Backlight port */
-#define GD_BACKLIGHT_DDR			DDRC
-#define GD_BACKLIGHT_PORT			PORTC
+#define KS0108_BCKL_DDR				DDRC
+#define KS0108_BCKL_PORT			PORTC
 
-#define GD_BCKL						(1<<PC7)
+#define KS0108_BCKL					(1<<PC7)
 
 /* Display geometry */
-#define GD_COLS						64
-#define GD_ROWS						8
-#define GD_CHIPS					2
+#define KS0108_COLS					64
+#define KS0108_ROWS					8
+#define KS0108_CHIPS				2
 
 /* Display control instructions */
 #define KS0108_DISPLAY_ON			0x3F
@@ -60,20 +60,17 @@ typedef struct {
 	uint8_t color;
 } fontParams;
 
-uint8_t gdReadStatus();
-uint8_t gdReadData();
+void ks0108WriteCommand(uint8_t command);
+void ks0108WriteData(uint8_t data);
 
-void gdWriteCommand(uint8_t command);
-void gdWriteData(uint8_t data);
+void ks0108Fill(uint8_t data);
+void ks0108Init(void);
 
-void gdFill(uint8_t data);
-void gdInit(void);
+void ks0108SetXY(uint8_t x, uint8_t y);
 
-void gdSetXY(uint8_t x, uint8_t y);
+void ks0108LoadFont(const uint8_t *font, uint8_t color);
 
-void gdLoadFont(const uint8_t *font, uint8_t color);
-
-void gdWriteChar(uint8_t code);
-void gdWriteString(uint8_t *string);
+void ks0108WriteChar(uint8_t code);
+void ks0108WriteString(uint8_t *string);
 
 #endif /* KS0108_H */
