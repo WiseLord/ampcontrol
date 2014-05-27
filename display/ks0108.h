@@ -27,12 +27,6 @@
 #define KS0108_CS2					(1<<PA6)
 #define KS0108_CS1					(1<<PA5)
 
-/* Backlight port */
-#define KS0108_BCKL_DDR				DDRC
-#define KS0108_BCKL_PORT			PORTC
-
-#define KS0108_BCKL					(1<<PC7)
-
 /* Display geometry */
 #define KS0108_COLS					64
 #define KS0108_ROWS					8

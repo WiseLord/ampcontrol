@@ -7,7 +7,9 @@ do
 		for TUNER in TEA5767 TUX032
 		do
 			make AUDIOPROC=${AUDIOPROC} DISPLAY=${DISPLAY} TUNER=${TUNER}
-			make AUDIOPROC=${AUDIOPROC} DISPLAY=${DISPLAY} TUNER=${TUNER} clean
+			make AUDIOPROC=${AUDIOPROC} DISPLAY=${DISPLAY} TUNER=${TUNER} clean_var
 		done
 	done
 done
+
+make clean_const

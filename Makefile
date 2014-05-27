@@ -27,7 +27,8 @@ else ifeq ($(TUNER), TUX032)
 TUNER_SRC = tuner/tux032.c
 endif
 
-SRCS = main.c eeprom.c display.c i2c.c ds1307.c audio.c tuner.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS_VAR = main.c audio.c display.c tuner.c
 
 MCU = atmega16
 F_CPU = 16000000L
@@ -50,7 +51,9 @@ AD_MCU = -p m16
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
-OBJS = $(SRCS:.c=.o)
+OBJS_CONST = $(SRCS_CONST:.c=.o)
+OBJS_VAR = $(SRCS_VAR:.c=.o)
+OBJS = $(OBJS_CONST) $(OBJS_VAR)
 
 all: $(TARG)
 
@@ -58,13 +61,18 @@ $(TARG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.elf $(OBJS) -lm
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf flash/$@.hex
 	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
-	echo; wc -c $@.bin; echo; rm -f $@.bin
+	echo; wc -c $@.bin; echo; rm -f $@.bin $@.elf
 
 %.o: %.c
 	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
 
-clean:
-	rm -f $(TARG).{elf,bin} $(OBJS)
+clean_var:
+	rm -f $(OBJS_VAR)
+
+clean_const:
+	rm -f $(OBJS_CONST)
+
+clean: clean_var clean_const
 
 flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:flash/$(TARG).hex:i
