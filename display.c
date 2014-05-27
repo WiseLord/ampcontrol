@@ -62,6 +62,8 @@ static void lcdGenLevels(void)
 			}
 		}
 	}
+
+	return;
 }
 static void lcdGenBar(void)
 {
@@ -88,6 +90,8 @@ static void lcdGenBar(void)
 	ks0066WriteData(0b00011011);
 	ks0066WriteData(0b00000000);
 	ks0066WriteData(0b00000000);
+
+	return;
 }
 #endif
 
@@ -100,6 +104,9 @@ void displayInit()
 	ks0066Init();
 	lcdGenLevels();
 #endif
+	DISPLAY_BACKLIGHT_DDR |= DISPLAY_BCKL;
+
+	return;
 }
 
 void clearDisplay()
@@ -109,6 +116,8 @@ void clearDisplay()
 #elif defined(KS0066)
 	ks0066Clear();
 #endif
+
+	return;
 }
 
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
@@ -134,6 +143,7 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 	}
 	if (i >= 0)
 		strbuf[i] = sign;
+
 	return strbuf;
 }
 
@@ -230,6 +240,8 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 		}
 	}
 #endif
+
+	return;
 }
 
 static void showParValue(int8_t value)
@@ -243,6 +255,8 @@ static void showParValue(int8_t value)
 	ks0066SetXY(11, 0);
 	ks0066WriteString(mkNumString(value, 3, ' ', 10));
 #endif
+
+	return;
 }
 
 static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
@@ -260,6 +274,8 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 	ks0066SetXY(14, 0);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 #endif
+
+	return;
 }
 
 void showRC5Info(uint16_t rc5Buf)
@@ -296,6 +312,8 @@ void showRC5Info(uint16_t rc5Buf)
 	ks0066WriteString((uint8_t*)",CM=");
 	ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
 #endif
+
+	return;
 }
 
 void showRadio(uint8_t num)
@@ -382,6 +400,8 @@ void showRadio(uint8_t num)
 		ks0066WriteString((uint8_t*)"--");
 	}
 #endif
+
+	return;
 }
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
@@ -405,6 +425,8 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	else
 		writeStringEeprom(txtLabels[LABEL_OFF]);
 #endif
+
+	return;
 }
 
 /* Show audio parameter */
@@ -413,6 +435,8 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 	showBar(param->min, param->max, param->value);
 	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
 	showParLabel(param->label, txtLabels);
+
+	return;
 }
 
 #if defined(KS0108)
@@ -424,6 +448,8 @@ static void drawTm(timeMode tm, const uint8_t *font)
 		ks0108LoadFont(font, 1);
 	ks0108WriteString(mkNumString(getTime(tm), 2, '0', 10));
 	ks0108LoadFont(font, 1);
+
+	return;
 }
 #endif
 
@@ -527,6 +553,7 @@ void showTime(uint8_t **txtLabels)
 		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
 	}
 #endif
+
 	return;
 }
 
@@ -597,6 +624,7 @@ void drawSpectrum(uint8_t *buf)
 		ks0066WriteData(data);
 	}
 #endif
+
 	return;
 }
 
@@ -615,6 +643,8 @@ void saveDisplayParams(void)
 	eeprom_write_byte(eepromBCKL, backlight);
 	eeprom_write_byte(eepromSpMode, spMode);
 	eeprom_write_byte(eepromDisplay, defDisplay);
+
+	return;
 }
 
 /* Turn on/off backlight */
