@@ -22,8 +22,8 @@
 #define SP_MODE_MIXED			1
 
 /* Backlight port */
-#define DISPLAY_BACKLIGHT_DDR	DDRC
-#define DISPLAY_BACKLIGHT_PORT	PORTC
+#define DISPLAY_BCKL_DDR		DDRC
+#define DISPLAY_BCKL_PORT		PORTC
 
 #define DISPLAY_BCKL			(1<<PC7)
 

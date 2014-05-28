@@ -6,7 +6,7 @@ const uint8_t *_font;
 static uint8_t _cs, _row, _col;
 static uint8_t csInv;		/* 0 for WG12864A, 1 for WG12864B */
 
-static fontParams fp;
+static uint8_t fp[FONT_PARAM_COUNT];
 
 static inline void ks0108SetPortCS()
 {
@@ -20,23 +20,7 @@ static inline void ks0108SetPortCS()
 	return;
 }
 
-static void ks0108WriteStrob()
-{
-	asm("nop");	/* 120ns */
-	asm("nop");
-	KS0108_CTRL_PORT |= KS0108_E;
-	asm("nop");	/* 360ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	KS0108_CTRL_PORT &= ~KS0108_E;
-
-	return;
-}
-
-static uint8_t ks0108ReadStrob()
+static uint8_t ks0108Strob()
 {
 	uint8_t pin;
 
@@ -65,7 +49,7 @@ uint8_t ks0108ReadStatus()
 	KS0108_CTRL_PORT |= KS0108_RW;
 	KS0108_CTRL_PORT &= ~KS0108_DI;
 
-	status = ks0108ReadStrob();
+	status = ks0108Strob();
 
 	return status;
 }
@@ -87,12 +71,12 @@ uint8_t ks0108ReadData()
 	ks0108WaitWhile(KS0108_STA_BUSY);
 	KS0108_CTRL_PORT |= KS0108_DI;
 
-	ks0108WriteStrob();
+	ks0108Strob();
 
 	ks0108WaitWhile(KS0108_STA_BUSY);
 	KS0108_CTRL_PORT |= KS0108_DI;
 
-	data = ks0108ReadStrob();
+	data = ks0108Strob();
 
 	return data;
 }
@@ -110,7 +94,7 @@ void ks0108WriteCommand(uint8_t command)
 
 	KS0108_DATA_PORT = command;
 
-	ks0108WriteStrob();
+	ks0108Strob();
 
 	return;
 }
@@ -128,13 +112,13 @@ void ks0108WriteData(uint8_t data)
 
 	KS0108_DATA_PORT = data;
 
-	ks0108WriteStrob();
+	ks0108Strob();
 
 	if (++_col == 64) {
 		_col = 0;
 
 		if (_cs & KS0108_CS2)
-			_row += fp.height;
+			_row += fp[FONT_HEIGHT];
 		if (_row == KS0108_ROWS)
 			_row = 0;
 
@@ -212,7 +196,7 @@ void ks0108Init(void)
 	ks0108WriteCommand(KS0108_SET_ADDRESS);
 	ks0108WriteCommand(KS0108_SET_PAGE);
 
-	fp.height = 1;
+	fp[FONT_HEIGHT] = 1;
 	ks0108Fill(0x00);
 
 	ks0108WriteCommand(KS0108_DISPLAY_ON);
@@ -227,7 +211,7 @@ void ks0108Init(void)
 void ks0108SetXY(uint8_t x, uint8_t y)
 {
 	if (x > ((KS0108_COLS << 1) - 1))
-		y += fp.height;
+		y += fp[FONT_HEIGHT];
 
 	if ((x & ((KS0108_COLS << 1) - 1)) < KS0108_COLS)
 		_cs = KS0108_CS1;
@@ -244,13 +228,10 @@ void ks0108SetXY(uint8_t x, uint8_t y)
 
 void ks0108LoadFont(const uint8_t *font, uint8_t color)
 {
+	uint8_t i;
 	_font = font + 5;
-	fp.height = pgm_read_byte(font);
-	fp.ltsppos = pgm_read_byte(font + 1);
-	fp.ccnt = pgm_read_byte(font + 2);
-	fp.ofta = pgm_read_byte(font + 3);
-	fp.oftna = pgm_read_byte(font + 4);
-	fp.color = color;
+	for (i = 0; i < FONT_PARAM_COUNT; i++)
+		fp[i] = pgm_read_byte(font + i);
 }
 
 void ks0108WriteChar(uint8_t code)
@@ -266,7 +247,7 @@ void ks0108WriteChar(uint8_t code)
 
 	uint8_t pgmData;
 
-	uint8_t spos = code - ((code >= 128) ? fp.oftna : fp.ofta);
+	uint8_t spos = code - ((code >= 128) ? fp[FONT_OFTNA] : fp[FONT_OFTA]);
 
 	uint16_t oft = 0;	/* Current symbol offset in array*/
 	uint8_t swd = 0;	/* Current symbol width */
@@ -276,14 +257,14 @@ void ks0108WriteChar(uint8_t code)
 		oft += swd;
 	}
 	swd = pgm_read_byte(_font + spos);
-	oft *= fp.height;
-	oft += fp.ccnt;
+	oft *= fp[FONT_HEIGHT];
+	oft += fp[FONT_CCNT];
 
-	for (j = 0; j < fp.height; j++) {
+	for (j = 0; j < fp[FONT_HEIGHT]; j++) {
 		ks0108SetXY(col, row + j);
 		for (i = 0; i < swd; i++) {
 			pgmData = pgm_read_byte(_font + oft + (swd * j) + i);
-			if (fp.color)
+			if (fp[FONT_COLOR])
 				ks0108WriteData(pgmData);
 			else
 				ks0108WriteData(~pgmData);
@@ -300,7 +281,7 @@ void ks0108WriteString(uint8_t *string)
 	if (*string)
 		ks0108WriteChar(*string++);
 	while(*string) {
-		ks0108WriteChar(fp.ltsppos);
+		ks0108WriteChar(fp[FONT_LTSPPOS]);
 		ks0108WriteChar(*string++);
 	}
 

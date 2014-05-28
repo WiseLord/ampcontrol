@@ -49,7 +49,7 @@ void powerOff(void)
 	_delay_ms(50);
 	SMF_PORT &= ~STDBY;
 	SMF_PORT &= ~FAN;
-	DISPLAY_BACKLIGHT_PORT &= ~DISPLAY_BCKL;
+	DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;
 	stopEditTime();
 	muteVolume();
 	saveParams();

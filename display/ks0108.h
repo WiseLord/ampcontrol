@@ -45,14 +45,18 @@
 #define KS0108_STA_DISP_OFF			0x20	/* DB5 */
 #define KS0108_STA_BUSY				0x80	/* DB4 */
 
-typedef struct {
-	uint8_t height;
-	uint8_t ltsppos;
-	uint8_t ccnt;
-	uint8_t ofta;
-	uint8_t oftna;
-	uint8_t color;
-} fontParams;
+#define CS_ENABLE					1
+#define CS_DISABLE					0
+
+#define FONT_PARAM_COUNT			6
+enum {
+	FONT_HEIGHT,
+	FONT_LTSPPOS,
+	FONT_CCNT,
+	FONT_OFTA,
+	FONT_OFTNA,
+	FONT_COLOR,
+};
 
 void ks0108WriteCommand(uint8_t command);
 void ks0108WriteData(uint8_t data);
