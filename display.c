@@ -640,9 +640,9 @@ void loadDispParams(void)
 
 void saveDisplayParams(void)
 {
-	eeprom_write_byte(eepromBCKL, backlight);
-	eeprom_write_byte(eepromSpMode, spMode);
-	eeprom_write_byte(eepromDisplay, defDisplay);
+	eeprom_update_byte(eepromBCKL, backlight);
+	eeprom_update_byte(eepromSpMode, spMode);
+	eeprom_update_byte(eepromDisplay, defDisplay);
 
 	return;
 }

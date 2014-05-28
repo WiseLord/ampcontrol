@@ -368,8 +368,6 @@ int main(void)
 				dispMode = MODE_STANDBY;
 				break;
 			default:
-				if (dispModePrev != dispMode)
-					saveParams();
 				dispMode = getDefDisplay();
 				if (dispMode == MODE_FM_RADIO && getChan())
 					dispMode = MODE_SPECTRUM;

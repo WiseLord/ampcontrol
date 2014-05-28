@@ -279,12 +279,12 @@ void saveAudioParams(void)
 	uint8_t i;
 
 	for (i = 0; i < SND_PARAM_COUNT; i++) {
-		eeprom_write_byte(eepromVolume + i, sndPar[i].value);
+		eeprom_update_byte(eepromVolume + i, sndPar[i].value);
 	}
 #ifdef TDA7313
-	eeprom_write_byte(eepromLoudness, loud);
+	eeprom_update_byte(eepromLoudness, loud);
 #endif
-	eeprom_write_byte(eepromChannel, chan);
+	eeprom_update_byte(eepromChannel, chan);
 }
 
 void changeParam(sndParam *param, int8_t diff)

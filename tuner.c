@@ -150,13 +150,13 @@ void storeStation(uint16_t freq)
 					freqCell = 0xFFFF;
 				else
 					freqCell = eeprom_read_word(eepromStations + j + 1);
-				eeprom_write_word(eepromStations + j, freqCell);
+				eeprom_update_word(eepromStations + j, freqCell);
 			}
 			break;
 		} else {
 			for (j = i; j < FM_COUNT; j++) {
 				freqCell = eeprom_read_word(eepromStations + j);
-				eeprom_write_word(eepromStations + j, freq);
+				eeprom_update_word(eepromStations + j, freq);
 				freq = freqCell;
 			}
 			break;
@@ -173,7 +173,7 @@ void loadTunerParams(uint16_t *freq)
 
 void saveTunerParams(uint16_t freq)
 {
-	eeprom_write_word(eepromFMFreq, freq);
+	eeprom_update_word(eepromFMFreq, freq);
 
 	return;
 }
