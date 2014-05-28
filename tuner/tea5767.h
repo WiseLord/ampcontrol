@@ -72,16 +72,6 @@
 #define TEA5767_BUF_READY(buf)	(buf[0] & TEA5767_RF)
 #define TEA5767_BUF_STEREO(buf)	(buf[2] & TEA5767_STEREO)
 
-typedef struct {
-	uint8_t high_cut;
-	uint8_t st_noise;
-	uint8_t soft_mute;
-	uint8_t japan_band;
-	uint8_t deemph_75;
-	uint8_t pllref;
-	uint8_t xtal_freq;
-} tea5767Ctrl;
-
 void tea5767Init(void);
 
 void tea5767SetFreq(uint16_t freq);

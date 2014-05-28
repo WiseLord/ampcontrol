@@ -1,18 +1,22 @@
 #include "tea5767.h"
 
 #include "../i2c.h"
+#include "../eeprom.h"
+#include <avr/eeprom.h>
 
-static tea5767Ctrl ctrl;
+static uint8_t ctrl;
+
+#define TEA5767_HCC_CTRL		(1<<6)
+#define TEA5767_SNC_CTRL		(1<<5)
+#define TEA5767_SMUTE_CTRL		(1<<4)
+#define TEA5767_DTC_CTRL		(1<<3)
+#define TEA5767_BL_CTRL			(1<<2)
+#define TEA5767_PLLREF_CTRL		(1<<1)
+#define TEA5767_XTAL_CTRL		(1<<0)
 
 void tea5767Init(void)
 {
-	ctrl.high_cut = 1;
-	ctrl.st_noise = 1;
-	ctrl.soft_mute = 1;
-	ctrl.deemph_75 = 0;
-	ctrl.japan_band = 0;
-	ctrl.pllref = 0;
-	ctrl.xtal_freq = 1;
+	ctrl = eeprom_read_byte(eepromFMCtrl);
 }
 
 static void tea5767loadBuf(uint8_t *buf, uint16_t div)
@@ -24,21 +28,21 @@ static void tea5767loadBuf(uint8_t *buf, uint16_t div)
 	buf[2] = TEA5767_SSL_MID;
 
 	buf[3] = 0;
-	if (ctrl.high_cut)
+	if (ctrl & TEA5767_HCC_CTRL)
 		buf[3] |= TEA5767_HCC;
-	if (ctrl.st_noise)
+	if (ctrl & TEA5767_SNC_CTRL)
 		buf[3] |= TEA5767_SNC;
-	if (ctrl.soft_mute)
+	if (ctrl & TEA5767_SMUTE_CTRL)
 		buf[3] |= TEA5767_SMUTE;
-	if (ctrl.japan_band)
+	if (ctrl & TEA5767_BL_CTRL)
 		buf[3] |= TEA5767_BL;
-	if (ctrl.xtal_freq)
+	if (ctrl & TEA5767_XTAL_CTRL)
 		buf[3] |= TEA5767_XTAL;
 
 	buf[4] = 0;
-	if (ctrl.deemph_75)
+	if (ctrl & TEA5767_DTC_CTRL)
 		buf[4] |= TEA5767_DTC;
-	if (ctrl.pllref)
+	if (ctrl & TEA5767_PLLREF_CTRL)
 		buf[4] |= TEA5767_PLLREF;
 }
 
@@ -59,7 +63,11 @@ void tea5767SetFreq(uint16_t freq)
 	uint8_t buf[5];
 	uint16_t div;
 
-	div = ((uint32_t)freq * 10000 + 225000) >> 13;
+	if (ctrl & TEA5767_XTAL_CTRL)
+		div = ((uint32_t)freq * 10000 + 225000) >> 13;
+	else
+		div = ((uint32_t)freq * 10000 + 225000) / 12500;
+
 
 	tea5767loadBuf(buf, div);
 
@@ -94,7 +102,11 @@ uint16_t tea5767FreqAvail(uint8_t *buf)
 	ret &= 0x3F;
 	ret <<= 8;
 	ret += buf[1];
-	ret <<= 13;
+	if (ctrl & TEA5767_XTAL_CTRL) {
+		ret <<= 13;
+	} else {
+		ret *= 12500;
+	}
 	ret -= 225000;
 	ret += 25000;
 	ret /= 50000;
@@ -108,11 +120,15 @@ void tea5767Search(uint16_t freq, uint8_t *buf, uint8_t direction)
 	uint16_t div;
 
 	if (direction == SEARCH_UP) {
-		div = ((uint32_t)freq * 10000 + 100000 + 225000) >> 13;
-//		ctrl.japan_band = 0;
+		if (ctrl & TEA5767_XTAL_CTRL)
+			div = ((uint32_t)freq * 10000 + 100000 + 225000) >> 13;
+		else
+			div = ((uint32_t)freq * 10000 + 100000 + 225000) / 12500;
 	} else {
-		div = ((uint32_t)freq * 10000 - 100000 + 225000) >> 13;
-//		ctrl.japan_band = 1;
+		if (ctrl & TEA5767_XTAL_CTRL)
+			div = ((uint32_t)freq * 10000 - 100000 + 225000) >> 13;
+		else
+			div = ((uint32_t)freq * 10000 + 100000 + 225000) / 12500;
 	}
 
 	tea5767loadBuf(buf, div);

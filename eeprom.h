@@ -29,6 +29,7 @@
 #define eepromDisplay	((void*)0x1E)
 
 #define eepromFMFreq	((void*)0x2C)
+#define eepromFMCtrl	((void*)0x2E)
 
 #define eepromRC5Addr	((void*)0x3C)
 
