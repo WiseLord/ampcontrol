@@ -17,15 +17,40 @@ static uint8_t ctrl;
 void tea5767Init(void)
 {
 	ctrl = eeprom_read_byte(eepromFMCtrl);
+
+	return;
 }
 
-static void tea5767loadBuf(uint8_t *buf, uint16_t div)
+static void tea5767WriteI2C(uint8_t *buf)
 {
+	uint8_t i;
+
+	I2CStart(TEA5767_ADDR);
+	for (i = 0; i < 5; i++) {
+		I2CWriteByte(buf[i]);
+	}
+	I2CStop();
+
+	return;
+}
+
+void tea5767SetFreq(uint16_t freq)
+{
+	uint8_t buf[5];
+	uint16_t div;
+
+	uint32_t fq = (uint32_t)freq * 10000 + 225000;
+
+	if (ctrl & TEA5767_XTAL_CTRL)
+		div = fq / 8192;
+	else
+		div = fq / 12500;
+
 	buf[0] = (div >> 8) & 0x3F;
 
 	buf[1] = div & 0xff;
 
-	buf[2] = TEA5767_SSL_MID;
+	buf[2] |= TEA5767_HLSI;
 
 	buf[3] = 0;
 	if (ctrl & TEA5767_HCC_CTRL)
@@ -44,34 +69,6 @@ static void tea5767loadBuf(uint8_t *buf, uint16_t div)
 		buf[4] |= TEA5767_DTC;
 	if (ctrl & TEA5767_PLLREF_CTRL)
 		buf[4] |= TEA5767_PLLREF;
-}
-
-static void tea5767WriteI2C(uint8_t *buf)
-{
-	uint8_t i;
-
-	I2CStart(TEA5767_ADDR);
-	for (i = 0; i < 5; i++) {
-		I2CWriteByte(buf[i]);
-	}
-	I2CStop();
-
-}
-
-void tea5767SetFreq(uint16_t freq)
-{
-	uint8_t buf[5];
-	uint16_t div;
-
-	if (ctrl & TEA5767_XTAL_CTRL)
-		div = ((uint32_t)freq * 10000 + 225000) >> 13;
-	else
-		div = ((uint32_t)freq * 10000 + 225000) / 12500;
-
-
-	tea5767loadBuf(buf, div);
-
-	buf[2] |= TEA5767_HLSI;
 
 	tea5767WriteI2C(buf);
 
@@ -87,6 +84,7 @@ void tea5767ReadStatus(uint8_t *buf)
 		I2CReadByte(&buf[i], 1);
 	I2CStop();
 
+	return;
 }
 
 uint8_t tea5767ADCLevel(uint8_t *buf)
@@ -103,7 +101,7 @@ uint16_t tea5767FreqAvail(uint8_t *buf)
 	ret <<= 8;
 	ret += buf[1];
 	if (ctrl & TEA5767_XTAL_CTRL) {
-		ret <<= 13;
+		ret *= 8192;
 	} else {
 		ret *= 12500;
 	}
@@ -113,33 +111,4 @@ uint16_t tea5767FreqAvail(uint8_t *buf)
 	ret *= 5;
 
 	return (uint16_t)ret;
-}
-
-void tea5767Search(uint16_t freq, uint8_t *buf, uint8_t direction)
-{
-	uint16_t div;
-
-	if (direction == SEARCH_UP) {
-		if (ctrl & TEA5767_XTAL_CTRL)
-			div = ((uint32_t)freq * 10000 + 100000 + 225000) >> 13;
-		else
-			div = ((uint32_t)freq * 10000 + 100000 + 225000) / 12500;
-	} else {
-		if (ctrl & TEA5767_XTAL_CTRL)
-			div = ((uint32_t)freq * 10000 - 100000 + 225000) >> 13;
-		else
-			div = ((uint32_t)freq * 10000 + 100000 + 225000) / 12500;
-	}
-
-	tea5767loadBuf(buf, div);
-
-	buf[0] |= TEA5767_SM;
-	buf[0] |= TEA5767_MUTE;
-	buf[2] |= TEA5767_HLSI;
-	if (direction == SEARCH_UP)
-		buf[2] |= TEA5767_SUD;
-
-	tea5767WriteI2C(buf);
-
-	return;
 }

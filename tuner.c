@@ -9,15 +9,6 @@ uint8_t bufFM[5];
 uint16_t freqFM;
 #endif
 
-void tunerSearch(uint16_t freq, uint8_t direction)
-{
-#if defined(TEA5767)
-	tea5767Search(freq, bufFM, direction);
-#elif defined(TUX032)
-	scanStoredFreq(freq, direction);
-#endif
-}
-
 void tunerReadStatus()
 {
 #if defined(TEA5767)
@@ -146,7 +137,7 @@ void storeStation(uint16_t freq)
 			continue;
 		if (freqCell == freq) {
 			for (j = i; j < FM_COUNT; j++) {
-				if (i == FM_COUNT - 1)
+				if (j == FM_COUNT - 1)
 					freqCell = 0xFFFF;
 				else
 					freqCell = eeprom_read_word(eepromStations + j + 1);
@@ -169,11 +160,21 @@ void storeStation(uint16_t freq)
 void loadTunerParams(uint16_t *freq)
 {
 	*freq = eeprom_read_word(eepromFMFreq);
+
+#if defined(TUX032)
+	tux032ExitStby();
+#elif defined(TEA5767)
+	tea5767SetFreq(*freq);
+#endif
 }
 
 void saveTunerParams(uint16_t freq)
 {
 	eeprom_update_word(eepromFMFreq, freq);
 
+#if defined(TUX032)
+	tux032GoStby();
+#elif defined(TEA5767)
+#endif
 	return;
 }

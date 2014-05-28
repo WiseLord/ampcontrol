@@ -33,10 +33,8 @@ void powerOn(void)
 	SMF_PORT |= MUTE;
 	SMF_PORT |= FAN;
 	loadDispParams();
+	loadTunerParams(&freqFM);
 	unmuteVolume();
-#ifdef TUX032
-	tux032ExitStby();
-#endif
 
 	return;
 }
@@ -53,9 +51,6 @@ void powerOff(void)
 	stopEditTime();
 	muteVolume();
 	saveParams();
-#ifdef TUX032
-	tux032GoStby();
-#endif
 
 	return;
 }
@@ -102,7 +97,6 @@ int main(void)
 	loadAudioParams(txtLabels);
 	loadTunerParams(&freqFM);
 
-	tunerSetFreq(freqFM);
 	powerOff();
 
 	while (1) {
@@ -242,9 +236,9 @@ int main(void)
 		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
 				if (cmd == CMD_BTN_3_LONG)
-					tunerSearch(freqFM, SEARCH_DOWN);
+					scanStoredFreq(freqFM, SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
-					tunerSearch(freqFM, SEARCH_UP);
+					scanStoredFreq(freqFM, SEARCH_UP);
 				else
 					storeStation(freqFM);
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -302,8 +296,6 @@ int main(void)
 						if (cmd == CMD_RC5_CHAN_DOWN)
 							direction = SEARCH_DOWN;
 						scanStoredFreq(freqFM, direction);
-						if (!stationNum(freqFM))
-							tunerSearch(freqFM, direction);
 						break;
 					}
 				}

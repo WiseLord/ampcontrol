@@ -34,7 +34,6 @@
 
 #endif
 
-void tunerSearch(uint16_t freq, uint8_t direction);
 void tunerReadStatus();
 uint16_t tunerFreqAvail();
 uint8_t tunerReady();

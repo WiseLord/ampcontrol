@@ -82,6 +82,4 @@ uint8_t tea5767ADCLevel(uint8_t *buf);
 
 uint16_t tea5767FreqAvail(uint8_t *buf);
 
-void tea5767Search(uint16_t freq, uint8_t *buf, uint8_t direction);
-
 #endif // TEA5767_H
