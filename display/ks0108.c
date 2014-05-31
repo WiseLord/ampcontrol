@@ -229,9 +229,11 @@ void ks0108SetXY(uint8_t x, uint8_t y)
 void ks0108LoadFont(const uint8_t *font, uint8_t color)
 {
 	uint8_t i;
+
 	_font = font + 5;
-	for (i = 0; i < FONT_PARAM_COUNT; i++)
+	for (i = 0; i < FONT_PARAM_COUNT - 1; i++)
 		fp[i] = pgm_read_byte(font + i);
+	fp[FONT_COLOR] = color;
 }
 
 void ks0108WriteChar(uint8_t code)
@@ -257,6 +259,7 @@ void ks0108WriteChar(uint8_t code)
 		oft += swd;
 	}
 	swd = pgm_read_byte(_font + spos);
+
 	oft *= fp[FONT_HEIGHT];
 	oft += fp[FONT_CCNT];
 

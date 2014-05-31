@@ -14,11 +14,13 @@ SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
 TUNER_SRC = tuner/tea5767.c
 
+FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ifeq ($(DISPLAY), KS0108)
-  FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
   DISP_SRC = $(addprefix display/, ks0108.c $(FONTS))
 else ifeq ($(DISPLAY), KS0066)
   DISP_SRC = display/ks0066.c
+else ifeq ($(DISPLAY), LS020)
+DISP_SRC = $(addprefix display/, ls020.c $(FONTS))
 endif
 
 ifeq ($(TUNER), TEA5767)

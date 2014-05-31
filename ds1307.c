@@ -3,7 +3,7 @@
 #include "i2c.h"
 
 static int8_t time[7];
-static timeMode etm;
+static timeMode _etm;
 
 int8_t getTime(timeMode tm)
 {
@@ -12,7 +12,7 @@ int8_t getTime(timeMode tm)
 
 timeMode getEtm()
 {
-	return etm;
+	return _etm;
 }
 
 static void calcWeekDay(void)
@@ -70,7 +70,7 @@ static void writeTime(void)
 
 	if (time[DAY] > daysInMonth())
 		time[DAY] = daysInMonth();
-	if (etm >= DAY)
+	if (_etm >= DAY)
 		calcWeekDay();
 
 	for (i = SEC; i <= YEAR; i++) {
@@ -86,37 +86,37 @@ static void writeTime(void)
 
 void stopEditTime(void)
 {
-	etm = NOEDIT;
+	_etm = NOEDIT;
 
 	return;
 }
 
 uint8_t isETM(void)
 {
-	if (etm == NOEDIT)
+	if (_etm == NOEDIT)
 		return 0;
 	return 1;
 }
 
 void editTime(void)
 {
-	switch (etm) {
+	switch (_etm) {
 	case NOEDIT:
-		etm = HOUR;
+		_etm = HOUR;
 		break;
 	case HOUR:
 	case MIN:
-		etm--;
+		_etm--;
 		break;
 	case SEC:
-		etm = DAY;
+		_etm = DAY;
 		break;
 	case DAY:
 	case MONTH:
-		etm++;
+		_etm++;
 		break;
 	default:
-		etm = NOEDIT;
+		_etm = NOEDIT;
 		break;
 	}
 }
@@ -124,7 +124,7 @@ void editTime(void)
 void changeTime(int diff)
 {
 	readTime();
-	switch (etm) {
+	switch (_etm) {
 	case HOUR:
 		time[HOUR] += diff;
 		if (time[HOUR] > 23)

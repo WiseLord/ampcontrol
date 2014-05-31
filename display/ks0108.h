@@ -55,7 +55,7 @@ enum {
 	FONT_CCNT,
 	FONT_OFTA,
 	FONT_OFTNA,
-	FONT_COLOR,
+	FONT_COLOR
 };
 
 void ks0108WriteCommand(uint8_t command);
