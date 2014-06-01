@@ -22,24 +22,14 @@
 #define FM_FREQ_MIN		8750
 #define FM_FREQ_MAX		10800
 
-#if defined(TEA5767)
-
-#define tunerInit() tea5767Init()
-#define tunerSetFreq(freq) tea5767SetFreq(freq)
-
-#elif defined(TUX032)
-
-#define tunerInit() tux032Init()
-#define tunerSetFreq(freq)	tux032SetFreq(freq); freqFM = (freq);
-
-#endif
+void tunerInit();
+void tunerSetFreq(uint16_t freq);
 
 void tunerReadStatus();
-uint16_t tunerFreqAvail();
+uint16_t tunerGetFreq();
 uint8_t tunerReady();
 uint8_t tunerStereo();
 uint8_t tunerLevel();
-void fineTune(uint16_t *freq);
 
 uint8_t stationNum(uint16_t freq);
 void scanStoredFreq(uint16_t freq, uint8_t direction);

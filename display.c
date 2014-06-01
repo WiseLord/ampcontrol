@@ -374,7 +374,7 @@ void showRC5Info(uint16_t rc5Buf)
 
 void showRadio(uint8_t num)
 {
-	uint16_t freq = tunerFreqAvail();
+	uint16_t freq = tunerGetFreq();
 
 #if defined(KS0108)
 	uint8_t i;

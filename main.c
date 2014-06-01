@@ -389,10 +389,8 @@ int main(void)
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();
-			freqFM = tunerFreqAvail();
+			freqFM = tunerGetFreq();
 			showRadio(stationNum(freqFM));
-			if (tunerReady())
-				fineTune(&freqFM);
 			break;
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);

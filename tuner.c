@@ -9,6 +9,29 @@ uint8_t bufFM[5];
 uint16_t freqFM;
 #endif
 
+void tunerInit()
+{
+#if defined(TEA5767)
+	tea5767Init();
+#elif defined(TUX032)
+	tux032Init();
+#endif
+}
+
+void tunerSetFreq(uint16_t freq)
+{
+	if (freq > FM_FREQ_MAX)
+		freq = FM_FREQ_MIN;
+	if (freq < FM_FREQ_MIN)
+		freq = FM_FREQ_MAX;
+#if defined(TEA5767)
+	tea5767SetFreq(freq);
+#elif defined(TUX032)
+	tux032SetFreq(freq);
+	freqFM = (freq);
+#endif
+}
+
 void tunerReadStatus()
 {
 #if defined(TEA5767)
@@ -18,7 +41,7 @@ void tunerReadStatus()
 #endif
 }
 
-uint16_t tunerFreqAvail()
+uint16_t tunerGetFreq()
 {
 #if defined(TEA5767)
 	return tea5767FreqAvail(bufFM);
@@ -55,21 +78,6 @@ uint8_t tunerLevel()
 	else
 		return 3;
 #endif
-}
-
-void fineTune(uint16_t *freq)
-{
-#if defined(TEA5767)
-	*freq = tea5767FreqAvail(bufFM);
-#elif defined(TUX032)
-	*freq = freqFM;
-#endif
-	if (*freq > FM_FREQ_MAX)
-		*freq = FM_FREQ_MIN;
-	if (*freq < FM_FREQ_MIN)
-		*freq = FM_FREQ_MAX;
-
-	tunerSetFreq(*freq);
 }
 
 /* Find station number (1..64) in EEPROM */

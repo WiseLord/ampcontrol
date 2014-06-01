@@ -50,7 +50,7 @@ void tea5767SetFreq(uint16_t freq)
 
 	buf[1] = div & 0xff;
 
-	buf[2] |= TEA5767_HLSI;
+	buf[2] = TEA5767_HLSI;
 
 	buf[3] = 0;
 	if (ctrl & TEA5767_HCC_CTRL)
