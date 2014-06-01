@@ -35,7 +35,7 @@ SRCS_VAR = main.c audio.c display.c tuner.c
 MCU = atmega16
 F_CPU = 16000000L
 
-CS = -fexec-charset=ks0066-ru
+#CS = -fexec-charset=ks0066-ru
 
 OPTIMIZE = -Os -mcall-prologues
 CFLAGS = -g -Wall -Werror -lm $(OPTIMIZE) $(CS) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
