@@ -27,11 +27,10 @@ void saveParams(void)
 /* Handle leaving standby mode */
 void powerOn(void)
 {
-	SMF_PORT |= STDBY;
+	STMU_PORT |= STDBY;
 	_delay_ms(50);
-	SMF_DDR |= MUTE;
-	SMF_PORT |= MUTE;
-	SMF_PORT |= FAN;
+	STMU_DDR |= MUTE;
+	STMU_PORT |= MUTE;
 	loadDispParams();
 	loadTunerParams(&freqFM);
 	unmuteVolume();
@@ -42,11 +41,10 @@ void powerOn(void)
 /* Handle entering standby mode */
 void powerOff(void)
 {
-	SMF_DDR &= ~MUTE;
-	SMF_PORT &= ~MUTE;
+	STMU_DDR &= ~MUTE;
+	STMU_PORT &= ~MUTE;
 	_delay_ms(50);
-	SMF_PORT &= ~STDBY;
-	SMF_PORT &= ~FAN;
+	STMU_PORT &= ~STDBY;
 	DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;
 	stopEditTime();
 	muteVolume();
@@ -70,8 +68,8 @@ void hwInit(void)
 
 	stopEditTime();					/* Exit edit time mode */
 
-	SMF_DDR |= (STDBY | FAN);		/* Standby/Mute/Fan port */
-	SMF_PORT &= ~(STDBY | MUTE | FAN);
+	STMU_DDR |= STDBY	;			/* Standby/Mute port */
+	STMU_PORT &= ~(STDBY | MUTE);
 
 	sei();							/* Gloabl interrupt enable */
 

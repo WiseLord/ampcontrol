@@ -27,13 +27,12 @@
 #define ENC_AB			(ENC_A | ENC_B)
 #define ENC_0			0
 
-/* Standby/Mute/Fan port definitions */
-#define SMF_DDR DDRC
-#define SMF_PORT PORTC
+/* Standby/Mute port definitions */
+#define STMU_DDR		DDRC
+#define STMU_PORT		PORTC
 
-#define FAN		(1<<PC2)
-#define MUTE	(1<<PC5)
-#define STDBY	(1<<PC6)
+#define MUTE			(1<<PC5)
+#define STDBY			(1<<PC6)
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	30
