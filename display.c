@@ -483,8 +483,8 @@ void showRadio(uint8_t num)
 	if (num) {
 		showParValue(num);
 	} else {
-		ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-		ls020SetXY(136, 96);
+		ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
+		ls020SetXY(100, 96);
 		ls020WriteString((uint8_t*)" --");
 	}
 #endif
