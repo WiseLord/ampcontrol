@@ -123,6 +123,11 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 void showSndParam(sndParam *param, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
+
+#if defined(LS020)
+void clearSpBufPrev(void);
+#endif
+
 void drawSpectrum(uint8_t *buf);
 
 void loadDispParams(void);
