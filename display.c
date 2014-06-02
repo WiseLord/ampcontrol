@@ -348,24 +348,20 @@ void showRC5Info(uint16_t rc5Buf)
 	ks0066WriteString((uint8_t*)",CM=");
 	ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
 #elif defined(LS020)
-	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-	ls020SetXY(0, 0);
-	ls020WriteString((uint8_t*)"RC5:");
-	ls020SetXY(5, 8);
-	ls020WriteString((uint8_t*)"Raw = ");
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+	ls020SetXY(4, 0);
 	ls020WriteString(mkNumString(rc5Buf, 14, '0', 2));
-	ls020SetXY(5, 16);
+	ls020SetXY(5, 24);
 	ls020WriteString((uint8_t*)"Tog = ");
 	ls020WriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
-	ls020SetXY(5, 24);
+	ls020SetXY(6, 48);
 	ls020WriteString((uint8_t*)"Adr = ");
 	ls020WriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-	ls020SetXY(5, 32);
+	ls020SetXY(4, 72);
 	ls020WriteString((uint8_t*)"Cmd = ");
 	ls020WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
-	ls020SetXY(0, 48);
-	ls020WriteString((uint8_t*)"Buttons:");
-	ls020SetXY(5, 56);
+	ls020SetXY(6, 104);
+	ls020WriteString((uint8_t*)"Btn = ");
 	ls020WriteString(mkNumString(BTN_PIN, 8, '0', 2));
 #endif
 
@@ -480,11 +476,11 @@ void showRadio(uint8_t num)
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
 
 	/* Station number */
+	ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
+	ls020SetXY(124, 96);
 	if (num) {
-		showParValue(num);
+		ls020WriteString(mkNumString(num, 3, ' ', 10));
 	} else {
-		ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
-		ls020SetXY(100, 96);
 		ls020WriteString((uint8_t*)" --");
 	}
 #endif
@@ -514,9 +510,9 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 		writeStringEeprom(txtLabels[LABEL_OFF]);
 #elif defined(LS020)
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-	ls020SetXY(0, 0);
+	ls020SetXY(4, 0);
 	writeStringEeprom(parLabel);
-	ls020SetXY(0, 32);
+	ls020SetXY(4, 32);
 	if (value)
 		writeStringEeprom(txtLabels[LABEL_ON]);
 	else
