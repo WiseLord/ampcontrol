@@ -3,6 +3,8 @@
 
 #include "ls020.h"
 
+#define LS020_ROTATE_180
+
 const uint8_t *_font;
 static uint8_t fp[FONT_PARAM_COUNT];
 static uint8_t _x, _y;
@@ -65,10 +67,17 @@ static void ls020WriteData(uint8_t data)
 static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
 	ls020WriteCommand(0x0504); /* Set Direction */
+#ifdef LS020_ROTATE_180
+	ls020WriteCommand(0x0800 + LS020_WIDTH - 1 - y1);
+	ls020WriteCommand(0x0900 + LS020_HEIGHT - 1 - y0);
+	ls020WriteCommand(0x0A00 + x0);
+	ls020WriteCommand(0x0B00 + x1);
+#else
 	ls020WriteCommand(0x0800 + y0);
 	ls020WriteCommand(0x0900 + y1);
 	ls020WriteCommand(0x0A00 + LS020_HEIGHT - 1 - x1);
 	ls020WriteCommand(0x0B00 + LS020_HEIGHT - 1 - x0);
+#endif
 }
 
 void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
@@ -192,12 +201,20 @@ void ls020WriteChar(uint8_t code)
 	LS020_PORT &= ~LS020_CS;
 	for (k = 0; k < fp[FONT_HEIGHT]; k++) {
 		for (j = 0; j < swd; j++) {
+#ifdef LS020_ROTATE_180
+			pgmData[j] = pgm_read_word(_font + oft + ((fp[FONT_HEIGHT] - k - 1)) * swd + j);
+#else
 			pgmData[j] = pgm_read_word(_font + oft + (k + 1) * swd - j - 1);
+#endif
 		}
 		for(i = 0; i < 8; i++) {
 			for (my = 0; my < fp[FONT_MULT]; my++) {
 				for (j = 0; j < swd; j++) {
+#ifdef LS020_ROTATE_180
+					if (pgmData[j] & (1<<(7 - i))) {
+#else
 					if (pgmData[j] & (1<<i)) {
+#endif
 						for (mx = 0; mx < fp[FONT_MULT]; mx++)
 							ls020WriteData(fp[FONT_COLOR]);
 					} else {
