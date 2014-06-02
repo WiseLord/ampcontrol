@@ -6,7 +6,6 @@
 #include "eeprom.h"
 #include "input.h"
 #include "tuner.h"
-#include "fft.h"
 
 uint8_t backlight;										/* Backlight */
 uint8_t spMode;											/* Spectrum mode */
@@ -686,19 +685,6 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
-#if defined(LS020)
-static uint8_t valPrev[FFT_SIZE];
-
-void clearSpBufPrev(void)
-{
-	uint8_t i;
-
-	for (i = 0; i < FFT_SIZE; i++) {
-		valPrev[i] = 0;
-	}
-}
-#endif
-
 void drawSpectrum(uint8_t *buf)
 {
 #if defined(KS0108)
@@ -773,26 +759,16 @@ void drawSpectrum(uint8_t *buf)
 		switch (spMode) {
 		case SP_MODE_STEREO:
 			val = buf[i] * 2;
-			if (val - valPrev[i] > 0)
-				ls020DrawRect(2 + i * 6, 2 + (63 - val), 5 + i * 6, 2 + (63 - valPrev[i]) + 1, COLOR_YELLOW);
-			else
-				ls020DrawRect(2 + i * 6, 2 + (63 - valPrev[i]), 5 + i * 6, 2 + (63 - val) + 1, COLOR_BCKG);
-			valPrev[i] = val;
-
+			ls020DrawRect(2 + i * 6, 2, 5 + i * 6, 2 + (63 - val) - 1, COLOR_BCKG);
+			ls020DrawRect(2 + i * 6, 2 + (63 - val), 5 + i * 6, 65, COLOR_YELLOW);
 			val = buf[i + 32] * 2;
-			if (val - valPrev[i + 32] > 0)
-				ls020DrawRect(2 + i * 6, 2 + (127 - val), 5 + i * 6, 2 + (127 - valPrev[i + 32]) + 1, COLOR_YELLOW);
-			else
-				ls020DrawRect(2 + i * 6, 2 + (127 - valPrev[i + 32]), 5 + i * 6, 2 + (127 - val) + 1, COLOR_BCKG);
-			valPrev[i + 32] = val;
+			ls020DrawRect(2 + i * 6, 2 + 64, 5 + i * 6, 2 + (63 - val) - 1 + 64, COLOR_BCKG);
+			ls020DrawRect(2 + i * 6, 2 + (63 - val) + 64, 5 + i * 6, 65 + 64, COLOR_YELLOW);
 			break;
 		default:
 			val = (buf[i] + buf[i + 32]) * 2;
-			if (val - valPrev[i] > 0)
-				ls020DrawRect(2 + i * 6, 2 + (127 - val), 5 + i * 6, 2 + (127 - valPrev[i]) + 1, COLOR_YELLOW);
-			else
-				ls020DrawRect(2 + i * 6, 2 + (127 - valPrev[i]), 5 + i * 6, 2 + (127 - val) + 1, COLOR_BCKG);
-			valPrev[i] = val;
+			ls020DrawRect(2 + i * 6, 2, 5 + i * 6, 2 + (127 - val) - 1, COLOR_BCKG);
+			ls020DrawRect(2 + i * 6, 2 + (127 - val), 5 + i * 6, 129, COLOR_YELLOW);
 			break;
 		}
 	}

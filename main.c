@@ -366,13 +366,8 @@ int main(void)
 		}
 
 		/* Clear screen if mode has changed */
-		if (dispMode != dispModePrev) {
+		if (dispMode != dispModePrev)
 			clearDisplay();
-#if defined(LS020)
-			if (dispMode == MODE_SPECTRUM)
-				clearSpBufPrev();
-#endif
-		}
 
 		/* Show things */
 		switch (dispMode) {
