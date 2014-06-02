@@ -165,11 +165,15 @@ ISR (TIMER2_COMP_vect)
 			togBitNow = 0;
 
 		rc5Cmd = rc5Buf &= RC5_COMM_MASK;
-		if ((togBitNow != togBitPrev) || (rc5Timer > 1000) ||
-		    (rc5Cmd == rcCode[CMD_RC5_VOL_UP] ||
-		     rc5Cmd == rcCode[CMD_RC5_VOL_DOWN])) {
+		if ((togBitNow != togBitPrev) || (rc5Timer > 800)) {
 			rc5Timer = 0;
 			rc5CmdBuf = rc5CmdIndex(rc5Cmd);
+		}
+		if (rc5Cmd == rcCode[CMD_RC5_VOL_UP] || rc5Cmd == rcCode[CMD_RC5_VOL_DOWN]) {
+			if (rc5Timer > 400) {
+				rc5Timer = 360;
+				rc5CmdBuf = rc5CmdIndex(rc5Cmd);
+			}
 		}
 		togBitPrev = togBitNow;
 	}
