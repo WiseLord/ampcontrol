@@ -279,27 +279,26 @@ int main(void)
 		case CMD_RC5_FM_DEC:
 		case CMD_RC5_CHAN_UP:
 		case CMD_RC5_CHAN_DOWN:
-			if (getChan() == 0) {
-				if (dispMode == MODE_FM_RADIO) {
-					switch (cmd) {
-					case CMD_RC5_FM_INC:
-						tunerSetFreq(freqFM + 10);
-						break;
-					case CMD_RC5_FM_DEC:
-						tunerSetFreq(freqFM - 10);
-						break;
-					case CMD_RC5_CHAN_UP:
-					case CMD_RC5_CHAN_DOWN:
-						direction = SEARCH_UP;
-						if (cmd == CMD_RC5_CHAN_DOWN)
-							direction = SEARCH_DOWN;
-						scanStoredFreq(freqFM, direction);
-						break;
-					}
+			setChan(0);
+			if (dispMode == MODE_FM_RADIO) {
+				switch (cmd) {
+				case CMD_RC5_FM_INC:
+					tunerSetFreq(freqFM + 10);
+					break;
+				case CMD_RC5_FM_DEC:
+					tunerSetFreq(freqFM - 10);
+					break;
+				case CMD_RC5_CHAN_UP:
+				case CMD_RC5_CHAN_DOWN:
+					direction = SEARCH_UP;
+					if (cmd == CMD_RC5_CHAN_DOWN)
+						direction = SEARCH_DOWN;
+					scanStoredFreq(freqFM, direction);
+					break;
 				}
-				dispMode = MODE_FM_RADIO;
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			}
+			dispMode = MODE_FM_RADIO;
+			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
 		case CMD_RC5_1:
 		case CMD_RC5_2:
@@ -311,11 +310,10 @@ int main(void)
 		case CMD_RC5_8:
 		case CMD_RC5_9:
 		case CMD_RC5_0:
-			if (getChan() == 0) {
-				loadStation(cmd - CMD_RC5_1);
-				dispMode = MODE_FM_RADIO;
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			}
+			setChan(0);
+			loadStation(cmd - CMD_RC5_1);
+			dispMode = MODE_FM_RADIO;
+			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
 		}
 
