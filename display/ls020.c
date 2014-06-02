@@ -29,17 +29,17 @@ const uint16_t init4[3] PROGMEM = {
 	0x8001, 0xEF90, 0x0000
 };
 
-const uint16_t power[26] PROGMEM = {
-	0xEF00, 0x7E04, 0xEFB0, 0x5A48,
-	0xEF00, 0x7F01, 0xEFB0, 0x64FF,
-	0x6500, 0xEF00, 0x7F01, 0xE262,
-	0xE202, 0xEFB0, 0xBC02, 0xEF00,
-	0x7F01, 0xE200, 0x8000, 0xE204,
-	0xE200, 0xE100, 0xEFB0, 0xBC00,
-	0xEF00, 0x7F01
-};
+//const uint16_t power[26] PROGMEM = {
+//	0xEF00, 0x7E04, 0xEFB0, 0x5A48,
+//	0xEF00, 0x7F01, 0xEFB0, 0x64FF,
+//	0x6500, 0xEF00, 0x7F01, 0xE262,
+//	0xE202, 0xEFB0, 0xBC02, 0xEF00,
+//	0x7F01, 0xE200, 0x8000, 0xE204,
+//	0xE200, 0xE100, 0xEFB0, 0xBC00,
+//	0xEF00, 0x7F01
+//};
 
-void ls020WriteCommand(uint16_t command)
+static void ls020WriteCommand(uint16_t command)
 { 
 	LS020_PORT |= LS020_RS;
 	LS020_PORT &= ~LS020_CS;
@@ -54,7 +54,7 @@ void ls020WriteCommand(uint16_t command)
 	return;
 }
 
-void ls020WriteData(uint8_t data)
+static void ls020WriteData(uint8_t data)
 {
 	SPDR = data;
 	while(!(SPSR & (1<<SPIF)));
@@ -62,7 +62,7 @@ void ls020WriteData(uint8_t data)
 	return;
 }
 
-void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
+static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
 	ls020WriteCommand(0x0504); /* Set Direction */
 	ls020WriteCommand(0x0800 + y0);
@@ -134,15 +134,15 @@ void ls020Init(void)
 	return;
 }
 
-void ls020PowerOff(void)
-{
-	uint8_t i;
+//void ls020PowerOff(void)
+//{
+//	uint8_t i;
 
-	for (i = 0; i < 26; i++)
-		ls020WriteCommand(pgm_read_word(power + i));
+//	for (i = 0; i < 26; i++)
+//		ls020WriteCommand(pgm_read_word(power + i));
 
-	return;
-}
+//	return;
+//}
 
 void ls020SetXY(uint8_t x, uint8_t y)
 {

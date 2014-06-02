@@ -43,17 +43,11 @@ enum {
 
 void ls020Init();
 
-void ls020PowerOff (void);
-
-void ls020WriteCommand(uint16_t command);
-
-void ls020WriteData(uint8_t data);
+//void ls020PowerOff (void);
 
 void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color);
 
 void ls020FillScreen(uint8_t color);
-
-void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1);
 
 void ls020SetXY(uint8_t x, uint8_t y);
 
@@ -62,9 +56,5 @@ void ls020LoadFont(const uint8_t *font, uint8_t color, uint8_t mult);
 void ls020WriteChar(uint8_t code);
 
 void ls020WriteString(uint8_t *string);
-
-void ls020DrawImage(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint16_t *pic);
-
-void ls020DrawImageMono(uint8_t x, uint8_t y, uint8_t w, uint8_t h, const uint8_t *pic);
 
 #endif /* _LCD_H */
