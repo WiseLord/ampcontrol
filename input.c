@@ -151,6 +151,8 @@ ISR (TIMER2_COMP_vect)
 	uint16_t rc5Buf = getRC5RawBuf();
 	if (rc5Buf != RC5_BUF_EMPTY)
 		rc5SaveBuf = rc5Buf;
+	else
+		return;
 
 	static uint8_t togBitNow = 0;
 	static uint8_t togBitPrev = 0;
