@@ -31,19 +31,19 @@ static uint8_t ks0066readStrob()
 	asm("nop");
 	pin = KS0066_DATA_PIN;
 	KS0066_CTRL_PORT &= ~KS0066_E;
-#ifdef LCD_4BIT_MODE
+#ifdef KS0066_4BIT_MODE
 	asm("nop");	/* 230ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
-	LCD_CONTROL_PORT |= LCD_E;
+	KS0066_CTRL_PORT |= KS0066_E;
 	asm("nop");	/* 230ns */
 	asm("nop");
 	asm("nop");
 	asm("nop");
 	pin &= 0xF0;
-	pin |= swap(LCD_DATA_PIN);
-	LCD_CONTROL_PORT &= ~LCD_E;
+	pin |= swap(KS0066_DATA_PIN);
+	KS0066_CTRL_PORT &= ~KS0066_E;
 #endif
 
 	return pin;
@@ -56,8 +56,8 @@ static void ks0066waitWhileBusy()
 	KS0066_CTRL_PORT &= ~KS0066_RS;
 	KS0066_CTRL_PORT |= KS0066_RW;
 
-#ifdef LCD_4BIT_MODE
-	LCD_DATA_DDR &= 0x0F;
+#ifdef KS0066_4BIT_MODE
+	KS0066_DATA_DDR &= 0x0F;
 #else
 	KS0066_DATA_DDR = 0x00;
 #endif
@@ -76,13 +76,13 @@ void ks0066WriteCommand(uint8_t command)
 
 	KS0066_CTRL_PORT &= ~(KS0066_RS | KS0066_RW);
 
-#ifdef LCD_4BIT_MODE
-	LCD_DATA_DDR |= 0xF0;
-	LCD_DATA_PORT &= 0x0F;
-	LCD_DATA_PORT |= (command & 0xF0);
-	writeStrob();
-	LCD_DATA_PORT &= 0x0F;
-	LCD_DATA_PORT |= (swap(command) & 0xF0);
+#ifdef KS0066_4BIT_MODE
+	KS0066_DATA_DDR |= 0xF0;
+	KS0066_DATA_PORT &= 0x0F;
+	KS0066_DATA_PORT |= (command & 0xF0);
+	ks0066writeStrob();
+	KS0066_DATA_PORT &= 0x0F;
+	KS0066_DATA_PORT |= (swap(command) & 0xF0);
 #else
 	KS0066_DATA_DDR |= 0xFF;
 	KS0066_DATA_PORT = command;
@@ -100,13 +100,13 @@ void ks0066WriteData(uint8_t data)
 	KS0066_CTRL_PORT &= ~KS0066_RW;
 	KS0066_CTRL_PORT |= KS0066_RS;
 
-#ifdef LCD_4BIT_MODE
-	LCD_DATA_DDR |= 0xF0;
-	LCD_DATA_PORT &= 0x0F;
-	LCD_DATA_PORT |= (data & 0xF0);
-	writeStrob();
-	LCD_DATA_PORT &= 0x0F;
-	LCD_DATA_PORT |= (swap(data) & 0xF0);
+#ifdef KS0066_4BIT_MODE
+	KS0066_DATA_DDR |= 0xF0;
+	KS0066_DATA_PORT &= 0x0F;
+	KS0066_DATA_PORT |= (data & 0xF0);
+	ks0066writeStrob();
+	KS0066_DATA_PORT &= 0x0F;
+	KS0066_DATA_PORT |= (swap(data) & 0xF0);
 #else
 	KS0066_DATA_DDR |= 0xFF;
 	KS0066_DATA_PORT = data;
@@ -139,8 +139,9 @@ void ks0066Init(void)
 	_delay_us(120);
 	ks0066writeStrob();
 
-#ifdef LCD_4BIT_MODE
-	lcdWriteCommand(KS0066_FUNCTION | KS0066_4BIT | KS0066_2LINES);
+#ifdef KS0066_4BIT_MODE
+	ks0066WriteCommand(swap(KS0066_FUNCTION | KS0066_4BIT));
+	ks0066WriteCommand(KS0066_FUNCTION | KS0066_4BIT | KS0066_2LINES);
 #else
 	ks0066WriteCommand(KS0066_FUNCTION | KS0066_8BIT | KS0066_2LINES);
 #endif
