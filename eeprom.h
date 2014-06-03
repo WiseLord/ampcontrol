@@ -30,6 +30,7 @@
 
 #define eepromFMFreq	((void*)0x2C)
 #define eepromFMCtrl	((void*)0x2E)
+#define eepromFMMono	((void*)0x2F)
 
 #define eepromRC5Addr	((void*)0x3C)
 

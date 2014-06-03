@@ -315,6 +315,13 @@ int main(void)
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
+		case CMD_RC5_FM_MONO:
+			if (getChan() == 0) {
+				tunerSwitchMono();
+				dispMode = MODE_FM_RADIO;
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			}
+			break;
 		}
 
 		/* Emulate RC5 VOL_UP/VOL_DOWN as encoder actions */

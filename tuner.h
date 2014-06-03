@@ -19,6 +19,9 @@
 #define SEARCH_DOWN		0
 #define SEARCH_UP		1
 
+#define FM_MONO					1
+#define FM_STEREO				0
+
 #define FM_FREQ_MIN		8750
 #define FM_FREQ_MAX		10800
 
@@ -27,6 +30,7 @@ void tunerSetFreq(uint16_t freq);
 
 void tunerReadStatus();
 uint16_t tunerGetFreq();
+void tunerSwitchMono();
 uint8_t tunerReady();
 uint8_t tunerStereo();
 uint8_t tunerLevel();

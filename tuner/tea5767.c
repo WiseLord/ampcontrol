@@ -34,7 +34,7 @@ static void tea5767WriteI2C(uint8_t *buf)
 	return;
 }
 
-void tea5767SetFreq(uint16_t freq)
+void tea5767SetFreq(uint16_t freq, uint8_t mono)
 {
 	uint8_t buf[5];
 	uint16_t div;
@@ -51,6 +51,8 @@ void tea5767SetFreq(uint16_t freq)
 	buf[1] = div & 0xff;
 
 	buf[2] = TEA5767_HLSI;
+	if (mono)
+		buf[2] |= TEA5767_MS;
 
 	buf[3] = 0;
 	if (ctrl & TEA5767_HCC_CTRL)
