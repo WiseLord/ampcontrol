@@ -151,8 +151,7 @@ ISR (TIMER2_COMP_vect)
 	uint16_t rc5Buf = getRC5RawBuf();
 	if (rc5Buf != RC5_BUF_EMPTY)
 		rc5SaveBuf = rc5Buf;
-	else
-		return;
+
 
 	static uint8_t togBitNow = 0;
 	static uint8_t togBitPrev = 0;
@@ -160,13 +159,13 @@ ISR (TIMER2_COMP_vect)
 	uint8_t rc5CmdBuf = CMD_EMPTY;
 	uint8_t rc5Cmd;
 
-	if ((rc5Buf & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr) {
+	if ((rc5Buf != RC5_BUF_EMPTY) && ((rc5Buf & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr)) {
 		if (rc5Buf & RC5_TOGB_MASK)
 			togBitNow = 1;
 		else
 			togBitNow = 0;
 
-		rc5Cmd = rc5Buf &= RC5_COMM_MASK;
+		rc5Cmd = rc5Buf & RC5_COMM_MASK;
 		if ((togBitNow != togBitPrev) || (rc5Timer > 800)) {
 			rc5Timer = 0;
 			rc5CmdBuf = rc5CmdIndex(rc5Cmd);
