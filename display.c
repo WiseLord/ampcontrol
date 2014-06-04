@@ -460,16 +460,13 @@ void showRadio(uint8_t num)
 	ls020WriteString((uint8_t*)"\x7F.\x7F");
 	ls020WriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
 
-	/* Signal level */
-	ls020DrawRect(150, 12, 150 + 15 - 1, 20, COLOR_CYAN);
-
 	/* Stereo indicator */
 	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-	ls020SetXY(120, 12);
+	ls020SetXY(132, 12);
 	if (tunerStereo())
-		ls020WriteString((uint8_t*)"ST");
+		ls020WriteString((uint8_t*)"STEREO");
 	else
-		ls020WriteString((uint8_t*)"  ");
+		ls020WriteString((uint8_t*)"      ");
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
