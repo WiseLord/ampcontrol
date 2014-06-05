@@ -7,7 +7,7 @@
 #include "audio.h"
 
 /* Graphics (ks0108-based) or character (ks0066-based) display selection  */
-#if !defined(KS0108) && !defined(KS0066) && !defined(LS020)
+#if !defined(KS0108) && !defined(KS0066) && !defined(LS020) && !defined(PCF8574)
 #define KS0108
 #endif
 
@@ -17,6 +17,8 @@
 #include "display/ks0066.h"
 #elif defined(LS020)
 #include "display/ls020.h"
+#elif defined(PCF8574)
+#include "display/pcf8574.h"
 #endif
 
 /* Spectrum output mode */

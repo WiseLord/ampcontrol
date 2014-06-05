@@ -25,7 +25,7 @@ void setDefDisplay(uint8_t value)
 	return;
 }
 
-#if defined(KS0066)
+#if defined(KS0066) || defined(PCF8574)
 static uint8_t userSybmols = LCD_LEVELS;
 #endif
 
@@ -38,7 +38,7 @@ static void writeStringEeprom(const uint8_t *string)
 
 #if defined(KS0108)
 	ks0108WriteString(strbuf);
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	ks0066WriteString(strbuf);
 #elif defined(LS020)
 	ls020WriteString(strbuf);
@@ -47,7 +47,7 @@ static void writeStringEeprom(const uint8_t *string)
 	return;
 }
 
-#if defined(KS0066)
+#if defined(KS0066) || defined(PCF8574)
 static void lcdGenLevels(void)
 {
 	ks0066WriteCommand(KS0066_SET_CGRAM);
@@ -101,7 +101,7 @@ void displayInit()
 #if defined(KS0108)
 	ks0108Init();
 	ks0108LoadFont(font_ks0066_ru_08, 1);
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	ks0066Init();
 	lcdGenLevels();
 #elif defined(LS020)
@@ -116,7 +116,7 @@ void clearDisplay()
 {
 #if defined(KS0108)
 	ks0108Fill(0x00);
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	ks0066Clear();
 #elif defined(LS020)
 	ls020FillScreen(COLOR_BCKG);
@@ -183,7 +183,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			ks0108WriteData(data);
 		}
 	}
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	uint8_t i;
 
 	if (userSybmols != LCD_BAR) {
@@ -276,7 +276,7 @@ static void showParValue(int8_t value)
 	ks0108SetXY(93, 4);
 	ks0108WriteString(mkNumString(value, 3, ' ', 10));
 	ks0108LoadFont(font_ks0066_ru_08, 1);
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	ks0066SetXY(11, 0);
 	ks0066WriteString(mkNumString(value, 3, ' ', 10));
 #elif defined(LS020)
@@ -297,7 +297,7 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 	ks0108LoadFont(font_ks0066_ru_08, 1);
 	ks0108SetXY(116, 7);
 	writeStringEeprom(txtLabels[LABEL_DB]);
-#elif defined (KS0066)
+#elif defined (KS0066) || defined(PCF8574)
 	ks0066SetXY(0, 0);
 	writeStringEeprom(parLabel);
 	ks0066SetXY(14, 0);
@@ -335,7 +335,7 @@ void showRC5Info(uint16_t rc5Buf)
 	ks0108WriteString((uint8_t*)"Buttons:");
 	ks0108SetXY(5, 7);
 	ks0108WriteString(mkNumString(BTN_PIN, 8, '0', 2));
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	ks0066SetXY(0, 0);
 	ks0066WriteString((uint8_t*)"R=");
 	ks0066WriteString(mkNumString(rc5Buf, 14, '0', 2));
@@ -412,7 +412,7 @@ void showRadio(uint8_t num)
 		ks0108WriteString((uint8_t*)" --");
 		ks0108LoadFont(font_ks0066_ru_08, 1);
 	}
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	uint8_t lev;
 
 	/* Frequency value */
@@ -496,7 +496,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	else
 		writeStringEeprom(txtLabels[LABEL_OFF]);
 	ks0108LoadFont(font_ks0066_ru_08, 1);
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	ks0066SetXY(0, 0);
 	writeStringEeprom(parLabel);
 	ks0066SetXY(1, 1);
@@ -581,7 +581,7 @@ void showTime(uint8_t **txtLabels)
 	ks0108LoadFont(font_ks0066_ru_08, 1);
 	ks0108SetXY(32, 7);
 
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	ks0066SetXY(0, 0);
 
 	ks0066WriteString(mkNumString(getTime(HOUR), 2, '0', 10));
@@ -649,7 +649,7 @@ void showTime(uint8_t **txtLabels)
 		break;
 	}
 
-#if defined(KS0066)
+#if defined(KS0066) || defined(PCF8574)
 	if (getEtm() == NOEDIT) {
 		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
 	} else {
@@ -718,7 +718,7 @@ void drawSpectrum(uint8_t *buf)
 				ks0108WriteData(0x00);
 		}
 	}
-#elif defined(KS0066)
+#elif defined(KS0066) || defined(PCF8574)
 	uint8_t i;
 	uint8_t lcdBuf[16];
 
@@ -796,11 +796,14 @@ void saveDisplayParams(void)
 /* Turn on/off backlight */
 void setBacklight(int8_t backlight)
 {
+#if defined(PCF8574)
+	ks0066Backlight(backlight);
+#else
 	if (backlight)
 		DISPLAY_BCKL_PORT |= DISPLAY_BCKL;
 	else
 		DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;
-
+#endif
 	return;
 }
 

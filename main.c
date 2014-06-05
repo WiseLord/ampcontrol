@@ -45,7 +45,7 @@ void powerOff(void)
 	STMU_PORT &= ~MUTE;
 	_delay_ms(50);
 	STMU_PORT &= ~STDBY;
-	DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;
+	setBacklight(BACKLIGHT_OFF);
 	stopEditTime();
 	muteVolume();
 	saveParams();

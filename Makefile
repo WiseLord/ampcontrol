@@ -20,13 +20,15 @@ ifeq ($(DISPLAY), KS0108)
 else ifeq ($(DISPLAY), KS0066)
   DISP_SRC = display/ks0066.c
 else ifeq ($(DISPLAY), LS020)
-DISP_SRC = $(addprefix display/, ls020.c $(FONTS))
+  DISP_SRC = $(addprefix display/, ls020.c $(FONTS))
+else ifeq ($(DISPLAY), PCF8574)
+  DISP_SRC = display/pcf8574.c
 endif
 
 ifeq ($(TUNER), TEA5767)
   TUNER_SRC = tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
-TUNER_SRC = tuner/tux032.c
+  TUNER_SRC = tuner/tux032.c
 endif
 
 SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(TUNER_SRC)
