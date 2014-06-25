@@ -82,7 +82,7 @@ enum {
 	CMD_BTN_5_LONG,
 	CMD_BTN_TESTMODE,
 
-	CMD_EMPTY = 0xFF
+	CMD_EMPTY = 0xEF
 };
 
 // Handling long press actions */

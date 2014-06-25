@@ -37,21 +37,18 @@ SRCS_VAR = main.c audio.c display.c tuner.c
 MCU = atmega16
 F_CPU = 16000000L
 
-#CS = -fexec-charset=ks0066-ru
-
-OPTIMIZE = -Os -mcall-prologues
-CFLAGS = -g -Wall -Werror -lm $(OPTIMIZE) $(CS) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
-LDFLAGS = -g -Wall -Werror -mmcu=$(MCU)
+OPTIMIZE = -Os -mcall-prologues -fshort-enums
+DEBUG = -g -Wall -Werror
+CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+LDFLAGS = $(DEBUG) -mmcu=$(MCU)
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 
 AVRDUDE = avrdude
-AD_MCU = -p m16
+AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
-#AD_PROG = -c usbasp
-#AD_PORT = -P usbasp
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
