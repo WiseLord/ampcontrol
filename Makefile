@@ -65,8 +65,7 @@ $(TARG): $(OBJS)
 	$(CC) $(LDFLAGS) -o $@.elf $(OBJS) -lm
 	mkdir -p flash
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf flash/$@.hex
-	$(OBJCOPY) -O binary -R .eeprom -R .nwram  $@.elf $@.bin
-	echo; wc -c $@.bin; echo; rm -f $@.bin $@.elf
+	./size.sh $@.elf
 
 %.o: %.c
 	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<

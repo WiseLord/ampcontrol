@@ -182,6 +182,7 @@ void loadTunerParams(uint16_t *freq)
 
 #if defined(TUX032)
 	tux032ExitStby();
+	tux032SetFreq(*freq);
 #elif defined(TEA5767)
 	tea5767SetFreq(*freq, monoFM);
 #endif
