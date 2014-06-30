@@ -17,10 +17,6 @@
 #include "display/pcf8574.h"
 #endif
 
-/* Spectrum output mode */
-#define SP_MODE_STEREO			0
-#define SP_MODE_MIXED			1
-
 /* Timers fo different screens */
 #define DISPLAY_TIME_TEST		20
 #define DISPLAY_TIME_GAIN		3

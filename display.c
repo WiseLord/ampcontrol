@@ -12,6 +12,8 @@ uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
 
 uint8_t defDisplay = MODE_SPECTRUM;						/* Default display */
 
+static uint8_t userSybmols = LCD_LEVELS;
+
 uint8_t getDefDisplay()
 {
 	return defDisplay;
@@ -23,10 +25,6 @@ void setDefDisplay(uint8_t value)
 
 	return;
 }
-
-#if defined(KS0066) || defined(PCF8574)
-static uint8_t userSybmols = LCD_LEVELS;
-#endif
 
 static void writeStringEeprom(const uint8_t *string)
 {
@@ -74,15 +72,6 @@ static void lcdGenBar(void)
 			ks0066WriteData(pos[i>>3]);
 		}
 	}
-	/* Stereo indicator */
-	ks0066WriteData(0b00000000);
-	ks0066WriteData(0b00011011);
-	ks0066WriteData(0b00010101);
-	ks0066WriteData(0b00010101);
-	ks0066WriteData(0b00010101);
-	ks0066WriteData(0b00011011);
-	ks0066WriteData(0b00000000);
-	ks0066WriteData(0b00000000);
 
 	return;
 }
@@ -255,7 +244,7 @@ void showRadio(uint8_t num)
 	/* Stereo indicator */
 	ks0066SetXY(9, 0);
 	if (tunerStereo())
-		ks0066WriteString((uint8_t*)"\x06");
+		ks0066WriteString((uint8_t*)"S");
 	else
 		ks0066WriteString((uint8_t*)" ");
 
@@ -307,50 +296,36 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 	return;
 }
 
+static void drawTm(timeMode tm)
+{
+	ks0066WriteString(mkNumString(getTime(tm), 2, '0', 10));
+
+	return;
+}
+
 void showTime(uint8_t **txtLabels)
 {
 	readTime();
 	ks0066SetXY(0, 0);
 
-	ks0066WriteString(mkNumString(getTime(HOUR), 2, '0', 10));
+	drawTm(HOUR);
 	ks0066WriteData(':');
-	ks0066WriteString(mkNumString(getTime(MIN), 2, '0', 10));
+	drawTm(MIN);
 	ks0066WriteData(':');
-	ks0066WriteString(mkNumString(getTime(SEC), 2, '0', 10));
+	drawTm(SEC);
 
 	ks0066SetXY(11, 0);
-	ks0066WriteString(mkNumString(getTime(DAY), 2, '0', 10));
+	drawTm(DAY);
 	ks0066WriteData('.');
-	ks0066WriteString(mkNumString(getTime(MONTH), 2, '0', 10));
+	drawTm(MONTH);
 
 	ks0066SetXY(12, 1);
-	ks0066WriteString(mkNumString(2000 + getTime(YEAR), 4, '0', 10));
+	ks0066WriteString((uint8_t*)"20");
+	drawTm(YEAR);
 
 	ks0066SetXY(0, 1);
 
-	switch (getTime(WEEK)) {
-	case 1:
-		writeStringEeprom(txtLabels[LABEL_THUESDAY]);
-		break;
-	case 2:
-		writeStringEeprom(txtLabels[LABEL_WEDNESDAY]);
-		break;
-	case 3:
-		writeStringEeprom(txtLabels[LABEL_THURSDAY]);
-		break;
-	case 4:
-		writeStringEeprom(txtLabels[LABEL_FRIDAY]);
-		break;
-	case 5:
-		writeStringEeprom(txtLabels[LABEL_SADURDAY]);
-		break;
-	case 6:
-		writeStringEeprom(txtLabels[LABEL_SUNDAY]);
-		break;
-	case 7:
-		writeStringEeprom(txtLabels[LABEL_MONDAY]);
-		break;
-	}
+	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
 
 	if (getEtm() == NOEDIT) {
 		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
