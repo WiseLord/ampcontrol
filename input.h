@@ -8,11 +8,11 @@
 #define BTN_PIN			PIND
 #define BTN_PORT		PORTD
 
-#define BTN_5		(1<<PD7)
-#define BTN_2		(1<<PD4)
-#define BTN_3		(1<<PD5)
-#define BTN_4		(1<<PD6)
-#define BTN_1		(1<<PD0)
+#define BTN_5			(1<<PD7)
+#define BTN_2			(1<<PD4)
+#define BTN_3			(1<<PD5)
+#define BTN_4			(1<<PD6)
+#define BTN_1			(1<<PD0)
 
 #define BTN_TEST_INPUT	(BTN_1 | BTN_2)
 #define BTN_MASK		(BTN_1 | BTN_2 | BTN_3 | BTN_4 | BTN_5)
@@ -31,8 +31,8 @@
 #define STMU_DDR		DDRC
 #define STMU_PORT		PORTC
 
-#define MUTE			(1<<PC5)
-#define STDBY			(1<<PC6)
+#define MUTE			(1<<PC2)
+#define STDBY			(1<<PC3)
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31

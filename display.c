@@ -92,7 +92,7 @@ void displayInit()
 	ks0066Init();
 	lcdGenLevels();
 
-	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
+	KS0066_BCKL_DDR |= KS0066_BCKL;
 
 	return;
 }
@@ -442,9 +442,9 @@ void setBacklight(int8_t backlight)
 	ks0066Backlight(backlight);
 #else
 	if (backlight)
-		DISPLAY_BCKL_PORT |= DISPLAY_BCKL;
+		KS0066_BCKL_PORT |= KS0066_BCKL;
 	else
-		DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;
+		KS0066_BCKL_PORT &= ~KS0066_BCKL;
 #endif
 	return;
 }

@@ -8,12 +8,9 @@
 
 static void ks0066writeStrob()
 {
-	asm("nop");	/* 40ns */
+	_delay_us(0.05);
 	KS0066_CTRL_PORT |= KS0066_E;
-	asm("nop");	/* 230ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
+	_delay_us(0.25);
 	KS0066_CTRL_PORT &= ~KS0066_E;
 
 	return;
@@ -23,28 +20,16 @@ static uint8_t ks0066readStrob()
 {
 	uint8_t pin;
 
-	asm("nop");	/* 40ns */
+	_delay_us(0.05);
 	KS0066_CTRL_PORT |= KS0066_E;
-	asm("nop");	/* 230ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	pin = KS0066_DATA_PIN;
+	_delay_us(0.25);
+	pin = swap(KS0066_DATA_PIN & 0x0F);
 	KS0066_CTRL_PORT &= ~KS0066_E;
-#ifdef KS0066_4BIT_MODE
-	asm("nop");	/* 230ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
+	_delay_us(0.25);
 	KS0066_CTRL_PORT |= KS0066_E;
-	asm("nop");	/* 230ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	pin &= 0xF0;
-	pin |= swap(KS0066_DATA_PIN);
+	_delay_us(0.25);
+	pin |= (KS0066_DATA_PIN & 0x0F);
 	KS0066_CTRL_PORT &= ~KS0066_E;
-#endif
 
 	return pin;
 }
@@ -56,11 +41,7 @@ static void ks0066waitWhileBusy()
 	KS0066_CTRL_PORT &= ~KS0066_RS;
 	KS0066_CTRL_PORT |= KS0066_RW;
 
-#ifdef KS0066_4BIT_MODE
 	KS0066_DATA_DDR &= 0x0F;
-#else
-	KS0066_DATA_DDR = 0x00;
-#endif
 
 	while (ks0066readStrob() & KS0066_STA_BUSY) {
 		if (i++ > 200)	/* Avoid endless loop */
@@ -76,17 +57,12 @@ void ks0066WriteCommand(uint8_t command)
 
 	KS0066_CTRL_PORT &= ~(KS0066_RS | KS0066_RW);
 
-#ifdef KS0066_4BIT_MODE
 	KS0066_DATA_DDR |= 0xF0;
 	KS0066_DATA_PORT &= 0x0F;
 	KS0066_DATA_PORT |= (command & 0xF0);
 	ks0066writeStrob();
 	KS0066_DATA_PORT &= 0x0F;
 	KS0066_DATA_PORT |= (swap(command) & 0xF0);
-#else
-	KS0066_DATA_DDR |= 0xFF;
-	KS0066_DATA_PORT = command;
-#endif
 
 	ks0066writeStrob();
 
@@ -100,17 +76,12 @@ void ks0066WriteData(uint8_t data)
 	KS0066_CTRL_PORT &= ~KS0066_RW;
 	KS0066_CTRL_PORT |= KS0066_RS;
 
-#ifdef KS0066_4BIT_MODE
 	KS0066_DATA_DDR |= 0xF0;
 	KS0066_DATA_PORT &= 0x0F;
 	KS0066_DATA_PORT |= (data & 0xF0);
 	ks0066writeStrob();
 	KS0066_DATA_PORT &= 0x0F;
 	KS0066_DATA_PORT |= (swap(data) & 0xF0);
-#else
-	KS0066_DATA_DDR |= 0xFF;
-	KS0066_DATA_PORT = data;
-#endif
 
 	ks0066writeStrob();
 
@@ -139,12 +110,9 @@ void ks0066Init(void)
 	_delay_us(120);
 	ks0066writeStrob();
 
-#ifdef KS0066_4BIT_MODE
 	ks0066WriteCommand(swap(KS0066_FUNCTION | KS0066_4BIT));
 	ks0066WriteCommand(KS0066_FUNCTION | KS0066_4BIT | KS0066_2LINES);
-#else
-	ks0066WriteCommand(KS0066_FUNCTION | KS0066_8BIT | KS0066_2LINES);
-#endif
+
 	ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
 	ks0066WriteCommand(KS0066_CLEAR);
 	_delay_ms(2);

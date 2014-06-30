@@ -4,20 +4,24 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#define KS0066_4BIT_MODE
-
 /* Data port */
 #define KS0066_DATA_PORT			PORTB
 #define KS0066_DATA_DDR				DDRB
 #define KS0066_DATA_PIN				PINB
 
 /* Control port */
-#define KS0066_CTRL_PORT			PORTA
-#define KS0066_CTRL_DDR				DDRA
+#define KS0066_CTRL_PORT			PORTB
+#define KS0066_CTRL_DDR				DDRB
 
-#define KS0066_E					(1<<PA4)
-#define KS0066_RW					(1<<PA3)
-#define KS0066_RS					(1<<PA2)
+#define KS0066_E					(1<<PB2)
+#define KS0066_RW					(1<<PB1)
+#define KS0066_RS					(1<<PB0)
+
+/* Backlight port */
+#define KS0066_BCKL_DDR				DDRC
+#define KS0066_BCKL_PORT			PORTC
+
+#define KS0066_BCKL					(1<<PB3)
 
 #define KS0066_INIT_DATA			0x30
 
