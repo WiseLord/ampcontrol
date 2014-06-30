@@ -145,6 +145,44 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			}
 		}
 	}
+//	} else {
+//		value = (int16_t)23 * value / max;
+//		if (value >= 0) {
+//			value++;
+//			for (i = 0; i < 7; i++) {
+//				ks0066WriteData(0x00);
+//			}
+//			ks0066WriteData(0x05);
+//			for (i = 0; i < 8; i++) {
+//				if (value / 3 > i) {
+//					ks0066WriteData(0x03);
+//				} else {
+//					if (value / 3 < i) {
+//						ks0066WriteData(0x00);
+//					} else {
+//						ks0066WriteData(value % 3);
+//					}
+//				}
+//			}
+//		} else {
+//			value += 23;
+//			for (i = 0; i < 8; i++) {
+//				if (value / 3 > i) {
+//					ks0066WriteData(0x00);
+//				} else {
+//					if (value / 3 < i) {
+//						ks0066WriteData(0x03);
+//					} else {
+//						ks0066WriteData(value % 3 + 3);
+//					}
+//				}
+//			}
+//			ks0066WriteData(0x01);
+//			for (i = 0; i < 7; i++) {
+//				ks0066WriteData(0x00);
+//			}
+//		}
+//	}
 
 	return;
 }
@@ -321,7 +359,6 @@ void drawSpectrum(uint8_t *buf)
 
 	for (i = 0; i < 16; i++) {
 		lcdBuf[i] = buf[2 * i] + buf[2 * i + 1];
-		lcdBuf[i] = buf[32 + 2 * i] + buf[32 + 2 * i + 1];
 		lcdBuf[i] >>= 2;
 	}
 
@@ -347,7 +384,7 @@ void drawSpectrum(uint8_t *buf)
 void loadDispParams(void)
 {
 	backlight = eeprom_read_byte(eepromBCKL);
-	setBacklight(backlight);
+	ks0066Backlight(backlight);
 	defDisplay = eeprom_read_byte(eepromDisplay);
 
 	return;
@@ -361,25 +398,11 @@ void saveDisplayParams(void)
 	return;
 }
 
-/* Turn on/off backlight */
-void setBacklight(int8_t backlight)
-{
-#if defined(PCF8574)
-	ks0066Backlight(backlight);
-#else
-	if (backlight)
-		KS0066_BCKL_PORT |= KS0066_BCKL;
-	else
-		KS0066_BCKL_PORT &= ~KS0066_BCKL;
-#endif
-	return;
-}
-
 /* Change backlight status */
 void switchBacklight(void)
 {
 	backlight = !backlight;
-	setBacklight(backlight);
+	ks0066Backlight(backlight);
 
 	return;
 }

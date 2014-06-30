@@ -135,3 +135,13 @@ void ks0066WriteString(uint8_t *string)
 
 	return;
 }
+
+void ks0066Backlight(uint8_t bckl)
+{
+	if (bckl)
+		KS0066_BCKL_PORT |= KS0066_BCKL;
+	else
+		KS0066_BCKL_PORT &= ~KS0066_BCKL;
+
+	return;
+}

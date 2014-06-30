@@ -7,8 +7,8 @@
 #include "rc5.h"
 #include "eeprom.h"
 
-static volatile int8_t encCnt;
-static volatile uint8_t cmdBuf;
+static volatile int8_t encCnt = 0;
+static volatile uint8_t cmdBuf = CMD_EMPTY;
 static volatile uint16_t rc5SaveBuf;
 
 static volatile uint16_t displayTime;
@@ -21,26 +21,21 @@ void inputInit()
 	uint8_t i;
 
 	/* Setup buttons and encoders as inputs with pull-up resistors */
-	BTN_DDR &= ~(BTN_MASK);
-	BTN_PORT |= BTN_MASK;
+	INPUT_DDR &= ~(BTN_MASK | ENC_AB);
+	INPUT_PORT |= (BTN_MASK | ENC_AB);
 
-	ENC_DDR &= ~(ENC_AB);
-	ENC_PORT |= ENC_AB;
-
-	TCCR2 = 0b101;					/* Set timer prescaller to 128 (125 kHz) */
-	OCR2 = 125;						/* 12500/125 => 1000 polls/sec */
-	TCCR2 |= (1<<WGM21);			/* Reset counter on match */
+	/* Set timer prescaller to 128 (62.5 kHz) and reset on match*/
+	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
+	OCR2 = 62;						/* 62500/62 => 1008 polls/sec */
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
 	/* Load RC5 device address and commands from eeprom */
 	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-	for (i = 0; i < RC5_CMD_COUNT; i++) {
+	for (i = 0; i < RC5_CMD_COUNT; i++)
 		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
-	}
 
-	encCnt = 0;
-	cmdBuf = CMD_EMPTY;
+	return;
 }
 
 static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
@@ -63,8 +58,8 @@ ISR (TIMER2_COMP_vect)
 	static uint8_t encPrev = ENC_0;
 	static uint8_t btnPrev = 0;
 	/* Current state */
-	uint8_t encNow = ~ENC_PIN & ENC_AB;
-	uint8_t btnNow = ~BTN_PIN & BTN_MASK;
+	uint8_t encNow = ~INPUT_PIN & ENC_AB;
+	uint8_t btnNow = ~INPUT_PIN & BTN_MASK;
 
 	/* If encoder event has happened, inc/dec encoder counter */
 	switch (encNow) {

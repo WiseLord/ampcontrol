@@ -116,7 +116,6 @@ void drawSpectrum(uint8_t *buf);
 void loadDispParams(void);
 void saveDisplayParams(void);
 
-void setBacklight(int8_t backlight);
 void switchBacklight(void);
 
 #endif /* DISPLAY_H */

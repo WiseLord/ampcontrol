@@ -43,7 +43,7 @@ void powerOff(void)
 	STMU_PORT &= ~MUTE;
 	_delay_ms(50);
 	STMU_PORT &= ~STDBY;
-	setBacklight(BACKLIGHT_OFF);
+	ks0066Backlight(BACKLIGHT_OFF);
 	stopEditTime();
 	muteVolume();
 	saveParams();
@@ -372,11 +372,11 @@ int main(void)
 		case MODE_STANDBY:
 			showTime(txtLabels);
 			if (dispModePrev == MODE_TEST)
-				setBacklight(0);
+				ks0066Backlight(0);
 			break;
 		case MODE_TEST:
 			showRC5Info(rc5Buf);
-			setBacklight(BACKLIGHT_ON);
+			ks0066Backlight(BACKLIGHT_ON);
 			if (rc5Buf != rc5BufPrev)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;

@@ -33,11 +33,9 @@ static void calcWeekDay(void)
 static uint8_t daysInMonth()
 {
 	if (time[MONTH] == 2) {
-		if (time[YEAR] & 0x03) {
+		if (time[YEAR] & 0x03)
 			return 28;
-		} else {
-			return 29;
-		}
+		return 29;
 	}
 
 	if (time[MONTH] == 4 || time[MONTH] == 6 || time[MONTH] == 9 || time[MONTH] == 11) {
@@ -83,7 +81,6 @@ static void writeTime(void)
 	return;
 }
 
-
 void stopEditTime(void)
 {
 	_etm = NOEDIT;
@@ -126,18 +123,20 @@ void changeTime(int diff)
 	readTime();
 	switch (_etm) {
 	case HOUR:
-		time[HOUR] += diff;
-		if (time[HOUR] > 23)
-			time[HOUR] = 0;
-		if (time[HOUR] < 0)
-			time[HOUR] = 23;
+//		time[HOUR] += diff;
+//		if (time[HOUR] > 23)
+//			time[HOUR] = 0;
+//		if (time[HOUR] < 0)
+//			time[HOUR] = 23;
+		time[HOUR] = (time[HOUR] + diff) % 24;
 		break;
 	case MIN:
-		time[MIN] += diff;
-		if (time[MIN] > 59)
-			time[MIN] = 0;
-		if (time[MIN] < 0)
-			time[MIN] = 59;
+//		time[MIN] += diff;
+//		if (time[MIN] > 59)
+//			time[MIN] = 0;
+//		if (time[MIN] < 0)
+//			time[MIN] = 59;
+		time[MIN] = (time[MIN] + diff) % 60;
 		break;
 	case SEC:
 		time[SEC] = 0;
@@ -157,11 +156,12 @@ void changeTime(int diff)
 			time[MONTH] = 12;
 		break;
 	case YEAR:
-		time[YEAR] += diff;
-		if (time[YEAR] > 99)
-			time[YEAR] = 0;
-		if (time[YEAR] < 0)
-			time[YEAR] = 99;
+//		time[YEAR] += diff;
+//		if (time[YEAR] > 99)
+//			time[YEAR] = 0;
+//		if (time[YEAR] < 0)
+//			time[YEAR] = 99;
+		time[YEAR] = (time[YEAR] + diff) % 100;
 		break;
 	default:
 		break;

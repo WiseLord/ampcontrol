@@ -18,12 +18,11 @@ static const uint8_t hannTable[] PROGMEM = {
 
 void adcInit()
 {
-	TCCR0 = 0b001;						/* Timer0 prescaller = 1 (8 MHz) */
+	TCCR0 = (0<<CS02) | (0<<CS01) | (1<<CS00);		/* Timer0 prescaller = 1 (8 MHz) */
 
-	ADCSRA |= (1<<ADEN);
-	ADCSRA |= (1<<ADPS2) | (1<<ADPS0);	/* ADC prescaler=32 (500 kHz) */
+	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS0);	/* Enable ADC with prescaler=32 (250 kHz) */
 
-	ADMUX |= (1<<ADLAR);				/* Adjust result to left */
+	ADMUX |= (1<<ADLAR);							/* Adjust result to left */
 
 	return;
 }
