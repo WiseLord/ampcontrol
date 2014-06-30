@@ -29,7 +29,6 @@ void powerOn(void)
 {
 	STMU_PORT |= STDBY;
 	_delay_ms(50);
-	STMU_DDR |= MUTE;
 	STMU_PORT |= MUTE;
 	loadDispParams();
 	loadTunerParams(&freqFM);
@@ -41,7 +40,6 @@ void powerOn(void)
 /* Handle entering standby mode */
 void powerOff(void)
 {
-	STMU_DDR &= ~MUTE;
 	STMU_PORT &= ~MUTE;
 	_delay_ms(50);
 	STMU_PORT &= ~STDBY;
@@ -68,7 +66,7 @@ void hwInit(void)
 
 	stopEditTime();					/* Exit edit time mode */
 
-	STMU_DDR |= STDBY	;			/* Standby/Mute port */
+	STMU_DDR |= STDBY | MUTE;		/* Standby/Mute port */
 	STMU_PORT &= ~(STDBY | MUTE);
 
 	sei();							/* Gloabl interrupt enable */
@@ -295,6 +293,13 @@ int main(void)
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
+		case CMD_RC5_FM_MONO:
+			if (getChan() == 0) {
+				tunerSwitchMono();
+				dispMode = MODE_FM_RADIO;
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			}
+			break;
 		case CMD_RC5_1:
 		case CMD_RC5_2:
 		case CMD_RC5_3:
@@ -309,13 +314,6 @@ int main(void)
 			loadStation(cmd - CMD_RC5_1);
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			break;
-		case CMD_RC5_FM_MONO:
-			if (getChan() == 0) {
-				tunerSwitchMono();
-				dispMode = MODE_FM_RADIO;
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			}
 			break;
 		}
 

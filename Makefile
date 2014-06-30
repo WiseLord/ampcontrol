@@ -31,7 +31,7 @@ SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(TUNE
 SRCS_VAR = main.c audio.c display.c tuner.c
 
 MCU = atmega16
-F_CPU = 16000000L
+F_CPU = 8000000L
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums
 DEBUG = -g -Wall -Werror

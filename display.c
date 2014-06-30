@@ -97,11 +97,13 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 {
 	uint8_t numdiv;
 	uint8_t sign = lead;
+	int8_t i;
+
 	if (number < 0) {
 		sign = '-';
 		number = -number;
 	}
-	int8_t i;
+
 	for (i = 0; i < width; i++)
 		strbuf[i] = lead;
 	strbuf[width] = '\0';
@@ -131,57 +133,18 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 
 	ks0066SetXY(0, 1);
 
-//	if (min + max) {
-		value = (int16_t)48 * (value - min) / (max - min);
-		for (i = 0; i < 16; i++) {
-			if (value / 3 > i) {
-				ks0066WriteData(0x03);
+	value = (int16_t)48 * (value - min) / (max - min);
+	for (i = 0; i < 16; i++) {
+		if (value / 3 > i) {
+			ks0066WriteData(0x03);
+		} else {
+			if (value / 3 < i) {
+				ks0066WriteData(0x00);
 			} else {
-				if (value / 3 < i) {
-					ks0066WriteData(0x00);
-				} else {
-					ks0066WriteData(value % 3);
-				}
+				ks0066WriteData(value % 3);
 			}
 		}
-//	} else {
-//		value = (int16_t)23 * value / max;
-//		if (value >= 0) {
-//			value++;
-//			for (i = 0; i < 7; i++) {
-//				ks0066WriteData(0x00);
-//			}
-//			ks0066WriteData(0x05);
-//			for (i = 0; i < 8; i++) {
-//				if (value / 3 > i) {
-//					ks0066WriteData(0x03);
-//				} else {
-//					if (value / 3 < i) {
-//						ks0066WriteData(0x00);
-//					} else {
-//						ks0066WriteData(value % 3);
-//					}
-//				}
-//			}
-//		} else {
-//			value += 23;
-//			for (i = 0; i < 8; i++) {
-//				if (value / 3 > i) {
-//					ks0066WriteData(0x00);
-//				} else {
-//					if (value / 3 < i) {
-//						ks0066WriteData(0x03);
-//					} else {
-//						ks0066WriteData(value % 3 + 3);
-//					}
-//				}
-//			}
-//			ks0066WriteData(0x01);
-//			for (i = 0; i < 7; i++) {
-//				ks0066WriteData(0x00);
-//			}
-//		}
-//	}
+	}
 
 	return;
 }
@@ -212,18 +175,6 @@ void showRC5Info(uint16_t rc5Buf)
 	ks0066SetXY(0, 1);
 	ks0066WriteString((uint8_t*)",CM=");
 	ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
-
-
-//	ks0066SetXY(0, 0);
-//	ks0066WriteString((uint8_t*)"R=");
-//	ks0066WriteString(mkNumString(rc5Buf, 14, '0', 2));
-//	ks0066SetXY(0, 1);
-//	ks0066WriteString((uint8_t*)"TB=");
-//	ks0066WriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
-//	ks0066WriteString((uint8_t*)",RC=");
-//	ks0066WriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-//	ks0066WriteString((uint8_t*)",CM=");
-//	ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
 
 	return;
 }

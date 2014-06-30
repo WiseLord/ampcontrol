@@ -18,9 +18,7 @@ static const uint8_t hannTable[] PROGMEM = {
 
 void adcInit()
 {
-	TCCR0 = 0b010;						/* Timer0 prescaller = 8 (2 MHz) */
-	OCR0 = 62;							/* 2000000/62 => 32k meas/sec */
-	TCCR0 |= (1<<WGM01);				/* Reset counter on match */
+	TCCR0 = 0b001;						/* Timer0 prescaller = 1 (8 MHz) */
 
 	ADCSRA |= (1<<ADEN);
 	ADCSRA |= (1<<ADPS2) | (1<<ADPS0);	/* ADC prescaler=32 (500 kHz) */
@@ -30,7 +28,7 @@ void adcInit()
 	return;
 }
 
-ISR (TIMER0_COMP_vect)
+ISR (TIMER0_OVF_vect)
 {
 	ADCSRA |= 1<<ADSC;
 
@@ -48,9 +46,9 @@ static uint8_t revBits(uint8_t x)
 static void getValues()
 {
 	uint8_t i = 0, j;
-	int16_t hv;
+	uint8_t hv;
 	TCNT0 = 0;							/* Reset timer */
-	TIMSK |= (1<<OCIE0);				/* Enable compare/match interrupt */
+	TIMSK |= (1<<TOIE0);				/* Enable compare/match interrupt */
 
 	ADMUX &= ~(1<<MUX0);				/* Switch to left channel */
 	while (!(ADCSRA & (1<<ADSC)));		/* Wait for start measure */
@@ -64,13 +62,13 @@ static void getValues()
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
-		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
+		f_l[j] = (hv * f_l[j]) >> 6;	/* Apply Hann window */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
 		f_i[i++] = 0;
 	} while (i < FFT_SIZE);
 
-	TIMSK &= ~(1<<OCIE0);				/* Disable compare/match interrupt */
+	TIMSK &= ~(1<<TOIE0);				/* Disable compare/match interrupt */
 
 	return;
 }

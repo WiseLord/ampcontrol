@@ -1,7 +1,7 @@
 #!/bin/bash
 
 sizes=($(avr-size -A $1 | grep '^.text\|^.data\|^.bss' | sed -e 's/.* \([0-9]\+\) .*/\1/'))
-
+avr-size -A $1 
 rm -f $1
 
 echo
