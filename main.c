@@ -270,11 +270,6 @@ int main(void)
 			dispMode = MODE_GAIN;
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
-		case CMD_RC5_SP_MODE:
-			switchSpMode();
-			dispMode = MODE_SPECTRUM;
-			setDisplayTime(DISPLAY_SPECTRUM);
-			break;
 		case CMD_RC5_FM_INC:
 		case CMD_RC5_FM_DEC:
 		case CMD_RC5_CHAN_UP:

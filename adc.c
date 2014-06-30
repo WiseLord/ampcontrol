@@ -5,10 +5,9 @@
 #include "adc.h"
 #include "fft.h"
 
-static int16_t f_l[FFT_SIZE];	/* Real values for left channel */
-static int16_t f_r[FFT_SIZE];	/* Real values for right channel */
-static int16_t f_i[FFT_SIZE];	/* Imaginary values */
-static uint8_t buf[FFT_SIZE];	/* Previous fft results: both left and right */
+static int16_t f_l[FFT_SIZE];			/* Real values for left channel */
+static int16_t f_i[FFT_SIZE];			/* Imaginary values */
+static uint8_t buf[FFT_SIZE / 2];		/* Previous fft results: both left and right */
 
 static const uint8_t hannTable[] PROGMEM = {
 	  0,   1,   3,   6,  10,  16,  22,  30,
@@ -66,13 +65,6 @@ static void getValues()
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
 		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
-		ADMUX |= (1<<MUX0);						/* Switch to right channel */
-		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
-
-		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
-		f_r[j] = ADCH - DC_CORR;				/* Read right channel value */
-		f_r[j] = ((int32_t)hv * f_r[j]) >> 6;	/* Apply Hann window */
-		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
 		f_i[i++] = 0;
@@ -86,16 +78,12 @@ static void getValues()
 /* NEW value is displayed if bigger then OLD. Otherwise OLD-1 is displayed */
 static void slowFall()
 {
-	uint8_t i, j;
-	for (i = 0, j = FFT_SIZE / 2; i < FFT_SIZE / 2; i++, j++) {
+	uint8_t i;
+	for (i = 0; i < FFT_SIZE / 2; i++) {
 		if (f_l[i] < buf[i])
 			buf[i]--;
 		else
 			buf[i] = f_l[i];
-		if (f_r[i] < buf[j])
-			buf[j]--;
-		else
-			buf[j] = f_r[i];
 	}
 
 	return;
@@ -107,9 +95,6 @@ uint8_t *getSpData()
 
 	fftRad4(f_l, f_i);
 	cplx2dB(f_l, f_i);
-
-	fftRad4(f_r, f_i);
-	cplx2dB(f_r, f_i);
 
 	slowFall();
 
