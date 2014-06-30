@@ -96,9 +96,6 @@ enum {
 
 #define STR_BUFSIZE		16
 
-uint8_t getDefDisplay();
-void setDefDisplay(uint8_t value);
-
 void displayInit();
 void clearDisplay();
 

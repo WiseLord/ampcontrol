@@ -8,7 +8,7 @@
 
 #define N_WAVE		64
 
-#define N_DB		32
+#define N_DB		16
 
 void fftRad4(int16_t *fr, int16_t *fi);
 void cplx2dB(int16_t *fr, int16_t *fi);

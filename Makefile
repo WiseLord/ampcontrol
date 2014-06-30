@@ -1,4 +1,4 @@
-AUDIOPROC = TDA7439
+AUDIOPROC = TDA7313
 DISPLAY = KS0066
 TUNER = TEA5767
 
@@ -30,7 +30,7 @@ endif
 SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(TUNER_SRC)
 SRCS_VAR = main.c audio.c display.c tuner.c
 
-MCU = atmega16
+MCU = atmega8
 F_CPU = 8000000L
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums

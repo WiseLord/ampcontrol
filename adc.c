@@ -7,7 +7,7 @@
 
 static int16_t f_l[FFT_SIZE];			/* Real values for left channel */
 static int16_t f_i[FFT_SIZE];			/* Imaginary values */
-static uint8_t buf[FFT_SIZE / 2];		/* Previous fft results: both left and right */
+static uint8_t buf[FFT_SIZE / 4];		/* Previous fft results: both left and right */
 
 static const uint8_t hannTable[] PROGMEM = {
 	  0,   1,   3,   6,  10,  16,  22,  30,
@@ -76,11 +76,14 @@ static void getValues()
 static void slowFall()
 {
 	uint8_t i;
-	for (i = 0; i < FFT_SIZE / 2; i++) {
-		if (f_l[i] < buf[i])
+	int16_t fl;
+
+	for (i = 0; i < FFT_SIZE / 4; i++) {
+		fl = f_l[2 * i] + f_l[2 * i + 1];
+		if (fl < buf[i])
 			buf[i]--;
 		else
-			buf[i] = f_l[i];
+			buf[i] = fl;
 	}
 
 	return;

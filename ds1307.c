@@ -3,7 +3,7 @@
 #include "i2c.h"
 
 static int8_t time[7];
-static timeMode _etm;
+static timeMode _etm = NOEDIT;
 
 int8_t getTime(timeMode tm)
 {

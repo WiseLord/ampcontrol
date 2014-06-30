@@ -14,18 +14,6 @@ uint8_t defDisplay = MODE_SPECTRUM;						/* Default display */
 
 static uint8_t userSybmols = LCD_LEVELS;
 
-uint8_t getDefDisplay()
-{
-	return defDisplay;
-}
-
-void setDefDisplay(uint8_t value)
-{
-	defDisplay = value;
-
-	return;
-}
-
 static void writeStringEeprom(const uint8_t *string)
 {
 	uint8_t i = 0;
@@ -81,7 +69,9 @@ void displayInit()
 	ks0066Init();
 	lcdGenLevels();
 
+#if defined(KS0066)
 	KS0066_BCKL_DDR |= KS0066_BCKL;
+#endif
 
 	return;
 }
@@ -207,12 +197,12 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 
 void showRC5Info(uint16_t rc5Buf)
 {
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)",RC=");
-	ks0066WriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-	ks0066SetXY(0, 1);
-	ks0066WriteString((uint8_t*)",CM=");
-	ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
+//	ks0066SetXY(0, 0);
+//	ks0066WriteString((uint8_t*)",RC=");
+//	ks0066WriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
+//	ks0066SetXY(0, 1);
+//	ks0066WriteString((uint8_t*)",CM=");
+//	ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
 
 	return;
 }
@@ -316,33 +306,33 @@ void showTime(uint8_t **txtLabels)
 
 	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
 
-	if (getEtm() == NOEDIT) {
-		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
-	} else {
-		switch (getEtm()) {
-		case HOUR:
-			ks0066SetXY(1, 0);
-			break;
-		case MIN:
-			ks0066SetXY(4, 0);
-			break;
-		case SEC:
-			ks0066SetXY(7, 0);
-			break;
-		case DAY:
-			ks0066SetXY(12, 0);
-			break;
-		case MONTH:
-			ks0066SetXY(15, 0);
-			break;
-		case YEAR:
-			ks0066SetXY(15, 1);
-			break;
-		default:
-			break;
-		}
-		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
-	}
+//	if (getEtm() == NOEDIT) {
+//		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
+//	} else {
+//		switch (getEtm()) {
+//		case HOUR:
+//			ks0066SetXY(1, 0);
+//			break;
+//		case MIN:
+//			ks0066SetXY(4, 0);
+//			break;
+//		case SEC:
+//			ks0066SetXY(7, 0);
+//			break;
+//		case DAY:
+//			ks0066SetXY(12, 0);
+//			break;
+//		case MONTH:
+//			ks0066SetXY(15, 0);
+//			break;
+//		case YEAR:
+//			ks0066SetXY(15, 1);
+//			break;
+//		default:
+//			break;
+//		}
+//		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
+//	}
 
 	return;
 }
@@ -350,7 +340,6 @@ void showTime(uint8_t **txtLabels)
 void drawSpectrum(uint8_t *buf)
 {
 	uint8_t i;
-	uint8_t lcdBuf[16];
 
 	if (userSybmols != LCD_LEVELS) {
 		lcdGenLevels();
@@ -358,24 +347,17 @@ void drawSpectrum(uint8_t *buf)
 	}
 
 	for (i = 0; i < 16; i++) {
-		lcdBuf[i] = buf[2 * i] + buf[2 * i + 1];
-		lcdBuf[i] >>= 2;
-	}
 
-	uint8_t data;
-	ks0066SetXY(0, 0);
-	for (i = 0; i < 16; i++) {
-		data = ' ';
-		if (lcdBuf[i] >= 8)
-			data = lcdBuf[i] - 8;
-		ks0066WriteData(data);
-	}
-	ks0066SetXY(0, 1);
-	for (i = 0; i < 16; i++) {
-		data = 0xFF;
-		if (lcdBuf[i] < 8)
-			data = lcdBuf[i];
-		ks0066WriteData(data);
+		ks0066SetXY(i, 0);
+		if (buf[i] < 8)
+			ks0066WriteData(0x20);
+		else
+			ks0066WriteData(buf[i] - 8);
+		ks0066SetXY(i, 0);
+		if (buf[i] < 8)
+			ks0066WriteData(buf[i]);
+		else
+			ks0066WriteData(0xFF);
 	}
 
 	return;

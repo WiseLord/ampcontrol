@@ -1,0 +1,25 @@
+B0 - Display RS
+B1 - Display RW
+B2 - Display E
+B3 - Display backlight
+B4 - Display B4
+B5 - Display B5
+B6 - Display B6
+B7 - Display B7
+
+C0 - Audio in (left channel, or mixed sound)
+C1 - NC (future right channel)
+C2 - MUTE
+C3 - STBY
+C4 - SDA
+C5 - SCL
+C6 - RESET
+
+D0 - Button 1
+D1 - Encoder +
+D2 - Encoder -
+D3 - RC5 in
+D4 - Button 2
+D5 - Button 3
+D6 - Button 4
+D7 - Button 5

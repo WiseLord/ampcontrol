@@ -7,7 +7,7 @@
 
 /* Integral circuits definitions */
 #if !defined(TDA7439) && !defined(TDA7313) && !defined(TDA7318)
-#define TDA7439
+#define TDA7313
 #endif
 
 /* Number of input channels */

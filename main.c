@@ -64,12 +64,12 @@ void hwInit(void)
 	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
 
-	stopEditTime();					/* Exit edit time mode */
-
 	STMU_DDR |= STDBY | MUTE;		/* Standby/Mute port */
 	STMU_PORT &= ~(STDBY | MUTE);
 
 	sei();							/* Gloabl interrupt enable */
+
+	muteVolume();
 
 	return;
 }
@@ -92,8 +92,6 @@ int main(void)
 	loadDispParams();
 	loadAudioParams(txtLabels);
 	loadTunerParams(&freqFM);
-
-	powerOff();
 
 	while (1) {
 		encCnt = getEncoder();
@@ -208,23 +206,6 @@ int main(void)
 		case CMD_BTN_1_LONG:
 		case CMD_RC5_BACKLIGHT:
 			switchBacklight();
-			break;
-		case CMD_BTN_2_LONG:
-		case CMD_RC5_DISPLAY:
-			switch (getDefDisplay()) {
-			case MODE_SPECTRUM:
-				if (getChan() == 0) {
-					setDefDisplay(MODE_FM_RADIO);
-					break;
-				}
-			case MODE_FM_RADIO:
-				setDefDisplay(MODE_TIME);
-				break;
-			default:
-				setDefDisplay(MODE_SPECTRUM);
-				break;
-			}
-			dispMode = getDefDisplay();
 			break;
 		case CMD_BTN_3_LONG:
 		case CMD_BTN_4_LONG:
@@ -356,9 +337,7 @@ int main(void)
 				dispMode = MODE_STANDBY;
 				break;
 			default:
-				dispMode = getDefDisplay();
-				if (dispMode == MODE_FM_RADIO && getChan())
-					dispMode = MODE_SPECTRUM;
+				dispMode = MODE_SPECTRUM;
 				break;
 			}
 		}
