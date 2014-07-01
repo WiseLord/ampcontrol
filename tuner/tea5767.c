@@ -89,11 +89,6 @@ void tea5767ReadStatus(uint8_t *buf)
 	return;
 }
 
-uint8_t tea5767ADCLevel(uint8_t *buf)
-{
-	return (buf[3] & TEA5767_LEV_MASK) >> 4;
-}
-
 uint16_t tea5767FreqAvail(uint8_t *buf)
 {
 	uint32_t ret;
@@ -107,7 +102,7 @@ uint16_t tea5767FreqAvail(uint8_t *buf)
 	} else {
 		ret *= 12500;
 	}
-	ret -= 225000;
+	ret -= 200000;
 	ret += 25000;
 	ret /= 50000;
 	ret *= 5;

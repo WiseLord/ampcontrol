@@ -7,11 +7,8 @@
 #include "input.h"
 #include "tuner.h"
 
-uint8_t backlight;										/* Backlight */
-uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
-
-uint8_t defDisplay = MODE_SPECTRUM;						/* Default display */
-
+static uint8_t backlight;
+static uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
 static uint8_t userSybmols = LCD_LEVELS;
 
 static const uint8_t barSymbols[] PROGMEM = {
@@ -164,7 +161,7 @@ void showRC5Info(uint16_t rc5Buf)
 {
 	ks0066SetXY(0, 0);
 	ks0066WriteString((uint8_t*)"RC=");
-//	ks0066WriteString(mkHexString((rc5Buf & 0x07C0)>>6));
+	ks0066WriteString(mkHexString((rc5Buf >> 6) & 0x1F));
 	ks0066SetXY(0, 1);
 	ks0066WriteString((uint8_t*)"CM=");
 	ks0066WriteString(mkHexString(rc5Buf & 0x3F));
@@ -194,7 +191,7 @@ void showRadio(uint8_t num)
 
 	/* Signal level */
 	ks0066SetXY(11, 0);
-	lev = tunerLevel() * 2 / 5;
+	lev = tunerLevel() * 13 / 32;
 	if (lev < 3) {
 		ks0066WriteData(lev);
 		ks0066WriteData(0x00);
@@ -332,7 +329,6 @@ void loadDispParams(void)
 {
 	backlight = eeprom_read_byte(eepromBCKL);
 	ks0066Backlight(backlight);
-	defDisplay = eeprom_read_byte(eepromDisplay);
 
 	return;
 }
@@ -340,7 +336,6 @@ void loadDispParams(void)
 void saveDisplayParams(void)
 {
 	eeprom_update_byte(eepromBCKL, backlight);
-	eeprom_update_byte(eepromDisplay, defDisplay);
 
 	return;
 }

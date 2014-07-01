@@ -1,11 +1,11 @@
 #include "fft.h"
 #include <avr/pgmspace.h>
 
-static const int16_t dbTable[N_DB - 1] PROGMEM = {
-	    1,    2,    4,   8,
-	   14,   24,   44,  78,
-	  140,  250,  448, 801,
-	 1432, 2561, 4580,
+static const int16_t dbTable[N_DB] PROGMEM = {
+	   1,    2,    3,    6,
+	  10,   18,   33,   59,
+	 105,  187,  335,  599,
+	1071, 1915, 3425, 6125
 };
 
 static const uint8_t sinTable[N_WAVE / 4 + 1] PROGMEM = {
@@ -149,12 +149,10 @@ void cplx2dB(int16_t *fr, int16_t *fi)
 	for (i = 0; i < FFT_SIZE / 2; i++) {
 		calc = ((int32_t)fr[i] * fr[i] + (int32_t)fi[i] * fi[i]) >> 13;
 
-		for (j = 0; j < N_DB - 1; j++)
+		for (j = 0; j < N_DB; j++)
 			if (calc <= pgm_read_word(&dbTable[j]))
 				break;
 		fr[i] = j;
 	}
-	for (i = 0; i < FFT_SIZE; i++)
-		fi[i] = 0;
 	return;
 }

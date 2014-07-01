@@ -14,16 +14,6 @@
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
 
-/* Save data to EEPROM */
-void saveParams(void)
-{
-	saveAudioParams();
-	saveDisplayParams();
-	saveTunerParams(freqFM);
-
-	return;
-}
-
 /* Handle leaving standby mode */
 void powerOn(void)
 {
@@ -46,7 +36,10 @@ void powerOff(void)
 	ks0066Backlight(BACKLIGHT_OFF);
 	stopEditTime();
 	muteVolume();
-	saveParams();
+
+	saveAudioParams();
+	saveDisplayParams();
+	saveTunerParams(freqFM);
 
 	return;
 }
@@ -56,13 +49,14 @@ void hwInit(void)
 {
 	loadLabels(txtLabels);			/* Load text labels from EEPROM */
 
-	displayInit();
 
 	rc5Init();						/* IR Remote control */
 	adcInit();						/* Analog-to-digital converter */
 	inputInit();					/* Buttons/encoder polling */
 	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
+
+	displayInit();
 
 	STMU_DDR |= STDBY | MUTE;		/* Standby/Mute port */
 	STMU_PORT &= ~(STDBY | MUTE);
@@ -107,8 +101,7 @@ int main(void)
 
 		/* Don't handle any command in standby mode except power on */
 		if (dispMode == MODE_STANDBY) {
-			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
-			    cmd != CMD_BTN_TESTMODE)
+			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY && cmd != CMD_BTN_TESTMODE)
 				cmd = CMD_EMPTY;
 		}
 
@@ -174,10 +167,9 @@ int main(void)
 					break;
 				}
 			default:
-				ks0066Clear();
 				switchMute();
 				dispMode = MODE_MUTE;
-				setDisplayTime(DISPLAY_TIME_CHAN);
+				setDisplayTime(DISPLAY_TIME_MUTE);
 				break;
 			}
 			break;
@@ -236,9 +228,8 @@ int main(void)
 				break;
 			}
 			break;
-#ifdef TDA7313
+#if defined(TDA7313)
 		case CMD_RC5_LOUDNESS:
-			ks0066Clear();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -247,7 +238,7 @@ int main(void)
 		case CMD_RC5_INPUT_0:
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
-#ifndef TDA7313
+#if !defined(TDA7313)
 		case CMD_RC5_INPUT_3:
 #endif
 			setChan(cmd - CMD_RC5_INPUT_0);
@@ -335,7 +326,7 @@ int main(void)
 			}
 		}
 
-		/* Exit to default mode and save params to EEPROM*/
+		/* Exit to default mode */
 		if (getDisplayTime() == 0) {
 			switch (dispMode) {
 			case MODE_STANDBY:
