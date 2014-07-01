@@ -14,6 +14,10 @@ uint8_t defDisplay = MODE_SPECTRUM;						/* Default display */
 
 static uint8_t userSybmols = LCD_LEVELS;
 
+static const uint8_t barSymbols[] PROGMEM = {
+	0x00, 0x10, 0x14, 0x15,
+};
+
 static void writeStringEeprom(const uint8_t *string)
 {
 	uint8_t i = 0;
@@ -44,21 +48,21 @@ static void lcdGenLevels(void)
 
 	return;
 }
+
 static void lcdGenBar(void)
 {
 	ks0066WriteCommand(KS0066_SET_CGRAM);
 
 	uint8_t i;
-	uint8_t pos[] = {0x00, 0x10, 0x14, 0x15, 0x05, 0x01};
+	uint8_t sym;
 
-	for (i = 0; i < 48; i++) {
-		if ((i & 0x07) == 0x03) {
-			ks0066WriteData(0x15);
-		} else if ((i & 0x07) == 0x07) {
-			ks0066WriteData(0x00);
-		} else {
-			ks0066WriteData(pos[i>>3]);
-		}
+	for (i = 0; i < 8 * 4; i++) {
+		sym = i / 8;
+		if (i % 8 == 3)
+			sym = 3;
+		if (i % 8 == 7)
+			sym = 0;
+		ks0066WriteData(pgm_read_byte(&barSymbols[sym]));
 	}
 
 	return;
@@ -76,38 +80,37 @@ void displayInit()
 	return;
 }
 
-void clearDisplay()
+static uint8_t *mkNumString(int16_t value, uint8_t width, uint8_t lead)
 {
-	ks0066Clear();
+	uint8_t sign = lead;
+	int8_t pos;
 
-	return;
+	if (value < 0) {
+		sign = '-';
+		value = -value;
+	}
+
+	for (pos = 0; pos < width; pos++)
+		strbuf[pos] = lead;
+	strbuf[width] = '\0';
+	pos = width - 1;
+
+	while (value > 0 || pos == width - 1) {
+		strbuf[pos] = value % 10 + 0x30;
+		pos--;
+		value /= 10;
+	}
+	if (pos >= 0)
+		strbuf[pos] = sign;
+
+	return strbuf;
 }
 
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
+static uint8_t *mkHexString(uint8_t value)
 {
-	uint8_t numdiv;
-	uint8_t sign = lead;
-	int8_t i;
-
-	if (number < 0) {
-		sign = '-';
-		number = -number;
-	}
-
-	for (i = 0; i < width; i++)
-		strbuf[i] = lead;
-	strbuf[width] = '\0';
-	i = width - 1;
-	while (number > 0 || i == width - 1) {
-		numdiv = number % radix;
-		strbuf[i] = numdiv + 0x30;
-		if (numdiv >= 10)
-			strbuf[i] += 7;
-		i--;
-		number /= radix;
-	}
-	if (i >= 0)
-		strbuf[i] = sign;
+	strbuf[2] = '\0';
+	strbuf[1] = value % 16 + 30;
+	strbuf[0] = value / 16 % 16 + 30;
 
 	return strbuf;
 }
@@ -135,44 +138,6 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			}
 		}
 	}
-//	} else {
-//		value = (int16_t)23 * value / max;
-//		if (value >= 0) {
-//			value++;
-//			for (i = 0; i < 7; i++) {
-//				ks0066WriteData(0x00);
-//			}
-//			ks0066WriteData(0x05);
-//			for (i = 0; i < 8; i++) {
-//				if (value / 3 > i) {
-//					ks0066WriteData(0x03);
-//				} else {
-//					if (value / 3 < i) {
-//						ks0066WriteData(0x00);
-//					} else {
-//						ks0066WriteData(value % 3);
-//					}
-//				}
-//			}
-//		} else {
-//			value += 23;
-//			for (i = 0; i < 8; i++) {
-//				if (value / 3 > i) {
-//					ks0066WriteData(0x00);
-//				} else {
-//					if (value / 3 < i) {
-//						ks0066WriteData(0x03);
-//					} else {
-//						ks0066WriteData(value % 3 + 3);
-//					}
-//				}
-//			}
-//			ks0066WriteData(0x01);
-//			for (i = 0; i < 7; i++) {
-//				ks0066WriteData(0x00);
-//			}
-//		}
-//	}
 
 	return;
 }
@@ -180,7 +145,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 static void showParValue(int8_t value)
 {
 	ks0066SetXY(11, 0);
-	ks0066WriteString(mkNumString(value, 3, ' ', 10));
+	ks0066WriteString(mkNumString(value, 3, ' '));
 
 	return;
 }
@@ -197,12 +162,12 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 
 void showRC5Info(uint16_t rc5Buf)
 {
-//	ks0066SetXY(0, 0);
-//	ks0066WriteString((uint8_t*)",RC=");
-//	ks0066WriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-//	ks0066SetXY(0, 1);
-//	ks0066WriteString((uint8_t*)",CM=");
-//	ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
+	ks0066SetXY(0, 0);
+	ks0066WriteString((uint8_t*)"RC=");
+//	ks0066WriteString(mkHexString((rc5Buf & 0x07C0)>>6));
+	ks0066SetXY(0, 1);
+	ks0066WriteString((uint8_t*)"CM=");
+	ks0066WriteString(mkHexString(rc5Buf & 0x3F));
 
 	return;
 }
@@ -216,9 +181,9 @@ void showRadio(uint8_t num)
 	/* Frequency value */
 	ks0066SetXY(0, 0);
 	ks0066WriteString((uint8_t*)"FM ");
-	ks0066WriteString(mkNumString(freq / 100, 3, ' ', 10));
+	ks0066WriteString(mkNumString(freq / 100, 3, ' '));
 	ks0066WriteData('.');
-	ks0066WriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
+	ks0066WriteString(mkNumString(freq / 10 % 10, 1, ' '));
 
 	/* Stereo indicator */
 	ks0066SetXY(9, 0);
@@ -244,7 +209,7 @@ void showRadio(uint8_t num)
 	/* Station number */
 	ks0066SetXY(14, 0);
 	if (num) {
-		ks0066WriteString(mkNumString(num, 2, ' ', 10));
+		ks0066WriteString(mkNumString(num, 2, ' '));
 	} else {
 		ks0066WriteString((uint8_t*)"--");
 	}
@@ -277,7 +242,7 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 
 static void drawTm(timeMode tm)
 {
-	ks0066WriteString(mkNumString(getTime(tm), 2, '0', 10));
+	ks0066WriteString(mkNumString(getTime(tm), 2, '0'));
 
 	return;
 }

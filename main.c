@@ -132,7 +132,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_GAIN:
 				nextChan();
-				clearDisplay();
+				ks0066Clear();
 			default:
 				curSndParam = sndParAddr(SND_GAIN0 + getChan());
 				dispMode = MODE_GAIN;
@@ -174,7 +174,7 @@ int main(void)
 					break;
 				}
 			default:
-				clearDisplay();
+				ks0066Clear();
 				switchMute();
 				dispMode = MODE_MUTE;
 				setDisplayTime(DISPLAY_TIME_CHAN);
@@ -207,6 +207,13 @@ int main(void)
 		case CMD_RC5_BACKLIGHT:
 			switchBacklight();
 			break;
+		case CMD_BTN_2_LONG:
+		case CMD_RC5_DISPLAY:
+			if (getChan() == 0) {
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				dispMode = MODE_FM_RADIO;
+			}
+			break;
 		case CMD_BTN_3_LONG:
 		case CMD_BTN_4_LONG:
 		case CMD_BTN_5_LONG:
@@ -231,7 +238,7 @@ int main(void)
 			break;
 #ifdef TDA7313
 		case CMD_RC5_LOUDNESS:
-			clearDisplay();
+			ks0066Clear();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -244,7 +251,7 @@ int main(void)
 		case CMD_RC5_INPUT_3:
 #endif
 			setChan(cmd - CMD_RC5_INPUT_0);
-			clearDisplay();
+			ks0066Clear();
 			curSndParam = sndParAddr(SND_GAIN0 + getChan());
 			dispMode = MODE_GAIN;
 			setDisplayTime(DISPLAY_TIME_GAIN);
@@ -344,7 +351,7 @@ int main(void)
 
 		/* Clear screen if mode has changed */
 		if (dispMode != dispModePrev)
-			clearDisplay();
+			ks0066Clear();
 
 		/* Show things */
 		switch (dispMode) {

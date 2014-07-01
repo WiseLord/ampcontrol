@@ -97,9 +97,6 @@ enum {
 #define STR_BUFSIZE		16
 
 void displayInit();
-void clearDisplay();
-
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void showRC5Info(uint16_t rc5Buf);
 void showRadio(uint8_t num);
