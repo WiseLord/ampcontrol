@@ -353,7 +353,7 @@ void drawSpectrum(uint8_t *buf)
 			ks0066WriteData(0x20);
 		else
 			ks0066WriteData(buf[i] - 8);
-		ks0066SetXY(i, 0);
+		ks0066SetXY(i, 1);
 		if (buf[i] < 8)
 			ks0066WriteData(buf[i]);
 		else
