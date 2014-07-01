@@ -19,14 +19,14 @@ static const uint8_t hannTable[] PROGMEM = {
 
 void adcInit()
 {
-	TCCR0 = 0b010;						/* Timer0 prescaller = 8 (2 MHz) */
-	OCR0 = 62;							/* 2000000/62 => 32k meas/sec */
-	TCCR0 |= (1<<WGM01);				/* Reset counter on match */
+	/* Set Timer0 prescaller to 8 (2 MHz) with reset on match */
+	TCCR0 = (0<<CS02) | (1<<CS01) | (0<<CS00) | (1<<WGM01);
 
-	ADCSRA |= (1<<ADEN);
-	ADCSRA |= (1<<ADPS2) | (1<<ADPS0);	/* ADC prescaler=32 (500 kHz) */
+	/* Enable ADC with prescaler 32 */
+	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (1<<ADPS0);
 
-	ADMUX |= (1<<ADLAR);				/* Adjust result to left */
+	OCR0 = 62;									/* 2000000/62 => 32k meas/sec */
+	ADMUX |= (1<<ADLAR);						/* Adjust result to left */
 
 	return;
 }
@@ -49,12 +49,12 @@ static uint8_t revBits(uint8_t x)
 static void getValues()
 {
 	uint8_t i = 0, j;
-	int16_t hv;
-	TCNT0 = 0;							/* Reset timer */
-	TIMSK |= (1<<OCIE0);				/* Enable compare/match interrupt */
+	uint8_t hv;
+	TCNT0 = 0;									/* Reset timer */
+	TIMSK |= (1<<OCIE0);						/* Enable compare/match interrupt */
 
-	ADMUX &= ~(1<<MUX0);				/* Switch to left channel */
-	while (!(ADCSRA & (1<<ADSC)));		/* Wait for start measure */
+	ADMUX &= ~(1<<MUX0);						/* Switch to left channel */
+	while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
 
 	do {
 		j = revBits(i);
@@ -65,13 +65,13 @@ static void getValues()
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
-		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
+		f_l[j] = (hv * f_l[j]) >> 6;			/* Apply Hann window */
 		ADMUX |= (1<<MUX0);						/* Switch to right channel */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_r[j] = ADCH - DC_CORR;				/* Read right channel value */
-		f_r[j] = ((int32_t)hv * f_r[j]) >> 6;	/* Apply Hann window */
+		f_r[j] = (hv * f_r[j]) >> 6;			/* Apply Hann window */
 		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 

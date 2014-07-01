@@ -129,15 +129,18 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 {
 	uint8_t numdiv;
 	uint8_t sign = lead;
+	int8_t i;
+
 	if (number < 0) {
 		sign = '-';
 		number = -number;
 	}
-	int8_t i;
+
 	for (i = 0; i < width; i++)
 		strbuf[i] = lead;
 	strbuf[width] = '\0';
 	i = width - 1;
+
 	while (number > 0 || i == width - 1) {
 		numdiv = number % radix;
 		strbuf[i] = numdiv + 0x30;
@@ -146,6 +149,7 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 		i--;
 		number /= radix;
 	}
+
 	if (i >= 0)
 		strbuf[i] = sign;
 
@@ -334,7 +338,7 @@ void showRC5Info(uint16_t rc5Buf)
 	ks0108SetXY(0, 6);
 	ks0108WriteString((uint8_t*)"Buttons:");
 	ks0108SetXY(5, 7);
-	ks0108WriteString(mkNumString(BTN_PIN, 8, '0', 2));
+	ks0108WriteString(mkNumString(INPUT_PIN, 8, '0', 2));
 #elif defined(KS0066) || defined(PCF8574)
 	ks0066SetXY(0, 0);
 	ks0066WriteString((uint8_t*)"R=");
@@ -540,6 +544,13 @@ static void drawTm(timeMode tm, const uint8_t *font)
 
 	return;
 }
+#elif defined(KS0066) || defined(PCF8574)
+static void drawTm(timeMode tm)
+{
+	ks0066WriteString(mkNumString(getTime(tm), 2, '0', 10));
+
+	return;
+}
 #elif defined(LS020)
 static void drawTm(timeMode tm, const uint8_t *font, uint8_t mult)
 {
@@ -584,19 +595,20 @@ void showTime(uint8_t **txtLabels)
 #elif defined(KS0066) || defined(PCF8574)
 	ks0066SetXY(0, 0);
 
-	ks0066WriteString(mkNumString(getTime(HOUR), 2, '0', 10));
+	drawTm(HOUR);
 	ks0066WriteData(':');
-	ks0066WriteString(mkNumString(getTime(MIN), 2, '0', 10));
+	drawTm(MIN);
 	ks0066WriteData(':');
-	ks0066WriteString(mkNumString(getTime(SEC), 2, '0', 10));
+	drawTm(SEC);
 
 	ks0066SetXY(11, 0);
-	ks0066WriteString(mkNumString(getTime(DAY), 2, '0', 10));
+	drawTm(DAY);
 	ks0066WriteData('.');
-	ks0066WriteString(mkNumString(getTime(MONTH), 2, '0', 10));
+	drawTm(MONTH);
 
 	ks0066SetXY(12, 1);
-	ks0066WriteString(mkNumString(2000 + getTime(YEAR), 4, '0', 10));
+	ks0066WriteString((uint8_t*)"20");
+	drawTm(YEAR);
 
 	ks0066SetXY(0, 1);
 #elif defined(LS020)
@@ -625,29 +637,7 @@ void showTime(uint8_t **txtLabels)
 
 #endif
 
-	switch (getTime(WEEK)) {
-	case 1:
-		writeStringEeprom(txtLabels[LABEL_THUESDAY]);
-		break;
-	case 2:
-		writeStringEeprom(txtLabels[LABEL_WEDNESDAY]);
-		break;
-	case 3:
-		writeStringEeprom(txtLabels[LABEL_THURSDAY]);
-		break;
-	case 4:
-		writeStringEeprom(txtLabels[LABEL_FRIDAY]);
-		break;
-	case 5:
-		writeStringEeprom(txtLabels[LABEL_SADURDAY]);
-		break;
-	case 6:
-		writeStringEeprom(txtLabels[LABEL_SUNDAY]);
-		break;
-	case 7:
-		writeStringEeprom(txtLabels[LABEL_MONDAY]);
-		break;
-	}
+	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
 
 #if defined(KS0066) || defined(PCF8574)
 	if (getEtm() == NOEDIT) {
@@ -729,25 +719,23 @@ void drawSpectrum(uint8_t *buf)
 
 	for (i = 0; i < 16; i++) {
 		lcdBuf[i] = buf[2 * i] + buf[2 * i + 1];
-		lcdBuf[i] = buf[32 + 2 * i] + buf[32 + 2 * i + 1];
+		lcdBuf[i] += buf[32 + 2 * i] + buf[32 + 2 * i + 1];
 		lcdBuf[i] >>= 2;
 	}
 
-	uint8_t data;
-	ks0066SetXY(0, 0);
 	for (i = 0; i < 16; i++) {
-		data = ' ';
-		if (lcdBuf[i] >= 8)
-			data = lcdBuf[i] - 8;
-		ks0066WriteData(data);
-	}
-	ks0066SetXY(0, 1);
-	for (i = 0; i < 16; i++) {
-		data = 0xFF;
+		ks0066SetXY(i, 0);
 		if (lcdBuf[i] < 8)
-			data = lcdBuf[i];
-		ks0066WriteData(data);
+			ks0066WriteData(0x20);
+		else
+			ks0066WriteData(lcdBuf[i] - 8);
+		ks0066SetXY(i, 1);
+		if (lcdBuf[i] < 8)
+			ks0066WriteData(lcdBuf[i]);
+		else
+			ks0066WriteData(0xFF);
 	}
+
 #elif defined(LS020)
 	uint8_t i;
 	uint8_t val;

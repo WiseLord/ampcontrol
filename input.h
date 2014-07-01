@@ -3,24 +3,19 @@
 
 #include <inttypes.h>
 
-/* Buttons definitions */
-#define BTN_DDR			DDRD
-#define BTN_PIN			PIND
-#define BTN_PORT		PORTD
+/* Input definitions */
+#define INPUT_DDR		DDRD
+#define INPUT_PIN		PIND
+#define INPUT_PORT		PORTD
 
-#define BTN_5		(1<<PD7)
-#define BTN_2		(1<<PD4)
-#define BTN_3		(1<<PD5)
-#define BTN_4		(1<<PD6)
-#define BTN_1		(1<<PD0)
+#define BTN_5			(1<<PD7)
+#define BTN_2			(1<<PD4)
+#define BTN_3			(1<<PD5)
+#define BTN_4			(1<<PD6)
+#define BTN_1			(1<<PD0)
 
 #define BTN_TEST_INPUT	(BTN_1 | BTN_2)
 #define BTN_MASK		(BTN_1 | BTN_2 | BTN_3 | BTN_4 | BTN_5)
-
-/* Encoder definitions */
-#define ENC_DDR			DDRD
-#define ENC_PIN			PIND
-#define ENC_PORT		PORTD
 
 #define ENC_A			(1<<PD2)
 #define ENC_B			(1<<PD1)

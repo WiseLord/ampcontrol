@@ -21,15 +21,12 @@ void inputInit()
 	uint8_t i;
 
 	/* Setup buttons and encoders as inputs with pull-up resistors */
-	BTN_DDR &= ~(BTN_MASK);
-	BTN_PORT |= BTN_MASK;
+	INPUT_DDR &= ~(BTN_MASK | ENC_AB);
+	INPUT_PORT |= (BTN_MASK | ENC_AB);
 
-	ENC_DDR &= ~(ENC_AB);
-	ENC_PORT |= ENC_AB;
-
-	TCCR2 = 0b101;					/* Set timer prescaller to 128 (125 kHz) */
-	OCR2 = 125;						/* 12500/125 => 1000 polls/sec */
-	TCCR2 |= (1<<WGM21);			/* Reset counter on match */
+	/* Set timer prescaller to 128 (125 kHz) and reset on match*/
+	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
+	OCR2 = 125;						/* 125000/125 => 1000 polls/sec */
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
@@ -63,8 +60,8 @@ ISR (TIMER2_COMP_vect)
 	static uint8_t encPrev = ENC_0;
 	static uint8_t btnPrev = 0;
 	/* Current state */
-	uint8_t encNow = ~ENC_PIN & ENC_AB;
-	uint8_t btnNow = ~BTN_PIN & BTN_MASK;
+	uint8_t encNow = ~INPUT_PIN & ENC_AB;
+	uint8_t btnNow = ~INPUT_PIN & BTN_MASK;
 
 	/* If encoder event has happened, inc/dec encoder counter */
 	switch (encNow) {
