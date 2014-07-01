@@ -38,10 +38,10 @@
 #define eepromRC5Cmd	((uint8_t*)0x40)
 
 /* FM stations */
-#define eepromStations	((uint16_t*)0x60)
+#define eepromStations	((uint16_t*)0x70)
 
 /* Text labels (maximum 15 byte followed by \0) */
-#define labelsAddr		((uint8_t*)0xE0)
+#define labelsAddr		((uint8_t*)0xF0)
 
 #define EEPROM_SIZE				0x200
 #define LABELS_COUNT			22
