@@ -365,7 +365,7 @@ void showRC5Info(uint16_t rc5Buf)
 	ls020WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
 	ls020SetXY(6, 104);
 	ls020WriteString((uint8_t*)"Btn = ");
-	ls020WriteString(mkNumString(BTN_PIN, 8, '0', 2));
+	ls020WriteString(mkNumString(INPUT_PIN, 8, '0', 2));
 #endif
 
 	return;

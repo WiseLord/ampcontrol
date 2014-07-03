@@ -302,6 +302,7 @@ int main(void)
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			}
+			break;
 		case CMD_RC5_1:
 		case CMD_RC5_2:
 		case CMD_RC5_3:
@@ -316,7 +317,6 @@ int main(void)
 			loadStation(cmd - CMD_RC5_1);
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			break;
 			break;
 		}
 
