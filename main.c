@@ -246,7 +246,7 @@ int main(void)
 				break;
 			}
 			break;
-#ifdef TDA7313
+#if defined(TDA7313)
 		case CMD_RC5_LOUDNESS:
 			clearDisplay();
 			switchLoudness();
@@ -257,7 +257,7 @@ int main(void)
 		case CMD_RC5_INPUT_0:
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
-#ifndef TDA7313
+#if !defined(TDA7313)
 		case CMD_RC5_INPUT_3:
 #endif
 			setChan(cmd - CMD_RC5_INPUT_0);
@@ -394,7 +394,7 @@ int main(void)
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
 			break;
-#ifdef TDA7313
+#if defined(TDA7313)
 		case MODE_LOUDNESS:
 			showBoolParam(!getLoudness(), txtLabels[LABEL_LOUDNESS], txtLabels);
 			break;
