@@ -65,13 +65,13 @@ static void getValues()
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
-		f_l[j] = (hv * f_l[j]) >> 6;			/* Apply Hann window */
+		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
 		ADMUX |= (1<<MUX0);						/* Switch to right channel */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_r[j] = ADCH - DC_CORR;				/* Read right channel value */
-		f_r[j] = (hv * f_r[j]) >> 6;			/* Apply Hann window */
+		f_r[j] = ((int32_t)hv * f_r[j]) >> 6;	/* Apply Hann window */
 		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
