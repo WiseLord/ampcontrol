@@ -16,14 +16,14 @@
 #define LM7001_RF			10
 
 /* Control byte */
-#define LM7001_CTRL_B0		(1<<7)
-#define LM7001_CTRL_B1		(1<<6)
-#define LM7001_CTRL_B2		(1<<5)
-#define LM7001_CTRL_TB		(1<<4)
-#define LM7001_CTRL_R0		(1<<3)
-#define LM7001_CTRL_R1		(1<<2)
-#define LM7001_CTRL_R2		(1<<1)
-#define LM7001_CTRL_S		(1<<0)
+#define LM7001_CTRL_B0		(1<<0)
+#define LM7001_CTRL_B1		(1<<1)
+#define LM7001_CTRL_B2		(1<<2)
+#define LM7001_CTRL_TB		(1<<3)
+#define LM7001_CTRL_R0		(1<<4)
+#define LM7001_CTRL_R1		(1<<5)
+#define LM7001_CTRL_R2		(1<<6)
+#define LM7001_CTRL_S		(1<<7)
 
 /* Set control byte to FM input with 100kHz Fref, (TB = 0, Bi = 0b000, Ri = 0b000, S = 1)*/
 #define LM7001_CTRL_WORD	(LM7001_CTRL_S)
