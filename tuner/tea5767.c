@@ -93,24 +93,3 @@ uint8_t tea5767ADCLevel(uint8_t *buf)
 {
 	return (buf[3] & TEA5767_LEV_MASK) >> 4;
 }
-
-uint16_t tea5767FreqAvail(uint8_t *buf)
-{
-	uint32_t ret;
-
-	ret = buf[0];
-	ret &= 0x3F;
-	ret <<= 8;
-	ret += buf[1];
-	if (ctrl & TEA5767_XTAL_CTRL) {
-		ret *= 8192;
-	} else {
-		ret *= 12500;
-	}
-	ret -= 225000;
-	ret += 25000;
-	ret /= 50000;
-	ret *= 5;
-
-	return (uint16_t)ret;
-}

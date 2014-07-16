@@ -25,7 +25,7 @@ void saveParams(void)
 }
 
 /* Handle leaving standby mode */
-void powerOn(void)
+static void powerOn(void)
 {
 	STMU_PORT |= STDBY;
 	_delay_ms(50);
@@ -38,7 +38,7 @@ void powerOn(void)
 }
 
 /* Handle entering standby mode */
-void powerOff(void)
+static void powerOff(void)
 {
 	STMU_PORT &= ~MUTE;
 	_delay_ms(50);
@@ -52,7 +52,7 @@ void powerOff(void)
 }
 
 /* Hardware initialization */
-void hwInit(void)
+static void hwInit(void)
 {
 	loadLabels(txtLabels);			/* Load text labels from EEPROM */
 

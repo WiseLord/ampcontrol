@@ -6,9 +6,7 @@
 uint8_t bufFM[5];
 uint8_t monoFM;
 
-#if defined(TUX032) || defined(LM7001)
 uint16_t freqFM;
-#endif
 
 void tunerInit()
 {
@@ -55,11 +53,7 @@ void tunerReadStatus()
 
 uint16_t tunerGetFreq()
 {
-#if defined(TEA5767)
-	return tea5767FreqAvail(bufFM);
-#elif defined(TUX032) || defined(LM7001)
 	return freqFM;
-#endif
 }
 
 void tunerSwitchMono()
