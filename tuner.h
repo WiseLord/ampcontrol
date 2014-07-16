@@ -4,14 +4,16 @@
 #include <inttypes.h>
 
 /* Tuner type selection */
-#if !defined(TEA5767) && !defined(TUX032)
-#define TEA5767
+#if !defined(TEA5767) && !defined(TUX032) && !defined(LM7001)
+#define LM7001
 #endif
 
 #if defined(TEA5767)
 #include "tuner/tea5767.h"
 #elif defined(TUX032)
 #include "tuner/tux032.h"
+#elif defined(LM7001)
+#include "tuner/lm7001.h"
 #endif
 
 #define FM_COUNT		64

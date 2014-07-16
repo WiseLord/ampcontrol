@@ -6,7 +6,7 @@
 uint8_t bufFM[5];
 uint8_t monoFM;
 
-#if defined(TUX032)
+#if defined(TUX032) || defined(LM7001)
 uint16_t freqFM;
 #endif
 
@@ -16,7 +16,11 @@ void tunerInit()
 	tea5767Init();
 #elif defined(TUX032)
 	tux032Init();
+#elif defined(LM7001)
+	lm7001Init();
 #endif
+
+	return;
 }
 
 void tunerSetFreq(uint16_t freq)
@@ -29,8 +33,13 @@ void tunerSetFreq(uint16_t freq)
 	tea5767SetFreq(freq, monoFM);
 #elif defined(TUX032)
 	tux032SetFreq(freq);
-	freqFM = (freq);
+	freqFM = freq;
+#elif defined(LM7001)
+	lm7001SetFreq(freq);
+	freqFM = freq;
 #endif
+
+	return;
 }
 
 void tunerReadStatus()
@@ -40,13 +49,15 @@ void tunerReadStatus()
 #elif defined(TUX032)
 	tux032ReadStatus(bufFM);
 #endif
+
+	return;
 }
 
 uint16_t tunerGetFreq()
 {
 #if defined(TEA5767)
 	return tea5767FreqAvail(bufFM);
-#elif defined(TUX032)
+#elif defined(TUX032) || defined(LM7001)
 	return freqFM;
 #endif
 }
@@ -66,6 +77,8 @@ uint8_t tunerStereo()
 	return TEA5767_BUF_STEREO(bufFM) && !monoFM;
 #elif defined(TUX032)
 	return !TUX032_BUF_STEREO(bufFM);
+#elif defined(LM7001)
+	return 1;
 #endif
 }
 
@@ -78,6 +91,8 @@ uint8_t tunerLevel()
 		return 13;
 	else
 		return 3;
+#elif defined(LM7001)
+	return 13;
 #endif
 }
 
@@ -171,12 +186,16 @@ void loadTunerParams(uint16_t *freq)
 	*freq = eeprom_read_word(eepromFMFreq);
 	monoFM = eeprom_read_byte(eepromFMMono);
 
-#if defined(TUX032)
+#if defined(TEA5767)
+	tea5767SetFreq(*freq, monoFM);
+#elif defined(TUX032)
 	tux032ExitStby();
 	tux032SetFreq(*freq);
-#elif defined(TEA5767)
-	tea5767SetFreq(*freq, monoFM);
+#elif defined(LM7001)
+	lm7001SetFreq(*freq);
 #endif
+
+	return;
 }
 
 void saveTunerParams(uint16_t freq)
@@ -186,7 +205,7 @@ void saveTunerParams(uint16_t freq)
 
 #if defined(TUX032)
 	tux032GoStby();
-#elif defined(TEA5767)
 #endif
+
 	return;
 }
