@@ -14,6 +14,14 @@ SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
 TUNER_SRC = tuner/tea5767.c
 
+ifeq ($(AUDIOPROC), TDA7313)
+  AUDIO_SRC = audio/tda7313.c
+else ifeq ($(AUDIOPROC), TDA7318)
+  AUDIO_SRC = audio/tda7318.c
+else ifeq ($(AUDIOPROC), TDA7439)
+  AUDIO_SRC = audio/tda7439.c
+endif
+
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ifeq ($(DISPLAY), KS0066)
   DISP_SRC = display/ks0066.c
@@ -27,7 +35,7 @@ else ifeq ($(TUNER), TUX032)
   TUNER_SRC = tuner/tux032.c
 endif
 
-SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
 SRCS_VAR = main.c audio.c display.c tuner.c
 
 MCU = atmega8

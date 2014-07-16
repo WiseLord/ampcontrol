@@ -368,7 +368,7 @@ int main(void)
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
 			break;
-#ifdef TDA7313
+#if defined(TDA7313)
 		case MODE_LOUDNESS:
 			showBoolParam(!getLoudness(), txtLabels[LABEL_LOUDNESS], txtLabels);
 			break;
