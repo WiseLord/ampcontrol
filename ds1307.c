@@ -123,20 +123,18 @@ void changeTime(int diff)
 	readTime();
 	switch (_etm) {
 	case HOUR:
-//		time[HOUR] += diff;
-//		if (time[HOUR] > 23)
-//			time[HOUR] = 0;
-//		if (time[HOUR] < 0)
-//			time[HOUR] = 23;
-		time[HOUR] = (time[HOUR] + diff) % 24;
+		time[HOUR] += diff;
+		if (time[HOUR] > 23)
+			time[HOUR] = 0;
+		if (time[HOUR] < 0)
+			time[HOUR] = 23;
 		break;
 	case MIN:
-//		time[MIN] += diff;
-//		if (time[MIN] > 59)
-//			time[MIN] = 0;
-//		if (time[MIN] < 0)
-//			time[MIN] = 59;
-		time[MIN] = (time[MIN] + diff) % 60;
+		time[MIN] += diff;
+		if (time[MIN] > 59)
+			time[MIN] = 0;
+		if (time[MIN] < 0)
+			time[MIN] = 59;
 		break;
 	case SEC:
 		time[SEC] = 0;
@@ -156,12 +154,11 @@ void changeTime(int diff)
 			time[MONTH] = 12;
 		break;
 	case YEAR:
-//		time[YEAR] += diff;
-//		if (time[YEAR] > 99)
-//			time[YEAR] = 0;
-//		if (time[YEAR] < 0)
-//			time[YEAR] = 99;
-		time[YEAR] = (time[YEAR] + diff) % 100;
+		time[YEAR] += diff;
+		if (time[YEAR] > 99)
+			time[YEAR] = 0;
+		if (time[YEAR] < 0)
+			time[YEAR] = 99;
 		break;
 	default:
 		break;
