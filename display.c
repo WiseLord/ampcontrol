@@ -268,33 +268,33 @@ void showTime(uint8_t **txtLabels)
 
 	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
 
-//	if (getEtm() == NOEDIT) {
-//		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
-//	} else {
-//		switch (getEtm()) {
-//		case HOUR:
-//			ks0066SetXY(1, 0);
-//			break;
-//		case MIN:
-//			ks0066SetXY(4, 0);
-//			break;
-//		case SEC:
-//			ks0066SetXY(7, 0);
-//			break;
-//		case DAY:
-//			ks0066SetXY(12, 0);
-//			break;
-//		case MONTH:
-//			ks0066SetXY(15, 0);
-//			break;
-//		case YEAR:
-//			ks0066SetXY(15, 1);
-//			break;
-//		default:
-//			break;
-//		}
-//		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
-//	}
+	if (getEtm() == NOEDIT) {
+		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
+	} else {
+		switch (getEtm()) {
+		case HOUR:
+			ks0066SetXY(1, 0);
+			break;
+		case MIN:
+			ks0066SetXY(4, 0);
+			break;
+		case SEC:
+			ks0066SetXY(7, 0);
+			break;
+		case DAY:
+			ks0066SetXY(12, 0);
+			break;
+		case MONTH:
+			ks0066SetXY(15, 0);
+			break;
+		case YEAR:
+			ks0066SetXY(15, 1);
+			break;
+		default:
+			break;
+		}
+		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
+	}
 
 	return;
 }
