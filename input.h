@@ -26,8 +26,7 @@
 #define STMU_DDR		DDRC
 #define STMU_PORT		PORTC
 
-#define MUTE			(1<<PC2)
-#define STDBY			(1<<PC3)
+#define MUTESTBY		(1<<PC3)
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31

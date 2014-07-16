@@ -24,6 +24,8 @@ void adcInit()
 
 	ADMUX |= (1<<ADLAR);							/* Adjust result to left */
 
+	ADMUX |= (1<<MUX2) | (1<<MUX1) | (0<<MUX0);		/* Set ADC mux to ADC6 */
+
 	return;
 }
 
@@ -49,7 +51,6 @@ static void getValues()
 	TCNT0 = 0;							/* Reset timer */
 	TIMSK |= (1<<TOIE0);				/* Enable compare/match interrupt */
 
-	ADMUX &= ~(1<<MUX0);				/* Switch to left channel */
 	while (!(ADCSRA & (1<<ADSC)));		/* Wait for start measure */
 
 	do {

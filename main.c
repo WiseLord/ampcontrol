@@ -17,9 +17,7 @@ uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
-	STMU_PORT |= STDBY;
-	_delay_ms(50);
-	STMU_PORT |= MUTE;
+	STMU_PORT |= MUTESTBY;
 	loadDispParams();
 	loadTunerParams(&freqFM);
 	unmuteVolume();
@@ -30,9 +28,7 @@ static void powerOn(void)
 /* Handle entering standby mode */
 static void powerOff(void)
 {
-	STMU_PORT &= ~MUTE;
-	_delay_ms(50);
-	STMU_PORT &= ~STDBY;
+	STMU_PORT &= ~MUTESTBY;
 	ks0066Backlight(BACKLIGHT_OFF);
 	stopEditTime();
 	muteVolume();
@@ -58,8 +54,8 @@ static void hwInit(void)
 
 	displayInit();
 
-	STMU_DDR |= STDBY | MUTE;		/* Standby/Mute port */
-	STMU_PORT &= ~(STDBY | MUTE);
+	STMU_DDR |= MUTESTBY;			/* Standby/Mute port */
+	STMU_PORT &= ~MUTESTBY;
 
 	sei();							/* Gloabl interrupt enable */
 
