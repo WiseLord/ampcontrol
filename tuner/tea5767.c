@@ -89,23 +89,3 @@ void tea5767ReadStatus(uint8_t *buf)
 	return;
 }
 
-uint16_t tea5767FreqAvail(uint8_t *buf)
-{
-	uint32_t ret;
-
-	ret = buf[0];
-	ret &= 0x3F;
-	ret <<= 8;
-	ret += buf[1];
-	if (ctrl & TEA5767_XTAL_CTRL) {
-		ret *= 8192;
-	} else {
-		ret *= 12500;
-	}
-	ret -= 200000;
-	ret += 25000;
-	ret /= 50000;
-	ret *= 5;
-
-	return (uint16_t)ret;
-}

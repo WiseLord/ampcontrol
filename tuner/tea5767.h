@@ -66,11 +66,7 @@
 #define TEA5767_BUF_STEREO(buf)	(buf[2] & TEA5767_STEREO)
 
 void tea5767Init(void);
-
 void tea5767SetFreq(uint16_t freq, uint8_t mono);
-
 void tea5767ReadStatus(uint8_t *buf);
-
-uint16_t tea5767FreqAvail(uint8_t *buf);
 
 #endif // TEA5767_H
