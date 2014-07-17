@@ -14,4 +14,4 @@ do
 	done
 done
 
-make clean_const
+make clean

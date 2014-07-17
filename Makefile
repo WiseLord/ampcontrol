@@ -83,7 +83,8 @@ clean_var:
 clean_const:
 	rm -f $(OBJS_CONST)
 
-clean: clean_var clean_const
+clean:
+	rm -f *.o */*.o
 
 flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:flash/$(TARG).hex:i
