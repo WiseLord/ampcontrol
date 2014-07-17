@@ -27,15 +27,15 @@ void tunerSetFreq(uint16_t freq)
 		freq = FM_FREQ_MIN;
 	if (freq < FM_FREQ_MIN)
 		freq = FM_FREQ_MAX;
+
 #if defined(TEA5767)
 	tea5767SetFreq(freq, monoFM);
 #elif defined(TUX032)
 	tux032SetFreq(freq);
-	freqFM = freq;
 #elif defined(LM7001)
 	lm7001SetFreq(freq);
-	freqFM = freq;
 #endif
+	freqFM = freq;
 
 	return;
 }
