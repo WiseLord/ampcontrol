@@ -1,5 +1,5 @@
-AUDIOPROC = TDA7439
-DISPLAY = KS0108
+AUDIOPROC = TDA7313
+DISPLAY = ST7920
 TUNER = TEA5767
 
 # Lowercase argument
@@ -31,6 +31,8 @@ else ifeq ($(DISPLAY), LS020)
   DISP_SRC = $(addprefix display/, ls020.c $(FONTS))
 else ifeq ($(DISPLAY), PCF8574)
   DISP_SRC = display/pcf8574.c
+else ifeq ($(DISPLAY), ST7920)
+  DISP_SRC = $(addprefix display/, st7920.c $(FONTS))
 endif
 
 ifeq ($(TUNER), TEA5767)
