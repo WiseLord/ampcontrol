@@ -912,6 +912,45 @@ void drawSpectrum(uint8_t *buf)
 		}
 	}
 #elif defined(ST7920)
+	uint8_t x, y;
+	uint8_t data;
+
+	for(y = 0; y < 64; y++) {
+		if (y < 32) {
+			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | y);
+			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM);
+		} else {
+			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (y - 32));
+			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
+		}
+
+		for(x = 0; x < 16; x++) {
+			data = 0x00;
+
+			switch (spMode) {
+			case SP_MODE_STEREO:
+				if (y < 32) {
+					if (buf[2 * x] >= (31 - y))
+						data |= 0xE0;
+					if (buf[2 * x + 1] >= (31 - y))
+						data |= 0x0E;
+				} else {
+					if (buf[2 * x + 32] >= (63 - y))
+						data |= 0xE0;
+					if (buf[2 * x + 32 + 1] >= (63 - y))
+						data |= 0x0E;
+				}
+				break;
+			default:
+				if (buf[2 * x] + buf[2 * x + 32] >= (63 - y))
+					data |= 0xE0;
+				if (buf[2 * x + 1] + buf[2 * x + 32 + 1] >= (63 - y))
+					data |= 0x0E;
+				break;
+			}
+			st7920WriteData(data);
+		}
+	}
 #endif
 
 	return;

@@ -104,8 +104,7 @@ void st7920Fill(uint8_t data)
 			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (y - 32));
 			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
 		}
-		for(x = 0; x < 8; x++) {
-			st7920WriteData(data);
+		for(x = 0; x < 16; x++) {
 			st7920WriteData(data);
 		}
 	}
