@@ -189,7 +189,7 @@ void st7920WriteTextString(char *string)
 }
 #endif
 
-static void st7920WriteFb(uint8_t row)
+void st7920WriteFb(uint8_t row, uint8_t nbytes)
 {
 	uint8_t i, j, k;
 	uint8_t data;
@@ -203,7 +203,7 @@ static void st7920WriteFb(uint8_t row)
 			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
 		}
 
-		for (j = 0; j < 16; j++) {
+		for (j = 0; j < nbytes; j++) {
 			data = 0x00;
 			for (k = 0; k < 8; k++) {
 				if (fb[j * 8 + k] & (1<<i))
@@ -250,6 +250,12 @@ void st7920SetXY(uint8_t x, uint8_t y)
 
 	st7920ReadFb(_row);
 
+	return;
+}
+
+void st7920WriteRawToFb(uint8_t pos, uint8_t data)
+{
+	fb[pos] = data;
 	return;
 }
 
@@ -300,7 +306,7 @@ void st7920WriteString(uint8_t *string)
 			st7920WriteChar(fp[FONT_LTSPPOS], i);
 			st7920WriteChar(*str++, i);
 		}
-		st7920WriteFb(_row);
+		st7920WriteFb(_row, 16);
 	}
 	_row = row;
 

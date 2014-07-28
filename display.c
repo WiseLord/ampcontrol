@@ -277,6 +277,34 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 		}
 	}
 #elif defined(ST7920)
+	uint8_t data;
+	uint8_t i, j;
+
+	if (min + max) {
+		value = (int16_t)85 * (value - min) / (max - min);
+	} else {
+		value = (int16_t)42 * value / max;
+	}
+	for (j = 5; j <= 6; j++) {
+		for (i = 0; i < 88; i++) {
+			if (((min + max) && (value <= i)) || (!(min + max) &&
+				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
+				((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
+				if (j == 5) {
+					data = 0x80;
+				} else {
+					data = 0x01;
+				}
+			} else {
+				data = 0xFF;
+			}
+			if ((i & 0x01) || (i >= 85)) {
+				data = 0x00;
+			}
+			st7920WriteRawToFb(i, data);
+		}
+		st7920WriteFb(j, 11);
+	}
 #endif
 
 	return;
