@@ -16,6 +16,8 @@ void tunerInit()
 	tux032Init();
 #elif defined(LM7001)
 	lm7001Init();
+#elif defined(RDA5807M)
+	rda5807mInit();
 #endif
 
 	return;
@@ -34,6 +36,8 @@ void tunerSetFreq(uint16_t freq)
 	tux032SetFreq(freq);
 #elif defined(LM7001)
 	lm7001SetFreq(freq);
+#elif defined(RDA5807M)
+	rda5807mSetFreq(freq, monoFM);
 #endif
 	freqFM = freq;
 
@@ -46,6 +50,8 @@ void tunerReadStatus()
 	tea5767ReadStatus(bufFM);
 #elif defined(TUX032)
 	tux032ReadStatus(bufFM);
+#elif defined(RDA5807M)
+	rda5807mReadStatus(bufFM);
 #endif
 
 	return;
@@ -58,7 +64,7 @@ uint16_t tunerGetFreq()
 
 void tunerSwitchMono()
 {
-#if defined(TEA5767)
+#if defined(TEA5767) || defined(RDA5807M)
 	monoFM = !monoFM;
 	tunerSetFreq(tunerGetFreq());
 #endif
@@ -71,6 +77,9 @@ uint8_t tunerReady()
 	return TEA5767_BUF_READY(bufFM);
 #elif defined(TUX032) || defined (LM7001)
 	return 1;
+#elif defined(RDA5807M)
+	/* TODO: handle it */
+	return 1;
 #endif
 }
 
@@ -81,6 +90,9 @@ uint8_t tunerStereo()
 #elif defined(TUX032)
 	return !TUX032_BUF_STEREO(bufFM);
 #elif defined(LM7001)
+	return 1;
+#elif defined(RDA5807M)
+	/* TODO: handle it */
 	return 1;
 #endif
 }
@@ -95,6 +107,9 @@ uint8_t tunerLevel()
 	else
 		return 3;
 #elif defined(LM7001)
+	return 13;
+#elif defined(RDA5807M)
+	/* TODO: handle it */
 	return 13;
 #endif
 }
