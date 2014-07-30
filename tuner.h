@@ -21,8 +21,8 @@
 #define SEARCH_DOWN		0
 #define SEARCH_UP		1
 
-#define FM_MONO					1
-#define FM_STEREO				0
+#define FM_MONO			1
+#define FM_STEREO		0
 
 #define FM_FREQ_MIN		8750
 #define FM_FREQ_MAX		10800
