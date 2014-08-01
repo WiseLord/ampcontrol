@@ -88,8 +88,3 @@ void tea5767ReadStatus(uint8_t *buf)
 
 	return;
 }
-
-uint8_t tea5767ADCLevel(uint8_t *buf)
-{
-	return (buf[3] & TEA5767_LEV_MASK) >> 4;
-}

@@ -3,11 +3,7 @@
 #include <avr/eeprom.h>
 #include "eeprom.h"
 
-#if defined(RDA5807)
-uint8_t bufFM[14];
-#else
 uint8_t bufFM[5];
-#endif
 
 uint8_t monoFM;
 uint16_t freqFM;
@@ -82,8 +78,7 @@ uint8_t tunerReady()
 #elif defined(TUX032) || defined (LM7001)
 	return 1;
 #elif defined(RDA5807)
-	/* TODO: handle it */
-	return 1;
+	return RDA5807_BUF_READY(bufFM);
 #endif
 }
 
@@ -96,8 +91,7 @@ uint8_t tunerStereo()
 #elif defined(LM7001)
 	return 1;
 #elif defined(RDA5807)
-	/* TODO: handle it */
-	return 1;
+	return RDA5807_BUF_STEREO(bufFM) && !monoFM;
 #endif
 }
 
@@ -113,8 +107,7 @@ uint8_t tunerLevel()
 #elif defined(LM7001)
 	return 13;
 #elif defined(RDA5807)
-	/* TODO: handle it */
-	return 13;
+	return (bufFM[0] & RDA5807_RSSI) >> 4;
 #endif
 }
 

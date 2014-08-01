@@ -32,15 +32,15 @@
 #define RDA5807_ENABLE				(1<<0) /* Power on radio (1) */
 
 /* 2 register (03H) */
-/* PLL 9..2 bits */
+/* CHAN 9..2 bits */
 /*
- * BAND = 0    => PLL = Channel spacing (kHz) * CHAN + 87.0MHz
- * BAND = 1,2  => PLL = Channel spacing (kHz) * CHAN + 76.0MHz
- * BAND = 3    => PLL = Channel spacing (kHz) * CHAN + 65.0MHz
+ * BAND = 0    => Freq = Channel spacing (kHz) * CHAN + 87.0MHz
+ * BAND = 1,2  => Freq = Channel spacing (kHz) * CHAN + 76.0MHz
+ * BAND = 3    => Freq = Channel spacing (kHz) * CHAN + 65.0MHz
 */
 
 /* 3 register (03L) */
-/* PLL 1.. 0 bits */
+/* CHAN 1.. 0 bits */
 #define RDA5807_DIRECT_MODE			(1<<5) /* Direct mode (1), only used when test */
 #define RDA5807_TUNE				(1<<4) /* Tune enable (1) */
 #define RDA5807_BAND_US_EUROPE		(0<<2) /* 87..108 MHz */
@@ -54,7 +54,7 @@
 
 /* 4 register (04H) */
 #define RDA5807_DE					(1<<3) /* De-emphasis 75us (0) / 50us (1) */
-#define RDA5807_SOFTMUTE_EN			(1<<1) /* Softmode enable (1) */
+#define RDA5807_SOFTMUTE_EN			(1<<1) /* Softmute enable (1) */
 #define RDA5807_AFCD				(1<<0) /* AFC disable (1) */
 
 /* 5 register (04L) */
@@ -62,25 +62,25 @@
 
 /* 6 register (05H) */
 #define RDA5807_INT_MODE			(1<<7) /* 5ms interrupt for RDSIEN on RDS ready (0) */
-#define RDA5807_SEEKTH				(1<<0) /* Seek SNR threshold, 4bits, default 1000=32dB */
+#define RDA5807_SEEKTH				0x0F   /* Seek SNR threshold, 4bits, default 1000=32dB */
 
 /* 7 register (05L) */
-#define RDA5807_LNA_PORT_SEL		(1<<6) /* Only for RDA5807FP 2 bit (10) to select FMIN input */
-#define RDA5807_VOLUME				0      /* 4 bits volume (0000 - muted, 1111 - max) */
+#define RDA5807_LNA_PORT_SEL		0xC0   /* Only for RDA5807FP 2 bit (10) to select FMIN input */
+#define RDA5807_VOLUME				0x0F   /* 4 bits volume (0000 - muted, 1111 - max) */
 
 /* 8 register (06H) */
-#define RDA5807_OPEN_MODE			6      /* 2 bits (11) to open read-only regs for writing */
+#define RDA5807_OPEN_MODE			0xC0   /* 2 bits (11) to open read-only regs for writing */
 /* Other bits for RDA5807FP, for I2S control */
 
 /* 9 register (06L) */
 /* It's for RDA5807FP, for I2S control */
 
 /* 10 register (07H) */
-#define RDA5807_TH_SOFRBLEND		2      /* 5 bits for noise soft blend, default 10000 */
+#define RDA5807_TH_SOFRBLEND		0x7C   /* 5 bits for noise soft blend, default 10000 */
 #define RDA5807_65M_50M_MODE		(1<<1) /* For BAND=11, 50..76MHz (0) */
 
 /* 11 register (07L) */
-#define RDA5807_TH_OLD				2      /* 6 bits seek treshold, valid for SKMODE=1 */
+#define RDA5807_TH_OLD				0xFC   /* 6 bits seek treshold, valid for SKMODE=1 */
 #define RDA5807_SOFTBLEND_EN		(1<<1) /* Softblend enable (1) */
 #define RDA5807_FREQ_MODE			(1<<0) /* Manual freq setup (1) for 12,13 regs */
 
@@ -102,14 +102,14 @@
 /* READCHAN 7-0 bits */
 
 /* 2 register (0BH) */
-#define RDA5807_RSSI				1      /* 7 bits of RSSI signal level*/
+#define RDA5807_RSSI				0xFE   /* 7 bits of RSSI signal level*/
 #define RDA5807_FM_TRUE				(1<<0) /* Current channel is a station (1) */
 
 /* 3 register (0BL) */
 #define RDA5807_FM_READY			(1<<7) /* Ready */
 #define RDA5807_ABCD_E				(1<<4) /* Data block E (1) or blocks A-D (0) */
-#define RDA5807_BLERA				2      /* 2 bits error level in block A(RDS) or E(RBDS) */
-#define RDA5807_BLERB				0      /* 2 bits error level in block B(RDS) or E(RBDS) */
+#define RDA5807_BLERA				0x0C   /* 2 bits error level in block A(RDS) or E(RBDS) */
+#define RDA5807_BLERB				0x03   /* 2 bits error level in block B(RDS) or E(RBDS) */
 
 /* 4-11 registers */
 /* RDS data registers:
@@ -119,6 +119,9 @@
  * 10-11 => D,
  * or 4-11 => E when ABCD_E = 1
  */
+
+#define RDA5807_BUF_READY(buf)	(buf[3] & RDA5807_FM_READY)
+#define RDA5807_BUF_STEREO(buf)	(buf[0] & RDA5807_ST)
 
 void rda5807Init(void);
 void rda5807SetFreq(uint16_t freq, uint8_t mono);

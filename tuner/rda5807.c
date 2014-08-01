@@ -2,6 +2,8 @@
 
 #include "../i2c.h"
 
+#define CHAN_SPACING 10
+
 void rda5807Init(void)
 {
 	/* TODO: Init IC */
@@ -13,7 +15,7 @@ static void rda5807WriteI2C(uint8_t *buf)
 	uint8_t i;
 
 	I2CStart(RDA5807M_ADDR);
-	for (i = 0; i < 14; i++) {
+	for (i = 0; i < 5; i++) {
 		I2CWriteByte(buf[i]);
 	}
 	I2CStop();
@@ -23,10 +25,25 @@ static void rda5807WriteI2C(uint8_t *buf)
 
 void rda5807SetFreq(uint16_t freq, uint8_t mono)
 {
-	uint8_t buf[14];
+	uint8_t buf[5];
 
-	/* TODO: Calculate setup word and set frequency */
+	uint16_t chan = (freq - 8700) / CHAN_SPACING;
 
+	buf[0] = (RDA5807_DHIZ | RDA5807_DMUTE);
+	if (mono)
+		buf[0] |= RDA5807_MONO;
+
+	buf[1] = RDA5807_CLK_MODE_32768;
+	buf[1] |= RDA5807_NEW_METHOD;
+	buf[1] |= RDA5807_ENABLE;
+
+	buf[2] = chan >> 2;						/* 8 MSB */
+
+	buf[3] = (chan & 0x03) << 6;			/* 2 LSB */
+	buf[3] |= RDA5807_BAND_US_EUROPE;
+	buf[3] |= RDA5807_SPACE_100;
+
+	buf[4] = RDA5807_SOFTMUTE_EN;
 
 	rda5807WriteI2C(buf);
 
@@ -38,7 +55,7 @@ void rda5807ReadStatus(uint8_t *buf)
 	uint8_t i;
 
 	I2CStart(RDA5807M_ADDR | I2C_READ);
-	for (i = 0; i < 12; i++)
+	for (i = 0; i < 4; i++)
 		I2CReadByte(&buf[i], 1);
 	I2CStop();
 
