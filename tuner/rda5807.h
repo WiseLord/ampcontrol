@@ -87,6 +87,38 @@
 /* 12,13 registers (08H,L) */
 /* Manual frequency value. Freq = 76000(87000)kHz + value of 08 word */
 
+/* Read mode register values */
+
+/* 0 register (0AH) */
+#define RDA5807_RDSR				(1<<7) /* RDS ready (1) */
+#define RDA5807_STC					(1<<6) /* Seek/tune complete (1) */
+#define RDA5807_SF					(1<<5) /* Seek failure (1) */
+#define RDA5807_RDSS				(1<<4) /* RDS decoder synchronized (1) */
+#define RDA5807_BLK_E				(1<<3) /* (When RDS enabled) block E has been found (1)*/
+#define RDA5807_ST					(1<<2) /* Stereo indicator (1) */
+/* READCHAN 9,8 bits */
+
+/* 1 register (0AL) */
+/* READCHAN 7-0 bits */
+
+/* 2 register (0BH) */
+#define RDA5807_RSSI				1      /* 7 bits of RSSI signal level*/
+#define RDA5807_FM_TRUE				(1<<0) /* Current channel is a station (1) */
+
+/* 3 register (0BL) */
+#define RDA5807_FM_READY			(1<<7) /* Ready */
+#define RDA5807_ABCD_E				(1<<4) /* Data block E (1) or blocks A-D (0) */
+#define RDA5807_BLERA				2      /* 2 bits error level in block A(RDS) or E(RBDS) */
+#define RDA5807_BLERB				0      /* 2 bits error level in block B(RDS) or E(RBDS) */
+
+/* 4-11 registers */
+/* RDS data registers:
+ * 4-5   => A,
+ * 6-7   => B,
+ * 8-9   => C,
+ * 10-11 => D,
+ * or 4-11 => E when ABCD_E = 1
+ */
 
 void rda5807Init(void);
 void rda5807SetFreq(uint16_t freq, uint8_t mono);
