@@ -1,6 +1,6 @@
 AUDIOPROC = TDA7439
 DISPLAY = KS0108
-TUNER = RDA5807M
+TUNER = RDA5807
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -41,8 +41,8 @@ else ifeq ($(TUNER), TUX032)
   TUNER_SRC = tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
   TUNER_SRC = tuner/lm7001.c
-else ifeq ($(TUNER), RDA5807M)
-  TUNER_SRC = tuner/rda5807m.c
+else ifeq ($(TUNER), RDA5807)
+  TUNER_SRC = tuner/rda5807.c
 endif
 
 SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)

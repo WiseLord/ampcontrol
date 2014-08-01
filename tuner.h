@@ -4,8 +4,8 @@
 #include <inttypes.h>
 
 /* Tuner type selection */
-#if !defined(TEA5767) && !defined(TUX032) && !defined(LM7001) && !defined(RDA5807M)
-#define RDA5807M
+#if !defined(TEA5767) && !defined(TUX032) && !defined(LM7001) && !defined(RDA5807)
+#define RDA5807
 #endif
 
 #if defined(TEA5767)
@@ -14,8 +14,8 @@
 #include "tuner/tux032.h"
 #elif defined(LM7001)
 #include "tuner/lm7001.h"
-#elif defined(RDA5807M)
-#include "tuner/rda5807m.h"
+#elif defined(RDA5807)
+#include "tuner/rda5807.h"
 #endif
 
 #define FM_COUNT		64
