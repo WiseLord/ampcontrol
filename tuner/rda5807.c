@@ -56,7 +56,8 @@ void rda5807ReadStatus(uint8_t *buf)
 
 	I2CStart(RDA5807M_ADDR | I2C_READ);
 	for (i = 0; i < 4; i++)
-		I2CReadByte(&buf[i], 1);
+		I2CReadByte(&buf[i], I2C_ACK);
+	I2CReadByte(&buf[4], I2C_NOACK);
 	I2CStop();
 
 	return;
