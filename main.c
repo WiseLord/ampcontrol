@@ -89,7 +89,6 @@ int main(void)
 	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
 	uint8_t direction;
 
-	loadDispParams();
 	loadAudioParams(txtLabels);
 	loadTunerParams(&freqFM);
 
