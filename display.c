@@ -439,7 +439,7 @@ void showRC5Info(uint16_t rc5Buf)
 
 	return;
 }
-
+#ifndef NOTUNER
 void showRadio(uint8_t num)
 {
 	uint16_t freq = tunerGetFreq();
@@ -597,6 +597,7 @@ void showRadio(uint8_t num)
 
 	return;
 }
+#endif
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {

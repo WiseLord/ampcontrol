@@ -1,6 +1,6 @@
 AUDIOPROC = TDA7439
 DISPLAY = KS0108
-TUNER = TEA5767
+TUNER = NOTUNER
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -36,17 +36,17 @@ else ifeq ($(DISPLAY), ST7920)
 endif
 
 ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner/tea5767.c
+  TUNER_SRC = tuner.c tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner/tux032.c
+  TUNER_SRC = tuner.c tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner/lm7001.c
+  TUNER_SRC = tuner.c tuner/lm7001.c
 else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner/rda5807.c
+  TUNER_SRC = tuner.c tuner/rda5807.c
 endif
 
-SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
-SRCS_VAR = main.c audio.c display.c tuner.c
+SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC)
+SRCS_VAR = main.c audio.c display.c $(TUNER_SRC)
 
 MCU = atmega16
 F_CPU = 16000000L

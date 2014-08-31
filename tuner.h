@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 /* Tuner type selection */
-#if !defined(TEA5767) && !defined(TUX032) && !defined(LM7001) && !defined(RDA5807)
+#if !defined(TEA5767) && !defined(TUX032) && !defined(LM7001) && !defined(RDA5807) && !defined(NOTUNER)
 #define TEA5767
 #endif
 
