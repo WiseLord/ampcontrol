@@ -4,6 +4,7 @@
 
 #include "../i2c.h"
 #include "../eeprom.h"
+#include "../input.h"
 
 static sndParam sndPar[SND_PARAM_COUNT];
 
@@ -135,12 +136,14 @@ void muteVolume(void)
 {
 	setVolume(sndPar[SND_VOLUME].min);
 	mute = MUTE_ON;
+	STMU_PORT &= ~STDBY;
 }
 
 void unmuteVolume(void)
 {
 	setVolume(sndPar[SND_VOLUME].value);
 	mute = MUTE_OFF;
+	STMU_PORT |= MUTE;
 }
 
 void switchMute(void)

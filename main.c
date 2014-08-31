@@ -29,7 +29,6 @@ static void powerOn(void)
 {
 	STMU_PORT |= STDBY;
 	_delay_ms(50);
-	STMU_PORT |= MUTE;
 	loadDispParams();
 	loadTunerParams(&freqFM);
 	unmuteVolume();
@@ -40,12 +39,11 @@ static void powerOn(void)
 /* Handle entering standby mode */
 static void powerOff(void)
 {
-	STMU_PORT &= ~MUTE;
+	muteVolume();
 	_delay_ms(50);
 	STMU_PORT &= ~STDBY;
 	setBacklight(BACKLIGHT_OFF);
 	stopEditTime();
-	muteVolume();
 	saveParams();
 
 	return;
@@ -65,7 +63,7 @@ static void hwInit(void)
 	tunerInit();					/* Tuner */
 
 	STMU_DDR |= (STDBY | MUTE)	;	/* Standby/Mute port */
-	STMU_PORT &= ~(STDBY | MUTE);
+	STMU_PORT &= ~STDBY;
 
 	sei();							/* Gloabl interrupt enable */
 
