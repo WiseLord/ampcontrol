@@ -176,6 +176,7 @@ void loadAudioParams(uint8_t **txtLabels)
 		sndPar[SND_GAIN0 + i].set = setGain;
 	}
 
+	muteVolume();
 	setChan(chan);
 	setBass(sndPar[SND_BASS].value);
 	setBalanceFrontRear(0);
