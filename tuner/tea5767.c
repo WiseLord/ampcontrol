@@ -88,4 +88,3 @@ void tea5767ReadStatus(uint8_t *buf)
 
 	return;
 }
-

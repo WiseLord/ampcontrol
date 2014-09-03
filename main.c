@@ -31,7 +31,6 @@ static void powerOff(void)
 	STMU_PORT &= ~MUTESTBY;
 	ks0066Backlight(BACKLIGHT_OFF);
 	stopEditTime();
-	muteVolume();
 
 	saveAudioParams();
 	saveDisplayParams();
@@ -45,14 +44,13 @@ static void hwInit(void)
 {
 	loadLabels(txtLabels);			/* Load text labels from EEPROM */
 
+	displayInit();
 
 	rc5Init();						/* IR Remote control */
 	adcInit();						/* Analog-to-digital converter */
 	inputInit();					/* Buttons/encoder polling */
 	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
-
-	displayInit();
 
 	STMU_DDR |= MUTESTBY;			/* Standby/Mute port */
 	STMU_PORT &= ~MUTESTBY;
