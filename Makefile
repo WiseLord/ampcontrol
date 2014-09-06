@@ -32,7 +32,7 @@ else ifeq ($(DISPLAY), LS020)
 else ifeq ($(DISPLAY), PCF8574)
   DISP_SRC = display/pcf8574.c
 else ifeq ($(DISPLAY), ST7920)
-  DISP_SRC = $(addprefix display/, st7920.c $(FONTS))
+  DISP_SRC = $(addprefix display/, fbgd.c st7920.c $(FONTS))
 endif
 
 ifeq ($(TUNER), TEA5767)

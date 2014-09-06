@@ -20,7 +20,7 @@
 #elif defined(PCF8574)
 #include "display/pcf8574.h"
 #elif defined(ST7920)
-#include "display/st7920.h"
+#include "display/fbgd.h"
 #endif
 
 /* Spectrum output mode */

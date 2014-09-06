@@ -19,24 +19,24 @@ static const uint8_t hannTable[] PROGMEM = {
 
 void adcInit()
 {
-	/* Set Timer0 prescaller to 8 (2 MHz) with reset on match */
-	TCCR0 = (0<<CS02) | (1<<CS01) | (0<<CS00) | (1<<WGM01);
+//	/* Set Timer0 prescaller to 8 (2 MHz) with reset on match */
+//	TCCR0 = (0<<CS02) | (1<<CS01) | (0<<CS00) | (1<<WGM01);
 
-	/* Enable ADC with prescaler 32 */
+//	/* Enable ADC with prescaler 32 */
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (1<<ADPS0);
 
-	OCR0 = 62;									/* 2000000/62 => 32k meas/sec */
+//	OCR0 = 62;									/* 2000000/62 => 32k meas/sec */
 	ADMUX |= (1<<ADLAR);						/* Adjust result to left */
 
 	return;
 }
 
-ISR (TIMER0_COMP_vect)
-{
-	ADCSRA |= 1<<ADSC;
+//ISR (TIMER0_COMP_vect)
+//{
+//	ADCSRA |= 1<<ADSC;
 
-	return;
-};
+//	return;
+//};
 
 static uint8_t revBits(uint8_t x)
 {

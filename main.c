@@ -404,7 +404,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
-			drawSpectrum(getSpData());
+//			drawSpectrum(getSpData());
 			break;
 #ifndef NOTUNER
 		case MODE_FM_RADIO:

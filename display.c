@@ -43,7 +43,7 @@ static void writeStringEeprom(const uint8_t *string)
 #elif defined(LS020)
 	ls020WriteString(strbuf);
 #elif defined(ST7920)
-	st7920WriteString(strbuf);
+	gdWriteString(strbuf);
 #endif
 
 	return;
@@ -110,7 +110,7 @@ void displayInit()
 	ls020Init();
 #elif defined(ST7920)
 	st7920Init();
-	st7920LoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1);
 	st7920Fill(0x00);
 #endif
 	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
@@ -277,34 +277,34 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 		}
 	}
 #elif defined(ST7920)
-	uint8_t data;
-	uint8_t i, j;
+//	uint8_t data;
+//	uint8_t i, j;
 
-	if (min + max) {
-		value = (int16_t)85 * (value - min) / (max - min);
-	} else {
-		value = (int16_t)42 * value / max;
-	}
-	for (j = 5; j <= 6; j++) {
-		for (i = 0; i < 88; i++) {
-			if (((min + max) && (value <= i)) || (!(min + max) &&
-				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
-				((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
-				if (j == 5) {
-					data = 0x80;
-				} else {
-					data = 0x01;
-				}
-			} else {
-				data = 0xFF;
-			}
-			if ((i & 0x01) || (i >= 85)) {
-				data = 0x00;
-			}
-			st7920WriteRawToFb(i, data);
-		}
-		st7920WriteFb(j, 11);
-	}
+//	if (min + max) {
+//		value = (int16_t)85 * (value - min) / (max - min);
+//	} else {
+//		value = (int16_t)42 * value / max;
+//	}
+//	for (j = 5; j <= 6; j++) {
+//		for (i = 0; i < 88; i++) {
+//			if (((min + max) && (value <= i)) || (!(min + max) &&
+//				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
+//				((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
+//				if (j == 5) {
+//					data = 0x80;
+//				} else {
+//					data = 0x01;
+//				}
+//			} else {
+//				data = 0xFF;
+//			}
+//			if ((i & 0x01) || (i >= 85)) {
+//				data = 0x00;
+//			}
+//			st7920WriteRawToFb(i, data);
+//		}
+//		st7920WriteFb(j, 11);
+//	}
 #endif
 
 	return;
@@ -325,10 +325,10 @@ static void showParValue(int8_t value)
 	ls020SetXY(100, 96);
 	ls020WriteString(mkNumString(value, 3, ' ', 10));
 #elif defined(ST7920)
-	st7920LoadFont(font_ks0066_ru_24, 1);
-	st7920SetXY(93, 32);
-	st7920WriteString(mkNumString(value, 3, ' ', 10));
-	st7920LoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(93, 32);
+	gdWriteString(mkNumString(value, 3, ' ', 10));
+	gdLoadFont(font_ks0066_ru_08, 1);
 #endif
 
 	return;
@@ -355,11 +355,11 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 	ls020SetXY(150, 104);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 #elif defined(ST7920)
-	st7920LoadFont(font_ks0066_ru_24, 1);
-	st7920SetXY(0, 0);
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
-	st7920LoadFont(font_ks0066_ru_08, 1);
-	st7920SetXY(116, 56);
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(116, 56);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 #endif
 
@@ -416,25 +416,25 @@ void showRC5Info(uint16_t rc5Buf)
 	ls020WriteString((uint8_t*)"Btn = ");
 	ls020WriteString(mkNumString(INPUT_PIN, 8, '0', 2));
 #elif defined(ST7920)
-	st7920LoadFont(font_ks0066_ru_08, 1);
-	st7920SetXY(0, 0);
-	st7920WriteString((uint8_t*)"RC5:");
-	st7920SetXY(5, 8);
-	st7920WriteString((uint8_t*)"Raw = ");
-	st7920WriteString(mkNumString(rc5Buf, 14, '0', 2));
-	st7920SetXY(5, 16);
-	st7920WriteString((uint8_t*)"Tog = ");
-	st7920WriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
-	st7920SetXY(5, 24);
-	st7920WriteString((uint8_t*)"Adr = ");
-	st7920WriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-	st7920SetXY(5, 32);
-	st7920WriteString((uint8_t*)"Cmd = ");
-	st7920WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
-	st7920SetXY(0, 48);
-	st7920WriteString((uint8_t*)"Buttons:");
-	st7920SetXY(5, 56);
-	st7920WriteString(mkNumString(INPUT_PIN, 8, '0', 2));
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(0, 0);
+	gdWriteString((uint8_t*)"RC5:");
+	gdSetXY(5, 8);
+	gdWriteString((uint8_t*)"Raw = ");
+	gdWriteString(mkNumString(rc5Buf, 14, '0', 2));
+	gdSetXY(5, 16);
+	gdWriteString((uint8_t*)"Tog = ");
+	gdWriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
+	gdSetXY(5, 24);
+	gdWriteString((uint8_t*)"Adr = ");
+	gdWriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
+	gdSetXY(5, 32);
+	gdWriteString((uint8_t*)"Cmd = ");
+	gdWriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
+	gdSetXY(0, 48);
+	gdWriteString((uint8_t*)"Buttons:");
+	gdSetXY(5, 56);
+	gdWriteString(mkNumString(INPUT_PIN, 8, '0', 2));
 #endif
 
 	return;
@@ -556,30 +556,30 @@ void showRadio(uint8_t num)
 	uint8_t i;
 
 	/* Frequency value */
-	st7920LoadFont(font_ks0066_ru_24, 1);
-	st7920SetXY(0, 0);
-	st7920WriteString((uint8_t*)"FM ");
-	st7920WriteString(mkNumString(freq / 100, 3, ' ', 10));
-	st7920WriteString((uint8_t*)"\x7F.\x7F");
-	st7920WriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
-	st7920LoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(0, 0);
+	gdWriteString((uint8_t*)"FM ");
+	gdWriteString(mkNumString(freq / 100, 3, ' ', 10));
+	gdWriteString((uint8_t*)"\x7F.\x7F");
+	gdWriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
+	gdLoadFont(font_ks0066_ru_08, 1);
 
 	/* Signal level */
-	st7920SetXY (112, 0);
+	gdSetXY (112, 0);
 	for (i = 0; i < 16; i+=2) {
 //		if (i <= tunerLevel())
 //			st7920WriteData(256 - (1<<(7 - i / 2)));
 //		else
 //			st7920WriteData(0x80);
-		st7920WriteData(0x00);
+		gdWriteChar(0x00);
 	}
 
 	/* Stereo indicator */
-	st7920SetXY(114, 16);
+	gdSetXY(114, 16);
 	if (tunerStereo())
-		st7920WriteString((uint8_t*)"ST");
+		gdWriteString((uint8_t*)"ST");
 	else
-		st7920WriteString((uint8_t*)"  ");
+		gdWriteString((uint8_t*)"  ");
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
@@ -588,10 +588,10 @@ void showRadio(uint8_t num)
 	if (num) {
 		showParValue(num);
 	} else {
-		st7920LoadFont(font_ks0066_ru_24, 1);
-		st7920SetXY(93, 32);
-		st7920WriteString((uint8_t*)" --");
-		st7920LoadFont(font_ks0066_ru_08, 1);
+		gdLoadFont(font_ks0066_ru_24, 1);
+		gdSetXY(93, 32);
+		gdWriteString((uint8_t*)" --");
+		gdLoadFont(font_ks0066_ru_08, 1);
 	}
 #endif
 
@@ -629,15 +629,15 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	else
 		writeStringEeprom(txtLabels[LABEL_OFF]);
 #elif defined(ST7920)
-	st7920LoadFont(font_ks0066_ru_24, 1);
-	st7920SetXY(0, 0);
+	gdLoadFont(font_ks0066_ru_24, 1);
+	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
-	st7920SetXY(0, 32);
+	gdSetXY(0, 32);
 	if (value)
 		writeStringEeprom(txtLabels[LABEL_ON]);
 	else
 		writeStringEeprom(txtLabels[LABEL_OFF]);
-	st7920LoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1);
 #endif
 
 	return;
@@ -688,11 +688,11 @@ static void drawTm(timeMode tm, const uint8_t *font, uint8_t mult)
 static void drawTm(timeMode tm, const uint8_t *font)
 {
 	if (getEtm() == tm)
-		st7920LoadFont(font, 0);
+		gdLoadFont(font, 0);
 	else
-		st7920LoadFont(font, 1);
-	st7920WriteString(mkNumString(getTime(tm), 2, '0', 10));
-	st7920LoadFont(font, 1);
+		gdLoadFont(font, 1);
+	gdWriteString(mkNumString(getTime(tm), 2, '0', 10));
+	gdLoadFont(font, 1);
 
 	return;
 }
@@ -768,28 +768,28 @@ void showTime(uint8_t **txtLabels)
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
 	ls020SetXY(24, 104);
 #elif defined(ST7920)
-	st7920SetXY(4, 0);
+	gdSetXY(4, 0);
 
 	drawTm(HOUR, font_digits_32);
-	st7920WriteString((uint8_t*)"\x7F:\x7F");
+	gdWriteString((uint8_t*)"\x7F:\x7F");
 	drawTm(MIN, font_digits_32);
-	st7920WriteString((uint8_t*)"\x7F:\x7F");
+	gdWriteString((uint8_t*)"\x7F:\x7F");
 	drawTm(SEC, font_digits_32);
 
-	st7920SetXY(9, 32);
+	gdSetXY(9, 32);
 
 	drawTm(DAY, font_ks0066_ru_24);
-	st7920WriteString((uint8_t*)"\x7F.\x7F");
+	gdWriteString((uint8_t*)"\x7F.\x7F");
 	drawTm(MONTH, font_ks0066_ru_24);
-	st7920WriteString((uint8_t*)"\x7F.\x7F");
+	gdWriteString((uint8_t*)"\x7F.\x7F");
 	if (getEtm() == YEAR)
-		st7920LoadFont(font_ks0066_ru_24, 0);
-	st7920WriteString((uint8_t*)"20");
-	st7920WriteString((uint8_t*)"\x7F");
+		gdLoadFont(font_ks0066_ru_24, 0);
+	gdWriteString((uint8_t*)"20");
+	gdWriteString((uint8_t*)"\x7F");
 	drawTm(YEAR, font_ks0066_ru_24);
 
-	st7920LoadFont(font_ks0066_ru_08, 1);
-	st7920SetXY(32, 56);
+	gdLoadFont(font_ks0066_ru_08, 1);
+	gdSetXY(32, 56);
 #endif
 
 	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
@@ -913,45 +913,45 @@ void drawSpectrum(uint8_t *buf)
 		}
 	}
 #elif defined(ST7920)
-	uint8_t x, y;
-	uint8_t data;
+//	uint8_t x, y;
+//	uint8_t data;
 
-	for(y = 0; y < 64; y++) {
-		if (y < 32) {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | y);
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM);
-		} else {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (y - 32));
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
-		}
+//	for(y = 0; y < 64; y++) {
+//		if (y < 32) {
+//			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | y);
+//			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM);
+//		} else {
+//			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (y - 32));
+//			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
+//		}
 
-		for(x = 0; x < 16; x++) {
-			data = 0x00;
+//		for(x = 0; x < 16; x++) {
+//			data = 0x00;
 
-			switch (spMode) {
-			case SP_MODE_STEREO:
-				if (y < 32) {
-					if (buf[2 * x] >= (31 - y))
-						data |= 0xE0;
-					if (buf[2 * x + 1] >= (31 - y))
-						data |= 0x0E;
-				} else {
-					if (buf[2 * x + 32] >= (63 - y))
-						data |= 0xE0;
-					if (buf[2 * x + 32 + 1] >= (63 - y))
-						data |= 0x0E;
-				}
-				break;
-			default:
-				if (buf[2 * x] + buf[2 * x + 32] >= (63 - y))
-					data |= 0xE0;
-				if (buf[2 * x + 1] + buf[2 * x + 32 + 1] >= (63 - y))
-					data |= 0x0E;
-				break;
-			}
-			st7920WriteData(data);
-		}
-	}
+//			switch (spMode) {
+//			case SP_MODE_STEREO:
+//				if (y < 32) {
+//					if (buf[2 * x] >= (31 - y))
+//						data |= 0xE0;
+//					if (buf[2 * x + 1] >= (31 - y))
+//						data |= 0x0E;
+//				} else {
+//					if (buf[2 * x + 32] >= (63 - y))
+//						data |= 0xE0;
+//					if (buf[2 * x + 32 + 1] >= (63 - y))
+//						data |= 0x0E;
+//				}
+//				break;
+//			default:
+//				if (buf[2 * x] + buf[2 * x + 32] >= (63 - y))
+//					data |= 0xE0;
+//				if (buf[2 * x + 1] + buf[2 * x + 32 + 1] >= (63 - y))
+//					data |= 0x0E;
+//				break;
+//			}
+//			st7920WriteData(data);
+//		}
+//	}
 #endif
 
 	return;
