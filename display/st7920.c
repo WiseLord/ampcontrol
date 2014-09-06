@@ -245,7 +245,7 @@ static void st7920ReadFb(uint8_t row)
 void st7920SetXY(uint8_t x, uint8_t y)
 {
 	_col = x;
-	_row = y;
+	_row = y / 8;
 
 	st7920ReadFb(_row);
 
@@ -297,7 +297,7 @@ void st7920WriteString(uint8_t *string)
 	uint8_t row = _row;
 
 	for (i = 0; i < fp[FONT_HEIGHT]; i++) {
-		st7920SetXY(col, row + i);
+		st7920SetXY(col, (row + i) * 8);
 		str = string;
 		if (*str)
 			st7920WriteChar(*str++, i);

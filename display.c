@@ -326,7 +326,7 @@ static void showParValue(int8_t value)
 	ls020WriteString(mkNumString(value, 3, ' ', 10));
 #elif defined(ST7920)
 	st7920LoadFont(font_ks0066_ru_24, 1);
-	st7920SetXY(93, 4);
+	st7920SetXY(93, 32);
 	st7920WriteString(mkNumString(value, 3, ' ', 10));
 	st7920LoadFont(font_ks0066_ru_08, 1);
 #endif
@@ -359,7 +359,7 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 	st7920SetXY(0, 0);
 	writeStringEeprom(parLabel);
 	st7920LoadFont(font_ks0066_ru_08, 1);
-	st7920SetXY(116, 7);
+	st7920SetXY(116, 56);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 #endif
 
@@ -419,21 +419,21 @@ void showRC5Info(uint16_t rc5Buf)
 	st7920LoadFont(font_ks0066_ru_08, 1);
 	st7920SetXY(0, 0);
 	st7920WriteString((uint8_t*)"RC5:");
-	st7920SetXY(5, 1);
+	st7920SetXY(5, 8);
 	st7920WriteString((uint8_t*)"Raw = ");
 	st7920WriteString(mkNumString(rc5Buf, 14, '0', 2));
-	st7920SetXY(5, 2);
+	st7920SetXY(5, 16);
 	st7920WriteString((uint8_t*)"Tog = ");
 	st7920WriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
-	st7920SetXY(5, 3);
+	st7920SetXY(5, 24);
 	st7920WriteString((uint8_t*)"Adr = ");
 	st7920WriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-	st7920SetXY(5, 4);
+	st7920SetXY(5, 32);
 	st7920WriteString((uint8_t*)"Cmd = ");
 	st7920WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
-	st7920SetXY(0, 6);
+	st7920SetXY(0, 48);
 	st7920WriteString((uint8_t*)"Buttons:");
-	st7920SetXY(5, 7);
+	st7920SetXY(5, 56);
 	st7920WriteString(mkNumString(INPUT_PIN, 8, '0', 2));
 #endif
 
@@ -575,7 +575,7 @@ void showRadio(uint8_t num)
 	}
 
 	/* Stereo indicator */
-	st7920SetXY(114, 2);
+	st7920SetXY(114, 16);
 	if (tunerStereo())
 		st7920WriteString((uint8_t*)"ST");
 	else
@@ -589,7 +589,7 @@ void showRadio(uint8_t num)
 		showParValue(num);
 	} else {
 		st7920LoadFont(font_ks0066_ru_24, 1);
-		st7920SetXY(93, 4);
+		st7920SetXY(93, 32);
 		st7920WriteString((uint8_t*)" --");
 		st7920LoadFont(font_ks0066_ru_08, 1);
 	}
@@ -632,7 +632,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	st7920LoadFont(font_ks0066_ru_24, 1);
 	st7920SetXY(0, 0);
 	writeStringEeprom(parLabel);
-	st7920SetXY(0, 4);
+	st7920SetXY(0, 32);
 	if (value)
 		writeStringEeprom(txtLabels[LABEL_ON]);
 	else
@@ -776,7 +776,7 @@ void showTime(uint8_t **txtLabels)
 	st7920WriteString((uint8_t*)"\x7F:\x7F");
 	drawTm(SEC, font_digits_32);
 
-	st7920SetXY(9, 4);
+	st7920SetXY(9, 32);
 
 	drawTm(DAY, font_ks0066_ru_24);
 	st7920WriteString((uint8_t*)"\x7F.\x7F");
@@ -789,7 +789,7 @@ void showTime(uint8_t **txtLabels)
 	drawTm(YEAR, font_ks0066_ru_24);
 
 	st7920LoadFont(font_ks0066_ru_08, 1);
-	st7920SetXY(32, 7);
+	st7920SetXY(32, 56);
 #endif
 
 	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);

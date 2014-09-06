@@ -1,6 +1,6 @@
 AUDIOPROC = TDA7439
-DISPLAY = KS0108
-TUNER = NOTUNER
+DISPLAY = ST7920
+TUNER = TEA5767
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -48,7 +48,7 @@ endif
 SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC)
 SRCS_VAR = main.c audio.c display.c $(TUNER_SRC)
 
-MCU = atmega16
+MCU = atmega32
 F_CPU = 16000000L
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums
