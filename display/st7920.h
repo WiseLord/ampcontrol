@@ -18,11 +18,6 @@
 #define ST7920_PSB					(1<<PA5)
 #define ST7920_RST					(1<<PA7)
 
-/* Backlight port */
-#define ST7920_BCKL_DDR				DDRC
-#define ST7920_BCKL_PORT			PORTC
-#define ST7920_BCKL					(1<<PC7)
-
 /* Basic instructions */
 #define ST7920_CLEAR				0x01
 #define ST7920_HOME					0x02
@@ -60,9 +55,12 @@
 #define ST7920_SIZE_X				128
 #define ST7920_SIZE_Y				64
 
+uint8_t isAdcResultReady(void);
+
 void st7920Init(void);
 void st7920Fill(uint8_t data);
 
 void st7920DrawPixel(uint8_t x, uint8_t y, uint8_t color);
+
 
 #endif /* ST7920_H */

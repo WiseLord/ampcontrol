@@ -7,6 +7,40 @@ static uint8_t fp[FONT_PARAM_COUNT];
 
 static uint8_t _x, _y;
 
+inline void gdInit(void)
+{
+#if defined(ST7920)
+	st7920Init();
+#elif defined(KS0108)
+	ks0108Init();
+#endif
+
+	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
+
+	return;
+}
+
+inline void gdClear(void) {
+#if defined(ST7920)
+	st7920Fill(0x00);
+#elif defined(KS0108)
+	ks0108Fill(0x00);
+#endif
+
+	return;
+}
+
+inline void gdDrawPixel(uint8_t x, uint8_t y, uint8_t color)
+{
+#if defined(ST7920)
+	st7920DrawPixel(x, y, color);
+#elif defined(KS0108)
+	ks0108DrawPixel(x, y, color);
+#endif
+
+	return;
+}
+
 void gdDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
 {
 	int8_t sX, sY, dX, dY, err;
@@ -132,7 +166,7 @@ void gdWriteChar(uint8_t code)
 			if (!fp[FONT_COLOR])
 				pgmData = ~pgmData;
 			for (k = 0; k < 8; k++) {
-				st7920DrawPixel(_x + i, _y + 8 * j + k, pgmData & (1<<k));
+				gdDrawPixel(_x + i, _y + 8 * j + k, pgmData & (1<<k));
 			}
 		}
 	}

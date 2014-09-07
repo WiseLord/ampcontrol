@@ -32,8 +32,19 @@ static void st7920TimerInit(void)
 	return;
 }
 
+static uint8_t adcResultReady;
+
+uint8_t isAdcResultReady(void)
+{
+	uint8_t ret = adcResultReady;
+	adcResultReady = 0;
+
+	return ret;
+}
+
 ISR (TIMER0_OVF_vect)
 {
+	adcResultReady = 1;
 	/* Start ADC conversion */
 	ADCSRA |= 1<<ADSC;
 

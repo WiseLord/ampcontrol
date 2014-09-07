@@ -63,7 +63,7 @@ static void hwInit(void)
 {
 	loadLabels(txtLabels);			/* Load text labels from EEPROM */
 
-	displayInit();
+	gdInit();
 
 	rc5Init();						/* IR Remote control */
 	adcInit();						/* Analog-to-digital converter */
@@ -142,7 +142,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_GAIN:
 				nextChan();
-				clearDisplay();
+				gdClear();
 			default:
 				curSndParam = sndParAddr(SND_GAIN0 + getChan());
 				dispMode = MODE_GAIN;
@@ -188,7 +188,7 @@ int main(void)
 				}
 #endif
 			default:
-				clearDisplay();
+				gdClear();
 				switchMute();
 				dispMode = MODE_MUTE;
 				setDisplayTime(DISPLAY_TIME_CHAN);
@@ -266,7 +266,7 @@ int main(void)
 			break;
 #if defined(TDA7313)
 		case CMD_RC5_LOUDNESS:
-			clearDisplay();
+			gdClear();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -279,7 +279,7 @@ int main(void)
 		case CMD_RC5_INPUT_3:
 #endif
 			setChan(cmd - CMD_RC5_INPUT_0);
-			clearDisplay();
+			gdClear();
 			curSndParam = sndParAddr(SND_GAIN0 + getChan());
 			dispMode = MODE_GAIN;
 			setDisplayTime(DISPLAY_TIME_GAIN);
@@ -388,7 +388,7 @@ int main(void)
 
 		/* Clear screen if mode has changed */
 		if (dispMode != dispModePrev)
-			clearDisplay();
+			gdClear();
 
 		/* Show things */
 		switch (dispMode) {
@@ -404,7 +404,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
-//			drawSpectrum(getSpData());
+			drawSpectrum(getSpData());
 			break;
 #ifndef NOTUNER
 		case MODE_FM_RADIO:

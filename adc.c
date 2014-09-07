@@ -5,6 +5,8 @@
 #include "adc.h"
 #include "fft.h"
 
+#include "display/st7920.h"
+
 static int16_t f_l[FFT_SIZE];	/* Real values for left channel */
 static int16_t f_r[FFT_SIZE];	/* Real values for right channel */
 static int16_t f_i[FFT_SIZE];	/* Imaginary values */
@@ -19,24 +21,13 @@ static const uint8_t hannTable[] PROGMEM = {
 
 void adcInit()
 {
-//	/* Set Timer0 prescaller to 8 (2 MHz) with reset on match */
-//	TCCR0 = (0<<CS02) | (1<<CS01) | (0<<CS00) | (1<<WGM01);
-
-//	/* Enable ADC with prescaler 32 */
+	/* Enable ADC with prescaler 32 */
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (1<<ADPS0);
 
-//	OCR0 = 62;									/* 2000000/62 => 32k meas/sec */
 	ADMUX |= (1<<ADLAR);						/* Adjust result to left */
 
 	return;
 }
-
-//ISR (TIMER0_COMP_vect)
-//{
-//	ADCSRA |= 1<<ADSC;
-
-//	return;
-//};
 
 static uint8_t revBits(uint8_t x)
 {
@@ -50,11 +41,10 @@ static void getValues()
 {
 	uint8_t i = 0, j;
 	uint8_t hv;
-	TCNT0 = 0;									/* Reset timer */
-	TIMSK |= (1<<OCIE0);						/* Enable compare/match interrupt */
 
 	ADMUX &= ~(1<<MUX0);						/* Switch to left channel */
-	while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
+	isAdcResultReady();							/* Reset ready flag */
+	while(!isAdcResultReady());					/* Wait for new result */
 
 	do {
 		j = revBits(i);
@@ -63,22 +53,22 @@ static void getValues()
 		else
 			hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
 
-		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
 		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
-		ADMUX |= (1<<MUX0);						/* Switch to right channel */
-		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
-		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
+		ADMUX |= (1<<MUX0);						/* Switch to right channel */
+
+		while(!isAdcResultReady());				/* Wait for new result */
+
 		f_r[j] = ADCH - DC_CORR;				/* Read right channel value */
 		f_r[j] = ((int32_t)hv * f_r[j]) >> 6;	/* Apply Hann window */
+
 		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
-		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
+
+		while(!isAdcResultReady());				/* Wait for new result */
 
 		f_i[i++] = 0;
 	} while (i < FFT_SIZE);
-
-	TIMSK &= ~(1<<OCIE0);				/* Disable compare/match interrupt */
 
 	return;
 }

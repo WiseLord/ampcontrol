@@ -6,22 +6,7 @@
 #include "ds1307.h"
 #include "audio.h"
 
-/* Graphics (ks0108-based) or character (ks0066-based) display selection  */
-#if !defined(KS0108) && !defined(KS0066) && !defined(LS020) && !defined(PCF8574) && !defined(ST7920)
-#define ST7920
-#endif
-
-#if defined(KS0108)
-#include "display/ks0108.h"
-#elif defined(KS0066)
-#include "display/ks0066.h"
-#elif defined(LS020)
-#include "display/ls020.h"
-#elif defined(PCF8574)
-#include "display/pcf8574.h"
-#elif defined(ST7920)
 #include "display/fbgd.h"
-#endif
 
 /* Spectrum output mode */
 #define SP_MODE_STEREO			0
@@ -113,19 +98,15 @@ enum {
 #define STR_BUFSIZE		16
 
 uint8_t getDefDisplay();
-void setDefDisplay(uint8_t value);
 
-void displayInit();
-void clearDisplay();
+void setDefDisplay(uint8_t value);
 
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void showRC5Info(uint16_t rc5Buf);
-#ifndef NOTUNER
 void showRadio(uint8_t num);
-#endif
-void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 
+void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 void showSndParam(sndParam *param, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
