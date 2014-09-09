@@ -565,14 +565,14 @@ void showRadio(uint8_t num)
 	st7920LoadFont(font_ks0066_ru_08, 1);
 
 	/* Signal level */
-	st7920SetXY (112, 0);
+	st7920ReadFb(0);
 	for (i = 0; i < 16; i+=2) {
-//		if (i <= tunerLevel())
-//			st7920WriteData(256 - (1<<(7 - i / 2)));
-//		else
-//			st7920WriteData(0x80);
-		st7920WriteData(0x00);
+		if (i <= tunerLevel())
+			st7920WriteRawToFb(112 + i, 256 - (1<<(7 - i / 2)));
+		else
+			st7920WriteRawToFb(112 + i, 0x80);
 	}
+	st7920WriteFb(0, 16);
 
 	/* Stereo indicator */
 	st7920SetXY(114, 2);

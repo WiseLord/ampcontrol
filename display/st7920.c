@@ -214,7 +214,7 @@ void st7920WriteFb(uint8_t row, uint8_t nbytes)
 	}
 }
 
-static void st7920ReadFb(uint8_t row)
+void st7920ReadFb(uint8_t row)
 {
 	uint8_t i, j, k;
 	uint8_t data;

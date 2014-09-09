@@ -8,7 +8,7 @@
 
 /* Graphics (ks0108-based) or character (ks0066-based) display selection  */
 #if !defined(KS0108) && !defined(KS0066) && !defined(LS020) && !defined(PCF8574) && !defined(ST7920)
-#define KS0108
+#define ST7920
 #endif
 
 #if defined(KS0108)

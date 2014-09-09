@@ -4,6 +4,8 @@
 #include "../eeprom.h"
 #include <avr/eeprom.h>
 
+static uint8_t buf[5];
+
 static uint8_t ctrl;
 
 #define TEA5767_HCC_CTRL		(1<<6)
@@ -36,7 +38,6 @@ static void tea5767WriteI2C(uint8_t *buf)
 
 void tea5767SetFreq(uint16_t freq, uint8_t mono)
 {
-	uint8_t buf[5];
 	uint16_t div;
 
 	uint32_t fq = (uint32_t)freq * 10000 + 225000;

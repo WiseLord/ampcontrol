@@ -107,7 +107,7 @@ uint8_t tunerLevel()
 #elif defined(LM7001)
 	return 13;
 #elif defined(RDA5807)
-	return (bufFM[0] & RDA5807_RSSI) >> 4;
+	return (bufFM[2] & RDA5807_RSSI) >> 4;
 #endif
 }
 
@@ -208,6 +208,8 @@ void loadTunerParams(uint16_t *freq)
 	tux032SetFreq(*freq);
 #elif defined(LM7001)
 	lm7001SetFreq(*freq);
+#elif defined(RDA5807)
+	rda5807SetFreq(*freq, monoFM);
 #endif
 
 	return;
