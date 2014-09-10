@@ -69,7 +69,7 @@
 #define RDA5807_VOLUME				0x0F   /* 4 bits volume (0000 - muted, 1111 - max) */
 
 /* 8 register (06H) */
-#define RDA5807_OPEN_MODE			0xC0   /* 2 bits (11) to open read-only regs for writing */
+#define RDA5807_OPEN_MODE			0x60   /* 2 bits (11) to open read-only regs for writing */
 /* Other bits for RDA5807FP, for I2S control */
 
 /* 9 register (06L) */
