@@ -148,7 +148,6 @@ void showRC5Info(uint16_t rc5Buf)
 	return;
 }
 
-#if !defined(NOTUNER)
 void showRadio(uint8_t num)
 {
 	uint16_t freq = tunerGetFreq();
@@ -168,10 +167,10 @@ void showRadio(uint8_t num)
 	/* Signal level */
 	gdSetXY (112, 0);
 	for (i = 0; i < 16; i+=2) {
-		if (i < level)
-			gdDrawPixel(112 + i, 0, 1);
+		if (i <= level)
+			gdDrawLine(112 + i, 7, 112 + i, 7 - i / 2, 0x01);
 		else
-			gdDrawPixel(112 + i, 0, 0);
+			gdDrawPixel(112 + i, 7, 0x01);
 	}
 
 	/* Stereo indicator */
@@ -196,7 +195,6 @@ void showRadio(uint8_t num)
 
 	return;
 }
-#endif
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {
