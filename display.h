@@ -6,7 +6,7 @@
 #include "ds1307.h"
 #include "audio.h"
 
-#include "display/fbgd.h"
+#include "display/gdfb.h"
 
 /* Spectrum output mode */
 #define SP_MODE_STEREO			0

@@ -78,7 +78,7 @@ ISR (TIMER0_OVF_vect)
 
 void st7920Init(void)
 {
-	/* Set control lines as outputs */
+	/* Set control and data lines as outputs */
 	ST7920_CTRL_DDR |= (ST7920_RS | ST7920_RW | ST7920_E | ST7920_PSB | ST7920_RST);
 	ST7920_DATA_DDR = 0xFF;
 

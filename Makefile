@@ -1,5 +1,5 @@
 AUDIOPROC = TDA7439
-DISPLAY = ST7920
+DISPLAY = KS0108A
 TUNER = RDA5807
 
 # Lowercase argument
@@ -22,24 +22,26 @@ else ifeq ($(AUDIOPROC), TDA7439)
 endif
 
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
-ifeq ($(DISPLAY), KS0108)
-  DISP_SRC = $(addprefix display/, fbgd.c ks0108.c $(FONTS))
-else ifeq ($(DISPLAY), ST7920)
-  DISP_SRC = $(addprefix display/, fbgd.c st7920.c $(FONTS))
+ifeq ($(DISPLAY), ST7920)
+  DISP_SRC = $(addprefix display/, gdfb.c st7920.c $(FONTS))
+else ifeq ($(DISPLAY), KS0108A)
+  DISP_SRC = $(addprefix display/, gdfb.c ks0108.c $(FONTS))
+else ifeq ($(DISPLAY), KS0108B)
+  DISP_SRC = $(addprefix display/, gdfb.c ks0108.c $(FONTS))
 endif
 
 ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner.c tuner/tea5767.c
+  TUNER_SRC = tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner.c tuner/tux032.c
+  TUNER_SRC = tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner.c tuner/lm7001.c
+  TUNER_SRC = tuner/lm7001.c
 else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner.c tuner/rda5807.c
+  TUNER_SRC = tuner/rda5807.c
 endif
 
-SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC)
-SRCS_VAR = main.c audio.c display.c $(TUNER_SRC)
+SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(TUNER_SRC)
+SRCS_VAR = main.c audio.c display.c tuner.c $(DISP_SRC)
 
 MCU = atmega32
 F_CPU = 16000000L

@@ -62,5 +62,4 @@ void st7920Fill(uint8_t data);
 
 void st7920DrawPixel(uint8_t x, uint8_t y, uint8_t color);
 
-
 #endif /* ST7920_H */

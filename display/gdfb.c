@@ -1,4 +1,4 @@
-#include "fbgd.h"
+#include "gdfb.h"
 
 #include <avr/pgmspace.h>
 
@@ -11,7 +11,7 @@ inline void gdInit(void)
 {
 #if defined(ST7920)
 	st7920Init();
-#elif defined(KS0108)
+#elif defined(KS0108A) || defined(KS0108B)
 	ks0108Init();
 #endif
 
@@ -23,7 +23,7 @@ inline void gdInit(void)
 inline void gdClear(void) {
 #if defined(ST7920)
 	st7920Fill(0x00);
-#elif defined(KS0108)
+#elif defined(KS0108A) || defined(KS0108B)
 	ks0108Fill(0x00);
 #endif
 
@@ -34,7 +34,7 @@ inline void gdDrawPixel(uint8_t x, uint8_t y, uint8_t color)
 {
 #if defined(ST7920)
 	st7920DrawPixel(x, y, color);
-#elif defined(KS0108)
+#elif defined(KS0108A) || defined(KS0108B)
 	ks0108DrawPixel(x, y, color);
 #endif
 
@@ -86,19 +86,19 @@ void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color)
 		if ((px = x0 - y) >= 0 && (py = y0 - x) >= 0)
 			gdDrawPixel(px, py, color);
 
-		if ((px = x0 + x) < ST7920_SIZE_X && (py = y0 - y) >= 0)
+		if ((px = x0 + x) < GD_SIZE_X && (py = y0 - y) >= 0)
 			gdDrawPixel(px, py, color);
-		if ((px = x0 + y) < ST7920_SIZE_X && (py = y0 - x) >= 0)
-			gdDrawPixel(px, py, color);
-
-		if ((px = x0 - x) >= 0 && (py = y0 + y) < ST7920_SIZE_Y)
-			gdDrawPixel(px, py, color);
-		if ((px = x0 - y) >= 0 && (py = y0 + x) < ST7920_SIZE_Y)
+		if ((px = x0 + y) < GD_SIZE_X && (py = y0 - x) >= 0)
 			gdDrawPixel(px, py, color);
 
-		if ((px = x0 + x) < ST7920_SIZE_X && (py = y0 + y) < ST7920_SIZE_Y)
+		if ((px = x0 - x) >= 0 && (py = y0 + y) < GD_SIZE_Y)
 			gdDrawPixel(px, py, color);
-		if ((px = x0 + y) < ST7920_SIZE_X && (py = y0 + x) < ST7920_SIZE_Y)
+		if ((px = x0 - y) >= 0 && (py = y0 + x) < GD_SIZE_Y)
+			gdDrawPixel(px, py, color);
+
+		if ((px = x0 + x) < GD_SIZE_X && (py = y0 + y) < GD_SIZE_Y)
+			gdDrawPixel(px, py, color);
+		if ((px = x0 + y) < GD_SIZE_X && (py = y0 + x) < GD_SIZE_Y)
 			gdDrawPixel(px, py, color);
 
 		err = 2 * (delta + y) - 1;
@@ -120,7 +120,7 @@ void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color)
 	}
 }
 
-void gdLoadFont(const uint8_t *font, uint8_t color)
+void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction)
 {
 	uint8_t i;
 
@@ -128,6 +128,7 @@ void gdLoadFont(const uint8_t *font, uint8_t color)
 	for (i = 0; i < FONT_PARAM_COUNT - 1; i++)
 		fp[i] = pgm_read_byte(font + i);
 	fp[FONT_COLOR] = color;
+	fp[FONT_DIRECTION] = direction;
 }
 
 void gdSetXY(uint8_t x, uint8_t y)
@@ -166,12 +167,37 @@ void gdWriteChar(uint8_t code)
 			if (!fp[FONT_COLOR])
 				pgmData = ~pgmData;
 			for (k = 0; k < 8; k++) {
-				gdDrawPixel(_x + i, _y + 8 * j + k, pgmData & (1<<k));
+				switch (fp[FONT_DIRECTION]) {
+				case FONT_DIR_0:
+					gdDrawPixel(_x + i, _y + (8 * j + k), pgmData & (1<<k));
+					break;
+				case FONT_DIR_90:
+					gdDrawPixel(_x + (8 * j + k), _y - i, pgmData & (1<<k));
+					break;
+				case FONT_DIR_180:
+					gdDrawPixel(_x - i, _y - (8 * j + k), pgmData & (1<<k));
+					break;
+				case FONT_DIR_270:
+					gdDrawPixel(_x - (8 * j + k), _y + i, pgmData & (1<<k));
+					break;
+				}
 			}
 		}
 	}
-
-	gdSetXY(_x + swd, _y);
+	switch (fp[FONT_DIRECTION]) {
+	case FONT_DIR_0:
+		gdSetXY(_x + swd, _y);
+		break;
+	case FONT_DIR_90:
+		gdSetXY(_x, _y - swd);
+		break;
+	case FONT_DIR_180:
+		gdSetXY(_x - swd, _y);
+		break;
+	case FONT_DIR_270:
+		gdSetXY(_x, _y + swd);
+		break;
+	}
 
 	return;
 }

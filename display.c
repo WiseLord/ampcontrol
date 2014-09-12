@@ -103,20 +103,20 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 
 static void showParValue(int8_t value)
 {
-	gdLoadFont(font_ks0066_ru_24, 1);
+	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(93, 32);
 	gdWriteString(mkNumString(value, 3, ' ', 10));
-	gdLoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	return;
 }
 
 static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 {
-	gdLoadFont(font_ks0066_ru_24, 1);
+	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
-	gdLoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(116, 56);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 
@@ -125,7 +125,7 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 
 void showRC5Info(uint16_t rc5Buf)
 {
-	gdLoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	gdWriteString((uint8_t*)"RC5:");
 	gdSetXY(5, 8);
@@ -156,13 +156,13 @@ void showRadio(uint8_t num)
 	uint8_t i;
 
 	/* Frequency value */
-	gdLoadFont(font_ks0066_ru_24, 1);
+	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	gdWriteString((uint8_t*)"FM ");
 	gdWriteString(mkNumString(freq / 100, 3, ' ', 10));
 	gdWriteString((uint8_t*)"\x7F.\x7F");
 	gdWriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
-	gdLoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	/* Signal level */
 	gdSetXY (112, 0);
@@ -187,10 +187,10 @@ void showRadio(uint8_t num)
 	if (num) {
 		showParValue(num);
 	} else {
-		gdLoadFont(font_ks0066_ru_24, 1);
+		gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 		gdSetXY(93, 32);
 		gdWriteString((uint8_t*)" --");
-		gdLoadFont(font_ks0066_ru_08, 1);
+		gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	}
 
 	return;
@@ -198,7 +198,7 @@ void showRadio(uint8_t num)
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {
-	gdLoadFont(font_ks0066_ru_24, 1);
+	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
 	gdSetXY(0, 32);
@@ -206,7 +206,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 		writeStringEeprom(txtLabels[LABEL_ON]);
 	else
 		writeStringEeprom(txtLabels[LABEL_OFF]);
-	gdLoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	return;
 }
@@ -224,11 +224,11 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 static void drawTm(timeMode tm, const uint8_t *font)
 {
 	if (getEtm() == tm)
-		gdLoadFont(font, 0);
+		gdLoadFont(font, 0, FONT_DIR_0);
 	else
-		gdLoadFont(font, 1);
+		gdLoadFont(font, 1, FONT_DIR_0);
 	gdWriteString(mkNumString(getTime(tm), 2, '0', 10));
-	gdLoadFont(font, 1);
+	gdLoadFont(font, 1, FONT_DIR_0);
 
 	return;
 }
@@ -252,12 +252,12 @@ void showTime(uint8_t **txtLabels)
 	drawTm(MONTH, font_ks0066_ru_24);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
 	if (getEtm() == YEAR)
-		gdLoadFont(font_ks0066_ru_24, 0);
+		gdLoadFont(font_ks0066_ru_24, 0, FONT_DIR_0);
 	gdWriteString((uint8_t*)"20");
 	gdWriteString((uint8_t*)"\x7F");
 	drawTm(YEAR, font_ks0066_ru_24);
 
-	gdLoadFont(font_ks0066_ru_08, 1);
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(32, 56);
 
 	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
