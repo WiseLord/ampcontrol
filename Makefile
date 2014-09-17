@@ -6,7 +6,7 @@ TUNER = RDA5807
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
+TARG = ampcontrol_m32fb_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
 # EEPROM file base name
 EEPROM = eeprom_$(call lc,$(AUDIOPROC))
 

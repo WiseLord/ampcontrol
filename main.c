@@ -30,6 +30,7 @@ static void powerOn(void)
 	STMU_PORT |= STDBY;
 	_delay_ms(50);
 	loadDispParams();
+	setWorkBrightness();
 	loadTunerParams(&freqFM);
 	unmuteVolume();
 
@@ -42,7 +43,7 @@ static void powerOff(void)
 	muteVolume();
 	_delay_ms(50);
 	STMU_PORT &= ~STDBY;
-	gdSetBrightness(GD_MIN_BRIGHTNESS);
+	setStbyBrightness();
 	stopEditTime();
 	saveParams();
 
@@ -202,7 +203,8 @@ int main(void)
 			break;
 		case CMD_BTN_1_LONG:
 		case CMD_RC5_BACKLIGHT:
-//			switchBacklight();
+			dispMode = MODE_BR;
+			setDisplayTime(DISPLAY_TIME_BR);
 			break;
 		case CMD_BTN_2_LONG:
 		case CMD_RC5_DISPLAY:
@@ -266,7 +268,7 @@ int main(void)
 		case CMD_RC5_SP_MODE:
 			switchSpMode();
 			dispMode = MODE_SPECTRUM;
-			setDisplayTime(DISPLAY_SPECTRUM);
+			setDisplayTime(DISPLAY_TIME_SP);
 			break;
 		case CMD_RC5_FM_INC:
 		case CMD_RC5_FM_DEC:
@@ -335,6 +337,10 @@ int main(void)
 				changeTime(encCnt);
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
 				break;
+			case MODE_BR:
+				changeBrWork(encCnt);
+				setDisplayTime(DISPLAY_TIME_BR);
+				break;
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
@@ -372,11 +378,11 @@ int main(void)
 		case MODE_STANDBY:
 			showTime(txtLabels);
 			if (dispModePrev == MODE_TEST)
-				gdSetBrightness(GD_MIN_BRIGHTNESS);
+				setStbyBrightness();
 			break;
 		case MODE_TEST:
 			showRC5Info(rc5Buf);
-			gdSetBrightness(GD_MAX_BRIGTHNESS);
+			setWorkBrightness();
 			if (rc5Buf != rc5BufPrev)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
@@ -399,6 +405,9 @@ int main(void)
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime(txtLabels);
+			break;
+		case MODE_BR:
+			showBrWork(txtLabels);
 			break;
 		default:
 			showSndParam(curSndParam, txtLabels);
