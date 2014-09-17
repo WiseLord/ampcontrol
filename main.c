@@ -29,7 +29,6 @@ static void powerOn(void)
 {
 	STMU_PORT |= STDBY;
 	_delay_ms(50);
-	loadDispParams();
 	setWorkBrightness();
 	loadTunerParams(&freqFM);
 	unmuteVolume();
@@ -90,6 +89,8 @@ int main(void)
 
 	loadTunerParams(&freqFM);
 	loadAudioParams(txtLabels);
+	loadDispParams();
+	setStbyBrightness();
 
 	while (1) {
 		encCnt = getEncoder();
