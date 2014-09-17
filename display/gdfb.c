@@ -15,18 +15,27 @@ inline void gdInit(void)
 	ks0108Init();
 #endif
 
-	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
-
 	return;
 }
 
 inline void gdClear(void) {
 #if defined(ST7920)
-	st7920Fill(0x00);
+	st7920Clear();
 #elif defined(KS0108A) || defined(KS0108B)
-	ks0108Fill(0x00);
+	ks0108Clear();
 #endif
 
+	return;
+}
+
+void gdSetBrightness(uint8_t br)
+{
+
+#if defined(ST7920)
+	st7920SetBrightness(br);
+#elif defined(KS0108A) || defined(KS0108B)
+	ks0108SetBrightness(br);
+#endif
 	return;
 }
 
@@ -120,6 +129,14 @@ void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color)
 	}
 }
 
+void gdSetXY(uint8_t x, uint8_t y)
+{
+	_x = x;
+	_y = y;
+
+	return;
+}
+
 void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction)
 {
 	uint8_t i;
@@ -129,14 +146,6 @@ void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction)
 		fp[i] = pgm_read_byte(font + i);
 	fp[FONT_COLOR] = color;
 	fp[FONT_DIRECTION] = direction;
-}
-
-void gdSetXY(uint8_t x, uint8_t y)
-{
-	_x = x;
-	_y = y;
-
-	return;
 }
 
 void gdWriteChar(uint8_t code)

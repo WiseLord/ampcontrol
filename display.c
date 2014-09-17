@@ -323,7 +323,7 @@ void drawSpectrum(uint8_t *buf)
 void loadDispParams(void)
 {
 	backlight = eeprom_read_byte(eepromBCKL);
-	setBacklight(backlight);
+	gdSetBrightness(GD_MAX_BRIGTHNESS);
 	spMode  = eeprom_read_byte(eepromSpMode);
 	defDisplay = eeprom_read_byte(eepromDisplay);
 
@@ -335,26 +335,6 @@ void saveDisplayParams(void)
 	eeprom_update_byte(eepromBCKL, backlight);
 	eeprom_update_byte(eepromSpMode, spMode);
 	eeprom_update_byte(eepromDisplay, defDisplay);
-
-	return;
-}
-
-/* Turn on/off backlight */
-void setBacklight(int8_t backlight)
-{
-	if (backlight)
-		DISPLAY_BCKL_PORT |= DISPLAY_BCKL;
-	else
-		DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;
-
-	return;
-}
-
-/* Change backlight status */
-void switchBacklight(void)
-{
-	backlight = !backlight;
-	setBacklight(backlight);
 
 	return;
 }

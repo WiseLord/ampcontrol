@@ -12,12 +12,6 @@
 #define SP_MODE_STEREO			0
 #define SP_MODE_MIXED			1
 
-/* Backlight port */
-#define DISPLAY_BCKL_DDR		DDRC
-#define DISPLAY_BCKL_PORT		PORTC
-
-#define DISPLAY_BCKL			(1<<PC7)
-
 /* Timers fo different screens */
 #define DISPLAY_TIME_TEST		20
 #define DISPLAY_TIME_GAIN		3
@@ -115,8 +109,6 @@ void drawSpectrum(uint8_t *buf);
 void loadDispParams(void);
 void saveDisplayParams(void);
 
-void setBacklight(int8_t backlight);
-void switchBacklight(void);
 void switchSpMode();
 
 #endif /* DISPLAY_H */

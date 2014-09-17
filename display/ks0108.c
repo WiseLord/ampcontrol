@@ -11,6 +11,14 @@
 #endif
 
 static uint8_t fb[KS0108_COLS * KS0108_CHIPS][KS0108_ROWS];
+static uint8_t _br;
+
+void ks0108SetBrightness(uint8_t br)
+{
+	_br = br;
+
+	return;
+}
 
 static void ks0108Write(uint8_t type, uint8_t data)
 {
@@ -60,6 +68,8 @@ ISR (TIMER0_OVF_vect)
 	static uint8_t j;
 	static uint8_t cs;
 
+	static uint8_t br;
+
 	if (j == 64) {									/* Phase 1 (Y) */
 		if (++i >= 8) {
 			i = 0;
@@ -91,6 +101,14 @@ ISR (TIMER0_OVF_vect)
 		KS0108_CTRL_PORT |= KS0108_DI;				/* Go to data mode */
 	}
 
+	if (++br >= KS0108_MAX_BRIGTHNESS)				/* Loop brightness */
+		br = KS0108_MIN_BRIGHTNESS;
+
+	if (br == _br) {
+		KS0108_BCKL_PORT &= ~KS0108_BCKL;			/* Turn backlight off */
+	} else if (br == 0)
+		KS0108_BCKL_PORT |= KS0108_BCKL;			/* Turn backlight on */
+
 	return;
 }
 
@@ -119,16 +137,18 @@ void ks0108Init(void)
 
 	ks0108TimerInit();
 
+	KS0108_BCKL_DDR |= KS0108_BCKL;
+
 	return;
 }
 
-void ks0108Fill(uint8_t data)
+void ks0108Clear()
 {
 	uint8_t i, j;
 
 	for (i = 0; i < KS0108_COLS * KS0108_CHIPS; i++) {
 		for (j = 0; j < KS0108_ROWS; j++) {
-			fb[i][j] = data;
+			fb[i][j] = 0x00;
 		}
 	}
 

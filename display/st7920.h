@@ -12,6 +12,11 @@
 #define ST7920_CTRL_PORT			PORTA
 #define ST7920_CTRL_DDR				DDRA
 
+/* Backlight port */
+#define ST7920_BCKL_DDR				DDRC
+#define ST7920_BCKL_PORT			PORTC
+#define ST7920_BCKL					(1<<PC7)
+
 #define ST7920_RS					(1<<PA2)
 #define ST7920_RW					(1<<PA3)
 #define ST7920_E					(1<<PA4)
@@ -52,13 +57,19 @@
 /* Some common defines */
 #define ST7920_COMMAND				0
 #define ST7920_DATA					1
+
 #define ST7920_SIZE_X				128
 #define ST7920_SIZE_Y				64
+
+#define ST7920_MIN_BRIGHTNESS		0
+#define ST7920_MAX_BRIGTHNESS		32
+
+void st7920SetBrightness(uint8_t br);
 
 uint8_t isAdcResultReady(void);
 
 void st7920Init(void);
-void st7920Fill(uint8_t data);
+void st7920Clear();
 
 void st7920DrawPixel(uint8_t x, uint8_t y, uint8_t color);
 

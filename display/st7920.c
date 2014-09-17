@@ -5,6 +5,14 @@
 #include <avr/pgmspace.h>
 
 static uint8_t fb[ST7920_SIZE_X / 4][ST7920_SIZE_Y / 2];
+static uint8_t _br;
+
+void st7920SetBrightness(uint8_t br)
+{
+	_br = br;
+
+	return;
+}
 
 static void st7920Write(uint8_t type, uint8_t data)
 {
@@ -53,6 +61,8 @@ ISR (TIMER0_OVF_vect)
 	static uint8_t i = 0;
 	static uint8_t j = 32;
 
+	static uint8_t br;
+
 	if (j == 32) {										/* Phase 1 (Y) */
 		ST7920_CTRL_PORT &= ~ST7920_RS;					/* Go to command mode */
 		if (++i >= 32)
@@ -72,6 +82,14 @@ ISR (TIMER0_OVF_vect)
 		j = 0;
 		ST7920_CTRL_PORT |= ST7920_RS;					/* Go to data mode */
 	}
+
+	if (++br >= ST7920_MAX_BRIGTHNESS)					/* Loop brightness */
+		br = ST7920_MIN_BRIGHTNESS;
+
+	if (br == _br) {
+		ST7920_BCKL_PORT &= ~ST7920_BCKL;				/* Turn backlight off */
+	} else if (br == 0)
+		ST7920_BCKL_PORT |= ST7920_BCKL;				/* Turn backlight on */
 
 	return;
 }
@@ -99,16 +117,18 @@ void st7920Init(void)
 
 	st7920TimerInit();
 
+	ST7920_BCKL_DDR |= ST7920_BCKL;
+
 	return;
 }
 
-void st7920Fill(uint8_t data)
+void st7920Clear()
 {
 	uint8_t i, j;
 
 	for (i = 0; i < ST7920_SIZE_X / 4; i++) {
 		for (j = 0; j < ST7920_SIZE_Y / 2; j++) {
-			fb[i][j] = data;
+			fb[i][j] = 0x00;
 		}
 	}
 

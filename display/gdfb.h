@@ -7,19 +7,28 @@
 #endif
 
 #if defined(ST7920)
+
 #include "st7920.h"
+
+#define GD_MIN_BRIGHTNESS			ST7920_MIN_BRIGHTNESS
+#define GD_MAX_BRIGTHNESS			ST7920_MAX_BRIGTHNESS
+
+#define GD_SIZE_X					ST7920_SIZE_X
+#define GD_SIZE_Y					ST7920_SIZE_Y
+
 #elif defined(KS0108A) || defined(KS0108B)
+
 #include "ks0108.h"
+
+#define GD_MIN_BRIGHTNESS			KS0108_MIN_BRIGHTNESS
+#define GD_MAX_BRIGTHNESS			KS0108_MAX_BRIGTHNESS
+
+#define GD_SIZE_X					KS0108_COLS * KS0108_CHIPS
+#define GD_SIZE_Y					KS0108_ROWS * 8
+
 #endif
+
 #include "fonts.h"
-
-/* Backlight port */
-#define DISPLAY_BCKL_DDR			DDRC
-#define DISPLAY_BCKL_PORT			PORTC
-#define DISPLAY_BCKL				(1<<PC7)
-
-#define GD_SIZE_X					128
-#define GD_SIZE_Y					64
 
 #define FONT_PARAM_COUNT			7
 enum {
@@ -41,13 +50,16 @@ enum {
 
 inline void gdInit(void);
 inline void gdClear(void);
-inline void gdDrawPixel(uint8_t x, uint8_t y, uint8_t color);
 
+void gdSetBrightness(uint8_t br);
+
+inline void gdDrawPixel(uint8_t x, uint8_t y, uint8_t color);
 void gdDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color);
 void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color);
 
-void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
 void gdSetXY(uint8_t x, uint8_t y);
+void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
+
 void gdWriteChar(uint8_t code);
 void gdWriteString(uint8_t *string);
 

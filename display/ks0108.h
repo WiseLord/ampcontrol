@@ -23,6 +23,11 @@
 #define KS0108_CS2					(1<<PA6)
 #define KS0108_RES					(1<<PA7)
 
+/* Backlight port */
+#define KS0108_BCKL_DDR				DDRC
+#define KS0108_BCKL_PORT			PORTC
+#define KS0108_BCKL					(1<<PC7)
+
 #define KS0108_CS_ALL				(KS0108_CS1 | KS0108_CS2)
 
 /* Display geometry */
@@ -47,10 +52,15 @@
 #define KS0108_COMMAND				0
 #define KS0108_DATA					1
 
+#define KS0108_MIN_BRIGHTNESS		0
+#define KS0108_MAX_BRIGTHNESS		32
+
+void ks0108SetBrightness(uint8_t br);
+
 uint8_t isAdcResultReady(void);
 
 void ks0108Init(void);
-void ks0108Fill(uint8_t data);
+void ks0108Clear();
 
 void ks0108DrawPixel(uint8_t x, uint8_t y, uint8_t color);
 

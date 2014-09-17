@@ -42,7 +42,7 @@ static void powerOff(void)
 	muteVolume();
 	_delay_ms(50);
 	STMU_PORT &= ~STDBY;
-	setBacklight(BACKLIGHT_OFF);
+	gdSetBrightness(GD_MIN_BRIGHTNESS);
 	stopEditTime();
 	saveParams();
 
@@ -202,7 +202,7 @@ int main(void)
 			break;
 		case CMD_BTN_1_LONG:
 		case CMD_RC5_BACKLIGHT:
-			switchBacklight();
+//			switchBacklight();
 			break;
 		case CMD_BTN_2_LONG:
 		case CMD_RC5_DISPLAY:
@@ -372,11 +372,11 @@ int main(void)
 		case MODE_STANDBY:
 			showTime(txtLabels);
 			if (dispModePrev == MODE_TEST)
-				setBacklight(0);
+				gdSetBrightness(GD_MIN_BRIGHTNESS);
 			break;
 		case MODE_TEST:
 			showRC5Info(rc5Buf);
-			setBacklight(BACKLIGHT_ON);
+			gdSetBrightness(GD_MAX_BRIGTHNESS);
 			if (rc5Buf != rc5BufPrev)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
