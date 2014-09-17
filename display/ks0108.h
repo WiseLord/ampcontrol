@@ -47,6 +47,8 @@
 #define KS0108_COMMAND				0
 #define KS0108_DATA					1
 
+uint8_t isAdcResultReady(void);
+
 void ks0108Init(void);
 void ks0108Fill(uint8_t data);
 

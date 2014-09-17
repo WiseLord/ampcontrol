@@ -59,7 +59,7 @@ AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
 
 OBJS_CONST = $(SRCS_CONST:.c=.o)
 OBJS_VAR = $(SRCS_VAR:.c=.o)
@@ -86,13 +86,13 @@ clean:
 	rm -f *.o */*.o
 
 flash: $(TARG)
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:flash/$(TARG).hex:i
+	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xc1:m
 
 eeprom_en:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_en.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/$(EEPROM)_en.bin:r
 
 eeprom_ru:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_ru.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/$(EEPROM)_ru.bin:r
