@@ -6,7 +6,18 @@
 #include "../eeprom.h"
 #include "../input.h"
 
-static sndParam sndPar[SND_PARAM_COUNT];
+static sndParam sndPar[SND_PARAM_COUNT] = {
+	{0x00, 0xC1, 0x00, 0x0A, (void*)0, (void*)0},
+	{0x00, 0xF9, 0x07, 0x10, (void*)0, (void*)0},
+	{0x00, 0x00, 0x00, 0x10, (void*)0, (void*)0},
+	{0x00, 0xF9, 0x07, 0x10, (void*)0, (void*)0},
+	{0x00, 0xF1, 0x0F, 0x0A, (void*)0, (void*)0},
+	{0x00, 0xF1, 0x0F, 0x0A, (void*)0, (void*)0},
+	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},
+	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},
+	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},
+	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},
+};
 
 static uint8_t chan;
 static uint8_t mute;
@@ -158,9 +169,6 @@ void loadAudioParams(uint8_t **txtLabels)
 	for (i = 0; i < SND_PARAM_COUNT; i++) {
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
 		sndPar[i].label = txtLabels[i];
-		sndPar[i].min = eeprom_read_byte(eepromMinimums + i);
-		sndPar[i].max = eeprom_read_byte(eepromMaximums + i);
-		sndPar[i].step = eeprom_read_byte(eepromSteps + i);
 	}
 
 	chan = eeprom_read_byte(eepromChannel);
