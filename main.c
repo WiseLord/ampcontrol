@@ -182,23 +182,12 @@ int main(void)
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
-			switch (dispMode) {
-			case MODE_BASS:
-#if defined(TDA7313) || defined(TDA7318)
-				curSndParam++;	/* Skip not supported middle*/
-				dispMode++;
-#endif
-			case MODE_VOLUME:
-			case MODE_MIDDLE:
-			case MODE_TREBLE:
-			case MODE_PREAMP:
+			if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
 				curSndParam++;
 				dispMode++;
-				break;
-			default:
+			} else {
 				curSndParam = sndParAddr(SND_VOLUME);
 				dispMode = MODE_VOLUME;
-				break;
 			}
 			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;

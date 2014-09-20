@@ -9,14 +9,12 @@
 static sndParam sndPar[SND_PARAM_COUNT] = {
 	{0x00, 0xC1, 0x00, 0x0A, (void*)0, (void*)0},	/* Volume */
 	{0x00, 0xF9, 0x07, 0x10, (void*)0, (void*)0},	/* Bass */
-	{0x00, 0x00, 0x00, 0x10, (void*)0, (void*)0},	/* Loudness */
 	{0x00, 0xF9, 0x07, 0x10, (void*)0, (void*)0},	/* Treble */
 	{0x00, 0xF1, 0x0F, 0x0A, (void*)0, (void*)0},	/* Front/Rear */
 	{0x00, 0xF1, 0x0F, 0x0A, (void*)0, (void*)0},	/* Balance */
 	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},	/* Gain 0 */
 	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},	/* Gain 1 */
 	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},	/* Gain 2 */
-	{0x00, 0x00, 0x03, 0x1E, (void*)0, (void*)0},	/* Gain 3 */
 };
 
 static uint8_t chan;
@@ -58,12 +56,12 @@ static void setVolume(int8_t val)
 		spFrontLeft += sndPar[SND_BALANCE].value;
 		spRearLeft += sndPar[SND_BALANCE].value;
 	}
-	if (sndPar[SND_BALANCE_FR].value > 0) {
-		spRearLeft -= sndPar[SND_BALANCE_FR].value;
-		spRearRight -= sndPar[SND_BALANCE_FR].value;
+	if (sndPar[SND_FRONTREAR].value > 0) {
+		spRearLeft -= sndPar[SND_FRONTREAR].value;
+		spRearRight -= sndPar[SND_FRONTREAR].value;
 	} else {
-		spFrontLeft += sndPar[SND_BALANCE_FR].value;
-		spFrontRight += sndPar[SND_BALANCE_FR].value;
+		spFrontLeft += sndPar[SND_FRONTREAR].value;
+		spFrontRight += sndPar[SND_FRONTREAR].value;
 	}
 	I2CStart(AUDIOPROC_ADDR);
 	I2CWriteByte(TDA7313_VOLUME | -val);
@@ -166,10 +164,17 @@ void loadAudioParams(uint8_t **txtLabels)
 {
 	uint8_t i;
 
-	for (i = 0; i < SND_PARAM_COUNT; i++) {
+	for (i = 0; i < SND_PARAM_COUNT; i++)
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
-		sndPar[i].label = txtLabels[i];
-	}
+
+	sndPar[SND_VOLUME].label = txtLabels[LABEL_VOLUME];
+	sndPar[SND_BASS].label = txtLabels[LABEL_BASS];
+	sndPar[SND_TREBLE].label = txtLabels[LABEL_TREBLE];
+	sndPar[SND_FRONTREAR].label = txtLabels[LABEL_FRONTREAR];
+	sndPar[SND_BALANCE].label = txtLabels[LABEL_BALANCE];
+	sndPar[SND_GAIN0].label = txtLabels[LABEL_GAIN0];
+	sndPar[SND_GAIN1].label = txtLabels[LABEL_GAIN1];
+	sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
 
 	chan = eeprom_read_byte(eepromChannel);
 	loud = eeprom_read_byte(eepromLoudness);
@@ -177,10 +182,10 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_VOLUME].set = setVolume;
 	sndPar[SND_BASS].set = setBass;
 	sndPar[SND_TREBLE].set = setTreble;
-	sndPar[SND_BALANCE_FR].set = setBalanceFrontRear;
+	sndPar[SND_FRONTREAR].set = setBalanceFrontRear;
 	sndPar[SND_BALANCE].set = setBalance;
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < 3; i++) {
 		sndPar[SND_GAIN0 + i].set = setGain;
 	}
 
