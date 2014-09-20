@@ -289,7 +289,7 @@ void showTime(uint8_t **txtLabels)
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(32, 56);
 
-	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
 
 	return;
 }
