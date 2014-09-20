@@ -35,17 +35,15 @@ typedef struct {
 enum {
 	SND_VOLUME,
 	SND_BASS,
-	SND_LOUDNESS,
 	SND_TREBLE,
-	SND_BALANCE_FR,
+	SND_FRONTREAR,
 	SND_BALANCE,
 	SND_GAIN0,
 	SND_GAIN1,
-	SND_GAIN2,
-	SND_GAIN3
+	SND_GAIN2
 };
 
-#define SND_PARAM_COUNT			10
+#define SND_PARAM_COUNT			8
 
 sndParam *sndParAddr(uint8_t index);
 uint8_t getChan();

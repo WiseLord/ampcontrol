@@ -7,8 +7,6 @@ lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
 TARG = ampcontrol_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
-# EEPROM file base name
-EEPROM = eeprom_$(call lc,$(AUDIOPROC))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
@@ -97,7 +95,7 @@ fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xc1:m
 
 eeprom_en:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_en.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_en.bin:r
 
 eeprom_ru:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_ru.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_ru.bin:r

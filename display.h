@@ -50,40 +50,6 @@
 #define LCD_LEVELS				0
 #define LCD_BAR					1
 
-/* EEPROM saved labels */
-enum {
-	LABEL_VOLUME,
-	LABEL_BASS,
-#if defined(TDA7439)
-	LABEL_MIDDLE,
-#else
-	LABEL_LOUDNESS,
-#endif
-	LABEL_TREBLE,
-#if defined(TDA7439)
-	LABEL_PREAMP,
-#else
-	LABEL_BALANCE_FR,
-#endif
-	LABEL_BALANCE,
-	LABEL_GAIN_0,
-	LABEL_GAIN_1,
-	LABEL_GAIN_2,
-	LABEL_GAIN_3,
-	LABEL_MUTE,
-	LABEL_ON,
-	LABEL_OFF,
-	LABEL_DB,
-	LABEL_SUNDAY,
-	LABEL_MONDAY,
-	LABEL_THUESDAY,
-	LABEL_WEDNESDAY,
-	LABEL_THURSDAY,
-	LABEL_FRIDAY,
-	LABEL_SADURDAY,
-	LABEL_BR_WORK
-};
-
 /* Display modes */
 enum {
 	MODE_STANDBY,
@@ -92,9 +58,15 @@ enum {
 
 	MODE_VOLUME,
 	MODE_BASS,
+#if defined(TDA7439)
 	MODE_MIDDLE,
+#endif
 	MODE_TREBLE,
+#if defined(TDA7439)
 	MODE_PREAMP,
+#elif defined(TDA7313) || defined(TDA7318)
+	MODE_FRONTREAR,
+#endif
 	MODE_BALANCE,
 
 	MODE_GAIN,
