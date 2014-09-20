@@ -792,7 +792,7 @@ void showTime(uint8_t **txtLabels)
 	st7920SetXY(32, 7);
 #endif
 
-	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
 
 #if defined(KS0066) || defined(PCF8574)
 	if (getEtm() == NOEDIT) {
