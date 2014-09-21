@@ -181,6 +181,7 @@ int main(void)
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
 			if (dispMode == MODE_TEST && cmd == CMD_BTN_5) {
+				gdClear();
 				nextRC5Cmd();
 			} else {
 				if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
@@ -374,7 +375,7 @@ int main(void)
 				setStbyBrightness();
 			break;
 		case MODE_TEST:
-			showRC5Info(getRC5Buf());
+			showRC5Info(getRC5Buf(), txtLabels);
 			setWorkBrightness();
 			break;
 		case MODE_SPECTRUM:

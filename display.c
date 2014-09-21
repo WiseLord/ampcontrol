@@ -157,33 +157,38 @@ void startTestMode(void)
 	return;
 }
 
-void showRC5Info(uint16_t rc5Buf)
+void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels)
 {
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
-	gdWriteString((uint8_t*)"RC5 raw status:");
-	gdSetXY(5, 9);
+	writeStringEeprom(txtLabels[LABEL_IN_STATUS]);
+	gdSetXY(4, 9);
+	writeStringEeprom(txtLabels[LABEL_REMOTE]);
+	gdSetXY(45, 9);
 	gdWriteString(mkNumString(rc5Buf, 14, '0', 2));
 
-	gdSetXY(0, 19);
-	gdWriteString((uint8_t*)"Buttons status:");
-	gdSetXY(5, 28);
+	gdSetXY(4, 18);
+	writeStringEeprom(txtLabels[LABEL_BUTTONS]);
+	gdSetXY(81, 18);
 	gdWriteString(mkNumString(INPUT_PIN, 8, '0', 2));
 
-	gdSetXY(0, 39);
-	gdWriteString((uint8_t*)"RC5 button ");
-	gdWriteString(mkNumString(rc5CmdInd, 2, ' ', 10));
+	gdSetXY(0, 30);
+	writeStringEeprom(txtLabels[LABEL_LEARN_MODE]);
+	gdSetXY(4, 39);
+	writeStringEeprom(txtLabels[LABEL_BUTTON]);
+	gdSetXY(48, 39);
+	writeStringEeprom(txtLabels[LABEL_RC5_STBY + rc5CmdInd]);
 
-	gdSetXY(5, 48);
-	gdWriteString((uint8_t*)"Address:");
+	gdSetXY(8, 48);
+	writeStringEeprom(txtLabels[LABEL_ADDRESS]);
 	gdSetXY(64, 48);
 	rc5Addr = (rc5Buf & 0x07C0)>>6;
 	gdWriteString(mkNumString(rc5Addr, 2, '0', 16));
 	gdWriteString((uint8_t*)" => ");
 	gdWriteString(mkNumString(eeprom_read_byte(eepromRC5Addr), 2, '0', 16));
 
-	gdSetXY(5, 56);
-	gdWriteString((uint8_t*)"Command:");
+	gdSetXY(8, 56);
+	writeStringEeprom(txtLabels[LABEL_COMMAND]);
 	gdSetXY(64, 56);
 	rc5Cmd = rc5Buf & 0x003F;
 	gdWriteString(mkNumString(rc5Cmd, 2, '0', 16));

@@ -75,7 +75,7 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 
 void nextRC5Cmd(void);
 void startTestMode(void);
-void showRC5Info(uint16_t rc5Buf);
+void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels);
 
 void showRadio(uint8_t num);
 
