@@ -228,6 +228,19 @@ int main(void)
 				else
 					storeStation(freqFM);
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			} else {
+				if (cmd == CMD_BTN_3_LONG) {
+					switchSpMode();
+					dispMode = MODE_SPECTRUM;
+					setDisplayTime(DISPLAY_TIME_SP);
+#if defined(TDA7313)
+				} else if (cmd == CMD_BTN_4_LONG) {
+					gdClear();
+					switchLoudness();
+					dispMode = MODE_LOUDNESS;
+					setDisplayTime(DISPLAY_TIME_AUDIO);
+#endif
+				}
 			}
 			break;
 		case CMD_BTN_TESTMODE:
@@ -384,7 +397,7 @@ int main(void)
 		case MODE_FM_RADIO:
 			tunerReadStatus();
 			freqFM = tunerGetFreq();
-			showRadio(stationNum(freqFM));
+			showRadio(stationNum(freqFM), getSpData());
 			break;
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
@@ -399,10 +412,10 @@ int main(void)
 			showTime(txtLabels);
 			break;
 		case MODE_BR:
-			showBrWork(txtLabels);
+			showBrWork(txtLabels, getSpData());
 			break;
 		default:
-			showSndParam(curSndParam, txtLabels);
+			showSndParam(curSndParam, txtLabels, getSpData());
 			break;
 		}
 

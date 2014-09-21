@@ -70,32 +70,49 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 	return strbuf;
 }
 
-static void showBar(int16_t min, int16_t max, int16_t value)
+static void showBar(int16_t min, int16_t max, int16_t value, uint8_t *buf)
 {
 	uint8_t i, j;
 	uint8_t color;
 
+	uint8_t x, xbase;
+	uint8_t y, ybase;
+
 	if (min + max) {
-		value = (int16_t)85 * (value - min) / (max - min);
+		value = (int16_t)91 * (value - min) / (max - min);
 	} else {
-		value = (int16_t)42 * value / max;
+		value = (int16_t)45 * value / max;
 	}
 
-	for (i = 0; i < 85; i++) {
+	for (i = 0; i < 91; i++) {
 		if (((min + max) && (value <= i)) || (!(min + max) &&
-			(((value > 0) && ((i < 42) || (value + 42 < i))) ||
-			((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
+			(((value > 0) && ((i < 45) || (value + 45 < i))) ||
+			((value <= 0) && ((i > 45) || (value + 45 > i)))))) {
 			color = 0x00;
 		} else {
 			color = 0x01;
 		}
 		if (!(i & 0x01)) {
-			for (j = 35; j < 54; j++) {
-				if (j == 44) {
+			for (j = 29; j < 40; j++) {
+				if (j == 34) {
 					gdDrawPixel(i, j, 1);
 				} else {
 					gdDrawPixel(i, j, color);
 				}
+			}
+		}
+	}
+
+	for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
+		for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
+			xbase = x * 3;
+			ybase = 63 - y;
+			if (buf[x] + buf[x + 32] >= y * 3) {
+				gdDrawPixel(xbase + 0, ybase, 1);
+				gdDrawPixel(xbase + 1, ybase, 1);
+			} else {
+				gdDrawPixel(xbase + 0, ybase, 0);
+				gdDrawPixel(xbase + 1, ybase, 0);
 			}
 		}
 	}
@@ -106,7 +123,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 static void showParValue(int8_t value)
 {
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-	gdSetXY(93, 32);
+	gdSetXY(94, 32);
 	gdWriteString(mkNumString(value, 3, ' ', 10));
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
@@ -198,7 +215,7 @@ void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels)
 	return;
 }
 
-void showRadio(uint8_t num)
+void showRadio(uint8_t num, uint8_t *buf)
 {
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
@@ -230,18 +247,18 @@ void showRadio(uint8_t num)
 	else
 		gdWriteString((uint8_t*)"  ");
 
-	/* Frequency scale */
-	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
-
 	/* Station number */
 	if (num) {
 		showParValue(num);
 	} else {
 		gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-		gdSetXY(93, 32);
+		gdSetXY(94, 32);
 		gdWriteString((uint8_t*)" --");
 		gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	}
+
+	/* Frequency scale */
+	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4, buf);
 
 	return;
 }
@@ -262,10 +279,10 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 }
 
 /* Show brightness control */
-void showBrWork(uint8_t **txtLabels)
+void showBrWork(uint8_t **txtLabels, uint8_t *buf)
 {
-	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
 	showParValue(brWork);
+	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork, buf);
 
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
@@ -289,10 +306,10 @@ void changeBrWork(int8_t diff)
 
 
 /* Show audio parameter */
-void showSndParam(sndParam *param, uint8_t **txtLabels)
+void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf)
 {
-	showBar(param->min, param->max, param->value);
 	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
+	showBar(param->min, param->max, param->value, buf);
 	showParLabel(param->label, txtLabels);
 
 	return;

@@ -77,14 +77,14 @@ void nextRC5Cmd(void);
 void startTestMode(void);
 void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels);
 
-void showRadio(uint8_t num);
+void showRadio(uint8_t num, uint8_t *buf);
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 
-void showBrWork(uint8_t **txtLabels);
+void showBrWork(uint8_t **txtLabels, uint8_t *buf);
 void changeBrWork(int8_t diff);
 
-void showSndParam(sndParam *param, uint8_t **txtLabels);
+void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf);
 
 void showTime(uint8_t **txtLabels);
 void drawSpectrum(uint8_t *buf);
