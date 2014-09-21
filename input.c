@@ -210,6 +210,14 @@ uint16_t getRC5Buf(void)
 	return rc5SaveBuf;
 }
 
+void setRC5Buf(uint8_t addr, uint8_t cmd)
+{
+	rc5SaveBuf &= (RC5_STBT_MASK | RC5_TOGB_MASK);
+	rc5SaveBuf |= ((addr<<6) | cmd);
+
+	return;
+}
+
 void setDisplayTime(uint8_t value)
 {
 	displayTime = value;

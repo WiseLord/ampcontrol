@@ -73,7 +73,10 @@ void setDefDisplay(uint8_t value);
 
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
+void nextRC5Cmd(void);
+void startTestMode(void);
 void showRC5Info(uint16_t rc5Buf);
+
 void showRadio(uint8_t num);
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);

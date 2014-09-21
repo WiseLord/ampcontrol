@@ -83,8 +83,6 @@ int main(void)
 
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_EMPTY;
-	uint16_t rc5Buf = RC5_BUF_EMPTY;
-	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
 	uint8_t direction;
 
 	loadTunerParams(&freqFM);
@@ -95,13 +93,13 @@ int main(void)
 	while (1) {
 		encCnt = getEncoder();
 		cmd = getBtnCmd();
-		rc5Buf = getRC5Buf();
 
 		/* Don't handle any command in test mode */
 		if (dispMode == MODE_TEST) {
 			if (cmd != CMD_EMPTY)
 				setDisplayTime(DISPLAY_TIME_TEST);
-			cmd = CMD_EMPTY;
+			if (cmd != CMD_BTN_5)
+				cmd = CMD_EMPTY;
 		}
 
 		/* Don't handle any command in standby mode except power on */
@@ -182,14 +180,18 @@ int main(void)
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
-			if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
-				curSndParam++;
-				dispMode++;
+			if (dispMode == MODE_TEST && cmd == CMD_BTN_5) {
+				nextRC5Cmd();
 			} else {
-				curSndParam = sndParAddr(SND_VOLUME);
-				dispMode = MODE_VOLUME;
+				if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
+					curSndParam++;
+					dispMode++;
+				} else {
+					curSndParam = sndParAddr(SND_VOLUME);
+					dispMode = MODE_VOLUME;
+				}
+				setDisplayTime(DISPLAY_TIME_AUDIO);
 			}
-			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case CMD_BTN_1_LONG:
 		case CMD_RC5_BACKLIGHT:
@@ -231,6 +233,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_STANDBY:
 				dispMode = MODE_TEST;
+				startTestMode();
 				setDisplayTime(DISPLAY_TIME_TEST);
 				break;
 			}
@@ -371,10 +374,8 @@ int main(void)
 				setStbyBrightness();
 			break;
 		case MODE_TEST:
-			showRC5Info(rc5Buf);
+			showRC5Info(getRC5Buf());
 			setWorkBrightness();
-			if (rc5Buf != rc5BufPrev)
-				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
 			drawSpectrum(getSpData());
@@ -407,7 +408,6 @@ int main(void)
 		/* Save current mode */
 		dispModePrev = dispMode;
 		/* Save current RC5 raw buf */
-		rc5BufPrev = rc5Buf;
 	}
 
 	return 0;

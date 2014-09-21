@@ -125,27 +125,70 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 	return;
 }
 
+static uint8_t rc5CmdInd = CMD_RC5_STBY;
+static uint8_t rc5Cmd;
+static uint8_t rc5Addr;
+
+void nextRC5Cmd(void)
+{
+	eeprom_update_byte(eepromRC5Cmd + rc5CmdInd, rc5Cmd);
+	eeprom_update_byte(eepromRC5Addr, rc5Addr);
+
+	rc5CmdInd++;
+	if (rc5CmdInd >= CMD_BTN_1)
+		rc5CmdInd = CMD_RC5_STBY;
+
+	rc5Addr = eeprom_read_byte(eepromRC5Addr);
+	rc5Cmd = eeprom_read_byte(eepromRC5Cmd + rc5CmdInd);
+
+	setRC5Buf(rc5Addr, rc5Cmd);
+
+	return;
+}
+
+void startTestMode(void)
+{
+	rc5CmdInd = CMD_RC5_STBY;
+	rc5Addr = eeprom_read_byte(eepromRC5Addr);
+	rc5Cmd = eeprom_read_byte(eepromRC5Cmd + rc5CmdInd);
+
+	setRC5Buf(rc5Addr, rc5Cmd);
+
+	return;
+}
+
 void showRC5Info(uint16_t rc5Buf)
 {
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
-	gdWriteString((uint8_t*)"RC5:");
-	gdSetXY(5, 8);
-	gdWriteString((uint8_t*)"Raw = ");
+	gdWriteString((uint8_t*)"RC5 raw status:");
+	gdSetXY(5, 9);
 	gdWriteString(mkNumString(rc5Buf, 14, '0', 2));
-	gdSetXY(5, 16);
-	gdWriteString((uint8_t*)"Tog = ");
-	gdWriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
-	gdSetXY(5, 24);
-	gdWriteString((uint8_t*)"Adr = ");
-	gdWriteString(mkNumString((rc5Buf & 0x07C0)>>6, 2, '0', 16));
-	gdSetXY(5, 32);
-	gdWriteString((uint8_t*)"Cmd = ");
-	gdWriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
-	gdSetXY(0, 48);
-	gdWriteString((uint8_t*)"Buttons:");
-	gdSetXY(5, 56);
+
+	gdSetXY(0, 19);
+	gdWriteString((uint8_t*)"Buttons status:");
+	gdSetXY(5, 28);
 	gdWriteString(mkNumString(INPUT_PIN, 8, '0', 2));
+
+	gdSetXY(0, 39);
+	gdWriteString((uint8_t*)"RC5 button ");
+	gdWriteString(mkNumString(rc5CmdInd, 2, ' ', 10));
+
+	gdSetXY(5, 48);
+	gdWriteString((uint8_t*)"Address:");
+	gdSetXY(64, 48);
+	rc5Addr = (rc5Buf & 0x07C0)>>6;
+	gdWriteString(mkNumString(rc5Addr, 2, '0', 16));
+	gdWriteString((uint8_t*)" => ");
+	gdWriteString(mkNumString(eeprom_read_byte(eepromRC5Addr), 2, '0', 16));
+
+	gdSetXY(5, 56);
+	gdWriteString((uint8_t*)"Command:");
+	gdSetXY(64, 56);
+	rc5Cmd = rc5Buf & 0x003F;
+	gdWriteString(mkNumString(rc5Cmd, 2, '0', 16));
+	gdWriteString((uint8_t*)" => ");
+	gdWriteString(mkNumString(eeprom_read_byte(eepromRC5Cmd + rc5CmdInd), 2, '0', 16));
 
 	return;
 }
