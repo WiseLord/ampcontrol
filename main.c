@@ -229,7 +229,6 @@ int main(void)
 			}
 			dispMode = getDefDisplay();
 			break;
-#ifndef NOTUNER
 		case CMD_BTN_3_LONG:
 		case CMD_BTN_4_LONG:
 		case CMD_BTN_5_LONG:
@@ -242,9 +241,21 @@ int main(void)
 				else
 					storeStation(freqFM);
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			} else {
+				if (cmd == CMD_BTN_3_LONG) {
+					switchSpMode();
+					dispMode = MODE_SPECTRUM;
+					setDisplayTime(DISPLAY_TIME_SP);
+#if defined(TDA7313)
+				} else if (cmd == CMD_BTN_4_LONG) {
+					gdClear();
+					switchLoudness();
+					dispMode = MODE_LOUDNESS;
+					setDisplayTime(DISPLAY_TIME_AUDIO);
+#endif
+				}
 			}
 			break;
-#endif
 		case CMD_BTN_TESTMODE:
 			switch (dispMode) {
 			case MODE_STANDBY:
@@ -276,7 +287,7 @@ int main(void)
 		case CMD_RC5_SP_MODE:
 			switchSpMode();
 			dispMode = MODE_SPECTRUM;
-			setDisplayTime(DISPLAY_SPECTRUM);
+			setDisplayTime(DISPLAY_TIME_SP);
 			break;
 #ifndef NOTUNER
 		case CMD_RC5_FM_INC:

@@ -41,7 +41,8 @@
 #define DISPLAY_TIME_FM_RADIO	5
 #define DISPLAY_TIME_CHAN		2
 #define DISPLAY_TIME_AUDIO		3
-#define DISPLAY_SPECTRUM		3
+#define DISPLAY_TIME_SP			3
+#define DISPLAY_TIME_BR			3
 
 #define BACKLIGHT_ON			1
 #define BACKLIGHT_OFF			0
