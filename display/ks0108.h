@@ -61,7 +61,7 @@ enum {
 void ks0108WriteCommand(uint8_t command);
 void ks0108WriteData(uint8_t data);
 
-void ks0108Fill(uint8_t data);
+void ks0108Clear(void);
 void ks0108Init(void);
 
 void ks0108SetXY(uint8_t x, uint8_t y);

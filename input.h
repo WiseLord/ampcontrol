@@ -32,6 +32,15 @@
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31
 
+#define GD_MIN_BRIGHTNESS		0
+#define GD_MAX_BRIGTHNESS		8
+
+/* Backlight port */
+#define DISPLAY_BCKL_DDR		DDRC
+#define DISPLAY_BCKL_PORT		PORTC
+
+#define DISPLAY_BCKL			(1<<PC7)
+
 enum {
 	CMD_RC5_STBY,
 	CMD_RC5_MUTE,
@@ -81,8 +90,8 @@ enum {
 };
 
 // Handling long press actions */
-#define SHORT_PRESS		100
-#define LONG_PRESS		600
+#define SHORT_PRESS		400
+#define LONG_PRESS		2400
 
 void inputInit();
 
@@ -92,5 +101,7 @@ uint16_t getRC5Buf(void);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);
+
+void gdSetBrightness(uint8_t br);
 
 #endif /* INPUT_H */

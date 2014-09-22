@@ -8,21 +8,6 @@ uint8_t bufFM[5];
 uint8_t monoFM;
 uint16_t freqFM;
 
-void tunerInit()
-{
-#if defined(TEA5767)
-	tea5767Init();
-#elif defined(TUX032)
-	tux032Init();
-#elif defined(LM7001)
-	lm7001Init();
-#elif defined(RDA5807)
-	rda5807Init();
-#endif
-
-	return;
-}
-
 void tunerSetFreq(uint16_t freq)
 {
 	if (freq > FM_FREQ_MAX)

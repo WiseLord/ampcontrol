@@ -133,7 +133,7 @@ void ks0108WriteData(uint8_t data)
 	return;
 }
 
-void ks0108Fill(uint8_t data)
+void ks0108Clear(void)
 {
 	uint8_t i, j;
 	uint8_t cs = _cs;
@@ -144,7 +144,7 @@ void ks0108Fill(uint8_t data)
 
 	for (i = 0; i < KS0108_ROWS; i++)
 		for (j = 0; j < KS0108_COLS; j++)
-			ks0108WriteData(data);
+			ks0108WriteData(0x00);
 	_cs = cs;
 
 	return;
@@ -197,7 +197,7 @@ void ks0108Init(void)
 	ks0108WriteCommand(KS0108_SET_PAGE);
 
 	fp[FONT_HEIGHT] = 1;
-	ks0108Fill(0x00);
+	ks0108Clear();
 
 	ks0108WriteCommand(KS0108_DISPLAY_ON);
 

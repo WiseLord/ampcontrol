@@ -7,6 +7,9 @@
 #include "input.h"
 #include "tuner.h"
 
+int8_t brStby;											/* Brightness in standby mode */
+int8_t brWork;											/* Brightness in working mode */
+
 uint8_t backlight;										/* Backlight */
 uint8_t spMode;											/* Spectrum mode */
 uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
@@ -111,7 +114,7 @@ void displayInit()
 #elif defined(ST7920)
 	st7920Init();
 	st7920LoadFont(font_ks0066_ru_08, 1);
-	st7920Fill(0x00);
+	st7920Clear();
 #endif
 	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
 
@@ -121,13 +124,13 @@ void displayInit()
 void clearDisplay()
 {
 #if defined(KS0108)
-	ks0108Fill(0x00);
+	ks0108Clear();
 #elif defined(KS0066) || defined(PCF8574)
 	ks0066Clear();
 #elif defined(LS020)
-	ls020FillScreen(COLOR_BCKG);
+	ls020Clear();
 #elif defined(ST7920)
-	st7920Fill(0x00);
+	st7920Clear();
 #endif
 
 	return;
@@ -286,6 +289,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 		value = (int16_t)42 * value / max;
 	}
 	for (j = 5; j <= 6; j++) {
+		st7920ReadFb(j);
 		for (i = 0; i < 88; i++) {
 			if (((min + max) && (value <= i)) || (!(min + max) &&
 				(((value > 0) && ((i < 42) || (value + 42 < i))) ||
@@ -303,7 +307,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			}
 			st7920WriteRawToFb(i, data);
 		}
-		st7920WriteFb(j, 11);
+		st7920WriteFb(j);
 	}
 #endif
 
@@ -341,26 +345,18 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 	ks0108SetXY(0, 0);
 	writeStringEeprom(parLabel);
 	ks0108LoadFont(font_ks0066_ru_08, 1);
-	ks0108SetXY(116, 7);
-	writeStringEeprom(txtLabels[LABEL_DB]);
 #elif defined (KS0066) || defined(PCF8574)
 	ks0066SetXY(0, 0);
 	writeStringEeprom(parLabel);
-	ks0066SetXY(14, 0);
-	writeStringEeprom(txtLabels[LABEL_DB]);
 #elif defined(LS020)
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
 	ls020SetXY(4, 8);
 	writeStringEeprom(parLabel);
-	ls020SetXY(150, 104);
-	writeStringEeprom(txtLabels[LABEL_DB]);
 #elif defined(ST7920)
 	st7920LoadFont(font_ks0066_ru_24, 1);
 	st7920SetXY(0, 0);
 	writeStringEeprom(parLabel);
 	st7920LoadFont(font_ks0066_ru_08, 1);
-	st7920SetXY(116, 7);
-	writeStringEeprom(txtLabels[LABEL_DB]);
 #endif
 
 	return;
@@ -460,7 +456,7 @@ void showRadio(uint8_t num)
 	ks0108SetXY (112, 0);
 	for (i = 0; i < 16; i+=2) {
 		if (i <= tunerLevel())
-			ks0108WriteData(256 - (1<<(7 - i / 2)));
+			ks0108WriteData(256 - (128>>(i / 2)));
 		else
 			ks0108WriteData(0x80);
 		ks0108WriteData(0x00);
@@ -568,11 +564,11 @@ void showRadio(uint8_t num)
 	st7920ReadFb(0);
 	for (i = 0; i < 16; i+=2) {
 		if (i <= tunerLevel())
-			st7920WriteRawToFb(112 + i, 256 - (1<<(7 - i / 2)));
+			st7920WriteRawToFb(112 + i, 256 - (128>>(i / 2)));
 		else
 			st7920WriteRawToFb(112 + i, 0x80);
 	}
-	st7920WriteFb(0, 16);
+	st7920WriteFb(0);
 
 	/* Stereo indicator */
 	st7920SetXY(114, 2);
@@ -643,12 +639,51 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	return;
 }
 
+/* Show brightness control */
+void showBrWork(uint8_t **txtLabels, uint8_t *buf)
+{
+	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
+	showParValue(brWork);
+	showParLabel(txtLabels[LABEL_BR_WORK], txtLabels);
+
+	return;
+}
+
+void changeBrWork(int8_t diff)
+{
+	brWork += diff;
+	if (brWork > GD_MAX_BRIGTHNESS)
+		brWork = GD_MAX_BRIGTHNESS;
+	if (brWork < GD_MIN_BRIGHTNESS)
+		brWork = GD_MIN_BRIGHTNESS;
+	gdSetBrightness(brWork);
+
+	return;
+}
+
 /* Show audio parameter */
 void showSndParam(sndParam *param, uint8_t **txtLabels)
 {
 	showBar(param->min, param->max, param->value);
 	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
 	showParLabel(param->label, txtLabels);
+
+#if defined(KS0108)
+	ks0108LoadFont(font_ks0066_ru_08, 1);
+	ks0108SetXY(116, 7);
+	writeStringEeprom(txtLabels[LABEL_DB]);
+#elif defined (KS0066) || defined(PCF8574)
+	ks0066SetXY(14, 0);
+	writeStringEeprom(txtLabels[LABEL_DB]);
+#elif defined(LS020)
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+	ls020SetXY(150, 104);
+	writeStringEeprom(txtLabels[LABEL_DB]);
+#elif defined(ST7920)
+	st7920LoadFont(font_ks0066_ru_08, 1);
+	st7920SetXY(116, 7);
+	writeStringEeprom(txtLabels[LABEL_DB]);
+#endif
 
 	return;
 }
@@ -957,10 +992,24 @@ void drawSpectrum(uint8_t *buf)
 	return;
 }
 
+void setWorkBrightness(void)
+{
+	gdSetBrightness(brWork);
+
+	return;
+}
+
+void setStbyBrightness(void)
+{
+	gdSetBrightness(brStby);
+
+	return;
+}
+
 void loadDispParams(void)
 {
-	backlight = eeprom_read_byte(eepromBCKL);
-	setBacklight(backlight);
+	brStby = eeprom_read_byte(eepromBrStby);
+	brWork = eeprom_read_byte(eepromBrWork);
 	spMode  = eeprom_read_byte(eepromSpMode);
 	defDisplay = eeprom_read_byte(eepromDisplay);
 
@@ -969,7 +1018,8 @@ void loadDispParams(void)
 
 void saveDisplayParams(void)
 {
-	eeprom_update_byte(eepromBCKL, backlight);
+	eeprom_update_byte(eepromBrStby, brStby);
+	eeprom_update_byte(eepromBrWork, brWork);
 	eeprom_update_byte(eepromSpMode, spMode);
 	eeprom_update_byte(eepromDisplay, defDisplay);
 

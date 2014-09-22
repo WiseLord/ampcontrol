@@ -42,6 +42,8 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono)
 
 	uint32_t fq = (uint32_t)freq * 10000 + 225000;
 
+	uint8_t tmpBuf;
+
 	if (ctrl & TEA5767_XTAL_CTRL)
 		div = fq / 8192;
 	else
@@ -51,27 +53,30 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono)
 
 	buf[1] = div & 0xff;
 
-	buf[2] = TEA5767_HLSI;
+	tmpBuf = TEA5767_HLSI;
 	if (mono)
-		buf[2] |= TEA5767_MS;
+		tmpBuf |= TEA5767_MS;
+	buf[2] = tmpBuf;
 
-	buf[3] = 0;
+	tmpBuf = 0;
 	if (ctrl & TEA5767_HCC_CTRL)
-		buf[3] |= TEA5767_HCC;
+		tmpBuf |= TEA5767_HCC;
 	if (ctrl & TEA5767_SNC_CTRL)
-		buf[3] |= TEA5767_SNC;
+		tmpBuf |= TEA5767_SNC;
 	if (ctrl & TEA5767_SMUTE_CTRL)
-		buf[3] |= TEA5767_SMUTE;
+		tmpBuf |= TEA5767_SMUTE;
 	if (ctrl & TEA5767_BL_CTRL)
-		buf[3] |= TEA5767_BL;
+		tmpBuf |= TEA5767_BL;
 	if (ctrl & TEA5767_XTAL_CTRL)
-		buf[3] |= TEA5767_XTAL;
+		tmpBuf |= TEA5767_XTAL;
+	buf[3] = tmpBuf;
 
-	buf[4] = 0;
+	tmpBuf = 0;
 	if (ctrl & TEA5767_DTC_CTRL)
-		buf[4] |= TEA5767_DTC;
+		tmpBuf |= TEA5767_DTC;
 	if (ctrl & TEA5767_PLLREF_CTRL)
-		buf[4] |= TEA5767_PLLREF;
+		tmpBuf |= TEA5767_PLLREF;
+	buf[4] = tmpBuf;
 
 	tea5767WriteI2C(buf);
 

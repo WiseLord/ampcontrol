@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #include "ds1307.h"
-#include "audio.h"
+#include "audio/audio.h"
 
 /* Graphics (ks0108-based) or character (ks0066-based) display selection  */
 #if !defined(KS0108) && !defined(KS0066) && !defined(LS020) && !defined(PCF8574) && !defined(ST7920)
@@ -27,14 +27,8 @@
 #define SP_MODE_STEREO			0
 #define SP_MODE_MIXED			1
 
-/* Backlight port */
-#define DISPLAY_BCKL_DDR		DDRC
-#define DISPLAY_BCKL_PORT		PORTC
-
-#define DISPLAY_BCKL			(1<<PC7)
-
 /* Timers fo different screens */
-#define DISPLAY_TIME_TEST		20
+#define DISPLAY_TIME_TEST		15
 #define DISPLAY_TIME_GAIN		3
 #define DISPLAY_TIME_TIME		3
 #define DISPLAY_TIME_TIME_EDIT	10
@@ -76,7 +70,9 @@ enum {
 	MODE_TIME_EDIT,
 	MODE_MUTE,
 	MODE_LOUDNESS,
-	MODE_TEST
+	MODE_TEST,
+
+	MODE_BR
 };
 
 /* Type of string printed (regular/eeprom/flash) */
@@ -100,10 +96,16 @@ void showRadio(uint8_t num);
 #endif
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 
+void showBrWork(uint8_t **txtLabels, uint8_t *buf);
+void changeBrWork(int8_t diff);
+
 void showSndParam(sndParam *param, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
 void drawSpectrum(uint8_t *buf);
+
+void setWorkBrightness(void);
+void setStbyBrightness(void);
 
 void loadDispParams(void);
 void saveDisplayParams(void);

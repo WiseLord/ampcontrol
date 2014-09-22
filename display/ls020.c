@@ -96,9 +96,9 @@ void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color
 	return;
 }
 
-void ls020FillScreen(uint8_t color)
+void ls020Clear(void)
 {
-	ls020DrawRect(0, 0, 175, 131, color);
+	ls020DrawRect(0, 0, 175, 131, COLOR_BCKG);
 
 	return;
 }
@@ -138,7 +138,7 @@ void ls020Init(void)
 	/* Set 8-bit color mode */
 	ls020WriteCommand(0xE800);
 
-	ls020FillScreen(COLOR_BCKG);
+	ls020Clear();
 
 	return;
 }
@@ -211,7 +211,7 @@ void ls020WriteChar(uint8_t code)
 			for (my = 0; my < fp[FONT_MULT]; my++) {
 				for (j = 0; j < swd; j++) {
 #ifdef LS020_ROTATE_180
-					if (pgmData[j] & (1<<(7 - i))) {
+					if (pgmData[j] & (128>>i)) {
 #else
 					if (pgmData[j] & (1<<i)) {
 #endif

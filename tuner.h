@@ -29,7 +29,16 @@
 #define FM_FREQ_MIN		8750
 #define FM_FREQ_MAX		10800
 
-void tunerInit();
+#if defined(TEA5767)
+#define tunerInit(); tea5767Init();
+#elif defined(TUX032)
+#define tunerInit(); tux032Init();
+#elif defined(LM7001)
+#define tunerInit(); lm7001Init();
+#elif defined(RDA5807)
+#define tunerInit(); rda5807Init();
+#endif
+
 void tunerSetFreq(uint16_t freq);
 
 void tunerReadStatus();

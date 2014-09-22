@@ -92,20 +92,16 @@ static uint8_t st7920ReadData()
 	return data;
 }
 
-void st7920Fill(uint8_t data)
+void st7920Clear(void)
 {
 	uint8_t x, y;
 
 	for(y = 0; y < 64; y++) {
-		if (y < 32) {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | y);
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM);
-		} else {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (y - 32));
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
-		}
+		st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (y & 31));
+		st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (y < 32 ? 0 : 0x08));
+
 		for(x = 0; x < 16; x++) {
-			st7920WriteData(data);
+			st7920WriteData(0x00);
 		}
 	}
 
@@ -188,25 +184,20 @@ void st7920WriteTextString(char *string)
 }
 #endif
 
-void st7920WriteFb(uint8_t row, uint8_t nbytes)
+void st7920WriteFb(uint8_t row)
 {
 	uint8_t i, j, k;
 	uint8_t data;
 
 	for (i = 0; i < 8; i++) {
-		if (row < 4) {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (row * 8 + i));
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM);
-		} else {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (row * 8 - 32 + i));
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
-		}
+		st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | ((row * 8) & 31) | i);
+		st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (row < 4 ? 0 : 0x08));
 
-		for (j = 0; j < nbytes; j++) {
+		for (j = 0; j < 16; j++) {
 			data = 0x00;
 			for (k = 0; k < 8; k++) {
 				if (fb[j * 8 + k] & (1<<i))
-					data |= (1<<(7 - k));
+					data |= (128>>k);
 			}
 
 			st7920WriteData(data);
@@ -217,23 +208,18 @@ void st7920WriteFb(uint8_t row, uint8_t nbytes)
 void st7920ReadFb(uint8_t row)
 {
 	uint8_t i, j, k;
-	uint8_t data;
+	uint8_t data = 0;
 
 	for (i = 0; i < 8; i++) {
-		if (row < 4) {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (row * 8) | i);
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM);
-		} else {
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (row * 8 - 32) | i);
-			st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | 0x08);
-		}
+		st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | ((row * 8) & 31) | i);
+		st7920WriteCommand(ST7920_SET_GRAPHIC_RAM | (row < 4 ? 0 : 0x08));
 
 		st7920ReadData();		/* Dubby read after setting address */
 
 		for (j = 0; j < 16; j++) {
 			data = st7920ReadData();
 			for (k = 0; k < 8; k++) {
-				if (data & (1<<(7 - k)))
+				if (data & (128>>k))
 					fb[j * 8 + k] |= (1<<i);
 				else
 					fb[j * 8 + k] &= ~(1<<i);
@@ -305,7 +291,7 @@ void st7920WriteString(uint8_t *string)
 			st7920WriteChar(fp[FONT_LTSPPOS], i);
 			st7920WriteChar(*str++, i);
 		}
-		st7920WriteFb(_row, 16);
+		st7920WriteFb(_row);
 	}
 	_row = row;
 

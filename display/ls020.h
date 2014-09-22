@@ -58,7 +58,7 @@ void ls020Init();
 
 void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color);
 
-void ls020FillScreen(uint8_t color);
+void ls020Clear(void);
 
 void ls020SetXY(uint8_t x, uint8_t y);
 

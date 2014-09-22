@@ -79,7 +79,7 @@ enum {
 void st7920WriteCommand(uint8_t cmd);
 void st7920WriteData(uint8_t data);
 
-void st7920Fill(uint8_t data);
+void st7920Clear(void);
 void st7920Init(void);
 
 #ifdef ST7920_ENABLE_TEXTMODE_FUNCTIONS
@@ -91,7 +91,7 @@ void st7920LoadFont(const uint8_t *font, uint8_t color);
 
 void st7920ReadFb(uint8_t row);
 void st7920SetXY(uint8_t x, uint8_t y);
-void st7920WriteFb(uint8_t row, uint8_t nbytes);
+void st7920WriteFb(uint8_t row);
 void st7920WriteRawToFb(uint8_t pos, uint8_t data);
 
 void st7920WriteString(uint8_t *string);

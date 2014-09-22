@@ -25,8 +25,9 @@
 #define eepromChannel	((void*)0x0D)
 
 #define eepromSpMode	((void*)0x1C)
-#define eepromBCKL		((void*)0x1D)
-#define eepromDisplay	((void*)0x1E)
+#define eepromDisplay	((void*)0x1D)
+#define eepromBrStby	((void*)0x1E)
+#define eepromBrWork	((void*)0x1F)
 
 #define eepromFMFreq	((void*)0x2C)
 #define eepromFMCtrl	((void*)0x2E)

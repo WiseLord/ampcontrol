@@ -16,6 +16,8 @@ static volatile uint16_t displayTime;
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
 
+static uint8_t _br;
+
 void inputInit()
 {
 	uint8_t i;
@@ -26,7 +28,7 @@ void inputInit()
 
 	/* Set timer prescaller to 128 (125 kHz) and reset on match*/
 	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
-	OCR2 = 125;						/* 125000/125 => 1000 polls/sec */
+	OCR2 = 31;						/* 125000/31 => 4032 polls/sec */
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
@@ -62,6 +64,8 @@ ISR (TIMER2_COMP_vect)
 	/* Current state */
 	uint8_t encNow = ~INPUT_PIN & ENC_AB;
 	uint8_t btnNow = ~INPUT_PIN & BTN_MASK;
+
+	static uint8_t br;
 
 	/* If encoder event has happened, inc/dec encoder counter */
 	switch (encNow) {
@@ -187,6 +191,15 @@ ISR (TIMER2_COMP_vect)
 	/* Time from last IR command */
 	if (rc5Timer < 1000)
 		rc5Timer++;
+
+	if (++br >= GD_MAX_BRIGTHNESS)				/* Loop brightness */
+		br = GD_MIN_BRIGHTNESS;
+
+	if (br == _br) {
+		DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;			/* Turn backlight off */
+	} else if (br == 0)
+		DISPLAY_BCKL_PORT |=DISPLAY_BCKL;			/* Turn backlight on */
+
 	return;
 };
 
@@ -213,10 +226,17 @@ uint16_t getRC5Buf(void)
 void setDisplayTime(uint8_t value)
 {
 	displayTime = value;
-	displayTime <<= 10;
+	displayTime <<= 12;
 }
 
 uint8_t getDisplayTime(void)
 {
-	return (displayTime | 0x3F) >> 10;
+	return (displayTime | 0x3F) >> 12;
+}
+
+void gdSetBrightness(uint8_t br)
+{
+	_br = br;
+
+	return;
 }
