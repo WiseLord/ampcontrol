@@ -7,11 +7,11 @@
 #endif
 
 #if defined(TDA7313)
-#include "audio/tda7313.h"
+#include "tda7313.h"
 #elif defined(TDA7318)
-#include "audio/tda7318.h"
+#include "tda7318.h"
 #elif defined(TDA7439)
-#include "audio/tda7439.h"
+#include "tda7439.h"
 #endif
 
 #endif /* AUDIO_H */

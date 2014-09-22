@@ -1,6 +1,6 @@
 AUDIOPROC = TDA7439
 DISPLAY = ST7920
-TUNER = TEA5767
+TUNER = RDA5807
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -39,7 +39,7 @@ else ifeq ($(TUNER), RDA5807)
 endif
 
 SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(TUNER_SRC)
-SRCS_VAR = main.c audio.c display.c tuner.c $(DISP_SRC)
+SRCS_VAR = main.c display.c tuner.c $(DISP_SRC)
 
 MCU = atmega32
 F_CPU = 16000000L

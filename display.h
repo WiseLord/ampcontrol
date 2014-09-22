@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #include "ds1307.h"
-#include "audio.h"
+#include "audio/audio.h"
 
 #include "display/gdfb.h"
 

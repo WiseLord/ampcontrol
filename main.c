@@ -7,7 +7,7 @@
 #include "rc5.h"
 #include "i2c.h"
 
-#include "audio.h"
+#include "audio/audio.h"
 #include "display.h"
 #include "tuner.h"
 
