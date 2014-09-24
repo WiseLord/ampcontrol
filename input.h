@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-/* Buttons and encoder definitions */
+/* Input definitions */
 #define INPUT_DDR		DDRD
 #define INPUT_PIN		PIND
 #define INPUT_PORT		PORTD
@@ -27,9 +27,19 @@
 #define STMU_PORT		PORTC
 
 #define MUTE			(1<<PC3)
+#define STDBY			(1<<PC3)
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31
+
+#define GD_MIN_BRIGHTNESS		0
+#define GD_MAX_BRIGTHNESS		8
+
+/* Backlight port */
+#define DISPLAY_BCKL_DDR		DDRB
+#define DISPLAY_BCKL_PORT		PORTB
+
+#define DISPLAY_BCKL			(1<<PB3)
 
 enum {
 	CMD_RC5_STBY,
@@ -48,8 +58,8 @@ enum {
 	CMD_RC5_LOUDNESS,
 	CMD_RC5_CHAN_UP,
 	CMD_RC5_CHAN_DOWN,
-	CMD_RC5_FM_DEC,
 	CMD_RC5_FM_INC,
+	CMD_RC5_FM_DEC,
 	CMD_RC5_FM_STORE,
 	CMD_RC5_1,
 	CMD_RC5_2,
@@ -80,8 +90,8 @@ enum {
 };
 
 // Handling long press actions */
-#define SHORT_PRESS		100
-#define LONG_PRESS		600
+#define SHORT_PRESS		400
+#define LONG_PRESS		2400
 
 void inputInit();
 
@@ -91,5 +101,7 @@ uint16_t getRC5Buf(void);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);
+
+void gdSetBrightness(uint8_t br);
 
 #endif /* INPUT_H */
