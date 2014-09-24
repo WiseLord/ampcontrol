@@ -10,7 +10,6 @@
 int8_t brStby;											/* Brightness in standby mode */
 int8_t brWork;											/* Brightness in working mode */
 
-uint8_t backlight;										/* Backlight */
 uint8_t spMode;											/* Spectrum mode */
 uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
 
@@ -1022,29 +1021,6 @@ void saveDisplayParams(void)
 	eeprom_update_byte(eepromBrWork, brWork);
 	eeprom_update_byte(eepromSpMode, spMode);
 	eeprom_update_byte(eepromDisplay, defDisplay);
-
-	return;
-}
-
-/* Turn on/off backlight */
-void setBacklight(int8_t backlight)
-{
-#if defined(PCF8574)
-	ks0066Backlight(backlight);
-#else
-	if (backlight)
-		DISPLAY_BCKL_PORT |= DISPLAY_BCKL;
-	else
-		DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;
-#endif
-	return;
-}
-
-/* Change backlight status */
-void switchBacklight(void)
-{
-	backlight = !backlight;
-	setBacklight(backlight);
 
 	return;
 }

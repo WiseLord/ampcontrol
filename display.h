@@ -110,8 +110,6 @@ void setStbyBrightness(void);
 void loadDispParams(void);
 void saveDisplayParams(void);
 
-void setBacklight(int8_t backlight);
-void switchBacklight(void);
 void switchSpMode();
 
 #endif /* DISPLAY_H */
