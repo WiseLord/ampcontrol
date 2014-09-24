@@ -29,7 +29,7 @@ static void powerOn(void)
 static void powerOff(void)
 {
 	STMU_PORT &= ~MUTE;
-	ks0066Backlight(BACKLIGHT_OFF);
+//	ks0066Backlight(BACKLIGHT_OFF);
 	stopEditTime();
 
 	saveAudioParams();
@@ -343,11 +343,11 @@ int main(void)
 		case MODE_STANDBY:
 			showTime(txtLabels);
 			if (dispModePrev == MODE_TEST)
-				ks0066Backlight(0);
+//				ks0066Backlight(0);
 			break;
 		case MODE_TEST:
 			showRC5Info(rc5Buf);
-			ks0066Backlight(BACKLIGHT_ON);
+//			ks0066Backlight(BACKLIGHT_ON);
 			if (rc5Buf != rc5BufPrev)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;

@@ -71,7 +71,7 @@ void displayInit()
 	lcdGenLevels();
 
 #if defined(KS0066)
-	KS0066_BCKL_DDR |= KS0066_BCKL;
+//	KS0066_BCKL_DDR |= KS0066_BCKL;
 #endif
 
 	return;
@@ -328,7 +328,7 @@ void drawSpectrum(uint8_t *buf)
 void loadDispParams(void)
 {
 //	backlight = eeprom_read_byte(eepromBCKL);
-	ks0066Backlight(backlight);
+//	ks0066Backlight(backlight);
 
 	return;
 }
@@ -344,7 +344,7 @@ void saveDisplayParams(void)
 void switchBacklight(void)
 {
 	backlight = !backlight;
-	ks0066Backlight(backlight);
+//	ks0066Backlight(backlight);
 
 	return;
 }

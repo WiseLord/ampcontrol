@@ -4,6 +4,8 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
+#define KS0066_4BIT_MODE
+
 /* Data port */
 #define KS0066_DATA_PORT			PORTB
 #define KS0066_DATA_DDR				DDRB
@@ -16,12 +18,6 @@
 #define KS0066_E					(1<<PB2)
 #define KS0066_RW					(1<<PB1)
 #define KS0066_RS					(1<<PB0)
-
-/* Backlight port */
-#define KS0066_BCKL_DDR				DDRC
-#define KS0066_BCKL_PORT			PORTC
-
-#define KS0066_BCKL					(1<<PB3)
 
 #define KS0066_INIT_DATA			0x30
 
@@ -66,7 +62,5 @@ void ks0066Init(void);
 
 void ks0066SetXY(uint8_t x, uint8_t y);
 void ks0066WriteString(uint8_t *string);
-
-void ks0066Backlight(uint8_t bckl);
 
 #endif /* KS0066_H */

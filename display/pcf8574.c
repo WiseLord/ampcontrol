@@ -56,6 +56,8 @@ void ks0066Clear(void)
 
 void ks0066Init(void)
 {
+	I2CInit();
+
 	I2CStart(PCF8574_ADDR);
 	portData = KS0066_INIT_DATA;
 	portData &= ~(KS0066_RS | KS0066_RW | KS0066_E);
