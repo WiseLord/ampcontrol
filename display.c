@@ -327,7 +327,7 @@ void drawSpectrum(uint8_t *buf)
 
 void loadDispParams(void)
 {
-	backlight = eeprom_read_byte(eepromBCKL);
+//	backlight = eeprom_read_byte(eepromBCKL);
 	ks0066Backlight(backlight);
 
 	return;
@@ -335,7 +335,7 @@ void loadDispParams(void)
 
 void saveDisplayParams(void)
 {
-	eeprom_update_byte(eepromBCKL, backlight);
+//	eeprom_update_byte(eepromBCKL, backlight);
 
 	return;
 }

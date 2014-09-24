@@ -38,7 +38,7 @@ else ifeq ($(TUNER), LM7001)
 endif
 
 SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
-SRCS_VAR = main.c audio.c display.c tuner.c
+SRCS_VAR = main.c display.c tuner.c
 
 MCU = atmega8
 F_CPU = 8000000L

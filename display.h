@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #include "ds1307.h"
-#include "audio.h"
+#include "audio/audio.h"
 
 /* Graphics (ks0108-based) or character (ks0066-based) display selection  */
 #if !defined(KS0066) && !defined(PCF8574)
@@ -34,39 +34,6 @@
 /* Data stored in user characters */
 #define LCD_LEVELS				0
 #define LCD_BAR					1
-
-/* EEPROM saved labels */
-enum {
-	LABEL_VOLUME,
-	LABEL_BASS,
-#if defined(TDA7439)
-	LABEL_MIDDLE,
-#else
-	LABEL_LOUDNESS,
-#endif
-	LABEL_TREBLE,
-#if defined(TDA7439)
-	LABEL_PREAMP,
-#else
-	LABEL_BALANCE_FR,
-#endif
-	LABEL_BALANCE,
-	LABEL_GAIN_0,
-	LABEL_GAIN_1,
-	LABEL_GAIN_2,
-	LABEL_GAIN_3,
-	LABEL_MUTE,
-	LABEL_ON,
-	LABEL_OFF,
-	LABEL_DB,
-	LABEL_MONDAY,
-	LABEL_THUESDAY,
-	LABEL_WEDNESDAY,
-	LABEL_THURSDAY,
-	LABEL_FRIDAY,
-	LABEL_SADURDAY,
-	LABEL_SUNDAY
-};
 
 /* Display modes */
 enum {

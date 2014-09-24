@@ -7,7 +7,7 @@
 #include "rc5.h"
 #include "i2c.h"
 
-#include "audio.h"
+#include "audio/audio.h"
 #include "display.h"
 #include "tuner.h"
 
@@ -17,7 +17,7 @@ uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
-	STMU_PORT |= MUTESTBY;
+	STMU_PORT |= MUTE;
 	loadDispParams();
 	loadTunerParams(&freqFM);
 	unmuteVolume();
@@ -28,7 +28,7 @@ static void powerOn(void)
 /* Handle entering standby mode */
 static void powerOff(void)
 {
-	STMU_PORT &= ~MUTESTBY;
+	STMU_PORT &= ~MUTE;
 	ks0066Backlight(BACKLIGHT_OFF);
 	stopEditTime();
 
@@ -52,8 +52,8 @@ static void hwInit(void)
 	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
 
-	STMU_DDR |= MUTESTBY;			/* Standby/Mute port */
-	STMU_PORT &= ~MUTESTBY;
+	STMU_DDR |= MUTE;			/* Standby/Mute port */
+	STMU_PORT &= ~MUTE;
 
 	sei();							/* Gloabl interrupt enable */
 
