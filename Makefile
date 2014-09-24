@@ -7,8 +7,6 @@ lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
 TARG = ampcontrol_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
-# EEPROM file base name
-EEPROM = eeprom_$(call lc,$(AUDIOPROC))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
@@ -22,7 +20,6 @@ else ifeq ($(AUDIOPROC), TDA7439)
   AUDIO_SRC = audio/tda7439.c
 endif
 
-FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ifeq ($(DISPLAY), KS0066)
   DISP_SRC = display/ks0066.c
 else ifeq ($(DISPLAY), PCF8574)
@@ -30,15 +27,17 @@ else ifeq ($(DISPLAY), PCF8574)
 endif
 
 ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner/tea5767.c
+  TUNER_SRC = tuner.c tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner/tux032.c
+  TUNER_SRC = tuner.c tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner/lm7001.c
+  TUNER_SRC = tuner.c tuner/lm7001.c
+else ifeq ($(TUNER), RDA5807)
+  TUNER_SRC = tuner.c tuner/rda5807.c
 endif
 
-SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
-SRCS_VAR = main.c display.c tuner.c
+SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC)
+SRCS_VAR = main.c display.c $(TUNER_SRC)
 
 MCU = atmega8
 F_CPU = 8000000L
@@ -77,7 +76,7 @@ clean_var:
 	rm -f $(OBJS_VAR)
 
 clean_const:
-	rm -f $(OBJS_CONST)
+	rm -f *.o */*.o
 
 clean: clean_var clean_const
 
@@ -92,3 +91,6 @@ eeprom_en:
 
 eeprom_ru:
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_ru.bin:r
+
+eeprom_by:
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_by.bin:r
