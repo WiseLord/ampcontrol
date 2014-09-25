@@ -9,10 +9,10 @@
 
 #define RC5_DATA		(1<<PD3)
 
-#define RC5_SHORT_MIN	888		/* 444 microseconds */
-#define RC5_SHORT_MAX	2666	/* 1333 microseconds */
-#define RC5_LONG_MIN	2668	/* 1334 microseconds */
-#define RC5_LONG_MAX	4444	/* 2222 microseconds */
+#define RC5_SHORT_MIN	444		/* 444 microseconds */
+#define RC5_SHORT_MAX	1333	/* 1333 microseconds */
+#define RC5_LONG_MIN	1334	/* 1334 microseconds */
+#define RC5_LONG_MAX	2222	/* 2222 microseconds */
 
 #define RC5_STBT_MASK	0x3000
 #define RC5_TOGB_MASK	0x0800

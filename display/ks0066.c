@@ -12,96 +12,16 @@ static void ks0066writeStrob()
 	KS0066_CTRL_PORT |= KS0066_E;
 	asm("nop");	/* 230ns */
 	asm("nop");
-	asm("nop");
-	asm("nop");
 	KS0066_CTRL_PORT &= ~KS0066_E;
 
 	return;
 }
 
-static uint8_t ks0066readStrob()
+static void ks0066WritePort(uint8_t data)
 {
-	uint8_t pin;
-
-	asm("nop");	/* 40ns */
-	KS0066_CTRL_PORT |= KS0066_E;
-	asm("nop");	/* 230ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	pin = KS0066_DATA_PIN;
-	KS0066_CTRL_PORT &= ~KS0066_E;
-#ifdef KS0066_4BIT_MODE
-	asm("nop");	/* 230ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	KS0066_CTRL_PORT |= KS0066_E;
-	asm("nop");	/* 230ns */
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	pin &= 0xF0;
-	pin |= swap(KS0066_DATA_PIN);
-	KS0066_CTRL_PORT &= ~KS0066_E;
-#endif
-
-	return pin;
-}
-
-static void ks0066waitWhileBusy()
-{
-	uint8_t i = 0;
-
-	KS0066_CTRL_PORT &= ~KS0066_RS;
-	KS0066_CTRL_PORT |= KS0066_RW;
-
-#ifdef KS0066_4BIT_MODE
-	KS0066_DATA_DDR &= 0x0F;
-#else
-	KS0066_DATA_DDR = 0x00;
-#endif
-
-	while (ks0066readStrob() & KS0066_STA_BUSY) {
-		if (i++ > 200)	/* Avoid endless loop */
-			return;
-	}
-
-	return;
-}
-
-void ks0066WriteCommand(uint8_t command)
-{
-	ks0066waitWhileBusy();
-
-	KS0066_CTRL_PORT &= ~(KS0066_RS | KS0066_RW);
-
-#ifdef KS0066_4BIT_MODE
-	KS0066_DATA_DDR |= 0xF0;
-	KS0066_DATA_PORT &= 0x0F;
-	KS0066_DATA_PORT |= (command & 0xF0);
-	ks0066writeStrob();
-	KS0066_DATA_PORT &= 0x0F;
-	KS0066_DATA_PORT |= (swap(command) & 0xF0);
-#else
-	KS0066_DATA_DDR |= 0xFF;
-	KS0066_DATA_PORT = command;
-#endif
-
-	ks0066writeStrob();
-
-	return;
-}
-
-void ks0066WriteData(uint8_t data)
-{
-	ks0066waitWhileBusy();
-
 	KS0066_CTRL_PORT &= ~KS0066_RW;
-	KS0066_CTRL_PORT |= KS0066_RS;
 
 #ifdef KS0066_4BIT_MODE
-	KS0066_DATA_DDR |= 0xF0;
 	KS0066_DATA_PORT &= 0x0F;
 	KS0066_DATA_PORT |= (data & 0xF0);
 	ks0066writeStrob();
@@ -113,6 +33,26 @@ void ks0066WriteData(uint8_t data)
 #endif
 
 	ks0066writeStrob();
+
+	return;
+}
+
+void ks0066WriteCommand(uint8_t command)
+{
+	_delay_us(100);
+
+	KS0066_CTRL_PORT &= ~KS0066_RS;
+	ks0066WritePort(command);
+
+	return;
+}
+
+void ks0066WriteData(uint8_t data)
+{
+	_delay_us(100);
+
+	KS0066_CTRL_PORT |= KS0066_RS;
+	ks0066WritePort(data);
 
 	return;
 }

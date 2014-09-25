@@ -44,7 +44,6 @@ void tunerSetFreq(uint16_t freq);
 void tunerReadStatus();
 uint16_t tunerGetFreq();
 void tunerSwitchMono();
-uint8_t tunerReady();
 uint8_t tunerStereo();
 uint8_t tunerLevel();
 
