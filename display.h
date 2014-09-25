@@ -77,7 +77,7 @@ void nextRC5Cmd(void);
 void startTestMode(void);
 void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels);
 
-void showRadio(uint8_t num, uint8_t *buf);
+void showRadio(uint8_t *buf);
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 

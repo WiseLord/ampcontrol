@@ -12,14 +12,13 @@
 #include "tuner.h"
 
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
-uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
 
 /* Save data to EEPROM */
 void saveParams(void)
 {
 	saveAudioParams();
 	saveDisplayParams();
-	saveTunerParams(freqFM);
+	saveTunerParams();
 
 	return;
 }
@@ -30,7 +29,7 @@ static void powerOn(void)
 	STMU_PORT |= STDBY;
 	_delay_ms(50);
 	setWorkBrightness();
-	loadTunerParams(&freqFM);
+	loadTunerParams();
 	unmuteVolume();
 
 	return;
@@ -85,7 +84,7 @@ int main(void)
 	uint8_t cmd = CMD_EMPTY;
 	uint8_t direction;
 
-	loadTunerParams(&freqFM);
+	loadTunerParams();
 	loadAudioParams(txtLabels);
 	loadDispParams();
 	setStbyBrightness();
@@ -150,7 +149,7 @@ int main(void)
 				break;
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
-					tunerSetFreq(freqFM - 10);
+					tunerSetFreq(tunerGetFreq() - 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -166,7 +165,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
-					tunerSetFreq(freqFM + 10);
+					tunerSetFreq(tunerGetFreq() + 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -222,11 +221,11 @@ int main(void)
 		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
 				if (cmd == CMD_BTN_3_LONG)
-					scanStoredFreq(freqFM, SEARCH_DOWN);
+					scanStoredFreq(SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
-					scanStoredFreq(freqFM, SEARCH_UP);
+					scanStoredFreq(SEARCH_UP);
 				else
-					storeStation(freqFM);
+					storeStation();
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			} else {
 				if (cmd == CMD_BTN_3_LONG) {
@@ -285,17 +284,17 @@ int main(void)
 			if (dispMode == MODE_FM_RADIO) {
 				switch (cmd) {
 				case CMD_RC5_FM_INC:
-					tunerSetFreq(freqFM + 10);
+					tunerSetFreq(tunerGetFreq() + 10);
 					break;
 				case CMD_RC5_FM_DEC:
-					tunerSetFreq(freqFM - 10);
+					tunerSetFreq(tunerGetFreq() - 10);
 					break;
 				case CMD_RC5_CHAN_UP:
 				case CMD_RC5_CHAN_DOWN:
 					direction = SEARCH_UP;
 					if (cmd == CMD_RC5_CHAN_DOWN)
 						direction = SEARCH_DOWN;
-					scanStoredFreq(freqFM, direction);
+					scanStoredFreq(direction);
 					break;
 				}
 			}
@@ -396,8 +395,7 @@ int main(void)
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();
-			freqFM = tunerGetFreq();
-			showRadio(stationNum(freqFM), getSpData());
+			showRadio(getSpData());
 			break;
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);

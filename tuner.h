@@ -40,11 +40,11 @@ uint8_t tunerStereo();
 uint8_t tunerLevel();
 
 uint8_t stationNum(uint16_t freq);
-void scanStoredFreq(uint16_t freq, uint8_t direction);
+void scanStoredFreq(uint8_t direction);
 void loadStation(uint8_t num);
-void storeStation(uint16_t freq);
+void storeStation(void);
 
-void loadTunerParams(uint16_t *freq);
-void saveTunerParams(uint16_t freq);
+void loadTunerParams(void);
+void saveTunerParams(void);
 
 #endif /* TUNER_H */

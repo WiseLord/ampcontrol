@@ -213,10 +213,11 @@ void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels)
 	return;
 }
 
-void showRadio(uint8_t num, uint8_t *buf)
+void showRadio(uint8_t *buf)
 {
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
+	uint8_t num = stationNum(freq);
 
 	uint8_t i;
 
