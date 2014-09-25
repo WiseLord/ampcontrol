@@ -8,8 +8,8 @@
 #define LM7001_PIN			PINC
 
 #define LM7001_DATA			(1<<PC2)
-#define LM7001_CL			(1<<PC3)
-#define LM7001_CE			(1<<PC4)
+#define LM7001_CL			(1<<PC1)
+#define LM7001_CE			(1<<PC0)
 
 /* IF = 10.7MHz and step = 100kHz */
 #define LM7001_IF			1070
