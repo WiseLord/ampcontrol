@@ -434,10 +434,10 @@ void showRC5Info(uint16_t rc5Buf)
 
 	return;
 }
-#ifndef NOTUNER
-void showRadio(uint8_t num)
+void showRadio(void)
 {
 	uint16_t freq = tunerGetFreq();
+	uint8_t num = stationNum(freq);
 
 #if defined(KS0108)
 	uint8_t i;
@@ -592,7 +592,6 @@ void showRadio(uint8_t num)
 
 	return;
 }
-#endif
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {

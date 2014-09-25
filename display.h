@@ -91,9 +91,7 @@ void clearDisplay();
 uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void showRC5Info(uint16_t rc5Buf);
-#ifndef NOTUNER
-void showRadio(uint8_t num);
-#endif
+void showRadio(void);
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 
 void showBrWork(uint8_t **txtLabels, uint8_t *buf);

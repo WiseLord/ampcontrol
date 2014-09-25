@@ -10,23 +10,16 @@
 #include "audio/audio.h"
 #include "display.h"
 
-#ifndef NOTUNER
 #include "tuner.h"
-#endif
 
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
-#ifndef NOTUNER
-uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
-#endif
 
 /* Save data to EEPROM */
 void saveParams(void)
 {
 	saveAudioParams();
 	saveDisplayParams();
-#ifndef NOTUNER
-	saveTunerParams(freqFM);
-#endif
+	saveTunerParams();
 
 	return;
 }
@@ -37,9 +30,7 @@ static void powerOn(void)
 	STMU_PORT |= STDBY;
 	_delay_ms(50);
 	setWorkBrightness();
-#ifndef NOTUNER
-	loadTunerParams(&freqFM);
-#endif
+	loadTunerParams();
 	unmuteVolume();
 
 	return;
@@ -69,9 +60,7 @@ static void hwInit(void)
 	adcInit();						/* Analog-to-digital converter */
 	inputInit();					/* Buttons/encoder polling */
 	I2CInit();						/* I2C bus */
-#ifndef NOTUNER
 	tunerInit();					/* Tuner */
-#endif
 
 	STMU_DDR |= (STDBY | MUTE)	;	/* Standby/Mute port */
 	STMU_PORT &= ~STDBY;
@@ -96,11 +85,9 @@ int main(void)
 	uint8_t cmd = CMD_EMPTY;
 	uint16_t rc5Buf = RC5_BUF_EMPTY;
 	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
-#ifndef NOTUNER
 	uint8_t direction;
 
-	loadTunerParams(&freqFM);
-#endif
+	loadTunerParams();
 	loadAudioParams(txtLabels);
 	loadDispParams();
 	setStbyBrightness();
@@ -163,14 +150,12 @@ int main(void)
 				if (!isETM())
 					setDisplayTime(DISPLAY_TIME_TIME);
 				break;
-#ifndef NOTUNER
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
-					tunerSetFreq(freqFM - 10);
+					tunerSetFreq(tunerGetFreq() - 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
-#endif
 			default:
 				stopEditTime();
 				dispMode = MODE_TIME;
@@ -181,14 +166,12 @@ int main(void)
 		case CMD_BTN_4:
 		case CMD_RC5_MUTE:
 			switch (dispMode) {
-#ifndef NOTUNER
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
-					tunerSetFreq(freqFM + 10);
+					tunerSetFreq(tunerGetFreq() + 10);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
-#endif
 			default:
 				clearDisplay();
 				switchMute();
@@ -217,13 +200,11 @@ int main(void)
 		case CMD_RC5_DISPLAY:
 			switch (getDefDisplay()) {
 			case MODE_SPECTRUM:
-#ifndef NOTUNER
 				if (getChan() == 0) {
 					setDefDisplay(MODE_FM_RADIO);
 					break;
 				}
 			case MODE_FM_RADIO:
-#endif
 				setDefDisplay(MODE_TIME);
 				break;
 			default:
@@ -237,15 +218,13 @@ int main(void)
 		case CMD_BTN_5_LONG:
 		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
-#ifndef NOTUNER
 				if (cmd == CMD_BTN_3_LONG)
-					scanStoredFreq(freqFM, SEARCH_DOWN);
+					scanStoredFreq(SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
-					scanStoredFreq(freqFM, SEARCH_UP);
+					scanStoredFreq(SEARCH_UP);
 				else
-					storeStation(freqFM);
+					storeStation();
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-#endif
 			} else {
 				if (cmd == CMD_BTN_3_LONG) {
 					switchSpMode();
@@ -294,7 +273,6 @@ int main(void)
 			dispMode = MODE_SPECTRUM;
 			setDisplayTime(DISPLAY_TIME_SP);
 			break;
-#ifndef NOTUNER
 		case CMD_RC5_FM_INC:
 		case CMD_RC5_FM_DEC:
 		case CMD_RC5_CHAN_UP:
@@ -303,17 +281,17 @@ int main(void)
 			if (dispMode == MODE_FM_RADIO) {
 				switch (cmd) {
 				case CMD_RC5_FM_INC:
-					tunerSetFreq(freqFM + 10);
+					tunerSetFreq(tunerGetFreq() + 10);
 					break;
 				case CMD_RC5_FM_DEC:
-					tunerSetFreq(freqFM - 10);
+					tunerSetFreq(tunerGetFreq() - 10);
 					break;
 				case CMD_RC5_CHAN_UP:
 				case CMD_RC5_CHAN_DOWN:
 					direction = SEARCH_UP;
 					if (cmd == CMD_RC5_CHAN_DOWN)
 						direction = SEARCH_DOWN;
-					scanStoredFreq(freqFM, direction);
+					scanStoredFreq(direction);
 					break;
 				}
 			}
@@ -342,7 +320,6 @@ int main(void)
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
-#endif
 		}
 
 		/* Emulate RC5 VOL_UP/VOL_DOWN as encoder actions */
@@ -415,13 +392,10 @@ int main(void)
 		case MODE_SPECTRUM:
 			drawSpectrum(getSpData());
 			break;
-#ifndef NOTUNER
 		case MODE_FM_RADIO:
 			tunerReadStatus();
-			freqFM = tunerGetFreq();
-			showRadio(stationNum(freqFM));
+			showRadio();
 			break;
-#endif
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
 			break;
