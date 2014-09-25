@@ -17,8 +17,7 @@ uint16_t freqFM;					/* FM freq (e.g. 10120 for 101.2MHz) */
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
-	STMU_PORT |= MUTE;
-	loadDispParams();
+	setWorkBrightness();
 	loadTunerParams(&freqFM);
 	unmuteVolume();
 
@@ -28,8 +27,8 @@ static void powerOn(void)
 /* Handle entering standby mode */
 static void powerOff(void)
 {
-	STMU_PORT &= ~MUTE;
-//	ks0066Backlight(BACKLIGHT_OFF);
+	muteVolume();
+	setStbyBrightness();
 	stopEditTime();
 
 	saveAudioParams();
@@ -52,8 +51,7 @@ static void hwInit(void)
 	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
 
-	STMU_DDR |= MUTE;			/* Standby/Mute port */
-	STMU_PORT &= ~MUTE;
+	STMU_DDR |= MUTE;				/* Standby/Mute port */
 
 	sei();							/* Gloabl interrupt enable */
 
@@ -77,9 +75,10 @@ int main(void)
 	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
 	uint8_t direction;
 
-	loadDispParams();
-	loadAudioParams(txtLabels);
 	loadTunerParams(&freqFM);
+	loadAudioParams(txtLabels);
+	loadDispParams();
+	setStbyBrightness();
 
 	while (1) {
 		encCnt = getEncoder();
@@ -95,7 +94,8 @@ int main(void)
 
 		/* Don't handle any command in standby mode except power on */
 		if (dispMode == MODE_STANDBY) {
-			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY && cmd != CMD_BTN_TESTMODE)
+			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
+				cmd != CMD_BTN_TESTMODE)
 				cmd = CMD_EMPTY;
 		}
 
@@ -161,37 +161,28 @@ int main(void)
 					break;
 				}
 			default:
+				ks0066Clear();
 				switchMute();
 				dispMode = MODE_MUTE;
-				setDisplayTime(DISPLAY_TIME_MUTE);
+				setDisplayTime(DISPLAY_TIME_CHAN);
 				break;
 			}
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
-			switch (dispMode) {
-			case MODE_BASS:
-#if defined(TDA7313) || defined(TDA7318)
-				curSndParam++;	/* Skip not supported middle*/
-				dispMode++;
-#endif
-			case MODE_VOLUME:
-			case MODE_MIDDLE:
-			case MODE_TREBLE:
-			case MODE_PREAMP:
+			if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
 				curSndParam++;
 				dispMode++;
-				break;
-			default:
+			} else {
 				curSndParam = sndParAddr(SND_VOLUME);
 				dispMode = MODE_VOLUME;
-				break;
 			}
 			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case CMD_BTN_1_LONG:
 		case CMD_RC5_BACKLIGHT:
-			switchBacklight();
+			dispMode = MODE_BR;
+			setDisplayTime(DISPLAY_TIME_BR);
 			break;
 		case CMD_BTN_2_LONG:
 		case CMD_RC5_DISPLAY:
@@ -212,6 +203,13 @@ int main(void)
 				else
 					storeStation(freqFM);
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+#if defined(TDA7313)
+			} else if (cmd == CMD_BTN_4_LONG) {
+				clearDisplay();
+				switchLoudness();
+				dispMode = MODE_LOUDNESS;
+				setDisplayTime(DISPLAY_TIME_AUDIO);
+#endif
 			}
 			break;
 		case CMD_BTN_TESTMODE:
@@ -224,6 +222,7 @@ int main(void)
 			break;
 #if defined(TDA7313)
 		case CMD_RC5_LOUDNESS:
+			clearDisplay();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -308,6 +307,10 @@ int main(void)
 				changeTime(encCnt);
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
 				break;
+			case MODE_BR:
+				changeBrWork(encCnt);
+				setDisplayTime(DISPLAY_TIME_BR);
+				break;
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
@@ -326,7 +329,7 @@ int main(void)
 			case MODE_STANDBY:
 				break;
 			case MODE_TEST:
-				dispMode = MODE_STANDBY;
+				setStbyBrightness();
 				break;
 			default:
 				dispMode = MODE_SPECTRUM;
@@ -343,11 +346,11 @@ int main(void)
 		case MODE_STANDBY:
 			showTime(txtLabels);
 			if (dispModePrev == MODE_TEST)
-//				ks0066Backlight(0);
+				setStbyBrightness();
 			break;
 		case MODE_TEST:
 			showRC5Info(rc5Buf);
-//			ks0066Backlight(BACKLIGHT_ON);
+			setWorkBrightness();
 			if (rc5Buf != rc5BufPrev)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
@@ -370,6 +373,9 @@ int main(void)
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime(txtLabels);
+			break;
+		case MODE_BR:
+			showBrWork(txtLabels, getSpData());
 			break;
 		default:
 			showSndParam(curSndParam, txtLabels);

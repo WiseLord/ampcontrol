@@ -1,6 +1,6 @@
-AUDIOPROC = TDA7439
+AUDIOPROC = TDA7318
 DISPLAY = KS0066
-TUNER = RDA5807
+TUNER = TUX032
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)

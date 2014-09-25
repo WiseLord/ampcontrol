@@ -7,7 +7,8 @@
 #include "input.h"
 #include "tuner.h"
 
-static uint8_t backlight;
+int8_t brStby;													/* Brightness in standby mode */
+int8_t brWork;													/* Brightness in working mode */
 static uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
 static uint8_t userSybmols = LCD_LEVELS;
 
@@ -227,6 +228,28 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 	return;
 }
 
+/* Show brightness control */
+void showBrWork(uint8_t **txtLabels, uint8_t *buf)
+{
+	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
+	showParValue(brWork);
+	showParLabel(txtLabels[LABEL_BR_WORK], txtLabels);
+
+	return;
+}
+
+void changeBrWork(int8_t diff)
+{
+	brWork += diff;
+	if (brWork > GD_MAX_BRIGTHNESS)
+		brWork = GD_MAX_BRIGTHNESS;
+	if (brWork < GD_MIN_BRIGHTNESS)
+		brWork = GD_MIN_BRIGHTNESS;
+	gdSetBrightness(brWork);
+
+	return;
+}
+
 /* Show audio parameter */
 void showSndParam(sndParam *param, uint8_t **txtLabels)
 {
@@ -325,26 +348,32 @@ void drawSpectrum(uint8_t *buf)
 	return;
 }
 
+void setWorkBrightness(void)
+{
+	gdSetBrightness(brWork);
+
+	return;
+}
+
+void setStbyBrightness(void)
+{
+	gdSetBrightness(brStby);
+
+	return;
+}
+
 void loadDispParams(void)
 {
-//	backlight = eeprom_read_byte(eepromBCKL);
-//	ks0066Backlight(backlight);
+	brStby = eeprom_read_byte(eepromBrStby);
+	brWork = eeprom_read_byte(eepromBrWork);
 
 	return;
 }
 
 void saveDisplayParams(void)
 {
-//	eeprom_update_byte(eepromBCKL, backlight);
-
-	return;
-}
-
-/* Change backlight status */
-void switchBacklight(void)
-{
-	backlight = !backlight;
-//	ks0066Backlight(backlight);
+	eeprom_update_byte(eepromBrStby, brStby);
+	eeprom_update_byte(eepromBrWork, brWork);
 
 	return;
 }
