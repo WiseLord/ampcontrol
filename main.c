@@ -43,15 +43,18 @@ static void hwInit(void)
 {
 	loadLabels(txtLabels);			/* Load text labels from EEPROM */
 
-	displayInit();
+	I2CInit();						/* I2C bus */
+	ks0066Init();
 
 	rc5Init();						/* IR Remote control */
 	adcInit();						/* Analog-to-digital converter */
 	inputInit();					/* Buttons/encoder polling */
-	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
 
 	STMU_DDR |= MUTE;				/* Standby/Mute port */
+#if defined(KS0066)
+	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
+#endif
 
 	sei();							/* Gloabl interrupt enable */
 
@@ -205,7 +208,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 #if defined(TDA7313)
 			} else if (cmd == CMD_BTN_4_LONG) {
-				clearDisplay();
+				ks0066Clear();
 				switchLoudness();
 				dispMode = MODE_LOUDNESS;
 				setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -222,7 +225,7 @@ int main(void)
 			break;
 #if defined(TDA7313)
 		case CMD_RC5_LOUDNESS:
-			clearDisplay();
+			ks0066Clear();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -355,7 +358,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
-			drawSpectrum(getSpData());
+			drawSpectrum();
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();
@@ -375,7 +378,7 @@ int main(void)
 			showTime(txtLabels);
 			break;
 		case MODE_BR:
-			showBrWork(txtLabels, getSpData());
+			showBrWork(txtLabels);
 			break;
 		default:
 			showSndParam(curSndParam, txtLabels);

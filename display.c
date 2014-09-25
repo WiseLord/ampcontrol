@@ -6,11 +6,15 @@
 #include "eeprom.h"
 #include "input.h"
 #include "tuner.h"
+#include "adc.h"
 
-int8_t brStby;													/* Brightness in standby mode */
-int8_t brWork;													/* Brightness in working mode */
-static uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
-static uint8_t userSybmols = LCD_LEVELS;
+static int8_t brStby;							/* Brightness in standby mode */
+static int8_t brWork;							/* Brightness in working mode */
+static uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
+
+static const uint8_t timeCurPos[] PROGMEM = {
+	7, 4, 1, 0, 12, 15, 79
+};
 
 static const uint8_t barSymbols[] PROGMEM = {
 	0x00, 0x10, 0x14, 0x15,
@@ -66,18 +70,6 @@ static void lcdGenBar(void)
 	return;
 }
 
-void displayInit()
-{
-	ks0066Init();
-	lcdGenLevels();
-
-#if defined(KS0066)
-//	KS0066_BCKL_DDR |= KS0066_BCKL;
-#endif
-
-	return;
-}
-
 static uint8_t *mkNumString(int16_t value, uint8_t width, uint8_t lead)
 {
 	uint8_t sign = lead;
@@ -117,11 +109,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 {
 	uint8_t i;
 
-	if (userSybmols != LCD_BAR) {
-		lcdGenBar();
-		userSybmols = LCD_BAR;
-	}
-
+	lcdGenBar();
 	ks0066SetXY(0, 1);
 
 	value = (int16_t)48 * (value - min) / (max - min);
@@ -229,7 +217,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 }
 
 /* Show brightness control */
-void showBrWork(uint8_t **txtLabels, uint8_t *buf)
+void showBrWork(uint8_t **txtLabels)
 {
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
 	showParValue(brWork);
@@ -289,58 +277,37 @@ void showTime(uint8_t **txtLabels)
 
 	ks0066SetXY(0, 1);
 
-	writeStringEeprom(txtLabels[LABEL_MONDAY + getTime(WEEK) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
 
 	if (getEtm() == NOEDIT) {
 		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
 	} else {
-		switch (getEtm()) {
-		case HOUR:
-			ks0066SetXY(1, 0);
-			break;
-		case MIN:
-			ks0066SetXY(4, 0);
-			break;
-		case SEC:
-			ks0066SetXY(7, 0);
-			break;
-		case DAY:
-			ks0066SetXY(12, 0);
-			break;
-		case MONTH:
-			ks0066SetXY(15, 0);
-			break;
-		case YEAR:
-			ks0066SetXY(15, 1);
-			break;
-		default:
-			break;
-		}
+		ks0066SetXY(pgm_read_byte(&timeCurPos[getEtm()]), 0);
 		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
 	}
 
 	return;
 }
 
-void drawSpectrum(uint8_t *buf)
+void drawSpectrum(void)
 {
 	uint8_t i;
+	uint8_t *buf;
+	uint8_t val;
 
-	if (userSybmols != LCD_LEVELS) {
-		lcdGenLevels();
-		userSybmols = LCD_LEVELS;
-	}
+	buf = getSpData();
+	lcdGenLevels();
 
 	for (i = 0; i < 16; i++) {
-
+		val = buf[i];
 		ks0066SetXY(i, 0);
-		if (buf[i] < 8)
+		if (val < 8)
 			ks0066WriteData(0x20);
 		else
-			ks0066WriteData(buf[i] - 8);
+			ks0066WriteData(val - 8);
 		ks0066SetXY(i, 1);
-		if (buf[i] < 8)
-			ks0066WriteData(buf[i]);
+		if (val < 8)
+			ks0066WriteData(val);
 		else
 			ks0066WriteData(0xFF);
 	}
