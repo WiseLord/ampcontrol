@@ -54,12 +54,11 @@ static void hwInit(void)
 {
 	loadLabels(txtLabels);			/* Load text labels from EEPROM */
 
+	I2CInit();						/* I2C bus */
 	displayInit();
-
 	rc5Init();						/* IR Remote control */
 	adcInit();						/* Analog-to-digital converter */
 	inputInit();					/* Buttons/encoder polling */
-	I2CInit();						/* I2C bus */
 	tunerInit();					/* Tuner */
 
 	STMU_DDR |= (STDBY | MUTE)	;	/* Standby/Mute port */
