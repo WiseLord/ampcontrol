@@ -6,7 +6,7 @@ TUNER = TEA5767
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
+TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
