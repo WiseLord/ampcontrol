@@ -230,6 +230,7 @@ int main(void)
 			} else {
 				if (cmd == CMD_BTN_3_LONG) {
 					switchSpMode();
+					gdClear();
 					dispMode = MODE_SPECTRUM;
 					setDisplayTime(DISPLAY_TIME_SP);
 #if defined(TDA7313)
@@ -273,6 +274,7 @@ int main(void)
 			break;
 		case CMD_RC5_SP_MODE:
 			switchSpMode();
+			gdClear();
 			dispMode = MODE_SPECTRUM;
 			setDisplayTime(DISPLAY_TIME_SP);
 			break;
@@ -391,7 +393,7 @@ int main(void)
 			setWorkBrightness();
 			break;
 		case MODE_SPECTRUM:
-			drawSpectrum(getSpData());
+			drawSpectrum(getSpData(), txtLabels);
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();

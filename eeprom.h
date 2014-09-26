@@ -113,10 +113,13 @@ enum {
 	LABEL_RC5_9,
 	LABEL_RC5_0,
 	LABEL_RC5_DISPLAY,
-	LABEL_RC5_FM_MONO
+	LABEL_RC5_FM_MONO,
+
+	LABEL_LEFT_CHANNEL,
+	LABEL_RIGHT_CHANNEL
 };
 
-#define LABELS_COUNT			62
+#define LABELS_COUNT			64
 
 void loadLabels(uint8_t **txtLabels);
 

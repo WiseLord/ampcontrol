@@ -8,10 +8,6 @@
 
 #include "display/gdfb.h"
 
-/* Spectrum output mode */
-#define SP_MODE_STEREO			0
-#define SP_MODE_MIXED			1
-
 /* Timers fo different screens */
 #define DISPLAY_TIME_TEST		20
 #define DISPLAY_TIME_GAIN		3
@@ -29,6 +25,13 @@
 /* Data stored in user characters */
 #define LCD_LEVELS				0
 #define LCD_BAR					1
+
+/* Spectrum output mode */
+enum {
+	SP_MODE_STEREO,
+	SP_MODE_METER,
+	SP_MODE_MIXED
+};
 
 /* Display modes */
 enum {
@@ -87,7 +90,7 @@ void changeBrWork(int8_t diff);
 void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf);
 
 void showTime(uint8_t **txtLabels);
-void drawSpectrum(uint8_t *buf);
+void drawSpectrum(uint8_t *buf, uint8_t **txtLabels);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);

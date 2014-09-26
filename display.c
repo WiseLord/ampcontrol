@@ -356,10 +356,11 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
-void drawSpectrum(uint8_t *buf)
+void drawSpectrum(uint8_t *buf, uint8_t **txtLabels)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
+	uint16_t left, right;
 
 	switch (spMode) {
 	case SP_MODE_STEREO:
@@ -385,6 +386,39 @@ void drawSpectrum(uint8_t *buf)
 					gdDrawPixel(xbase + 0, ybase, 0);
 					gdDrawPixel(xbase + 1, ybase, 0);
 					gdDrawPixel(xbase + 2, ybase, 0);
+				}
+			}
+		}
+		break;
+	case SP_MODE_METER:
+		gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+		gdSetXY(0, 0);
+		writeStringEeprom(txtLabels[LABEL_LEFT_CHANNEL]);
+		gdSetXY(0, 36);
+		writeStringEeprom(txtLabels[LABEL_RIGHT_CHANNEL]);
+		left = 0;
+		right = 0;
+		for (x = 0; x < GD_SIZE_X / 4; x++) {
+			left += buf[x];
+			right += buf[x + 32];
+		}
+		left >>= 3;
+		right >>= 3;
+		for (x = 0; x < GD_SIZE_X; x++) {
+			if (x % 3) {
+				for (y = 12; y < 27; y++) {
+					if (x < left || y == 19) {
+						gdDrawPixel(x, y, 1);
+					} else {
+						gdDrawPixel(x, y, 0);
+					}
+				}
+				for (y = 48; y < 63; y++) {
+					if (x < right || y == 55) {
+						gdDrawPixel(x, y, 1);
+					} else {
+						gdDrawPixel(x, y, 0);
+					}
 				}
 			}
 		}
@@ -448,7 +482,8 @@ void saveDisplayParams(void)
 /* Change spectrum mode */
 void switchSpMode()
 {
-	spMode = !spMode;
+	if (++spMode > SP_MODE_MIXED)
+		spMode = SP_MODE_STEREO;
 
 	return;
 }
