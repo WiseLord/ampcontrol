@@ -71,17 +71,6 @@ void tunerSwitchMono()
 	return;
 }
 
-uint8_t tunerReady()
-{
-#if defined(TEA5767)
-	return TEA5767_BUF_READY(bufFM);
-#elif defined(TUX032) || defined (LM7001)
-	return 1;
-#elif defined(RDA5807)
-	return RDA5807_BUF_READY(bufFM);
-#endif
-}
-
 uint8_t tunerStereo()
 {
 #if defined(TEA5767)
