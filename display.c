@@ -105,14 +105,14 @@ static uint8_t *mkHexString(uint8_t value)
 	return strbuf;
 }
 
-static void showBar(int16_t min, int16_t max, int16_t value)
+static void showBar(int8_t min, int8_t max, int8_t value)
 {
 	uint8_t i;
 
 	lcdGenBar();
 	ks0066SetXY(0, 1);
 
-	value = (value - min) * 48 / (max - min);
+	value = (int16_t)(value - min) * 48 / (max - min);
 	for (i = 0; i < 16; i++) {
 		if (value / 3 > i) {
 			ks0066WriteData(0x03);
@@ -173,14 +173,12 @@ void showRadio(void)
 	ks0066WriteString(mkNumString(freq / 10 % 10, 1, ' '));
 
 	/* Stereo indicator */
-	ks0066SetXY(9, 0);
 	if (tunerStereo())
-		ks0066WriteString((uint8_t*)"S");
+		ks0066WriteString((uint8_t*)" S ");
 	else
-		ks0066WriteString((uint8_t*)" ");
+		ks0066WriteString((uint8_t*)"   ");
 
 	/* Signal level */
-	ks0066SetXY(11, 0);
 	lev = tunerLevel() * 13 / 32;
 	if (lev < 3) {
 		ks0066WriteData(lev);
@@ -190,16 +188,15 @@ void showRadio(void)
 		ks0066WriteData(lev - 3);
 	}
 
-	/* Frequency scale */
-	showBar(FM_FREQ_MIN>>2, FM_FREQ_MAX>>2, freq>>2);
-
 	/* Station number */
-	ks0066SetXY(14, 0);
 	if (num) {
-		ks0066WriteString(mkNumString(num, 2, ' '));
+		ks0066WriteString(mkNumString(num, 3, ' '));
 	} else {
-		ks0066WriteString((uint8_t*)"--");
+		ks0066WriteString((uint8_t*)" --");
 	}
+
+	/* Frequency scale */
+	showBar(0, (FM_FREQ_MAX - FM_FREQ_MIN)>>5, (freq - FM_FREQ_MIN)>>5);
 
 	return;
 }
