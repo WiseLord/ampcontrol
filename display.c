@@ -70,7 +70,7 @@ static void lcdGenBar(void)
 	return;
 }
 
-static uint8_t *mkNumString(int16_t value, uint8_t width, uint8_t lead)
+static uint8_t *mkNumString(int8_t value, uint8_t width, uint8_t lead)
 {
 	uint8_t sign = lead;
 	int8_t pos;
@@ -99,8 +99,8 @@ static uint8_t *mkNumString(int16_t value, uint8_t width, uint8_t lead)
 static uint8_t *mkHexString(uint8_t value)
 {
 	strbuf[2] = '\0';
-	strbuf[1] = value % 16 + 30;
-	strbuf[0] = value / 16 % 16 + 30;
+	strbuf[1] = value % 16 + 0x30;
+	strbuf[0] = value / 16 % 16 + 0x30;
 
 	return strbuf;
 }
@@ -112,7 +112,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	lcdGenBar();
 	ks0066SetXY(0, 1);
 
-	value = (int16_t)48 * (value - min) / (max - min);
+	value = (value - min) * 48 / (max - min);
 	for (i = 0; i < 16; i++) {
 		if (value / 3 > i) {
 			ks0066WriteData(0x03);
@@ -158,9 +158,10 @@ void showRC5Info(uint16_t rc5Buf)
 	return;
 }
 
-void showRadio(uint8_t num)
+void showRadio(void)
 {
 	uint16_t freq = tunerGetFreq();
+	uint8_t num = stationNum(freq);
 
 	uint8_t lev;
 
@@ -190,7 +191,7 @@ void showRadio(uint8_t num)
 	}
 
 	/* Frequency scale */
-	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
+	showBar(FM_FREQ_MIN>>2, FM_FREQ_MAX>>2, freq>>2);
 
 	/* Station number */
 	ks0066SetXY(14, 0);
@@ -289,13 +290,11 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
-void drawSpectrum(void)
+void drawSpectrum(uint8_t *buf)
 {
 	uint8_t i;
-	uint8_t *buf;
 	uint8_t val;
 
-	buf = getSpData();
 	lcdGenLevels();
 
 	for (i = 0; i < 16; i++) {

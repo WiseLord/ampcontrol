@@ -8,6 +8,21 @@ uint8_t bufFM[5];
 uint8_t monoFM;
 uint16_t freqFM;
 
+void tunerInit()
+{
+#if defined(TEA5767)
+	tea5767Init();
+#elif defined(TUX032)
+	tux032Init();
+#elif defined(LM7001)
+	lm7001Init();
+#elif defined(RDA5807)
+	rda5807Init();
+#endif
+
+	return;
+}
+
 void tunerSetFreq(uint16_t freq)
 {
 	if (freq > FM_FREQ_MAX)
@@ -81,7 +96,7 @@ uint8_t tunerLevel()
 #elif defined(LM7001)
 	return 13;
 #elif defined(RDA5807)
-	return (bufFM[2] & RDA5807_RSSI) >> 4;
+	return (bufFM[0] & RDA5807_RSSI) >> 4;
 #endif
 }
 
@@ -98,22 +113,22 @@ uint8_t stationNum(uint16_t freq)
 }
 
 /* Find nearest next/prev stored station */
-void scanStoredFreq(uint16_t freq, uint8_t direction)
+void scanStoredFreq(uint8_t direction)
 {
 	uint8_t i;
 	uint16_t freqCell;
-	uint16_t freqFound = freq;
+	uint16_t freqFound = freqFM;
 
 	for (i = 0; i < FM_COUNT; i++) {
 		freqCell = eeprom_read_word(eepromStations + i);
 		if (freqCell != 0xFFFF) {
 			if (direction) {
-				if (freqCell > freq) {
+				if (freqCell > freqFM) {
 					freqFound = freqCell;
 					break;
 				}
 			} else {
-				if (freqCell < freq) {
+				if (freqCell < freqFM) {
 					freqFound = freqCell;
 				} else {
 					break;
@@ -139,10 +154,13 @@ void loadStation(uint8_t num)
 }
 
 /* Save/delete station from eeprom */
-void storeStation(uint16_t freq)
+void storeStation(void)
 {
 	uint8_t i, j;
 	uint16_t freqCell;
+	uint16_t freq;
+
+	freq = freqFM;
 
 	for (i = 0; i < FM_COUNT; i++) {
 		freqCell = eeprom_read_word(eepromStations + i);
@@ -170,28 +188,19 @@ void storeStation(uint16_t freq)
 	return;
 }
 
-void loadTunerParams(uint16_t *freq)
+void loadTunerParams(void)
 {
-	*freq = eeprom_read_word(eepromFMFreq);
+	freqFM = eeprom_read_word(eepromFMFreq);
 	monoFM = eeprom_read_byte(eepromFMMono);
 
-#if defined(TEA5767)
-	tea5767SetFreq(*freq, monoFM);
-#elif defined(TUX032)
-	tux032ExitStby();
-	tux032SetFreq(*freq);
-#elif defined(LM7001)
-	lm7001SetFreq(*freq);
-#elif defined(RDA5807)
-	rda5807SetFreq(*freq, monoFM);
-#endif
+	tunerSetFreq(freqFM);
 
 	return;
 }
 
-void saveTunerParams(uint16_t freq)
+void saveTunerParams(void)
 {
-	eeprom_update_word(eepromFMFreq, freq);
+	eeprom_update_word(eepromFMFreq, freqFM);
 	eeprom_update_byte(eepromFMMono, monoFM);
 
 #if defined(TUX032)

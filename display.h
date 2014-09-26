@@ -73,7 +73,7 @@ enum {
 #define STR_BUFSIZE		16
 
 void showRC5Info(uint16_t rc5Buf);
-void showRadio(uint8_t num);
+void showRadio(void);
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 
 void showBrWork(uint8_t **txtLabels);
@@ -82,7 +82,7 @@ void changeBrWork(int8_t diff);
 void showSndParam(sndParam *param, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
-void drawSpectrum(void);
+void drawSpectrum(uint8_t *buf);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);
