@@ -66,7 +66,7 @@
 
 void st7920SetBrightness(uint8_t br);
 
-uint8_t isAdcResultReady(void);
+void setAdcTimer(uint8_t value);
 
 void st7920Init(void);
 void st7920Clear();

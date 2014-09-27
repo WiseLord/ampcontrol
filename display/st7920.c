@@ -7,6 +7,15 @@
 static uint8_t fb[ST7920_SIZE_X / 4][ST7920_SIZE_Y / 2];
 static uint8_t _br;
 
+static uint8_t adcTimer = 0;
+
+void setAdcTimer(uint8_t value)
+{
+	adcTimer = value;
+
+	return;
+}
+
 void st7920SetBrightness(uint8_t br)
 {
 	_br = br;
@@ -40,21 +49,10 @@ static void st7920TimerInit(void)
 	return;
 }
 
-static uint8_t adcResultReady;
-
-uint8_t isAdcResultReady(void)
-{
-	uint8_t ret = adcResultReady;
-	adcResultReady = 0;
-
-	return ret;
-}
-
 ISR (TIMER0_OVF_vect)
 {
-	adcResultReady = 1;
-	/* Start ADC conversion */
-	ADCSRA |= 1<<ADSC;
+	if (adcTimer)
+		ADCSRA |= 1<<ADSC;
 
 	TCNT0 = 164;										/* 2MHz / (256 - 164) / 32 / 34 = 20 FPS */
 

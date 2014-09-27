@@ -57,8 +57,6 @@
 
 void ks0108SetBrightness(uint8_t br);
 
-uint8_t isAdcResultReady(void);
-
 void ks0108Init(void);
 void ks0108Clear();
 

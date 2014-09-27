@@ -42,9 +42,10 @@ static void getValues()
 	uint8_t i = 0, j;
 	uint8_t hv;
 
+	setAdcTimer(ADC_TIMER_ENABLED);				/* Enable start ADC  by timer */
+
 	ADMUX &= ~(1<<MUX0);						/* Switch to left channel */
-	isAdcResultReady();							/* Reset ready flag */
-	while(!isAdcResultReady());					/* Wait for new result */
+	while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
 
 	do {
 		j = revBits(i);
@@ -57,18 +58,18 @@ static void getValues()
 		ADMUX |= (1<<MUX0);						/* Switch to right channel */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
 		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
-
-		while(!isAdcResultReady());				/* Wait for new result */
+		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
 		f_r[j] = ADCH - DC_CORR;				/* Read right channel value */
 		f_r[j] = ((int32_t)hv * f_r[j]) >> 6;	/* Apply Hann window */
-
-		while(!isAdcResultReady());				/* Wait for new result */
+		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
 		f_i[i++] = 0;
 	} while (i < FFT_SIZE);
+
+	setAdcTimer(ADC_TIMER_DISABLED);							/* Enable start ADC  by timer */
 
 	return;
 }

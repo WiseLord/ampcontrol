@@ -13,6 +13,15 @@
 static uint8_t fb[KS0108_COLS * KS0108_CHIPS][KS0108_ROWS];
 static uint8_t _br;
 
+static uint8_t adcTimer = 0;
+
+void setAdcTimer(uint8_t value)
+{
+	adcTimer = value;
+
+	return;
+}
+
 void ks0108SetBrightness(uint8_t br)
 {
 	_br = br;
@@ -58,9 +67,8 @@ uint8_t isAdcResultReady(void)
 
 ISR (TIMER0_OVF_vect)
 {
-	adcResultReady = 1;
-	/* Start ADC conversion */
-	ADCSRA |= 1<<ADSC;
+	if (adcTimer)
+		ADCSRA |= 1<<ADSC;
 
 	TCNT0 = 161;									/* 2MHz / (256 - 161) / 8 / 2 / 66 = 20 FPS */
 
