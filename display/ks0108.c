@@ -70,7 +70,8 @@ ISR (TIMER0_OVF_vect)
 	if (adcTimer)
 		ADCSRA |= 1<<ADSC;
 
-	TCNT0 = 161;									/* 2MHz / (256 - 161) / 8 / 2 / 66 = 20 FPS */
+	/* 2MHz / (255 - 155) = 20000Hz => 10kHz Fourier analysis */
+	TCNT0 = 155;									/* 20000Hz / 8 / 2 / 66 = 18.9 FPS */
 
 	static uint8_t i;
 	static uint8_t j;

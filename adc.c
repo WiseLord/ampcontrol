@@ -21,8 +21,8 @@ static const uint8_t hannTable[] PROGMEM = {
 
 void adcInit()
 {
-	/* Enable ADC with prescaler 32 */
-	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (1<<ADPS0);
+	/* Enable ADC with prescaler 16 */
+	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
 
 	ADMUX |= (1<<ADLAR);						/* Adjust result to left */
 

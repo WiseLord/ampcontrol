@@ -51,10 +51,11 @@ static void st7920TimerInit(void)
 
 ISR (TIMER0_OVF_vect)
 {
+	/* 2MHz / (255 - 155) = 20000Hz => 10kHz Fourier analysis */
+	TCNT0 = 155;										/* 20000 / 32 / 34 = 18.4 FPS */
+
 	if (adcTimer)
 		ADCSRA |= 1<<ADSC;
-
-	TCNT0 = 164;										/* 2MHz / (256 - 164) / 32 / 34 = 20 FPS */
 
 	static uint8_t i = 0;
 	static uint8_t j = 32;
