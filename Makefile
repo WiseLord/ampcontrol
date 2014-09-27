@@ -44,7 +44,7 @@ SRCS_VAR = main.c display.c tuner.c $(DISP_SRC)
 MCU = atmega32
 F_CPU = 16000000L
 
-OPTIMIZE = -Os -mcall-prologues -fshort-enums
+OPTIMIZE = -O2 -mcall-prologues -fshort-enums
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 LDFLAGS = $(DEBUG) -mmcu=$(MCU)
