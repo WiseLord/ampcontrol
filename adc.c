@@ -53,17 +53,17 @@ static void getValues()
 		else
 			hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
 
+		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
+		ADMUX |= (1<<MUX0);						/* Switch to right channel */
 		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
 		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
 
-		ADMUX |= (1<<MUX0);						/* Switch to right channel */
-
 		while(!isAdcResultReady());				/* Wait for new result */
 
+		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
+		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
 		f_r[j] = ADCH - DC_CORR;				/* Read right channel value */
 		f_r[j] = ((int32_t)hv * f_r[j]) >> 6;	/* Apply Hann window */
-
-		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
 
 		while(!isAdcResultReady());				/* Wait for new result */
 
