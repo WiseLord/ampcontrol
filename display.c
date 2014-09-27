@@ -405,7 +405,7 @@ void drawSpectrum(uint8_t *buf, uint8_t **txtLabels)
 		left >>= 3;
 		right >>= 3;
 		for (x = 0; x < GD_SIZE_X; x++) {
-			if (x % 3) {
+			if (x % 3 != 2) {
 				for (y = 12; y < 27; y++) {
 					if (x < left || y == 19) {
 						gdDrawPixel(x, y, 1);
