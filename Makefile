@@ -102,3 +102,6 @@ eeprom_ru:
 
 eeprom_by:
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_by.bin:r
+
+eeprom_ua:
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_ua.bin:r
