@@ -64,9 +64,9 @@
 #define ST7920_MIN_BRIGHTNESS		0
 #define ST7920_MAX_BRIGTHNESS		32
 
-void st7920SetBrightness(uint8_t br);
-
 void setAdcTimer(uint8_t value);
+
+void st7920SetBrightness(uint8_t br);
 
 void st7920Init(void);
 void st7920Clear();

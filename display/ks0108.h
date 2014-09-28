@@ -55,6 +55,8 @@
 #define KS0108_MIN_BRIGHTNESS		0
 #define KS0108_MAX_BRIGTHNESS		32
 
+void setAdcTimer(uint8_t value);
+
 void ks0108SetBrightness(uint8_t br);
 
 void ks0108Init(void);

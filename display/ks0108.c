@@ -67,11 +67,11 @@ uint8_t isAdcResultReady(void)
 
 ISR (TIMER0_OVF_vect)
 {
-	if (adcTimer)
-		ADCSRA |= 1<<ADSC;
-
 	/* 2MHz / (255 - 155) = 20000Hz => 10kHz Fourier analysis */
 	TCNT0 = 155;									/* 20000Hz / 8 / 2 / 66 = 18.9 FPS */
+
+	if (adcTimer)
+		ADCSRA |= 1<<ADSC;
 
 	static uint8_t i;
 	static uint8_t j;
@@ -136,9 +136,14 @@ void ks0108Init(void)
 	asm("nop");
 	asm("nop");
 
-	KS0108_SET_CS(KS0108_CS_ALL);
-	KS0108_CTRL_PORT &= ~KS0108_RW;
-
+	/* Init first controller */
+	KS0108_CTRL_PORT |= KS0108_CS1;
+	KS0108_CTRL_PORT &= ~KS0108_CS2;
+	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_START_LINE);
+	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_ON);
+	/* Init second controller */
+	KS0108_CTRL_PORT |= KS0108_CS2;
+	KS0108_CTRL_PORT &= ~KS0108_CS1;
 	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_START_LINE);
 	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_ON);
 
