@@ -5,6 +5,7 @@
 #include "../i2c.h"
 #include "../eeprom.h"
 #include "../input.h"
+#include "../tuner.h"
 
 static sndParam sndPar[SND_PARAM_COUNT] = {
 	{0x00, 0xC1, 0x00, 0x0A},	/* Volume */
@@ -107,6 +108,12 @@ static void setGain(int8_t val)
 
 void setChan(uint8_t ch)
 {
+#if defined(LS020) || defined(KS0066) || defined(PCF8574)
+	if (ch == 0)
+		TUNER_PORT |= TUNER_POWER;
+	else
+		TUNER_PORT &= ~TUNER_POWER;
+#endif
 	chan = ch;
 	setGain(sndPar[SND_GAIN0 + ch].value);
 	setSwitch(sndPar[SND_GAIN0 + chan].value);

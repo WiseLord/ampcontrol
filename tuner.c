@@ -15,6 +15,10 @@ void tunerInit()
 #elif defined(TUX032)
 	tux032Init();
 #elif defined(LM7001)
+#if defined(LS020) || defined(KS0066) || defined(PCF8574)
+	TUNER_DDR |= TUNER_POWER;
+	TUNER_DDR &= ~TUNER_STEREO;
+#endif
 	lm7001Init();
 #elif defined(RDA5807)
 	rda5807Init();
@@ -78,7 +82,11 @@ uint8_t tunerStereo()
 #elif defined(TUX032)
 	return !TUX032_BUF_STEREO(bufFM);
 #elif defined(LM7001)
+#if defined(LS020) || defined(KS0066) || defined(PCF8574)
+	return TUNER_PIN & TUNER_STEREO;
+#else
 	return 1;
+#endif
 #elif defined(RDA5807)
 	return RDA5807_BUF_STEREO(bufFM) && !monoFM;
 #endif

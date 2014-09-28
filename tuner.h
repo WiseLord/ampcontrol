@@ -29,6 +29,13 @@
 #define FM_FREQ_MIN		8750
 #define FM_FREQ_MAX		10800
 
+#define TUNER_DDR		DDRA
+#define TUNER_PORT		PORTA
+#define TUNER_PIN		PINA
+
+#define TUNER_STEREO	(1<<PA6)
+#define TUNER_POWER		(1<<PA7)
+
 void tunerInit();
 void tunerSetFreq(uint16_t freq);
 

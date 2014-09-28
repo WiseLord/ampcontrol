@@ -31,6 +31,7 @@ static void powerOn(void)
 	_delay_ms(50);
 	setWorkBrightness();
 	loadTunerParams();
+	setChan(getChan());
 	unmuteVolume();
 
 	return;
@@ -45,6 +46,9 @@ static void powerOff(void)
 	setStbyBrightness();
 	stopEditTime();
 	saveParams();
+#if defined(LS020) || defined(KS0066) || defined(PCF8574)
+	TUNER_PORT &= ~TUNER_POWER;
+#endif
 
 	return;
 }
@@ -88,6 +92,9 @@ int main(void)
 
 	loadTunerParams();
 	loadAudioParams(txtLabels);
+#if defined(LS020) || defined(KS0066) || defined(PCF8574)
+	TUNER_PORT &= ~TUNER_POWER;
+#endif
 	loadDispParams();
 	setStbyBrightness();
 
