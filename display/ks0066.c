@@ -70,35 +70,9 @@ static void ks0066waitWhileBusy()
 	return;
 }
 
-void ks0066WriteCommand(uint8_t command)
+static void ks0066WritePort(uint8_t data)
 {
-	ks0066waitWhileBusy();
-
-	KS0066_CTRL_PORT &= ~(KS0066_RS | KS0066_RW);
-
-#ifdef KS0066_4BIT_MODE
-	KS0066_DATA_DDR |= 0xF0;
-	KS0066_DATA_PORT &= 0x0F;
-	KS0066_DATA_PORT |= (command & 0xF0);
-	ks0066writeStrob();
-	KS0066_DATA_PORT &= 0x0F;
-	KS0066_DATA_PORT |= (swap(command) & 0xF0);
-#else
-	KS0066_DATA_DDR |= 0xFF;
-	KS0066_DATA_PORT = command;
-#endif
-
-	ks0066writeStrob();
-
-	return;
-}
-
-void ks0066WriteData(uint8_t data)
-{
-	ks0066waitWhileBusy();
-
 	KS0066_CTRL_PORT &= ~KS0066_RW;
-	KS0066_CTRL_PORT |= KS0066_RS;
 
 #ifdef KS0066_4BIT_MODE
 	KS0066_DATA_DDR |= 0xF0;
@@ -113,6 +87,26 @@ void ks0066WriteData(uint8_t data)
 #endif
 
 	ks0066writeStrob();
+
+	return;
+}
+
+void ks0066WriteCommand(uint8_t command)
+{
+	ks0066waitWhileBusy();
+
+	KS0066_CTRL_PORT &= ~KS0066_RS;
+	ks0066WritePort(command);
+
+	return;
+}
+
+void ks0066WriteData(uint8_t data)
+{
+	ks0066waitWhileBusy();
+
+	KS0066_CTRL_PORT |= KS0066_RS;
+	ks0066WritePort(data);
 
 	return;
 }
