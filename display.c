@@ -7,8 +7,8 @@
 #include "input.h"
 #include "tuner.h"
 
-int8_t brStby;											/* Brightness in standby mode */
-int8_t brWork;											/* Brightness in working mode */
+static int8_t brStby;									/* Brightness in standby mode */
+static int8_t brWork;									/* Brightness in working mode */
 
 uint8_t spMode;											/* Spectrum mode */
 uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
@@ -654,7 +654,7 @@ void changeBrWork(int8_t diff)
 		brWork = GD_MAX_BRIGTHNESS;
 	if (brWork < GD_MIN_BRIGHTNESS)
 		brWork = GD_MIN_BRIGHTNESS;
-	gdSetBrightness(brWork);
+	setWorkBrightness();
 
 	return;
 }
@@ -994,12 +994,23 @@ void setWorkBrightness(void)
 {
 	gdSetBrightness(brWork);
 
+#if defined(PCF8574)
+	if (brWork == GD_MAX_BRIGTHNESS)
+		pcf8574IntBacklight(BACKLIGHT_ON);
+	else
+		pcf8574IntBacklight(BACKLIGHT_OFF);
+#endif
+
 	return;
 }
 
 void setStbyBrightness(void)
 {
 	gdSetBrightness(brStby);
+
+#if defined(PCF8574)
+	pcf8574IntBacklight(BACKLIGHT_OFF);
+#endif
 
 	return;
 }

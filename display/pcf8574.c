@@ -94,3 +94,12 @@ void ks0066WriteString(uint8_t *string)
 	return;
 }
 
+void pcf8574IntBacklight(uint8_t value)
+{
+	if (value)
+		portData |= KS0066_BCKL;
+	else
+		portData &= ~KS0066_BCKL;
+
+	return;
+}
