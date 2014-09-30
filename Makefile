@@ -57,28 +57,31 @@ AD_MCU = -p $(MCU)
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
-OBJS_CONST = $(SRCS_CONST:.c=.o)
 OBJS_VAR = $(SRCS_VAR:.c=.o)
-OBJS = $(OBJS_CONST) $(OBJS_VAR)
+OBJS = $(SRCS_CONST:.c=.o) $(OBJS_VAR)
+
+OBJDIR = obj
 
 all: $(TARG)
 
 $(TARG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@.elf $(OBJS) -lm
+	$(CC) $(LDFLAGS) -o $(addprefix $(OBJDIR)/, $@.elf $(OBJS)) -lm
 	mkdir -p flash
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf flash/$@.hex
-	./size.sh $@.elf
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(addprefix $(OBJDIR)/, $@.elf) flash/$@.hex
+	./size.sh $(addprefix $(OBJDIR)/, $@.elf)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
+	mkdir -p $(dir $(OBJDIR)/$@)
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o  $(OBJDIR)/$@ $<
 
 clean_var:
 	rm -f $(OBJS_VAR)
 
-clean_const:
-	rm -f *.o */*.o
+clean:
+	rm -rf $(OBJDIR)
 
-clean: clean_var clean_const
+mrproper: clean
+	rm -rf flash
 
 flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:flash/$(TARG).hex:i
@@ -94,3 +97,6 @@ eeprom_ru:
 
 eeprom_by:
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_by.bin:r
+
+eeprom_ua:
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_ua.bin:r

@@ -4,8 +4,6 @@ text=$(avr-size $1 | grep $1 | xargs | cut -d ' ' -f1)
 data=$(avr-size $1 | grep $1 | xargs | cut -d ' ' -f2)
 bss=$(avr-size $1 | grep $1 | xargs | cut -d ' ' -f3)
 
-rm $1
-
 echo
 echo "AVR Memory Usage:"
 echo
