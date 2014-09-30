@@ -10,7 +10,6 @@ TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(T
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
-TUNER_SRC = tuner/tea5767.c
 
 ifeq ($(AUDIOPROC), TDA7313)
   AUDIO_SRC = audio/tda7313.c
@@ -21,9 +20,9 @@ else ifeq ($(AUDIOPROC), TDA7439)
 endif
 
 ifeq ($(DISPLAY), KS0066)
-  DISP_SRC = display/ks0066.c
+  DISP_SRC = display.c display/ks0066.c
 else ifeq ($(DISPLAY), PCF8574)
-  DISP_SRC = display/pcf8574.c
+  DISP_SRC = display.c display/pcf8574.c
 endif
 
 ifeq ($(TUNER), TEA5767)
@@ -36,8 +35,7 @@ else ifeq ($(TUNER), RDA5807)
   TUNER_SRC = tuner.c tuner/rda5807.c
 endif
 
-SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC)
-SRCS_VAR = main.c display.c $(TUNER_SRC)
+SRCS = main.c eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
 
 MCU = atmega8
 F_CPU = 8000000L
@@ -57,8 +55,7 @@ AD_MCU = -p $(MCU)
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
-OBJS_VAR = $(SRCS_VAR:.c=.o)
-OBJS = $(SRCS_CONST:.c=.o) $(OBJS_VAR)
+OBJS = $(SRCS:.c=.o)
 
 OBJDIR = obj
 
@@ -73,9 +70,6 @@ $(TARG): $(OBJS)
 %.o: %.c
 	mkdir -p $(dir $(OBJDIR)/$@)
 	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o  $(OBJDIR)/$@ $<
-
-clean_var:
-	rm -f $(OBJS_VAR)
 
 clean:
 	rm -rf $(OBJDIR)
