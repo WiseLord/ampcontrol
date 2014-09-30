@@ -231,7 +231,7 @@ void changeBrWork(int8_t diff)
 		brWork = GD_MAX_BRIGTHNESS;
 	if (brWork < GD_MIN_BRIGHTNESS)
 		brWork = GD_MIN_BRIGHTNESS;
-	gdSetBrightness(brWork);
+	setWorkBrightness();
 
 	return;
 }
@@ -315,12 +315,23 @@ void setWorkBrightness(void)
 {
 	gdSetBrightness(brWork);
 
+#if defined(PCF8574)
+	if (brWork == GD_MAX_BRIGTHNESS)
+		pcf8574IntBacklight(BACKLIGHT_ON);
+	else
+		pcf8574IntBacklight(BACKLIGHT_OFF);
+#endif
+
 	return;
 }
 
 void setStbyBrightness(void)
 {
 	gdSetBrightness(brStby);
+
+#if defined(PCF8574)
+	pcf8574IntBacklight(BACKLIGHT_OFF);
+#endif
 
 	return;
 }

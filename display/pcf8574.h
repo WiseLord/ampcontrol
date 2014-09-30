@@ -60,4 +60,6 @@ void ks0066Init(void);
 void ks0066SetXY(uint8_t x, uint8_t y);
 void ks0066WriteString(uint8_t *string);
 
+void pcf8574IntBacklight(uint8_t value);
+
 #endif /* PCF8574_H */
