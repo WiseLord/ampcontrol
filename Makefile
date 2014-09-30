@@ -21,25 +21,24 @@ endif
 
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ifeq ($(DISPLAY), ST7920)
-  DISP_SRC = $(addprefix display/, gdfb.c st7920.c $(FONTS))
+  DISP_SRC = display.c $(addprefix display/, gdfb.c st7920.c $(FONTS))
 else ifeq ($(DISPLAY), KS0108A)
-  DISP_SRC = $(addprefix display/, gdfb.c ks0108.c $(FONTS))
+  DISP_SRC = display.c $(addprefix display/, gdfb.c ks0108.c $(FONTS))
 else ifeq ($(DISPLAY), KS0108B)
-  DISP_SRC = $(addprefix display/, gdfb.c ks0108.c $(FONTS))
+  DISP_SRC = display.c $(addprefix display/, gdfb.c ks0108.c $(FONTS))
 endif
 
 ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner/tea5767.c
+  TUNER_SRC = tuner.c tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner/tux032.c
+  TUNER_SRC = tuner.c tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner/lm7001.c
+  TUNER_SRC = tuner.c tuner/lm7001.c
 else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner/rda5807.c
+  TUNER_SRC = tuner.c tuner/rda5807.c
 endif
 
-SRCS_CONST = eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(TUNER_SRC)
-SRCS_VAR = main.c display.c tuner.c $(DISP_SRC)
+SRCS = main.c eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
 
 MCU = atmega32
 F_CPU = 16000000L
@@ -59,29 +58,27 @@ AD_MCU = -p $(MCU)
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
 
-OBJS_CONST = $(SRCS_CONST:.c=.o)
-OBJS_VAR = $(SRCS_VAR:.c=.o)
-OBJS = $(OBJS_CONST) $(OBJS_VAR)
+OBJS = $(SRCS:.c=.o)
+
+OBJDIR = obj
 
 all: $(TARG)
 
 $(TARG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $@.elf $(OBJS) -lm
+	$(CC) $(LDFLAGS) -o $(addprefix $(OBJDIR)/, $@.elf $(OBJS)) -lm
 	mkdir -p flash
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram  $@.elf flash/$@.hex
-	./size.sh $@.elf
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(addprefix $(OBJDIR)/, $@.elf) flash/$@.hex
+	./size.sh $(addprefix $(OBJDIR)/, $@.elf)
 
 %.o: %.c
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
-
-clean_var:
-	rm -f $(OBJS_VAR)
-
-clean_const:
-	rm -f $(OBJS_CONST)
+	mkdir -p $(dir $(OBJDIR)/$@)
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o  $(OBJDIR)/$@ $<
 
 clean:
-	rm -f *.o */*.o
+	rm -rf $(OBJDIR)
+
+mrproper: clean
+	rm -rf flash
 
 flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
