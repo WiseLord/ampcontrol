@@ -147,14 +147,14 @@ void muteVolume(void)
 {
 	setVolume(sndPar[SND_VOLUME].min);
 	mute = MUTE_ON;
-	STMU_PORT &= ~MUTE;
+	PORT(STMU_MUTE) &= ~STMU_MUTE_PIN;
 }
 
 void unmuteVolume(void)
 {
 	setVolume(sndPar[SND_VOLUME].value);
 	mute = MUTE_OFF;
-	STMU_PORT |= MUTE;
+	PORT(STMU_MUTE) |= STMU_MUTE_PIN;
 }
 
 void switchMute(void)

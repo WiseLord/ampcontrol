@@ -1,5 +1,5 @@
 AUDIOPROC = TDA7439
-DISPLAY = KS0108A
+DISPLAY = ST7920
 TUNER = TEA5767
 
 # Lowercase argument
@@ -76,9 +76,6 @@ $(TARG): $(OBJS)
 
 clean:
 	rm -rf $(OBJDIR)
-
-mrproper: clean
-	rm -rf flash
 
 flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i

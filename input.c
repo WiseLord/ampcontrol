@@ -9,7 +9,12 @@
 
 static volatile int8_t encCnt;
 static volatile uint8_t cmdBuf;
+
+/* Previous state */
 static volatile uint16_t rc5SaveBuf;
+static volatile uint8_t btnSaveBuf;
+static volatile uint8_t encPrev = ENC_0;
+static volatile uint8_t btnPrev = BTN_STATE_0;
 
 static volatile uint16_t displayTime;
 
@@ -20,9 +25,24 @@ void inputInit()
 {
 	uint8_t i;
 
-	/* Setup buttons and encoders as inputs with pull-up resistors */
-	INPUT_DDR &= ~(BTN_MASK | ENC_AB);
-	INPUT_PORT |= (BTN_MASK | ENC_AB);
+	/* Setup buttons and encoder as inputs with pull-up resistors */
+	DDR(BUTTON_1) &= ~BUTTON_1_PIN;
+	DDR(BUTTON_2) &= ~BUTTON_2_PIN;
+	DDR(BUTTON_3) &= ~BUTTON_3_PIN;
+	DDR(BUTTON_4) &= ~BUTTON_4_PIN;
+	DDR(BUTTON_5) &= ~BUTTON_5_PIN;
+
+	DDR(ENCODER_A) &= ~ENCODER_A_PIN;
+	DDR(ENCODER_B) &= ~ENCODER_B_PIN;
+
+	PORT(BUTTON_1) |= BUTTON_1_PIN;
+	PORT(BUTTON_2) |= BUTTON_2_PIN;
+	PORT(BUTTON_3) |= BUTTON_3_PIN;
+	PORT(BUTTON_4) |= BUTTON_4_PIN;
+	PORT(BUTTON_5) |= BUTTON_5_PIN;
+
+	PORT(ENCODER_A) |= ENCODER_A_PIN;
+	PORT(ENCODER_B) |= ENCODER_B_PIN;
 
 	/* Set timer prescaller to 128 (125 kHz) and reset on match*/
 	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
@@ -56,12 +76,25 @@ ISR (TIMER2_COMP_vect)
 	static int16_t btnCnt = 0;		/* Buttons press duration value */
 	static uint16_t rc5Timer;
 
-	/* Previous state */
-	static uint8_t encPrev = ENC_0;
-	static uint8_t btnPrev = 0;
 	/* Current state */
-	uint8_t encNow = ~INPUT_PIN & ENC_AB;
-	uint8_t btnNow = ~INPUT_PIN & BTN_MASK;
+	uint8_t encNow = ENC_0;
+	uint8_t btnNow = BTN_STATE_0;
+
+	if (~PIN(ENCODER_A) & ENCODER_A_PIN)
+		encNow |= ENC_A;
+	if (~PIN(ENCODER_B) & ENCODER_B_PIN)
+		encNow |= ENC_B;
+
+	if (~PIN(BUTTON_1) & BUTTON_1_PIN)
+		btnNow |= BTN_1;
+	if (~PIN(BUTTON_2) & BUTTON_2_PIN)
+		btnNow |= BTN_2;
+	if (~PIN(BUTTON_3) & BUTTON_3_PIN)
+		btnNow |= BTN_3;
+	if (~PIN(BUTTON_4) & BUTTON_4_PIN)
+		btnNow |= BTN_4;
+	if (~PIN(BUTTON_5) & BUTTON_5_PIN)
+		btnNow |= BTN_5;
 
 	/* If encoder event has happened, inc/dec encoder counter */
 	switch (encNow) {
@@ -113,7 +146,7 @@ ISR (TIMER2_COMP_vect)
 				case BTN_5:
 					cmdBuf = CMD_BTN_5_LONG;
 					break;
-				case BTN_TEST_INPUT:
+				case BTN_12:
 					cmdBuf = CMD_BTN_TESTMODE;
 					break;
 				}
@@ -143,6 +176,7 @@ ISR (TIMER2_COMP_vect)
 		}
 		btnCnt = 0;
 	}
+	btnSaveBuf = btnNow;
 
 	/* Place RC5 event to command buffer if enough RC5 timer ticks */
 	uint16_t rc5Buf = getRC5RawBuf();
@@ -208,6 +242,16 @@ uint8_t getBtnCmd(void)
 uint16_t getRC5Buf(void)
 {
 	return rc5SaveBuf;
+}
+
+uint16_t getBtnBuf(void)
+{
+	return btnSaveBuf;
+}
+
+uint16_t getEncBuf(void)
+{
+	return encPrev;
 }
 
 void setRC5Buf(uint8_t addr, uint8_t cmd)

@@ -26,7 +26,7 @@ void saveParams(void)
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
-	STMU_PORT |= STDBY;
+	PORT(STMU_STBY) |= STMU_STBY_PIN;
 	_delay_ms(50);
 	setWorkBrightness();
 	loadTunerParams();
@@ -40,7 +40,7 @@ static void powerOff(void)
 {
 	muteVolume();
 	_delay_ms(50);
-	STMU_PORT &= ~STDBY;
+	PORT(STMU_STBY) &= ~STMU_STBY_PIN;
 	setStbyBrightness();
 	stopEditTime();
 	saveParams();
@@ -51,20 +51,22 @@ static void powerOff(void)
 /* Hardware initialization */
 static void hwInit(void)
 {
-	loadLabels(txtLabels);			/* Load text labels from EEPROM */
+	loadLabels(txtLabels);				/* Load text labels from EEPROM */
 
 	gdInit();
 
-	rc5Init();						/* IR Remote control */
-	adcInit();						/* Analog-to-digital converter */
-	inputInit();					/* Buttons/encoder polling */
-	I2CInit();						/* I2C bus */
-	tunerInit();					/* Tuner */
+	rc5Init();							/* IR Remote control */
+	adcInit();							/* Analog-to-digital converter */
+	inputInit();						/* Buttons/encoder polling */
+	I2CInit();							/* I2C bus */
+	tunerInit();						/* Tuner */
 
-	STMU_DDR |= (STDBY | MUTE)	;	/* Standby/Mute port */
-	STMU_PORT &= ~STDBY;
+	DDR(STMU_STBY) |= STMU_STBY_PIN;	/* Standby port */
+	DDR(STMU_MUTE) |= STMU_MUTE_PIN;	/* Mute port */
 
-	sei();							/* Gloabl interrupt enable */
+	PORT(STMU_STBY) &= ~STMU_STBY_PIN;
+
+	sei();								/* Gloabl interrupt enable */
 
 	muteVolume();
 
@@ -389,7 +391,7 @@ int main(void)
 				setStbyBrightness();
 			break;
 		case MODE_TEST:
-			showRC5Info(getRC5Buf(), txtLabels);
+			showRC5Info(txtLabels);
 			setWorkBrightness();
 			break;
 		case MODE_SPECTRUM:

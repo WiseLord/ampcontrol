@@ -1,27 +1,8 @@
 #ifndef ST7920_H
 #define ST7920_H
 
-#include <avr/io.h>
-
-/* Data port */
-#define ST7920_DATA_PORT			PORTB
-#define ST7920_DATA_DDR				DDRB
-#define ST7920_DATA_PIN				PINB
-
-/* Control port */
-#define ST7920_CTRL_PORT			PORTA
-#define ST7920_CTRL_DDR				DDRA
-
-/* Backlight port */
-#define ST7920_BCKL_DDR				DDRC
-#define ST7920_BCKL_PORT			PORTC
-#define ST7920_BCKL					(1<<PC7)
-
-#define ST7920_RS					(1<<PA2)
-#define ST7920_RW					(1<<PA3)
-#define ST7920_E					(1<<PA4)
-#define ST7920_PSB					(1<<PA5)
-#define ST7920_RST					(1<<PA7)
+#include <stdint.h>
+#include "../pins.h"
 
 /* Basic instructions */
 #define ST7920_CLEAR				0x01

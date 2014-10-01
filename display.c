@@ -172,8 +172,12 @@ void startTestMode(void)
 	return;
 }
 
-void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels)
+void showRC5Info(uint8_t **txtLabels)
 {
+	uint16_t rc5Buf = getRC5Buf();
+	uint8_t btnBuf = getBtnBuf();
+	uint8_t encBuf = getEncBuf();
+
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(txtLabels[LABEL_IN_STATUS]);
@@ -184,8 +188,12 @@ void showRC5Info(uint16_t rc5Buf, uint8_t **txtLabels)
 
 	gdSetXY(4, 18);
 	writeStringEeprom(txtLabels[LABEL_BUTTONS]);
-	gdSetXY(81, 18);
-	gdWriteString(mkNumString(INPUT_PIN, 8, '0', 2));
+	gdSetXY(75, 18);
+	gdWriteString(mkNumString(btnBuf, 5, '0', 2));
+	gdSetXY(108, 18);
+	gdWriteString((uint8_t*)"/");
+	gdSetXY(117, 18);
+	gdWriteString(mkNumString(encBuf, 2, '0', 2));
 
 	gdSetXY(0, 30);
 	writeStringEeprom(txtLabels[LABEL_LEARN_MODE]);

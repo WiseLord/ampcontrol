@@ -1,34 +1,12 @@
 #ifndef KS0108_H
 #define KS0108_H
 
-#include <avr/io.h>
+#include <stdint.h>
+#include "../pins.h"
 
 #ifdef KS0108B
 #define KS0108_CS_INV
 #endif
-
-/* Data port */
-#define KS0108_DATA_PORT			PORTB
-#define KS0108_DATA_DDR				DDRB
-#define KS0108_DATA_PIN				PINB
-
-/* Control port */
-#define KS0108_CTRL_PORT			PORTA
-#define KS0108_CTRL_DDR				DDRA
-
-#define KS0108_DI					(1<<PA2)
-#define KS0108_RW					(1<<PA3)
-#define KS0108_E					(1<<PA4)
-#define KS0108_CS1					(1<<PA5)
-#define KS0108_CS2					(1<<PA6)
-#define KS0108_RES					(1<<PA7)
-
-/* Backlight port */
-#define KS0108_BCKL_DDR				DDRC
-#define KS0108_BCKL_PORT			PORTC
-#define KS0108_BCKL					(1<<PC7)
-
-#define KS0108_CS_ALL				(KS0108_CS1 | KS0108_CS2)
 
 /* Display geometry */
 #define KS0108_COLS					64
