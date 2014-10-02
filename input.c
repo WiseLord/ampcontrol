@@ -26,23 +26,23 @@ void inputInit()
 	uint8_t i;
 
 	/* Setup buttons and encoder as inputs with pull-up resistors */
-	DDR(BUTTON_1) &= ~BUTTON_1_PIN;
-	DDR(BUTTON_2) &= ~BUTTON_2_PIN;
-	DDR(BUTTON_3) &= ~BUTTON_3_PIN;
-	DDR(BUTTON_4) &= ~BUTTON_4_PIN;
-	DDR(BUTTON_5) &= ~BUTTON_5_PIN;
+	DDR(BUTTON_1) &= ~BUTTON_1_LINE;
+	DDR(BUTTON_2) &= ~BUTTON_2_LINE;
+	DDR(BUTTON_3) &= ~BUTTON_3_LINE;
+	DDR(BUTTON_4) &= ~BUTTON_4_LINE;
+	DDR(BUTTON_5) &= ~BUTTON_5_LINE;
 
-	DDR(ENCODER_A) &= ~ENCODER_A_PIN;
-	DDR(ENCODER_B) &= ~ENCODER_B_PIN;
+	DDR(ENCODER_A) &= ~ENCODER_A_LINE;
+	DDR(ENCODER_B) &= ~ENCODER_B_LINE;
 
-	PORT(BUTTON_1) |= BUTTON_1_PIN;
-	PORT(BUTTON_2) |= BUTTON_2_PIN;
-	PORT(BUTTON_3) |= BUTTON_3_PIN;
-	PORT(BUTTON_4) |= BUTTON_4_PIN;
-	PORT(BUTTON_5) |= BUTTON_5_PIN;
+	PORT(BUTTON_1) |= BUTTON_1_LINE;
+	PORT(BUTTON_2) |= BUTTON_2_LINE;
+	PORT(BUTTON_3) |= BUTTON_3_LINE;
+	PORT(BUTTON_4) |= BUTTON_4_LINE;
+	PORT(BUTTON_5) |= BUTTON_5_LINE;
 
-	PORT(ENCODER_A) |= ENCODER_A_PIN;
-	PORT(ENCODER_B) |= ENCODER_B_PIN;
+	PORT(ENCODER_A) |= ENCODER_A_LINE;
+	PORT(ENCODER_B) |= ENCODER_B_LINE;
 
 	/* Set timer prescaller to 128 (125 kHz) and reset on match*/
 	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
@@ -80,20 +80,20 @@ ISR (TIMER2_COMP_vect)
 	uint8_t encNow = ENC_0;
 	uint8_t btnNow = BTN_STATE_0;
 
-	if (~PIN(ENCODER_A) & ENCODER_A_PIN)
+	if (~PIN(ENCODER_A) & ENCODER_A_LINE)
 		encNow |= ENC_A;
-	if (~PIN(ENCODER_B) & ENCODER_B_PIN)
+	if (~PIN(ENCODER_B) & ENCODER_B_LINE)
 		encNow |= ENC_B;
 
-	if (~PIN(BUTTON_1) & BUTTON_1_PIN)
+	if (~PIN(BUTTON_1) & BUTTON_1_LINE)
 		btnNow |= BTN_1;
-	if (~PIN(BUTTON_2) & BUTTON_2_PIN)
+	if (~PIN(BUTTON_2) & BUTTON_2_LINE)
 		btnNow |= BTN_2;
-	if (~PIN(BUTTON_3) & BUTTON_3_PIN)
+	if (~PIN(BUTTON_3) & BUTTON_3_LINE)
 		btnNow |= BTN_3;
-	if (~PIN(BUTTON_4) & BUTTON_4_PIN)
+	if (~PIN(BUTTON_4) & BUTTON_4_LINE)
 		btnNow |= BTN_4;
-	if (~PIN(BUTTON_5) & BUTTON_5_PIN)
+	if (~PIN(BUTTON_5) & BUTTON_5_LINE)
 		btnNow |= BTN_5;
 
 	/* If encoder event has happened, inc/dec encoder counter */

@@ -26,7 +26,7 @@ void saveParams(void)
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
-	PORT(STMU_STBY) |= STMU_STBY_PIN;
+	PORT(STMU_STBY) |= STMU_STBY_LINE;
 	_delay_ms(50);
 	setWorkBrightness();
 	loadTunerParams();
@@ -40,7 +40,7 @@ static void powerOff(void)
 {
 	muteVolume();
 	_delay_ms(50);
-	PORT(STMU_STBY) &= ~STMU_STBY_PIN;
+	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
 	setStbyBrightness();
 	stopEditTime();
 	saveParams();
@@ -61,10 +61,10 @@ static void hwInit(void)
 	I2CInit();							/* I2C bus */
 	tunerInit();						/* Tuner */
 
-	DDR(STMU_STBY) |= STMU_STBY_PIN;	/* Standby port */
-	DDR(STMU_MUTE) |= STMU_MUTE_PIN;	/* Mute port */
+	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
+	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 
-	PORT(STMU_STBY) &= ~STMU_STBY_PIN;
+	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
 
 	sei();								/* Gloabl interrupt enable */
 
