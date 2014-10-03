@@ -429,8 +429,7 @@ int main(void)
 		switch (dispMode) {
 		case MODE_STANDBY:
 			showTime(txtLabels);
-			if (dispModePrev == MODE_TEST)
-				setStbyBrightness();
+			setStbyBrightness();
 			break;
 		case MODE_TEST:
 			showRC5Info(txtLabels);

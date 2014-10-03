@@ -20,6 +20,7 @@ static uint8_t ds18x20IsOnBus(void)
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
 	_delay_us(485);										/* Reset */
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
 	_delay_us(65);										/* Wait for response */
 
 	ret = !(PIN(ONE_WIRE) & ONE_WIRE_LINE);
@@ -37,6 +38,7 @@ static void ds18x20SendBit(uint8_t bit)
 	if (!bit)
 		_delay_us(50);
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
 	_delay_us(5);
 	if (bit)
 		_delay_us(50);
@@ -48,10 +50,11 @@ static uint8_t ds18x20GetBit(void)
 {
 	uint8_t ret;
 
-	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* pin as output */
+	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(2);										/* strob */
-	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* pin as input */
+	_delay_us(2);										/* Strob */
+	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
 	_delay_us(7);
 
 	ret = PIN(ONE_WIRE) & ONE_WIRE_LINE;
