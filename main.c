@@ -105,21 +105,22 @@ int main(void)
 		tempControlProcess();
 #endif
 
-		/* Don't handle any command in testmode except button5 */
+		/* Don't handle any command in test mode except BTN_5 and BTN_1_LONG */
 		if (dispMode == MODE_TEST) {
 			if (cmd != CMD_EMPTY)
 				setDisplayTime(DISPLAY_TIME_TEST);
-			if (cmd != CMD_BTN_5)
+			if (cmd != CMD_BTN_5 && cmd != CMD_BTN_1_LONG)
 				cmd = CMD_EMPTY;
 		}
-		/* Don't handle any command in temp mode */
+		/* Don't handle any command in temp mode except BTN_1_LONG */
 		if (dispMode == MODE_TEMP) {
 			if (cmd != CMD_EMPTY)
 				setDisplayTime(DISPLAY_TIME_TEMP);
+			if (cmd != CMD_BTN_1_LONG)
 				cmd = CMD_EMPTY;
 		}
 
-		/* Don't handle commands in standby mode except power on, test and temp */
+		/* Don't handle commands in standby mode except STBY, TEST and TEMP */
 		if (dispMode == MODE_STANDBY) {
 #if !defined(LM7001)
 			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
@@ -218,6 +219,17 @@ int main(void)
 			}
 			break;
 		case CMD_BTN_1_LONG:
+			switch (dispMode) {
+			case MODE_TEST:
+			case MODE_TEMP:
+				setDisplayTime(0);
+				break;
+			default:
+				dispMode = MODE_BR;
+				setDisplayTime(DISPLAY_TIME_BR);
+				break;
+			}
+			break;
 		case CMD_RC5_BACKLIGHT:
 			dispMode = MODE_BR;
 			setDisplayTime(DISPLAY_TIME_BR);
