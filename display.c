@@ -6,6 +6,8 @@
 #include "eeprom.h"
 #include "input.h"
 #include "tuner.h"
+#include "ds18x20.h"
+#include "temp.h"
 
 int8_t brStby;											/* Brightness in standby mode */
 int8_t brWork;											/* Brightness in working mode */
@@ -103,16 +105,18 @@ static void showBar(int16_t min, int16_t max, int16_t value, uint8_t *buf)
 		}
 	}
 
-	for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
-		for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
-			xbase = x * 3;
-			ybase = 63 - y;
-			if (buf[x] + buf[x + 32] >= y * 3) {
-				gdDrawPixel(xbase + 0, ybase, 1);
-				gdDrawPixel(xbase + 1, ybase, 1);
-			} else {
-				gdDrawPixel(xbase + 0, ybase, 0);
-				gdDrawPixel(xbase + 1, ybase, 0);
+	if (buf) {
+		for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
+			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
+				xbase = x * 3;
+				ybase = 63 - y;
+				if (buf[x] + buf[x + 32] >= y * 3) {
+					gdDrawPixel(xbase + 0, ybase, 1);
+					gdDrawPixel(xbase + 1, ybase, 1);
+				} else {
+					gdDrawPixel(xbase + 0, ybase, 0);
+					gdDrawPixel(xbase + 1, ybase, 0);
+				}
 			}
 		}
 	}
@@ -220,6 +224,39 @@ void showRC5Info(uint8_t **txtLabels)
 
 	return;
 }
+
+#if !defined(LM7001)
+void showTemp(uint8_t **txtLabels)
+{
+	int8_t tempTH;
+
+	tempTH = getTempTH();
+
+	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
+	gdSetXY(0, 0);
+	writeStringEeprom(txtLabels[LABEL_THRESHOLD]);
+
+	showBar(MIN_TEMP, MAX_TEMP, tempTH, 0);
+
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+	gdSetXY(0, 48);
+	writeStringEeprom(txtLabels[LABEL_SENSOR]);
+	gdWriteString((uint8_t*)" 1: ");
+	gdWriteString(mkNumString(ds18x20GetTemp(0), 3, ' ', 10));
+	gdWriteString((uint8_t*)" \xDF""C");
+	gdSetXY(0, 56);
+	writeStringEeprom(txtLabels[LABEL_SENSOR]);
+	gdWriteString((uint8_t*)" 2: ");
+	gdWriteString(mkNumString(ds18x20GetTemp(1), 3, ' ', 10));
+	gdWriteString((uint8_t*)" \xDF""C");
+
+	showParValue(tempTH);
+	gdSetXY(118, 56);
+	gdWriteString((uint8_t*)"\xDF""C");
+
+	return;
+}
+#endif
 
 void showRadio(uint8_t *buf)
 {

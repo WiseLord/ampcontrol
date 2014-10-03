@@ -10,6 +10,7 @@
 #include "audio/audio.h"
 #include "display.h"
 #include "tuner.h"
+#include "temp.h"
 
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 
@@ -51,13 +52,19 @@ static void powerOff(void)
 /* Hardware initialization */
 static void hwInit(void)
 {
+	sei();								/* Gloabl interrupt enable */
+	inputInit();						/* Buttons/encoder polling */
+#if !defined(LM7001)
+	ds18x20SearchDevices();
+	tempInit();							/* Init temperature control */
+#endif
+
 	loadLabels(txtLabels);				/* Load text labels from EEPROM */
 
 	gdInit();
 
 	rc5Init();							/* IR Remote control */
 	adcInit();							/* Analog-to-digital converter */
-	inputInit();						/* Buttons/encoder polling */
 	I2CInit();							/* I2C bus */
 	tunerInit();						/* Tuner */
 
@@ -65,8 +72,6 @@ static void hwInit(void)
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 
 	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
-
-	sei();								/* Gloabl interrupt enable */
 
 	muteVolume();
 
@@ -95,19 +100,36 @@ int main(void)
 		encCnt = getEncoder();
 		cmd = getBtnCmd();
 
-		/* Don't handle any command in test mode */
+#if !defined(LM7001)
+		ds18x20Process();
+		tempControlProcess();
+#endif
+
+		/* Don't handle any command in testmode except button5 */
 		if (dispMode == MODE_TEST) {
 			if (cmd != CMD_EMPTY)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			if (cmd != CMD_BTN_5)
 				cmd = CMD_EMPTY;
 		}
-
-		/* Don't handle any command in standby mode except power on */
-		if (dispMode == MODE_STANDBY) {
-			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
-			    cmd != CMD_BTN_TESTMODE)
+		/* Don't handle any command in temp mode */
+		if (dispMode == MODE_TEMP) {
+			if (cmd != CMD_EMPTY)
+				setDisplayTime(DISPLAY_TIME_TEMP);
 				cmd = CMD_EMPTY;
+		}
+
+		/* Don't handle commands in standby mode except power on, test and temp */
+		if (dispMode == MODE_STANDBY) {
+#if !defined(LM7001)
+			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
+				cmd != CMD_BTN_TEST && cmd != CMD_BTN_TEMP)
+				cmd = CMD_EMPTY;
+#else
+			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
+				cmd != CMD_BTN_TEST)
+				cmd = CMD_EMPTY;
+#endif
 		}
 
 		/* Handle command */
@@ -245,12 +267,20 @@ int main(void)
 				}
 			}
 			break;
-		case CMD_BTN_TESTMODE:
+		case CMD_BTN_TEST:
 			switch (dispMode) {
 			case MODE_STANDBY:
 				dispMode = MODE_TEST;
 				startTestMode();
 				setDisplayTime(DISPLAY_TIME_TEST);
+				break;
+			}
+			break;
+		case CMD_BTN_TEMP:
+			switch (dispMode) {
+			case MODE_STANDBY:
+				dispMode = MODE_TEMP;
+				setDisplayTime(DISPLAY_TIME_TEMP);
 				break;
 			}
 			break;
@@ -343,6 +373,12 @@ int main(void)
 			case MODE_TEST:
 				setDisplayTime(DISPLAY_TIME_TEST);
 				break;
+#if !defined(LM7001)
+			case MODE_TEMP:
+				changeTempTH(encCnt);
+				setDisplayTime(DISPLAY_TIME_TEMP);
+				break;
+#endif
 			case MODE_TIME_EDIT:
 				changeTime(encCnt);
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
@@ -371,6 +407,12 @@ int main(void)
 			case MODE_TEST:
 				dispMode = MODE_STANDBY;
 				break;
+#if !defined(LM7001)
+			case MODE_TEMP:
+				saveTempParams();
+				dispMode = MODE_STANDBY;
+				break;
+#endif
 			default:
 				dispMode = getDefDisplay();
 				if (dispMode == MODE_FM_RADIO && getChan())
@@ -394,6 +436,12 @@ int main(void)
 			showRC5Info(txtLabels);
 			setWorkBrightness();
 			break;
+#if !defined(LM7001)
+		case MODE_TEMP:
+			showTemp(txtLabels);
+			setWorkBrightness();
+			break;
+#endif
 		case MODE_SPECTRUM:
 			drawSpectrum(getSpData(), txtLabels);
 			break;

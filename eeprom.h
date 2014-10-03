@@ -34,6 +34,7 @@
 #define eepromFMMono	((void*)0x2F)
 
 #define eepromRC5Addr	((void*)0x3C)
+#define eepromTempTH	((void*)0x3D)
 
 /* RC5 commands array */
 #define eepromRC5Cmd	((uint8_t*)0x40)
@@ -116,10 +117,13 @@ enum {
 	LABEL_RC5_FM_MONO,
 
 	LABEL_LEFT_CHANNEL,
-	LABEL_RIGHT_CHANNEL
+	LABEL_RIGHT_CHANNEL,
+
+	LABEL_THRESHOLD,
+	LABEL_SENSOR
 };
 
-#define LABELS_COUNT			64
+#define LABELS_COUNT			66
 
 void loadLabels(uint8_t **txtLabels);
 

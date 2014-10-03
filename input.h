@@ -16,6 +16,7 @@
 #define BTN_4			0b01000
 #define BTN_5			0b10000
 #define BTN_12			0b00011
+#define BTN_13			0b00101
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31
@@ -63,7 +64,8 @@ enum {
 	CMD_BTN_3_LONG,
 	CMD_BTN_4_LONG,
 	CMD_BTN_5_LONG,
-	CMD_BTN_TESTMODE,
+	CMD_BTN_TEST,
+	CMD_BTN_TEMP,
 
 	CMD_EMPTY = 0xEF
 };
@@ -85,5 +87,8 @@ void setRC5Buf(uint8_t addr, uint8_t cmd);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);
+
+uint16_t getTempTimer(void);
+void setTempTimer(uint16_t val);
 
 #endif /* INPUT_H */

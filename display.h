@@ -10,6 +10,7 @@
 
 /* Timers fo different screens */
 #define DISPLAY_TIME_TEST		20
+#define DISPLAY_TIME_TEMP		10
 #define DISPLAY_TIME_GAIN		3
 #define DISPLAY_TIME_TIME		3
 #define DISPLAY_TIME_TIME_EDIT	10
@@ -60,7 +61,9 @@ enum {
 	MODE_LOUDNESS,
 	MODE_TEST,
 
-	MODE_BR
+	MODE_BR,
+
+	MODE_TEMP
 };
 
 /* Type of string printed (regular/eeprom/flash) */
@@ -78,7 +81,9 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 
 void nextRC5Cmd(void);
 void startTestMode(void);
+
 void showRC5Info(uint8_t **txtLabels);
+void showTemp(uint8_t **txtLabels);
 
 void showRadio(uint8_t *buf);
 

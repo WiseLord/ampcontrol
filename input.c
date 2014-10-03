@@ -18,6 +18,8 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 
 static volatile uint16_t displayTime;
 
+static volatile uint16_t tempTimer;			/* Timer of temperature measuring process */
+
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
 
@@ -58,6 +60,9 @@ void inputInit()
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;
+	tempTimer = 0;
+
+	return;
 }
 
 static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
@@ -147,7 +152,10 @@ ISR (TIMER2_COMP_vect)
 					cmdBuf = CMD_BTN_5_LONG;
 					break;
 				case BTN_12:
-					cmdBuf = CMD_BTN_TESTMODE;
+					cmdBuf = CMD_BTN_TEST;
+					break;
+				case BTN_13:
+					cmdBuf = CMD_BTN_TEMP;
 					break;
 				}
 			}
@@ -221,6 +229,11 @@ ISR (TIMER2_COMP_vect)
 	/* Time from last IR command */
 	if (rc5Timer < 1000)
 		rc5Timer++;
+
+	/* Timer of temperature measurement */
+	if (tempTimer)
+		tempTimer--;
+
 	return;
 };
 
@@ -271,4 +284,14 @@ void setDisplayTime(uint8_t value)
 uint8_t getDisplayTime(void)
 {
 	return (displayTime | 0x3F) >> 10;
+}
+
+uint16_t getTempTimer(void)
+{
+	return tempTimer;
+}
+
+void setTempTimer(uint16_t val)
+{
+	tempTimer = val;
 }
