@@ -62,21 +62,21 @@ AD_MCU = -p $(MCU)
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
 
-OBJS = $(SRCS:.c=.o)
-
 OBJDIR = obj
+OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
+ELF = $(OBJDIR)/$(TARG).elf
 
 all: $(TARG)
 
 $(TARG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(addprefix $(OBJDIR)/, $@.elf $(OBJS)) -lm
+	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
 	mkdir -p flash
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(addprefix $(OBJDIR)/, $@.elf) flash/$@.hex
-	./size.sh $(addprefix $(OBJDIR)/, $@.elf)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$@.hex
+	./size.sh $(ELF)
 
-%.o: %.c
-	mkdir -p $(dir $(OBJDIR)/$@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o  $(OBJDIR)/$@ $<
+obj/%.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)
