@@ -125,6 +125,4 @@ enum {
 
 #define LABELS_COUNT			66
 
-void loadLabels(uint8_t **txtLabels);
-
 #endif /* EEPROM_H */

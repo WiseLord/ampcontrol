@@ -42,7 +42,7 @@ ifneq ($(TUNER), LM7001)
 TEMP_SRC = ds18x20.c temp.c
 endif
 
-SRCS = main.c eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC) $(TEMP_SRC)
+SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC) $(TEMP_SRC)
 
 MCU = atmega32
 F_CPU = 16000000L
