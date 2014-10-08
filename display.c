@@ -146,7 +146,7 @@ static void showParLabel(const uint8_t *parLabel)
 
 static void showParIcon(const uint8_t *icon)
 {
-	gdSetXY(104, 0);
+	gdSetXY(104, 2);
 	gdWriteIcon24(icon);
 
 	return;
@@ -336,6 +336,7 @@ void showBrWork(uint8_t **txtLabels, uint8_t *buf)
 	showParValue(brWork);
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork, buf);
 	showParLabel(txtLabels[LABEL_BR_WORK]);
+	showParIcon(icons_24_brightness);
 
 	return;
 }

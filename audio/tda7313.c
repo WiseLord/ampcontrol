@@ -177,6 +177,11 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_GAIN1].label = txtLabels[LABEL_GAIN1];
 	sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
 
+	sndPar[SND_VOLUME].icon = icons_24_volume;
+	sndPar[SND_BASS].icon = icons_24_bass;
+	sndPar[SND_TREBLE].icon = icons_24_treble;
+	sndPar[SND_FRONTREAR].icon = icons_24_frontrear;
+	sndPar[SND_BALANCE].icon = icons_24_balance;
 	sndPar[SND_GAIN0].icon = icons_24_tuner;
 	sndPar[SND_GAIN1].icon = icons_24_pc;
 	sndPar[SND_GAIN2].icon = icons_24_tv;
