@@ -14,5 +14,6 @@ extern const uint8_t icons_24_preamp[];
 extern const uint8_t icons_24_balance[];
 extern const uint8_t icons_24_frontrear[];
 extern const uint8_t icons_24_brightness[];
+extern const uint8_t icons_24_threshold[];
 
 #endif /*ICONS_H */

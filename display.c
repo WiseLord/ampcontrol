@@ -240,12 +240,6 @@ void showTemp(uint8_t **txtLabels)
 
 	tempTH = getTempTH();
 
-	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-	gdSetXY(0, 0);
-	writeStringEeprom(txtLabels[LABEL_THRESHOLD]);
-
-	showBar(MIN_TEMP, MAX_TEMP, tempTH, 0);
-
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(0, 48);
 	writeStringEeprom(txtLabels[LABEL_SENSOR]);
@@ -259,6 +253,10 @@ void showTemp(uint8_t **txtLabels)
 	gdWriteString((uint8_t*)" \xDF""C");
 
 	showParValue(tempTH);
+	showBar(MIN_TEMP, MAX_TEMP, tempTH, 0);
+	showParLabel(txtLabels[LABEL_THRESHOLD]);
+	showParIcon(icons_24_threshold);
+
 	gdSetXY(118, 56);
 	gdWriteString((uint8_t*)"\xDF""C");
 
