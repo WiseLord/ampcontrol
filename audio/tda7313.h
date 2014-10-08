@@ -29,6 +29,7 @@ typedef struct {
 	int8_t max;
 	uint8_t step;
 	uint8_t *label;
+	const uint8_t *icon;
 	void (*set)(int8_t value);
 } sndParam;
 

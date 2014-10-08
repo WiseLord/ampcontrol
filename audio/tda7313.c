@@ -5,6 +5,7 @@
 #include "../i2c.h"
 #include "../eeprom.h"
 #include "../input.h"
+#include "../display/icons.h"
 
 static sndParam sndPar[SND_PARAM_COUNT] = {
 	{0x00, 0xC1, 0x00, 0x0A},	/* Volume */
@@ -175,6 +176,10 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_GAIN0].label = txtLabels[LABEL_GAIN0];
 	sndPar[SND_GAIN1].label = txtLabels[LABEL_GAIN1];
 	sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
+
+	sndPar[SND_GAIN0].icon = icons_24_tuner;
+	sndPar[SND_GAIN1].icon = icons_24_pc;
+	sndPar[SND_GAIN2].icon = icons_24_tv;
 
 	chan = eeprom_read_byte(eepromChannel);
 	loud = eeprom_read_byte(eepromLoudness);

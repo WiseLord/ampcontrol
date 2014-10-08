@@ -29,6 +29,7 @@
 #endif
 
 #include "fonts.h"
+#include "icons.h"
 
 #define FONT_PARAM_COUNT			7
 enum {
@@ -62,5 +63,7 @@ void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
 
 void gdWriteChar(uint8_t code);
 void gdWriteString(uint8_t *string);
+
+void  gdWriteIcon24(const uint8_t *icon);
 
 #endif /* FBGD_H */

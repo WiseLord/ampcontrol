@@ -134,12 +134,20 @@ static void showParValue(int8_t value)
 	return;
 }
 
-static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
+static void showParLabel(const uint8_t *parLabel)
 {
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+
+	return;
+}
+
+static void showParIcon(const uint8_t *icon)
+{
+	gdSetXY(104, 0);
+	gdWriteIcon24(icon);
 
 	return;
 }
@@ -327,7 +335,7 @@ void showBrWork(uint8_t **txtLabels, uint8_t *buf)
 {
 	showParValue(brWork);
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork, buf);
-	showParLabel(txtLabels[LABEL_BR_WORK], txtLabels);
+	showParLabel(txtLabels[LABEL_BR_WORK]);
 
 	return;
 }
@@ -350,7 +358,8 @@ void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf)
 {
 	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
 	showBar(param->min, param->max, param->value, buf);
-	showParLabel(param->label, txtLabels);
+	showParLabel(param->label);
+	showParIcon(param->icon);
 	gdSetXY(116, 56);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 
