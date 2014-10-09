@@ -5,8 +5,9 @@
 
 uint8_t bufFM[5];
 
-uint8_t monoFM;
-uint16_t freqFM;
+static uint16_t freqFM;
+static uint8_t monoFM;
+static uint8_t stepFM;
 
 void tunerInit()
 {
@@ -102,14 +103,14 @@ uint8_t tunerLevel()
 
 void tunerIncFreq(void)
 {
-	tunerSetFreq(tunerGetFreq() + 10);
+	tunerSetFreq(tunerGetFreq() + stepFM);
 
 	return;
 }
 
 void tunerDecFreq(void)
 {
-	tunerSetFreq(tunerGetFreq() - 10);
+	tunerSetFreq(tunerGetFreq() - stepFM);
 
 	return;
 }
@@ -206,6 +207,7 @@ void loadTunerParams(void)
 {
 	freqFM = eeprom_read_word(eepromFMFreq);
 	monoFM = eeprom_read_byte(eepromFMMono);
+	stepFM = eeprom_read_byte(eepromFMStep);
 
 	tunerSetFreq(freqFM);
 

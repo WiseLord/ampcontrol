@@ -27,6 +27,7 @@
 #define eepromFMFreq	((void*)0x16)
 #define eepromFMCtrl	((void*)0x18)
 #define eepromFMMono	((void*)0x19)
+#define eepromFMStep	((void*)0x1A)
 
 #define eepromRC5Addr	((void*)0x1C)
 #define eepromTempTH	((void*)0x1D)
