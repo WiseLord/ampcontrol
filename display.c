@@ -278,7 +278,7 @@ void showRadio(uint8_t *buf)
 	gdWriteString((uint8_t*)"FM ");
 	gdWriteString(mkNumString(freq / 100, 3, ' ', 10));
 	gdWriteString((uint8_t*)"\x7F.\x7F");
-	gdWriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
+	gdWriteString(mkNumString(freq % 100, 2, '0', 10));
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	/* Signal level */

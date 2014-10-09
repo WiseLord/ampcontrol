@@ -100,6 +100,20 @@ uint8_t tunerLevel()
 #endif
 }
 
+void tunerIncFreq(void)
+{
+	tunerSetFreq(tunerGetFreq() + 10);
+
+	return;
+}
+
+void tunerDecFreq(void)
+{
+	tunerSetFreq(tunerGetFreq() - 10);
+
+	return;
+}
+
 /* Find station number (1..64) in EEPROM */
 uint8_t stationNum(uint16_t freq)
 {

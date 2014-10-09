@@ -38,6 +38,9 @@ void tunerSwitchMono();
 uint8_t tunerStereo();
 uint8_t tunerLevel();
 
+void tunerIncFreq(void);
+void tunerDecFreq(void);
+
 uint8_t stationNum(uint16_t freq);
 void scanStoredFreq(uint8_t direction);
 void loadStation(uint8_t num);

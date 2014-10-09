@@ -201,7 +201,7 @@ int main(void)
 				break;
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
-					tunerSetFreq(tunerGetFreq() - 10);
+					tunerDecFreq();
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -217,7 +217,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
-					tunerSetFreq(tunerGetFreq() + 10);
+					tunerIncFreq();
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -357,10 +357,10 @@ int main(void)
 			if (dispMode == MODE_FM_RADIO) {
 				switch (cmd) {
 				case CMD_RC5_FM_INC:
-					tunerSetFreq(tunerGetFreq() + 10);
+					tunerIncFreq();
 					break;
 				case CMD_RC5_FM_DEC:
-					tunerSetFreq(tunerGetFreq() - 10);
+					tunerDecFreq();
 					break;
 				case CMD_RC5_CHAN_UP:
 				case CMD_RC5_CHAN_DOWN:
