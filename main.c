@@ -426,6 +426,10 @@ int main(void)
 				changeBrWork(encCnt);
 				setDisplayTime(DISPLAY_TIME_BR);
 				break;
+			case MODE_MUTE:
+				if (getMute())
+					unmuteVolume();
+			case MODE_LOUDNESS:
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
