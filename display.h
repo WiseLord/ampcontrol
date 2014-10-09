@@ -87,7 +87,10 @@ void showTemp(uint8_t **txtLabels);
 
 void showRadio(uint8_t *buf);
 
-void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
+void showMute(uint8_t **txtLabels, uint8_t *buf);
+#if defined(TDA7313)
+void showLoudness(uint8_t **txtLabels, uint8_t *buf);
+#endif
 
 void showBrWork(uint8_t **txtLabels, uint8_t *buf);
 void changeBrWork(int8_t diff);

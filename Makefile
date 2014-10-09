@@ -20,7 +20,7 @@ else ifeq ($(AUDIOPROC), TDA7439)
 endif
 
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
-ICONS = icons-24.c
+ICONS = icons-24.c icons-32.c
 ifeq ($(DISPLAY), ST7920)
   DISP_SRC = display.c $(addprefix display/, gdfb.c st7920.c $(FONTS) $(ICONS))
 else ifeq ($(DISPLAY), KS0108A)

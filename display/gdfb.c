@@ -241,3 +241,22 @@ void gdWriteIcon24(const uint8_t *icon)
 
 	return;
 }
+
+void gdWriteIcon32(const uint8_t *icon)
+{
+	uint8_t i, j, k;
+	uint8_t pgmData;
+
+	if (icon) {
+		for (j = 0; j < 4; j++) {
+			for (i = 0; i < 32; i++) {
+				pgmData = pgm_read_byte(icon + 32 * j + i);
+				for (k = 0; k < 8; k++) {
+					gdDrawPixel(_x + i, _y + 8 * j + k, pgmData & (1<<k));
+				}
+			}
+		}
+	}
+
+	return;
+}

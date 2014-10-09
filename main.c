@@ -225,7 +225,7 @@ int main(void)
 				gdClear();
 				switchMute();
 				dispMode = MODE_MUTE;
-				setDisplayTime(DISPLAY_TIME_CHAN);
+				setDisplayTime(DISPLAY_TIME_AUDIO);
 				break;
 			}
 			break;
@@ -488,11 +488,11 @@ int main(void)
 			showRadio(getSpData());
 			break;
 		case MODE_MUTE:
-			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
+			showMute(txtLabels, getSpData());
 			break;
 #if defined(TDA7313)
 		case MODE_LOUDNESS:
-			showBoolParam(!getLoudness(), txtLabels[LABEL_LOUDNESS], txtLabels);
+			showLoudness(txtLabels, getSpData());
 			break;
 #endif
 		case MODE_TIME:

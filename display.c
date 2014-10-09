@@ -313,20 +313,65 @@ void showRadio(uint8_t *buf)
 	return;
 }
 
-void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
+static void drawMiniSpectrum(uint8_t *buf)
 {
-	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-	gdSetXY(0, 0);
-	writeStringEeprom(parLabel);
-	gdSetXY(0, 32);
-	if (value)
-		writeStringEeprom(txtLabels[LABEL_ON]);
-	else
-		writeStringEeprom(txtLabels[LABEL_OFF]);
-	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+	uint8_t x, xbase;
+	uint8_t y, ybase;
+
+	if (buf) {
+		for (y = 0; y < GD_SIZE_Y / 8 * 4; y++) {
+			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
+				xbase = x * 3;
+				ybase = 63 - y;
+				if (buf[x] + buf[x + 32] >= y * 2) {
+					gdDrawPixel(xbase + 0, ybase, 1);
+					gdDrawPixel(xbase + 1, ybase, 1);
+				} else {
+					gdDrawPixel(xbase + 0, ybase, 0);
+					gdDrawPixel(xbase + 1, ybase, 0);
+				}
+			}
+		}
+	}
 
 	return;
 }
+
+void showMute(uint8_t **txtLabels, uint8_t *buf)
+{
+	showParLabel(txtLabels[LABEL_MUTE]);
+
+	gdSetXY(96, 32);
+
+	if (getMute()) {
+		gdWriteIcon32(icons_32_mute_on);
+	} else {
+		gdWriteIcon32(icons_32_mute_off);
+	}
+
+	drawMiniSpectrum(buf);
+
+	return;
+}
+
+#if defined(TDA7313)
+void showLoudness(uint8_t **txtLabels, uint8_t *buf)
+{
+	showParLabel(txtLabels[LABEL_LOUDNESS]);
+
+	gdSetXY(96, 32);
+
+	if (getLoudness()) {
+		gdWriteIcon32(icons_32_loud_on);
+	} else {
+		gdWriteIcon32(icons_32_loud_off);
+	}
+
+	drawMiniSpectrum(buf);
+
+	return;
+}
+#endif
 
 /* Show brightness control */
 void showBrWork(uint8_t **txtLabels, uint8_t *buf)
