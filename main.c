@@ -427,8 +427,6 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_BR);
 				break;
 			case MODE_MUTE:
-				if (getMute())
-					unmuteVolume();
 			case MODE_LOUDNESS:
 			case MODE_SPECTRUM:
 			case MODE_TIME:
@@ -436,6 +434,8 @@ int main(void)
 				curSndParam = sndParAddr(SND_VOLUME);
 				dispMode = MODE_VOLUME;
 			default:
+				if (getMute())
+					unmuteVolume();
 				changeParam(curSndParam, encCnt);
 				setDisplayTime(DISPLAY_TIME_GAIN);
 				break;
