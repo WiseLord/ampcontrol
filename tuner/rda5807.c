@@ -2,7 +2,7 @@
 
 #include "../i2c.h"
 
-#define CHAN_SPACING 10
+#define CHAN_SPACING 5
 
 static uint8_t buf[4];
 
@@ -39,7 +39,7 @@ void rda5807SetFreq(uint16_t freq, uint8_t mono)
 	buf[2] = chan >> 2;						/* 8 MSB */
 
 	buf[3] = (chan & 0x03) << 6;			/* 2 LSB */
-	buf[3] |= (RDA5807_TUNE | RDA5807_BAND_US_EUROPE | RDA5807_SPACE_100);
+	buf[3] |= (RDA5807_TUNE | RDA5807_BAND_US_EUROPE | RDA5807_SPACE_50);
 
 	rda5807WriteI2C(buf);
 

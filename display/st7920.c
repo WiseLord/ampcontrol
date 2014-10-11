@@ -122,20 +122,10 @@ void st7920Init(void)
 	ST7920_CTRL_PORT &= ~ST7920_RST;
 	_delay_us(1);
 	ST7920_CTRL_PORT |= ST7920_RST;
+
+	/* Init display in graphics mode */
 	_delay_ms(40);
-
-	/* Init display */
 	st7920WriteCommand(ST7920_FUNCTION | ST7920_8BIT);
-	_delay_us(100);
-	st7920WriteCommand(ST7920_FUNCTION | ST7920_8BIT);
-	_delay_us(40);
-	st7920WriteCommand(ST7920_DISPLAY | ST7920_DISPLAY_ON);
-	_delay_us(100);
-	st7920WriteCommand(ST7920_CLEAR);
-	_delay_ms(10);
-	st7920WriteCommand(ST7920_ENTRY_MODE | ST7920_INC_ADDR);
-
-	/* Enable graphic mode */
 	st7920WriteCommand(ST7920_FUNCTION | ST7920_8BIT | ST7920_EXT_INSTR);
 	st7920WriteCommand(ST7920_FUNCTION | ST7920_8BIT | ST7920_EXT_INSTR | ST7920_GRAPHIC);
 

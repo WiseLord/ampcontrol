@@ -15,16 +15,6 @@
 
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 
-/* Save data to EEPROM */
-void saveParams(void)
-{
-	saveAudioParams();
-	saveDisplayParams();
-	saveTunerParams();
-
-	return;
-}
-
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
@@ -46,7 +36,9 @@ static void powerOff(void)
 	STMU_PORT &= ~STDBY;
 	setStbyBrightness();
 	stopEditTime();
-	saveParams();
+	saveAudioParams();
+	saveDisplayParams();
+	saveTunerParams();
 #if defined(LS020) || defined(KS0066) || defined(PCF8574)
 	TUNER_PORT &= ~TUNER_POWER;
 #endif
@@ -115,7 +107,6 @@ int main(void)
 	uint8_t cmd = CMD_EMPTY;
 	uint16_t rc5Buf = RC5_BUF_EMPTY;
 	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
-	uint8_t direction;
 
 	loadTunerParams();
 	loadAudioParams(txtLabels);
@@ -185,7 +176,7 @@ int main(void)
 				break;
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
-					tunerSetFreq(tunerGetFreq() - 10);
+					tunerDecFreq();
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -201,7 +192,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
-					tunerSetFreq(tunerGetFreq() + 10);
+					tunerIncFreq();
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -314,17 +305,16 @@ int main(void)
 			if (dispMode == MODE_FM_RADIO) {
 				switch (cmd) {
 				case CMD_RC5_FM_INC:
-					tunerSetFreq(tunerGetFreq() + 10);
+					tunerIncFreq();
 					break;
 				case CMD_RC5_FM_DEC:
-					tunerSetFreq(tunerGetFreq() - 10);
+					tunerDecFreq();
 					break;
 				case CMD_RC5_CHAN_UP:
+					scanStoredFreq(SEARCH_UP);
+					break;
 				case CMD_RC5_CHAN_DOWN:
-					direction = SEARCH_UP;
-					if (cmd == CMD_RC5_CHAN_DOWN)
-						direction = SEARCH_DOWN;
-					scanStoredFreq(direction);
+					scanStoredFreq(SEARCH_DOWN);
 					break;
 				}
 			}
@@ -377,12 +367,16 @@ int main(void)
 				changeBrWork(encCnt);
 				setDisplayTime(DISPLAY_TIME_BR);
 				break;
+			case MODE_MUTE:
+			case MODE_LOUDNESS:
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
 				curSndParam = sndParAddr(SND_VOLUME);
 				dispMode = MODE_VOLUME;
 			default:
+				if (getMute())
+					unmuteVolume();
 				changeParam(curSndParam, encCnt);
 				setDisplayTime(DISPLAY_TIME_GAIN);
 				break;

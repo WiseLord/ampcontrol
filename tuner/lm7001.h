@@ -11,9 +11,9 @@
 #define LM7001_CL			(1<<PC3)
 #define LM7001_CE			(1<<PC4)
 
-/* IF = 10.7MHz and step = 100kHz */
+/* IF = 10.7MHz and step = 50kHz */
 #define LM7001_IF			1070
-#define LM7001_RF			10
+#define LM7001_RF			5
 
 /* Control byte */
 #define LM7001_CTRL_B0		(1<<0)
@@ -25,8 +25,8 @@
 #define LM7001_CTRL_R2		(1<<6)
 #define LM7001_CTRL_S		(1<<7)
 
-/* Set control byte to FM input with 100kHz Fref, (TB = 0, Bi = 0b000, Ri = 0b000, S = 1)*/
-#define LM7001_CTRL_WORD	(LM7001_CTRL_S)
+/* Set control byte to FM input with 50kHz Fref, (TB = 0, Bi = 0b000, Ri = 0b100, S = 1)*/
+#define LM7001_CTRL_WORD	(LM7001_CTRL_S | LM7001_CTRL_R2)
 
 void lm7001Init(void);
 
