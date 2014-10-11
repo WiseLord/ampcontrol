@@ -20,7 +20,9 @@ void saveParams(void)
 {
 	saveAudioParams();
 	saveDisplayParams();
+#if !defined(NOTUNER)
 	saveTunerParams();
+#endif
 
 	return;
 }
@@ -31,7 +33,9 @@ static void powerOn(void)
 	PORT(STMU_STBY) |= STMU_STBY_LINE;
 	_delay_ms(50);
 	setWorkBrightness();
+#if !defined(NOTUNER)
 	loadTunerParams();
+#endif
 	unmuteVolume();
 
 	return;
@@ -93,7 +97,9 @@ static void hwInit(void)
 	rc5Init();							/* IR Remote control */
 	adcInit();							/* Analog-to-digital converter */
 	I2CInit();							/* I2C bus */
+#if !defined(NOTUNER)
 	tunerInit();						/* Tuner */
+#endif
 
 	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
@@ -116,9 +122,10 @@ int main(void)
 
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_EMPTY;
-	uint8_t direction;
 
+#if !defined(NOTUNER)
 	loadTunerParams();
+#endif
 	loadAudioParams(txtLabels);
 	loadDispParams();
 	setStbyBrightness();
@@ -199,12 +206,14 @@ int main(void)
 				if (!isETM())
 					setDisplayTime(DISPLAY_TIME_TIME);
 				break;
+#if !defined(NOTUNER)
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
 					tunerDecFreq();
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
+#endif
 			default:
 				stopEditTime();
 				dispMode = MODE_TIME;
@@ -215,12 +224,14 @@ int main(void)
 		case CMD_BTN_4:
 		case CMD_RC5_MUTE:
 			switch (dispMode) {
+#if !defined(NOTUNER)
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
 					tunerIncFreq();
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
+#endif
 			default:
 				gdClear();
 				switchMute();
@@ -265,11 +276,13 @@ int main(void)
 		case CMD_RC5_DISPLAY:
 			switch (getDefDisplay()) {
 			case MODE_SPECTRUM:
+#if !defined(NOTUNER)
 				if (getChan() == 0) {
 					setDefDisplay(MODE_FM_RADIO);
 					break;
 				}
 			case MODE_FM_RADIO:
+#endif
 				setDefDisplay(MODE_TIME);
 				break;
 			default:
@@ -283,6 +296,7 @@ int main(void)
 		case CMD_BTN_5_LONG:
 		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
+#if !defined(NOTUNER)
 				if (cmd == CMD_BTN_3_LONG)
 					scanStoredFreq(SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
@@ -290,6 +304,7 @@ int main(void)
 				else
 					storeStation();
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+#endif
 			} else {
 				if (cmd == CMD_BTN_3_LONG) {
 					switchSpMode();
@@ -349,6 +364,7 @@ int main(void)
 			dispMode = MODE_SPECTRUM;
 			setDisplayTime(DISPLAY_TIME_SP);
 			break;
+#if !defined(NOTUNER)
 		case CMD_RC5_FM_INC:
 		case CMD_RC5_FM_DEC:
 		case CMD_RC5_CHAN_UP:
@@ -363,11 +379,10 @@ int main(void)
 					tunerDecFreq();
 					break;
 				case CMD_RC5_CHAN_UP:
+					scanStoredFreq(SEARCH_UP);
+					break;
 				case CMD_RC5_CHAN_DOWN:
-					direction = SEARCH_UP;
-					if (cmd == CMD_RC5_CHAN_DOWN)
-						direction = SEARCH_DOWN;
-					scanStoredFreq(direction);
+					scanStoredFreq(SEARCH_DOWN);
 					break;
 				}
 			}
@@ -396,6 +411,7 @@ int main(void)
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
+#endif
 		}
 
 		/* Emulate RC5 VOL_UP/VOL_DOWN as encoder actions */
@@ -487,10 +503,12 @@ int main(void)
 		case MODE_SPECTRUM:
 			drawSpectrum(getSpData(), txtLabels);
 			break;
+#if !defined(NOTUNER)
 		case MODE_FM_RADIO:
 			tunerReadStatus();
 			showRadio(getSpData());
 			break;
+#endif
 		case MODE_MUTE:
 			showMute(txtLabels, getSpData());
 			break;

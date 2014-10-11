@@ -264,6 +264,7 @@ void showTemp(uint8_t **txtLabels)
 }
 #endif
 
+#if !defined(NOTUNER)
 void showRadio(uint8_t *buf)
 {
 	uint16_t freq = tunerGetFreq();
@@ -312,6 +313,7 @@ void showRadio(uint8_t *buf)
 
 	return;
 }
+#endif
 
 static void drawMiniSpectrum(uint8_t *buf)
 {
