@@ -6,6 +6,7 @@
 #include "eeprom.h"
 #include "input.h"
 #include "tuner.h"
+#include "adc.h"
 
 static int8_t brStby;									/* Brightness in standby mode */
 static int8_t brWork;									/* Brightness in working mode */
@@ -115,7 +116,7 @@ void displayInit()
 	st7920LoadFont(font_ks0066_ru_08, 1);
 	st7920Clear();
 #endif
-	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
+	BCKL_DDR |= BCKL;
 
 	return;
 }
@@ -640,7 +641,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 /* Show brightness control */
 void showBrWork(uint8_t **txtLabels, uint8_t *buf)
 {
-	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
+	showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
 	showParValue(brWork);
 	showParLabel(txtLabels[LABEL_BR_WORK], txtLabels);
 
@@ -650,10 +651,10 @@ void showBrWork(uint8_t **txtLabels, uint8_t *buf)
 void changeBrWork(int8_t diff)
 {
 	brWork += diff;
-	if (brWork > GD_MAX_BRIGTHNESS)
-		brWork = GD_MAX_BRIGTHNESS;
-	if (brWork < GD_MIN_BRIGHTNESS)
-		brWork = GD_MIN_BRIGHTNESS;
+	if (brWork > DISP_MAX_BR)
+		brWork = DISP_MAX_BR;
+	if (brWork < DISP_MIN_BR)
+		brWork = DISP_MIN_BR;
 	setWorkBrightness();
 
 	return;
@@ -995,7 +996,7 @@ void setWorkBrightness(void)
 	gdSetBrightness(brWork);
 
 #if defined(PCF8574)
-	if (brWork == GD_MAX_BRIGTHNESS)
+	if (brWork == DISP_MAX_BR)
 		pcf8574IntBacklight(BACKLIGHT_ON);
 	else
 		pcf8574IntBacklight(BACKLIGHT_OFF);
