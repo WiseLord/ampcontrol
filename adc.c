@@ -16,20 +16,37 @@ static const uint8_t hannTable[] PROGMEM = {
 	221, 229, 236, 242, 247, 251, 254, 255,
 };
 
+static uint8_t _br;
+
 void adcInit()
 {
-	TCCR0 = (0<<CS02) | (0<<CS01) | (1<<CS00);		/* Timer0 prescaller = 1 (8 MHz) */
+	TIMSK |= (1<<TOIE0);						/* Enable Timer0 overflow interrupt */
+	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);	/* Set timer prescaller to 8 (1MHz) */
 
-	ADCSRA = ((1<<ADEN) | (1<<ADPS2) | (1<<ADPS0));	/* Enable ADC with prescaler=32 (250 kHz) */
+	/* Enable ADC with prescaler 16 */
+	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
 
-	ADMUX |= ((1<<ADLAR) | (0<<MUX2) | (0<<MUX1) | (0<<MUX0));	/* Mux to ADC0, adjust to left */
+	ADMUX |= (1<<ADLAR);						/* Adjust result to left */
 
 	return;
 }
 
 ISR (TIMER0_OVF_vect)
 {
+	/* 1MHz / (255 - 155) = 10000Hz => 10kHz Fourier analysis */
+	TCNT0 = 155;								/* 20000 / 32 / 34 = 18.4 FPS */
+
 	ADCSRA |= 1<<ADSC;
+
+	static uint8_t br;
+
+	if (++br >= DISP_MAX_BR)					/* Loop brightness */
+		br = DISP_MIN_BR;
+
+	if (br == _br) {
+		BCKL_PORT &= ~BCKL;						/* Turn backlight off */
+	} else if (br == 0)
+		BCKL_PORT |=BCKL;						/* Turn backlight on */
 
 	return;
 };
@@ -46,10 +63,8 @@ static void getValues()
 {
 	uint8_t i = 0, j;
 	uint8_t hv;
-	TCNT0 = 0;							/* Reset timer */
-	TIMSK |= (1<<TOIE0);				/* Enable compare/match interrupt */
 
-	while (!(ADCSRA & (1<<ADSC)));		/* Wait for start measure */
+	while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
 
 	do {
 		j = revBits(i);
@@ -65,8 +80,6 @@ static void getValues()
 
 		f_i[i++] = 0;
 	} while (i < FFT_SIZE);
-
-	TIMSK &= ~(1<<TOIE0);				/* Disable compare/match interrupt */
 
 	return;
 }
@@ -98,4 +111,11 @@ uint8_t *getSpData()
 	slowFall();
 
 	return buf;
+}
+
+void setDispBr(uint8_t br)
+{
+	_br = br;
+
+	return;
 }

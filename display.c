@@ -207,7 +207,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 /* Show brightness control */
 void showBrWork(uint8_t **txtLabels)
 {
-	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
+	showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
 	ks0066SetXY(13, 0);
 //	showParValue(brWork);
 	ks0066WriteString(mkNumString(brWork, 3, ' '));
@@ -219,10 +219,10 @@ void showBrWork(uint8_t **txtLabels)
 void changeBrWork(int8_t diff)
 {
 	brWork += diff;
-	if (brWork > GD_MAX_BRIGTHNESS)
-		brWork = GD_MAX_BRIGTHNESS;
-	if (brWork < GD_MIN_BRIGHTNESS)
-		brWork = GD_MIN_BRIGHTNESS;
+	if (brWork > DISP_MAX_BR)
+		brWork = DISP_MAX_BR;
+	if (brWork < DISP_MIN_BR)
+		brWork = DISP_MIN_BR;
 	setWorkBrightness();
 
 	return;
@@ -309,7 +309,7 @@ void drawSpectrum(uint8_t *buf)
 
 void setWorkBrightness(void)
 {
-	gdSetBrightness(brWork);
+	setDispBr(brWork);
 
 #if defined(PCF8574)
 	if (brWork == GD_MAX_BRIGTHNESS)
@@ -323,7 +323,7 @@ void setWorkBrightness(void)
 
 void setStbyBrightness(void)
 {
-	gdSetBrightness(brStby);
+	setDispBr(brStby);
 
 #if defined(PCF8574)
 	pcf8574IntBacklight(BACKLIGHT_OFF);
