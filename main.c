@@ -78,7 +78,7 @@ static void hwInit(void)
 	tunerInit();					/* Tuner */
 
 	STMU_DDR |= MUTE;				/* Standby/Mute port */
-	DISPLAY_BCKL_DDR |= DISPLAY_BCKL;
+	BCKL_DDR |= BCKL;
 
 	sei();							/* Gloabl interrupt enable */
 

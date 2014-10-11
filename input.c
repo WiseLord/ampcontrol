@@ -196,9 +196,9 @@ ISR (TIMER2_COMP_vect)
 		br = GD_MIN_BRIGHTNESS;
 
 	if (br == _br) {
-		DISPLAY_BCKL_PORT &= ~DISPLAY_BCKL;			/* Turn backlight off */
+		BCKL_PORT &= ~BCKL;			/* Turn backlight off */
 	} else if (br == 0)
-		DISPLAY_BCKL_PORT |=DISPLAY_BCKL;			/* Turn backlight on */
+		BCKL_PORT |=BCKL;			/* Turn backlight on */
 
 	return;
 };

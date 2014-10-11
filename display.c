@@ -128,20 +128,10 @@ static void showBar(int8_t min, int8_t max, int8_t value)
 	return;
 }
 
-static void showParValue(int8_t value)
-{
-	ks0066SetXY(11, 0);
-	ks0066WriteString(mkNumString(value, 3, ' '));
-
-	return;
-}
-
 static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 {
 	ks0066SetXY(0, 0);
 	writeStringEeprom(parLabel);
-	ks0066SetXY(14, 0);
-	writeStringEeprom(txtLabels[LABEL_DB]);
 
 	return;
 }
@@ -218,7 +208,9 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 void showBrWork(uint8_t **txtLabels)
 {
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
-	showParValue(brWork);
+	ks0066SetXY(13, 0);
+//	showParValue(brWork);
+	ks0066WriteString(mkNumString(brWork, 3, ' '));
 	showParLabel(txtLabels[LABEL_BR_WORK], txtLabels);
 
 	return;
@@ -240,8 +232,12 @@ void changeBrWork(int8_t diff)
 void showSndParam(sndParam *param, uint8_t **txtLabels)
 {
 	showBar(param->min, param->max, param->value);
-	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
+	ks0066SetXY(11, 0);
+//	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
+	ks0066WriteString(mkNumString(param->value, 3, ' '));
 	showParLabel(param->label, txtLabels);
+	ks0066SetXY(14, 0);
+	writeStringEeprom(txtLabels[LABEL_DB]);
 
 	return;
 }
