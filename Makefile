@@ -1,5 +1,5 @@
 AUDIOPROC = TDA7439
-DISPLAY = ST7920
+DISPLAY = KS0108
 TUNER = RDA5807
 
 # Lowercase argument
@@ -42,7 +42,7 @@ else ifeq ($(TUNER), RDA5807)
   TUNER_SRC = tuner.c tuner/rda5807.c
 endif
 
-SRCS = main.c eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
 
 MCU = atmega16
 F_CPU = 16000000L
