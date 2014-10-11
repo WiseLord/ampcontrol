@@ -26,7 +26,7 @@
 #define STMU_DDR		DDRB
 #define STMU_PORT		PORTB
 
-#define MUTE			(1<<PB3)
+#define MUTE			(1<<PB1)
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31
