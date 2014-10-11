@@ -35,7 +35,7 @@ else ifeq ($(TUNER), RDA5807)
   TUNER_SRC = tuner.c tuner/rda5807.c
 endif
 
-SRCS = main.c eeprom.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
 
 MCU = atmega8
 F_CPU = 8000000L

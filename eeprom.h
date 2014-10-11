@@ -15,25 +15,22 @@
 #define eepromGain2		((void*)0x08)
 #define eepromGain3		((void*)0x09)
 
-/* Parameters min/max/step values */
-#define eepromMinimums	((void*)0x10)
-#define eepromMaximums	((void*)0x20)
-#define eepromSteps		((void*)0x30)
-
-/*Some stored in EEPROM values */
+/* Some values stored in EEPROM */
 #define eepromLoudness	((void*)0x0C)
 #define eepromChannel	((void*)0x0D)
 
-#define eepromSpMode	((void*)0x1C)
-#define eepromDisplay	((void*)0x1D)
-#define eepromBrStby	((void*)0x1E)
-#define eepromBrWork	((void*)0x1F)
+#define eepromSpMode	((void*)0x10)
+#define eepromDisplay	((void*)0x11)
+#define eepromBrStby	((void*)0x12)
+#define eepromBrWork	((void*)0x13)
 
-#define eepromFMFreq	((void*)0x2C)
-#define eepromFMCtrl	((void*)0x2E)
-#define eepromFMMono	((void*)0x2F)
+#define eepromFMFreq	((void*)0x16)
+#define eepromFMCtrl	((void*)0x18)
+#define eepromFMMono	((void*)0x19)
+#define eepromFMStep	((void*)0x1A)
 
-#define eepromRC5Addr	((void*)0x3C)
+#define eepromRC5Addr	((void*)0x1C)
+#define eepromTempTH	((void*)0x1D)
 
 /* RC5 commands array */
 #define eepromRC5Cmd	((uint8_t*)0x40)
@@ -64,6 +61,7 @@ enum {
 	LABEL_ON,
 	LABEL_OFF,
 	LABEL_DB,
+
 	LABEL_SUNDAY,
 	LABEL_MONDAY,
 	LABEL_THUESDAY,
@@ -71,11 +69,10 @@ enum {
 	LABEL_THURSDAY,
 	LABEL_FRIDAY,
 	LABEL_SADURDAY,
+
 	LABEL_BR_WORK
 };
 
 #define LABELS_COUNT			24
-
-void loadLabels(uint8_t **txtLabels);
 
 #endif /* EEPROM_H */
