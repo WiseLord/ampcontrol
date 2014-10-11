@@ -7,9 +7,6 @@
 
 #define DC_CORR 128 /* Raw value from ADC when no signal */
 
-#define ADC_TIMER_DISABLED	0
-#define ADC_TIMER_ENABLED	1
-
 #define DISP_MIN_BR			0
 #define DISP_MAX_BR			32
 
@@ -21,6 +18,6 @@
 void adcInit();
 uint8_t *getSpData();
 
-void gdSetBrightness(uint8_t br);
+void setDispBr(uint8_t br);
 
 #endif /* ADC_H */

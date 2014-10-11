@@ -18,7 +18,6 @@ static const uint8_t hannTable[] PROGMEM = {
 };
 
 static uint8_t _br;
-static uint8_t adc = ADC_TIMER_DISABLED;
 
 void adcInit()
 {
@@ -42,13 +41,13 @@ ISR (TIMER0_OVF_vect)
 
 	static uint8_t br;
 
-	if (++br >= DISP_MAX_BR)				/* Loop brightness */
+	if (++br >= DISP_MAX_BR)					/* Loop brightness */
 		br = DISP_MIN_BR;
 
 	if (br == _br) {
-		BCKL_PORT &= ~BCKL;		/* Turn backlight off */
+		BCKL_PORT &= ~BCKL;						/* Turn backlight off */
 	} else if (br == 0)
-		BCKL_PORT |=BCKL;		/* Turn backlight on */
+		BCKL_PORT |=BCKL;						/* Turn backlight on */
 
 	return;
 };
@@ -65,8 +64,6 @@ static void getValues()
 {
 	uint8_t i = 0, j;
 	uint8_t hv;
-
-	adc = ADC_TIMER_ENABLED;				/* Enable start ADC  by timer */
 
 	ADMUX &= ~(1<<MUX0);						/* Switch to left channel */
 	while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
@@ -92,8 +89,6 @@ static void getValues()
 
 		f_i[i++] = 0;
 	} while (i < FFT_SIZE);
-
-	adc = ADC_TIMER_DISABLED;				/* Disable start ADC  by timer */
 
 	return;
 }
@@ -131,7 +126,7 @@ uint8_t *getSpData()
 	return buf;
 }
 
-void gdSetBrightness(uint8_t br)
+void setDispBr(uint8_t br)
 {
 	_br = br;
 

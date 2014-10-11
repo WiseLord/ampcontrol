@@ -993,7 +993,7 @@ void drawSpectrum(uint8_t *buf)
 
 void setWorkBrightness(void)
 {
-	gdSetBrightness(brWork);
+	setDispBr(brWork);
 
 #if defined(PCF8574)
 	if (brWork == DISP_MAX_BR)
@@ -1007,7 +1007,7 @@ void setWorkBrightness(void)
 
 void setStbyBrightness(void)
 {
-	gdSetBrightness(brStby);
+	setDispBr(brStby);
 
 #if defined(PCF8574)
 	pcf8574IntBacklight(BACKLIGHT_OFF);
