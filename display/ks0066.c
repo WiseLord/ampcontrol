@@ -8,10 +8,9 @@
 
 static void ks0066writeStrob()
 {
-	asm("nop");	/* 40ns */
+	_delay_us(0.04);
 	KS0066_CTRL_PORT |= KS0066_E;
-	asm("nop");	/* 230ns */
-	asm("nop");
+	_delay_us(0.23);
 	KS0066_CTRL_PORT &= ~KS0066_E;
 
 	return;

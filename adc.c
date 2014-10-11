@@ -43,9 +43,9 @@ ISR (TIMER0_OVF_vect)
 	if (++br >= DISP_MAX_BR)					/* Loop brightness */
 		br = DISP_MIN_BR;
 
-	if (br == _br) {
+	if (br >= _br)
 		BCKL_PORT &= ~BCKL;						/* Turn backlight off */
-	} else if (br == 0)
+	else
 		BCKL_PORT |=BCKL;						/* Turn backlight on */
 
 	return;
