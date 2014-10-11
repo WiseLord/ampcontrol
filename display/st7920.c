@@ -7,15 +7,6 @@
 static uint8_t fb[ST7920_SIZE_X / 4][ST7920_SIZE_Y / 2];
 static uint8_t _br;
 
-static uint8_t adcTimer = 0;
-
-void setAdcTimer(uint8_t value)
-{
-	adcTimer = value;
-
-	return;
-}
-
 void st7920SetBrightness(uint8_t br)
 {
 	_br = br;
@@ -69,21 +60,12 @@ static void st7920Write(uint8_t type, uint8_t data)
 	return;
 }
 
-static void st7920TimerInit(void)
-{
-	TIMSK |= (1<<TOIE0);								/* Enable Timer0 overflow interrupt */
-	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);			/* Set timer prescaller to 8 (2MHz) */
-
-	return;
-}
-
 ISR (TIMER0_OVF_vect)
 {
 	/* 2MHz / (255 - 155) = 20000Hz => 10kHz Fourier analysis */
 	TCNT0 = 155;										/* 20000 / 32 / 34 = 18.4 FPS */
 
-	if (adcTimer)
-		ADCSRA |= 1<<ADSC;
+	ADCSRA |= 1<<ADSC;
 
 	static uint8_t i = 0;
 	static uint8_t j = 32;
@@ -147,8 +129,6 @@ void st7920Init(void)
 	st7920Write(ST7920_COMMAND, ST7920_FUNCTION | ST7920_8BIT);
 	st7920Write(ST7920_COMMAND, ST7920_FUNCTION | ST7920_8BIT | ST7920_EXT_INSTR);
 	st7920Write(ST7920_COMMAND, ST7920_FUNCTION | ST7920_8BIT | ST7920_EXT_INSTR | ST7920_GRAPHIC);
-
-	st7920TimerInit();
 
 	DDR(ST7920_BCKL)  |= ST7920_BCKL_LINE;
 

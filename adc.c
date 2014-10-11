@@ -23,8 +23,10 @@ void adcInit()
 {
 	/* Enable ADC with prescaler 16 */
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
-
 	ADMUX |= (1<<ADLAR);						/* Adjust result to left */
+
+	TIMSK |= (1<<TOIE0);						/* Enable Timer0 overflow interrupt */
+	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);	/* Set timer prescaller to 8 (2MHz) */
 
 	return;
 }
@@ -41,8 +43,6 @@ static void getValues()
 {
 	uint8_t i = 0, j;
 	uint8_t hv;
-
-	setAdcTimer(ADC_TIMER_ENABLED);				/* Enable start ADC  by timer */
 
 	ADMUX &= ~(1<<MUX0);						/* Switch to left channel */
 	while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
@@ -68,8 +68,6 @@ static void getValues()
 
 		f_i[i++] = 0;
 	} while (i < FFT_SIZE);
-
-	setAdcTimer(ADC_TIMER_DISABLED);							/* Enable start ADC  by timer */
 
 	return;
 }

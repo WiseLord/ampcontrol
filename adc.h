@@ -7,9 +7,6 @@
 
 #define DC_CORR 128 /* Raw value from ADC when no signal */
 
-#define ADC_TIMER_DISABLED	0
-#define ADC_TIMER_ENABLED	1
-
 void adcInit();
 uint8_t *getSpData();
 

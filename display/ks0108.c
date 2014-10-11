@@ -23,15 +23,6 @@
 static uint8_t fb[KS0108_COLS * KS0108_CHIPS][KS0108_ROWS];
 static uint8_t _br;
 
-static uint8_t adcTimer = 0;
-
-void setAdcTimer(uint8_t value)
-{
-	adcTimer = value;
-
-	return;
-}
-
 void ks0108SetBrightness(uint8_t br)
 {
 	_br = br;
@@ -87,31 +78,12 @@ static void ks0108Write(uint8_t type, uint8_t data)
 	return;
 }
 
-static void ks0108TimerInit(void)
-{
-	TIMSK |= (1<<TOIE0);							/* Enable Timer0 overflow interrupt */
-	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);		/* Set timer prescaller to 8 (2MHz) */
-
-	return;
-}
-
-static uint8_t adcResultReady;
-
-uint8_t isAdcResultReady(void)
-{
-	uint8_t ret = adcResultReady;
-	adcResultReady = 0;
-
-	return ret;
-}
-
 ISR (TIMER0_OVF_vect)
 {
 	/* 2MHz / (255 - 155) = 20000Hz => 10kHz Fourier analysis */
 	TCNT0 = 155;									/* 20000Hz / 8 / 2 / 66 = 18.9 FPS */
 
-	if (adcTimer)
-		ADCSRA |= 1<<ADSC;
+	ADCSRA |= 1<<ADSC;
 
 	static uint8_t i;
 	static uint8_t j;
@@ -194,8 +166,6 @@ void ks0108Init(void)
 	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_ON);
 
 	PORT(KS0108_DI) |= KS0108_DI_LINE;
-
-	ks0108TimerInit();
 
 	DDR(KS0108_BCKL) |= KS0108_BCKL_LINE;
 
