@@ -23,11 +23,10 @@
 #define ENC_0			0
 
 /* Standby/Mute port definitions */
-#define STMU_DDR		DDRC
-#define STMU_PORT		PORTC
+#define STMU_DDR		DDRB
+#define STMU_PORT		PORTB
 
-#define MUTE			(1<<PC3)
-#define STDBY			(1<<PC3)
+#define MUTE			(1<<PB3)
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31

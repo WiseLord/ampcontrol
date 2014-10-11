@@ -81,13 +81,13 @@ flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:flash/$(TARG).hex:i
 
 fuse:
-	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xf8:m -U hfuse:w:0xd1:m
+	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xe4:m -U hfuse:w:0xc1:m
 
 eeprom_en:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_en.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_en.bin:r
 
 eeprom_ru:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/$(EEPROM)_ru.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_ru.bin:r
 
 eeprom_by:
 	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_by.bin:r

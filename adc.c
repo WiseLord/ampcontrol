@@ -20,11 +20,9 @@ void adcInit()
 {
 	TCCR0 = (0<<CS02) | (0<<CS01) | (1<<CS00);		/* Timer0 prescaller = 1 (8 MHz) */
 
-	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (1<<ADPS0);	/* Enable ADC with prescaler=32 (250 kHz) */
+	ADCSRA = ((1<<ADEN) | (1<<ADPS2) | (1<<ADPS0));	/* Enable ADC with prescaler=32 (250 kHz) */
 
-	ADMUX |= (1<<ADLAR);							/* Adjust result to left */
-
-	ADMUX |= (1<<MUX2) | (1<<MUX1) | (0<<MUX0);		/* Set ADC mux to ADC6 */
+	ADMUX |= ((1<<ADLAR) | (0<<MUX2) | (0<<MUX1) | (0<<MUX0));	/* Mux to ADC0, adjust to left */
 
 	return;
 }

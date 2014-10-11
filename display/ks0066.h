@@ -16,7 +16,6 @@
 #define KS0066_CTRL_DDR				DDRB
 
 #define KS0066_E					(1<<PB2)
-#define KS0066_RW					(1<<PB1)
 #define KS0066_RS					(1<<PB0)
 
 #define KS0066_INIT_DATA			0x30
