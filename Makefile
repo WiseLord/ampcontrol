@@ -53,38 +53,35 @@ AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
-
-OBJS = $(SRCS:.c=.o)
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
 
 OBJDIR = obj
+OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
+ELF = $(OBJDIR)/$(TARG).elf
 
 all: $(TARG)
 
 $(TARG): $(OBJS)
-	$(CC) $(LDFLAGS) -o $(addprefix $(OBJDIR)/, $@.elf $(OBJS)) -lm
+	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
 	mkdir -p flash
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(addprefix $(OBJDIR)/, $@.elf) flash/$@.hex
-	./size.sh $(addprefix $(OBJDIR)/, $@.elf)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$@.hex
+	./size.sh $(ELF)
 
-%.o: %.c
-	mkdir -p $(dir $(OBJDIR)/$@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o  $(OBJDIR)/$@ $<
+obj/%.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)
 
-mrproper: clean
-	rm -rf flash
-
 flash: $(TARG)
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U flash:w:flash/$(TARG).hex:i
+	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 fuse:
-	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xe4:m -U hfuse:w:0xc1:m
+	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xc1:m
 
 eeprom_en:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_en.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_en.bin:r
 
 eeprom_ru:
-	$(AVRDUDE) $(AD_CMDLINE) -V -B 1.1 -U eeprom:w:eeprom/eeprom_ru.bin:r
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ru.bin:r

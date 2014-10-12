@@ -316,7 +316,7 @@ void setWorkBrightness(void)
 	setDispBr(brWork);
 
 #if defined(PCF8574)
-	if (brWork == GD_MAX_BRIGTHNESS)
+	if (brWork == DISP_MAX_BR)
 		pcf8574IntBacklight(BACKLIGHT_ON);
 	else
 		pcf8574IntBacklight(BACKLIGHT_OFF);
