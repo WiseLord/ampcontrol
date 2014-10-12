@@ -294,6 +294,8 @@ void drawSpectrum(uint8_t *buf)
 
 	for (i = 0; i < 16; i++) {
 		val = buf[i];
+		if (val > 15)
+			val = 15;
 		ks0066SetXY(i, 0);
 		if (val < 8)
 			ks0066WriteData(0x20);

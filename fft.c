@@ -2,10 +2,10 @@
 #include <avr/pgmspace.h>
 
 static const int16_t dbTable[N_DB] PROGMEM = {
-	   1,    2,    3,    6,
-	  10,   18,   33,   59,
-	 105,  187,  335,  599,
-	1071, 1915, 3425, 6125
+	   1,    2,    4,    8,
+	  14,   24,   44,   78,
+	 140,  250,  448,  801,
+	1432, 2561, 4580, 8191
 };
 
 static const uint8_t sinTable[N_WAVE / 4 + 1] PROGMEM = {

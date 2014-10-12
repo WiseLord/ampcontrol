@@ -34,7 +34,7 @@ void adcInit()
 ISR (TIMER0_OVF_vect)
 {
 	/* 1MHz / (255 - 155) = 10000Hz => 10kHz Fourier analysis */
-	TCNT0 = 155;								/* 20000 / 32 / 34 = 18.4 FPS */
+	TCNT0 = 155;
 
 	ADCSRA |= 1<<ADSC;
 

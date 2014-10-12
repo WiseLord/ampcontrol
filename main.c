@@ -397,6 +397,7 @@ int main(void)
 			break;
 		case MODE_SPECTRUM:
 			drawSpectrum(getSpData());
+			_delay_ms(20);
 			break;
 #if !defined(NOTUNER)
 		case MODE_FM_RADIO:
