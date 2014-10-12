@@ -396,7 +396,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
-			drawSpectrum(getSpData());
+			showSpectrum(getSpData());
 			_delay_ms(20);
 			break;
 #if !defined(NOTUNER)

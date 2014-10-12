@@ -285,7 +285,7 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
-void drawSpectrum(uint8_t *buf)
+void showSpectrum(uint8_t *buf)
 {
 	uint8_t i;
 	uint8_t val;
@@ -315,23 +315,12 @@ void setWorkBrightness(void)
 {
 	setDispBr(brWork);
 
-#if defined(PCF8574)
-	if (brWork == DISP_MAX_BR)
-		pcf8574IntBacklight(BACKLIGHT_ON);
-	else
-		pcf8574IntBacklight(BACKLIGHT_OFF);
-#endif
-
 	return;
 }
 
 void setStbyBrightness(void)
 {
 	setDispBr(brStby);
-
-#if defined(PCF8574)
-	pcf8574IntBacklight(BACKLIGHT_OFF);
-#endif
 
 	return;
 }

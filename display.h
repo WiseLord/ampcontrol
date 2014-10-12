@@ -5,17 +5,7 @@
 
 #include "ds1307.h"
 #include "audio/audio.h"
-
-/* Graphics (ks0108-based) or character (ks0066-based) display selection  */
-#if !defined(KS0066) && !defined(PCF8574)
-#define KS0066
-#endif
-
-#if defined(KS0066)
 #include "display/ks0066.h"
-#elif defined(PCF8574)
-#include "display/pcf8574.h"
-#endif
 
 /* Timers fo different screens */
 #define DISPLAY_TIME_TEST		15
@@ -82,7 +72,7 @@ void changeBrWork(int8_t diff);
 void showSndParam(sndParam *param, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
-void drawSpectrum(uint8_t *buf);
+void showSpectrum(uint8_t *buf);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);

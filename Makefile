@@ -1,12 +1,11 @@
 AUDIOPROC = TDA7313
-DISPLAY = KS0066
 TUNER = TEA5767
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
+TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))_$(call lc,$(TUNER))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
@@ -19,11 +18,7 @@ else ifeq ($(AUDIOPROC), TDA7439)
   AUDIO_SRC = audio/tda7439.c
 endif
 
-ifeq ($(DISPLAY), KS0066)
-  DISP_SRC = display.c display/ks0066.c
-else ifeq ($(DISPLAY), PCF8574)
-  DISP_SRC = display.c display/pcf8574.c
-endif
+DISP_SRC = display.c display/ks0066.c
 
 ifeq ($(TUNER), TEA5767)
   TUNER_SRC = tuner.c tuner/tea5767.c
@@ -69,7 +64,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(TUNER) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)
