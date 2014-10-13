@@ -47,6 +47,7 @@ enum {
 #define SND_PARAM_COUNT			10
 
 sndParam *sndParAddr(uint8_t index);
+
 uint8_t getChan(void);
 uint8_t getMute(void);
 

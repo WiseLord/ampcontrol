@@ -3,7 +3,7 @@
 
 /* Integral circuits definitions */
 #if !defined(TDA7313) && !defined(TDA7318) && !defined(TDA7439)
-#define TDA7313
+#define TDA7439
 #endif
 
 #if defined(TDA7313)
