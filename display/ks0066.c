@@ -20,16 +20,12 @@ static void ks0066WritePort(uint8_t data)
 {
 	_delay_us(100);
 
-#ifdef KS0066_4BIT_MODE
 	KS0066_DATA_PORT &= 0x0F;
 	KS0066_DATA_PORT |= (data & 0xF0);
 	ks0066writeStrob();
 	KS0066_DATA_PORT &= 0x0F;
 	KS0066_DATA_PORT |= (swap(data) & 0xF0);
-#else
-	KS0066_DATA_DDR |= 0xFF;
-	KS0066_DATA_PORT = data;
-#endif
+
 	ks0066writeStrob();
 
 	return;
@@ -73,15 +69,10 @@ void ks0066Init(void)
 	_delay_us(120);
 	ks0066writeStrob();
 
-#ifdef KS0066_4BIT_MODE
 	ks0066WriteCommand(swap(KS0066_FUNCTION | KS0066_4BIT));
 	ks0066WriteCommand(KS0066_FUNCTION | KS0066_4BIT | KS0066_2LINES);
-#else
-	ks0066WriteCommand(KS0066_FUNCTION | KS0066_8BIT | KS0066_2LINES);
-#endif
 	ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
-	ks0066WriteCommand(KS0066_CLEAR);
-	_delay_ms(2);
+	ks0066Clear();
 	ks0066WriteCommand(KS0066_SET_MODE | KS0066_INC_ADDR);
 
 	return;

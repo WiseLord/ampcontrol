@@ -4,8 +4,6 @@
 #include <avr/io.h>
 #include <inttypes.h>
 
-#define KS0066_4BIT_MODE
-
 /* Data port */
 #define KS0066_DATA_PORT			PORTB
 #define KS0066_DATA_DDR				DDRB
