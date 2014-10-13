@@ -4,6 +4,7 @@
 
 #include "adc.h"
 #include "fft.h"
+#include "pins.h"
 
 static int16_t f_l[FFT_SIZE];			/* Real values for left channel */
 static int16_t f_i[FFT_SIZE];			/* Imaginary values */
@@ -44,9 +45,9 @@ ISR (TIMER0_OVF_vect)
 		br = DISP_MIN_BR;
 
 	if (br >= _br)
-		BCKL_PORT &= ~BCKL;						/* Turn backlight off */
+		PORT(BCKL) &= ~BCKL_LINE;				/* Turn backlight off */
 	else
-		BCKL_PORT |=BCKL;						/* Turn backlight on */
+		PORT(BCKL) |= BCKL_LINE;						/* Turn backlight on */
 
 	return;
 };

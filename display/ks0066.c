@@ -9,9 +9,19 @@
 static void ks0066writeStrob()
 {
 	_delay_us(0.04);
-	KS0066_CTRL_PORT |= KS0066_E;
+	PORT(KS0066_E) |= KS0066_E_LINE;
 	_delay_us(0.23);
-	KS0066_CTRL_PORT &= ~KS0066_E;
+	PORT(KS0066_E) &= ~KS0066_E_LINE;
+
+	return;
+}
+
+static void ks0066SetHighNibble(uint8_t data)
+{
+	if (data & (1<<7)) PORT(KS0066_D7) |= KS0066_D7_LINE; else PORT(KS0066_D7) &= ~KS0066_D7_LINE;
+	if (data & (1<<6)) PORT(KS0066_D6) |= KS0066_D6_LINE; else PORT(KS0066_D6) &= ~KS0066_D6_LINE;
+	if (data & (1<<5)) PORT(KS0066_D5) |= KS0066_D5_LINE; else PORT(KS0066_D5) &= ~KS0066_D5_LINE;
+	if (data & (1<<4)) PORT(KS0066_D4) |= KS0066_D4_LINE; else PORT(KS0066_D4) &= ~KS0066_D4_LINE;
 
 	return;
 }
@@ -20,12 +30,9 @@ static void ks0066WritePort(uint8_t data)
 {
 	_delay_us(100);
 
-	KS0066_DATA_PORT &= 0x0F;
-	KS0066_DATA_PORT |= (data & 0xF0);
+	ks0066SetHighNibble(data);
 	ks0066writeStrob();
-	KS0066_DATA_PORT &= 0x0F;
-	KS0066_DATA_PORT |= (swap(data) & 0xF0);
-
+	ks0066SetHighNibble(swap(data));
 	ks0066writeStrob();
 
 	return;
@@ -33,7 +40,7 @@ static void ks0066WritePort(uint8_t data)
 
 void ks0066WriteCommand(uint8_t command)
 {
-	KS0066_CTRL_PORT &= ~KS0066_RS;
+	PORT(KS0066_RS) &= ~KS0066_RS_LINE;
 	ks0066WritePort(command);
 
 	return;
@@ -41,7 +48,7 @@ void ks0066WriteCommand(uint8_t command)
 
 void ks0066WriteData(uint8_t data)
 {
-	KS0066_CTRL_PORT |= KS0066_RS;
+	PORT(KS0066_RS) |= KS0066_RS_LINE;
 	ks0066WritePort(data);
 
 	return;
@@ -57,11 +64,15 @@ void ks0066Clear(void)
 
 void ks0066Init(void)
 {
-	KS0066_DATA_DDR |= 0xFF;
-	KS0066_CTRL_DDR |= KS0066_RS | KS0066_E;
+	DDR(KS0066_D7) |= KS0066_D7_LINE;
+	DDR(KS0066_D6) |= KS0066_D6_LINE;
+	DDR(KS0066_D5) |= KS0066_D5_LINE;
+	DDR(KS0066_D4) |= KS0066_D4_LINE;
+	DDR(KS0066_RS) |= KS0066_RS_LINE;
+	DDR(KS0066_E) |= KS0066_E_LINE;
 
-	KS0066_DATA_PORT |= KS0066_INIT_DATA;
-	KS0066_CTRL_PORT &= ~KS0066_RS;
+	ks0066SetHighNibble(KS0066_INIT_DATA);
+	PORT(KS0066_RS) &= ~KS0066_RS_LINE;
 	_delay_ms(20);
 	ks0066writeStrob();
 	_delay_ms(5);

@@ -83,8 +83,8 @@ static void hwInit(void)
 	tunerInit();					/* Tuner */
 #endif
 
-	STMU_DDR |= MUTE;				/* Standby/Mute port */
-	BCKL_DDR |= BCKL;
+	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
+	DDR(BCKL) |= BCKL_LINE;
 
 	sei();							/* Gloabl interrupt enable */
 
@@ -129,7 +129,7 @@ int main(void)
 		/* Don't handle any command in standby mode except power on */
 		if (dispMode == MODE_STANDBY) {
 			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
-				cmd != CMD_BTN_TESTMODE)
+				cmd != CMD_BTN_TEST)
 				cmd = CMD_EMPTY;
 		}
 
@@ -252,7 +252,7 @@ int main(void)
 #endif
 			}
 			break;
-		case CMD_BTN_TESTMODE:
+		case CMD_BTN_TEST:
 			switch (dispMode) {
 			case MODE_STANDBY:
 				dispMode = MODE_TEST;

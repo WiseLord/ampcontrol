@@ -1,15 +1,8 @@
 #ifndef LM7001_H
 #define LM7001_H
 
-#include <avr/io.h>
-
-#define LM7001_DDR			DDRC
-#define LM7001_PORT			PORTC
-#define LM7001_PIN			PINC
-
-#define LM7001_DATA			(1<<PC3)
-#define LM7001_CL			(1<<PC2)
-#define LM7001_CE			(1<<PC1)
+#include <inttypes.h>
+#include "../pins.h"
 
 /* IF = 10.7MHz and step = 100kHz */
 #define LM7001_IF			1070

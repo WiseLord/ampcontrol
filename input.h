@@ -2,31 +2,21 @@
 #define INPUT_H
 
 #include <inttypes.h>
+#include "pins.h"
 
-/* Input definitions */
-#define INPUT_DDR		DDRD
-#define INPUT_PIN		PIND
-#define INPUT_PORT		PORTD
+#define ENC_0			0b00
+#define ENC_A			0b01
+#define ENC_B			0b10
+#define ENC_AB			0b11
 
-#define BTN_5			(1<<PD7)
-#define BTN_2			(1<<PD4)
-#define BTN_3			(1<<PD5)
-#define BTN_4			(1<<PD6)
-#define BTN_1			(1<<PD0)
-
-#define BTN_TEST_INPUT	(BTN_1 | BTN_2)
-#define BTN_MASK		(BTN_1 | BTN_2 | BTN_3 | BTN_4 | BTN_5)
-
-#define ENC_A			(1<<PD2)
-#define ENC_B			(1<<PD1)
-#define ENC_AB			(ENC_A | ENC_B)
-#define ENC_0			0
-
-/* Standby/Mute port definitions */
-#define STMU_DDR		DDRB
-#define STMU_PORT		PORTB
-
-#define MUTE			(1<<PB1)
+#define BTN_STATE_0		0b00000
+#define BTN_1			0b10000
+#define BTN_2			0b01000
+#define BTN_3			0b00100
+#define BTN_4			0b00010
+#define BTN_5			0b00001
+#define BTN_12			0b11000
+#define BTN_13			0b10100
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31
@@ -74,7 +64,7 @@ enum {
 	CMD_BTN_3_LONG,
 	CMD_BTN_4_LONG,
 	CMD_BTN_5_LONG,
-	CMD_BTN_TESTMODE,
+	CMD_BTN_TEST,
 
 	CMD_EMPTY = 0xEF
 };

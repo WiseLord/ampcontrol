@@ -2,6 +2,7 @@
 #define ADC_H
 
 #include <inttypes.h>
+#include "pins.h"
 
 #define swap(x) (__builtin_avr_swap(x))		/*  Swaps nibbles in byte */
 
@@ -9,11 +10,6 @@
 
 #define DISP_MIN_BR			0
 #define DISP_MAX_BR			48
-
-/* Backlight port */
-#define BCKL_DDR			DDRB
-#define BCKL_PORT			PORTB
-#define BCKL				(1<<PB3)
 
 void adcInit();
 uint8_t *getSpData();

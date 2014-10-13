@@ -9,7 +9,11 @@
 
 static volatile int8_t encCnt;
 static volatile uint8_t cmdBuf;
+
+/* Previous state */
 static volatile uint16_t rc5SaveBuf;
+static volatile uint8_t encPrev = ENC_0;
+static volatile uint8_t btnPrev = BTN_STATE_0;
 
 static volatile uint16_t displayTime;
 
@@ -20,9 +24,24 @@ void inputInit()
 {
 	uint8_t i;
 
-	/* Setup buttons and encoders as inputs with pull-up resistors */
-	INPUT_DDR &= ~(BTN_MASK | ENC_AB);
-	INPUT_PORT |= (BTN_MASK | ENC_AB);
+	/* Setup buttons and encoder as inputs with pull-up resistors */
+	DDR(BUTTON_1) &= ~BUTTON_1_LINE;
+	DDR(BUTTON_2) &= ~BUTTON_2_LINE;
+	DDR(BUTTON_3) &= ~BUTTON_3_LINE;
+	DDR(BUTTON_4) &= ~BUTTON_4_LINE;
+	DDR(BUTTON_5) &= ~BUTTON_5_LINE;
+
+	DDR(ENCODER_A) &= ~ENCODER_A_LINE;
+	DDR(ENCODER_B) &= ~ENCODER_B_LINE;
+
+	PORT(BUTTON_1) |= BUTTON_1_LINE;
+	PORT(BUTTON_2) |= BUTTON_2_LINE;
+	PORT(BUTTON_3) |= BUTTON_3_LINE;
+	PORT(BUTTON_4) |= BUTTON_4_LINE;
+	PORT(BUTTON_5) |= BUTTON_5_LINE;
+
+	PORT(ENCODER_A) |= ENCODER_A_LINE;
+	PORT(ENCODER_B) |= ENCODER_B_LINE;
 
 	/* Set timer prescaller to 128 (62.5 kHz) and reset on match*/
 	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
@@ -56,12 +75,25 @@ ISR (TIMER2_COMP_vect)
 	static int16_t btnCnt = 0;		/* Buttons press duration value */
 	static uint16_t rc5Timer;
 
-	/* Previous state */
-	static uint8_t encPrev = ENC_0;
-	static uint8_t btnPrev = 0;
 	/* Current state */
-	uint8_t encNow = ~INPUT_PIN & ENC_AB;
-	uint8_t btnNow = ~INPUT_PIN & BTN_MASK;
+	uint8_t encNow = ENC_0;
+	uint8_t btnNow = BTN_STATE_0;
+
+	if (~PIN(ENCODER_A) & ENCODER_A_LINE)
+		encNow |= ENC_A;
+	if (~PIN(ENCODER_B) & ENCODER_B_LINE)
+		encNow |= ENC_B;
+
+	if (~PIN(BUTTON_1) & BUTTON_1_LINE)
+		btnNow |= BTN_1;
+	if (~PIN(BUTTON_2) & BUTTON_2_LINE)
+		btnNow |= BTN_2;
+	if (~PIN(BUTTON_3) & BUTTON_3_LINE)
+		btnNow |= BTN_3;
+	if (~PIN(BUTTON_4) & BUTTON_4_LINE)
+		btnNow |= BTN_4;
+	if (~PIN(BUTTON_5) & BUTTON_5_LINE)
+		btnNow |= BTN_5;
 
 	/* If encoder event has happened, inc/dec encoder counter */
 	switch (encNow) {
@@ -113,8 +145,8 @@ ISR (TIMER2_COMP_vect)
 				case BTN_5:
 					cmdBuf = CMD_BTN_5_LONG;
 					break;
-				case BTN_TEST_INPUT:
-					cmdBuf = CMD_BTN_TESTMODE;
+				case BTN_12:
+					cmdBuf = CMD_BTN_TEST;
 					break;
 				}
 			}

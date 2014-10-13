@@ -1,20 +1,8 @@
 #ifndef KS0066_H
 #define KS0066_H
 
-#include <avr/io.h>
 #include <inttypes.h>
-
-/* Data port */
-#define KS0066_DATA_PORT			PORTB
-#define KS0066_DATA_DDR				DDRB
-#define KS0066_DATA_PIN				PINB
-
-/* Control port */
-#define KS0066_CTRL_PORT			PORTB
-#define KS0066_CTRL_DDR				DDRB
-
-#define KS0066_E					(1<<PB2)
-#define KS0066_RS					(1<<PB0)
+#include "../pins.h"
 
 #define KS0066_INIT_DATA			0x30
 

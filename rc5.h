@@ -2,12 +2,7 @@
 #define RC5_H
 
 #include <inttypes.h>
-
-#define RC5_DDR			DDRD
-#define RC5_PIN			PIND
-#define RC5_PORT		PORTD
-
-#define RC5_DATA		(1<<PD3)
+#include "pins.h"
 
 #define RC5_SHORT_MIN	444		/* 444 microseconds */
 #define RC5_SHORT_MAX	1333	/* 1333 microseconds */
