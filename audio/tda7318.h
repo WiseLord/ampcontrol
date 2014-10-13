@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-#define AUDIOPROC_ADDR			0b10001000
+#define TDA7318_ADDR			0b10001000
 
 #define CHAN_CNT				4
 
@@ -19,9 +19,6 @@
 
 #define MUTE_ON					1
 #define MUTE_OFF				0
-
-#define LOUDNESS_ON				0
-#define LOUDNESS_OFF			1
 
 typedef struct {
 	int8_t value;
@@ -47,6 +44,7 @@ enum {
 #define SND_PARAM_COUNT			9
 
 sndParam *sndParAddr(uint8_t index);
+
 uint8_t getChan();
 uint8_t getMute();
 
