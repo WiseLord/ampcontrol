@@ -4,8 +4,11 @@
 
 #include "../i2c.h"
 #include "../eeprom.h"
-#include "../input.h"
+#include "../pins.h"
 #include "../display/icons.h"
+
+static uint8_t chan;
+static uint8_t mute;
 
 static sndParam sndPar[SND_PARAM_COUNT] = {
 	{0x00, 0xB1, 0x00, 0x08},	/* Volume */
@@ -20,23 +23,6 @@ static sndParam sndPar[SND_PARAM_COUNT] = {
 	{0x00, 0x00, 0x0F, 0x10},	/* Gain 3 */
 };
 
-static uint8_t chan;
-static uint8_t mute;
-
-sndParam *sndParAddr(uint8_t index)
-{
-	return &sndPar[index];
-}
-
-uint8_t getChan()
-{
-	return chan;
-}
-
-uint8_t getMute()
-{
-	return mute;
-}
 
 static void setVolume(int8_t val)
 {
@@ -61,20 +47,11 @@ static void setVolume(int8_t val)
 	return;
 }
 
-static void setPreamp(int8_t val)
-{
-	I2CStart(TDA7439_ADDR);
-	I2CWriteByte(TDA7439_PREAMP);
-	I2CWriteByte(-val);
-	I2CStop();
-
-	return;
-}
-
 static int8_t calcBMT(int8_t val)
 {
 	if (val > 0)
 		return 15 - val;
+
 	return 7 + val;
 }
 
@@ -108,6 +85,23 @@ static void setTreble(int8_t val)
 	return;
 }
 
+static void setPreamp(int8_t val)
+{
+	I2CStart(TDA7439_ADDR);
+	I2CWriteByte(TDA7439_PREAMP);
+	I2CWriteByte(-val);
+	I2CStop();
+
+	return;
+}
+
+static void setBalance(int8_t val)
+{
+	setVolume(sndPar[SND_VOLUME].value);
+
+	return;
+}
+
 static void setGain(int8_t val)
 {
 	I2CStart(TDA7439_ADDR);
@@ -117,6 +111,37 @@ static void setGain(int8_t val)
 
 	return;
 }
+
+
+sndParam *sndParAddr(uint8_t index)
+{
+	return &sndPar[index];
+}
+
+
+uint8_t getChan(void)
+{
+	return chan;
+}
+
+uint8_t getMute(void)
+{
+	return mute;
+}
+
+
+void changeParam(sndParam *param, int8_t diff)
+{
+	param->value += diff;
+	if (param->value > param->max)
+		param->value = param->max;
+	if (param->value < param->min)
+		param->value = param->min;
+	param->set(param->value);
+
+	return;
+}
+
 
 void setChan(uint8_t ch)
 {
@@ -137,18 +162,18 @@ void nextChan(void)
 	if (chan >= CHAN_CNT)
 		chan = 0;
 	setChan(chan);
+
+	return;
 }
 
-static void setBalance(int8_t val)
-{
-	setVolume(sndPar[SND_VOLUME].value);
-}
 
 void muteVolume(void)
 {
 	setVolume(sndPar[SND_VOLUME].min);
 	mute = MUTE_ON;
 	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
+
+	return;
 }
 
 void unmuteVolume(void)
@@ -156,7 +181,10 @@ void unmuteVolume(void)
 	setVolume(sndPar[SND_VOLUME].value);
 	mute = MUTE_OFF;
 	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
+
+	return;
 }
+
 
 void switchMute(void)
 {
@@ -165,7 +193,10 @@ void switchMute(void)
 	} else {
 		muteVolume();
 	}
+
+	return;
 }
+
 
 void loadAudioParams(uint8_t **txtLabels)
 {
@@ -215,24 +246,18 @@ void loadAudioParams(uint8_t **txtLabels)
 	setPreamp(sndPar[SND_PREAMP].value);
 	setMiddle(sndPar[SND_MIDDLE].value);
 	setTreble(sndPar[SND_TREBLE].value);
+
+	return;
 }
 
 void saveAudioParams(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < SND_PARAM_COUNT; i++) {
+	for (i = 0; i < SND_PARAM_COUNT; i++)
 		eeprom_update_byte(eepromVolume + i, sndPar[i].value);
-	}
-	eeprom_update_byte(eepromChannel, chan);
-}
 
-void changeParam(sndParam *param, int8_t diff)
-{
-	param->value += diff;
-	if (param->value > param->max)
-		param->value = param->max;
-	if (param->value < param->min)
-		param->value = param->min;
-	param->set(param->value);
+	eeprom_update_byte(eepromChannel, chan);
+
+	return;
 }

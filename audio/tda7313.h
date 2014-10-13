@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-#define AUDIOPROC_ADDR			0b10001000
+#define TDA7313_ADDR			0b10001000
 
 #define CHAN_CNT				3
 
@@ -47,6 +47,7 @@ enum {
 #define SND_PARAM_COUNT			8
 
 sndParam *sndParAddr(uint8_t index);
+
 uint8_t getChan();
 uint8_t getMute();
 uint8_t getLoudness();
