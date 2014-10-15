@@ -11,7 +11,7 @@
 #include "audio/audio.h"
 #include "display.h"
 
-uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
+static uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 
 /* Handle leaving standby mode */
 static void powerOn(void)
@@ -64,19 +64,18 @@ static void loadLabels(uint8_t **txtLabels)
 /* Hardware initialization */
 static void hwInit(void)
 {
-	loadLabels(txtLabels);			/* Load text labels from EEPROM */
+	loadLabels(txtLabels);				/* Load text labels from EEPROM */
 
-	I2CInit();						/* I2C bus */
-	ks0066Init();
-
-	rc5Init();						/* IR Remote control */
-	adcInit();						/* Analog-to-digital converter */
-	inputInit();					/* Buttons/encoder polling */
+	I2CInit();							/* I2C bus */
+	ks0066Init();						/* Display */
+	rc5Init();							/* IR Remote control */
+	adcInit();							/* Analog-to-digital converter */
+	inputInit();						/* Buttons/encoder polling */
 
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 	DDR(BCKL) |= BCKL_LINE;
 
-	sei();							/* Gloabl interrupt enable */
+	sei();								/* Gloabl interrupt enable */
 
 	muteVolume();
 
@@ -113,10 +112,9 @@ int main(void)
 			cmd = CMD_EMPTY;
 		}
 
-		/* Don't handle any command in standby mode except power on */
+		/* Don't handle any command in standby mode except power on and test */
 		if (dispMode == MODE_STANDBY) {
-			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
-				cmd != CMD_BTN_TEST)
+			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY && cmd != CMD_BTN_TEST)
 				cmd = CMD_EMPTY;
 		}
 
@@ -144,9 +142,9 @@ int main(void)
 			default:
 				curSndParam = sndParAddr(SND_GAIN0 + getChan());
 				dispMode = MODE_GAIN;
-				setDisplayTime(DISPLAY_TIME_GAIN);
 				break;
 			}
+			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
 		case CMD_BTN_3:
 		case CMD_RC5_TIME:
@@ -168,14 +166,10 @@ int main(void)
 			break;
 		case CMD_BTN_4:
 		case CMD_RC5_MUTE:
-			switch (dispMode) {
-			default:
-				ks0066Clear();
-				switchMute();
-				dispMode = MODE_MUTE;
-				setDisplayTime(DISPLAY_TIME_CHAN);
-				break;
-			}
+			ks0066Clear();
+			switchMute();
+			dispMode = MODE_MUTE;
+			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
@@ -195,6 +189,7 @@ int main(void)
 			break;
 #if defined(TDA7313)
 		case CMD_BTN_4_LONG:
+		case CMD_RC5_LOUDNESS:
 			ks0066Clear();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
@@ -209,14 +204,6 @@ int main(void)
 				break;
 			}
 			break;
-#if defined(TDA7313)
-		case CMD_RC5_LOUDNESS:
-			ks0066Clear();
-			switchLoudness();
-			dispMode = MODE_LOUDNESS;
-			setDisplayTime(DISPLAY_TIME_AUDIO);
-			break;
-#endif
 		case CMD_RC5_INPUT_0:
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
