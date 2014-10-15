@@ -24,22 +24,14 @@
 #define eepromBrStby	((void*)0x12)
 #define eepromBrWork	((void*)0x13)
 
-#define eepromFMFreq	((void*)0x16)
-#define eepromFMCtrl	((void*)0x18)
-#define eepromFMMono	((void*)0x19)
-#define eepromFMStep	((void*)0x1A)
-
 #define eepromRC5Addr	((void*)0x1C)
 #define eepromTempTH	((void*)0x1D)
 
 /* RC5 commands array */
-#define eepromRC5Cmd	((uint8_t*)0x40)
-
-/* FM stations */
-#define eepromStations	((uint16_t*)0x70)
+#define eepromRC5Cmd	((uint8_t*)0x20)
 
 /* Text labels (maximum 15 byte followed by \0) */
-#define labelsAddr		((uint8_t*)0xF0)
+#define labelsAddr		((uint8_t*)0x30)
 
 #define EEPROM_SIZE				0x200
 

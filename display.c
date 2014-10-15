@@ -5,7 +5,6 @@
 
 #include "eeprom.h"
 #include "input.h"
-#include "tuner.h"
 #include "adc.h"
 
 static int8_t brStby;							/* Brightness in standby mode */
@@ -148,51 +147,6 @@ void showRC5Info(uint16_t rc5Buf)
 	return;
 }
 
-#if !defined(NOTUNER)
-void showRadio(void)
-{
-	uint16_t freq = tunerGetFreq();
-	uint8_t num = stationNum(freq);
-
-	uint8_t lev;
-
-	/* Frequency value */
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"FM ");
-	ks0066WriteString(mkNumString(freq / 100, 3, ' '));
-	ks0066WriteData('.');
-	ks0066WriteString(mkNumString(freq / 10 % 10, 1, ' '));
-
-	/* Stereo indicator */
-	if (tunerStereo())
-		ks0066WriteString((uint8_t*)" S ");
-	else
-		ks0066WriteString((uint8_t*)"   ");
-
-	/* Signal level */
-	lev = tunerLevel() * 13 / 32;
-	if (lev < 3) {
-		ks0066WriteData(lev);
-		ks0066WriteData(0x00);
-	} else {
-		ks0066WriteData(0x03);
-		ks0066WriteData(lev - 3);
-	}
-
-	/* Station number */
-	if (num) {
-		ks0066WriteString(mkNumString(num, 3, ' '));
-	} else {
-		ks0066WriteString((uint8_t*)" --");
-	}
-
-	/* Frequency scale */
-	showBar(0, (FM_FREQ_MAX - FM_FREQ_MIN)>>5, (freq - FM_FREQ_MIN)>>5);
-
-	return;
-}
-#endif
-
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {
 	ks0066SetXY(0, 0);
@@ -254,8 +208,16 @@ static void drawTm(timeMode tm)
 void showTime(uint8_t **txtLabels)
 {
 	readTime();
-	ks0066SetXY(0, 0);
 
+	static uint8_t lastWeekDay;
+	uint8_t weekDay;
+
+	weekDay = getTime(WEEK) % 7;
+	if (weekDay != lastWeekDay)
+		ks0066Clear();
+	lastWeekDay = weekDay;
+
+	ks0066SetXY(0, 0);
 	drawTm(HOUR);
 	ks0066WriteData(':');
 	drawTm(MIN);
@@ -272,8 +234,7 @@ void showTime(uint8_t **txtLabels)
 	drawTm(YEAR);
 
 	ks0066SetXY(0, 1);
-
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + weekDay]);
 
 	if (getEtm() == NOEDIT) {
 		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);

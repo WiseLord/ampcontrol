@@ -1,11 +1,10 @@
 AUDIOPROC = TDA7313
-TUNER = TEA5767
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))_$(call lc,$(TUNER))
+TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
@@ -20,17 +19,7 @@ endif
 
 DISP_SRC = display.c display/ks0066.c
 
-ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner.c tuner/tea5767.c
-else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner.c tuner/tux032.c
-else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner.c tuner/lm7001.c
-else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner.c tuner/rda5807.c
-endif
-
-SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC)
 
 MCU = atmega8
 F_CPU = 8000000L
@@ -64,7 +53,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(TUNER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)

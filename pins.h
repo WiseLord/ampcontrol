@@ -24,7 +24,7 @@
 #define KS0066_E			B
 #define KS0066_E_LINE		(1<<2)
 
-/* KS0066 Backlight port */
+/* Backlight port */
 #define BCKL				B
 #define BCKL_LINE			(1<<3)
 
@@ -35,14 +35,6 @@
 /* Standby/Mute port definitions */
 #define STMU_MUTE			B
 #define STMU_MUTE_LINE		(1<<1)
-
-/* LM7001 definitions */
-#define LM7001_DATA			C
-#define LM7001_DATA_LINE	(1<<3)
-#define LM7001_CL			C
-#define LM7001_CL_LINE		(1<<2)
-#define LM7001_CE			C
-#define LM7001_CE_LINE		(1<<1)
 
 /* Encoder definitions */
 #define ENCODER_A			D
