@@ -189,8 +189,7 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 {
 	showBar(param->min, param->max, param->value);
 	ks0066SetXY(11, 0);
-//	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
-	ks0066WriteString(mkNumString(param->value, 3, ' '));
+	ks0066WriteString(mkNumString(((int16_t)(param->value) * param->step + 4) >> 3, 3, ' '));
 	showParLabel(param->label, txtLabels);
 	ks0066SetXY(14, 0);
 	writeStringEeprom(txtLabels[LABEL_DB]);
@@ -198,50 +197,57 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 	return;
 }
 
-static void drawTm(timeMode tm)
-{
-	ks0066WriteString(mkNumString(getTime(tm), 2, '0'));
-
-	return;
-}
-
 void showTime(uint8_t **txtLabels)
 {
-	readTime();
+	uint8_t i, flag;
 
-	static uint8_t lastWeekDay;
-	uint8_t weekDay;
+	int8_t *time;
+	static int8_t lastTime[7];
 
-	weekDay = getTime(WEEK) % 7;
-	if (weekDay != lastWeekDay)
-		ks0066Clear();
-	lastWeekDay = weekDay;
+	time = readTime();
 
-	ks0066SetXY(0, 0);
-	drawTm(HOUR);
-	ks0066WriteData(':');
-	drawTm(MIN);
-	ks0066WriteData(':');
-	drawTm(SEC);
-
-	ks0066SetXY(11, 0);
-	drawTm(DAY);
-	ks0066WriteData('.');
-	drawTm(MONTH);
-
-	ks0066SetXY(12, 1);
-	ks0066WriteString((uint8_t*)"20");
-	drawTm(YEAR);
-
-	ks0066SetXY(0, 1);
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + weekDay]);
-
-	if (getEtm() == NOEDIT) {
-		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
-	} else {
-		ks0066SetXY(pgm_read_byte(&timeCurPos[getEtm()]), 0);
-		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
+	flag = 0;
+	for (i = 0; i < 7; i++) {
+		if (lastTime[i] != time[i]) {
+			flag = 1;
+			break;
+		}
 	}
+
+	if (flag) {
+		if (lastTime[WEEK] != time[WEEK])
+			ks0066Clear();
+
+		ks0066SetXY(0, 0);
+		ks0066WriteString(mkNumString(time[HOUR], 2, '0'));
+		ks0066WriteData(':');
+		ks0066WriteString(mkNumString(time[MIN], 2, '0'));
+		ks0066WriteData(':');
+		ks0066WriteString(mkNumString(time[SEC], 2, '0'));
+
+		ks0066SetXY(11, 0);
+		ks0066WriteString(mkNumString(time[DAY], 2, '0'));
+		ks0066WriteData('.');
+		ks0066WriteString(mkNumString(time[MONTH], 2, '0'));
+
+		ks0066SetXY(12, 1);
+		ks0066WriteString((uint8_t*)"20");
+		ks0066WriteString(mkNumString(time[YEAR], 2, '0'));
+
+		ks0066SetXY(0, 1);
+		writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
+
+		if (getEtm() == NOEDIT) {
+			ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
+		} else {
+			ks0066SetXY(pgm_read_byte(&timeCurPos[getEtm()]), 0);
+			ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
+		}
+	}
+
+	for (i = 0; i < 7; i++)
+		lastTime[i] = time[i];
+
 
 	return;
 }
