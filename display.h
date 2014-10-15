@@ -4,8 +4,8 @@
 #include <inttypes.h>
 
 #include "ds1307.h"
-#include "audio/audio.h"
-#include "display/ks0066.h"
+#include "tda7313.h"
+#include "ks0066.h"
 
 /* Timers fo different screens */
 #define DISPLAY_TIME_TEST		15
@@ -26,23 +26,17 @@
 
 /* Display modes */
 enum {
-	MODE_STANDBY,
-	MODE_SPECTRUM,
-
 	MODE_VOLUME,
 	MODE_BASS,
-#if defined(TDA7439)
-	MODE_MIDDLE,
-#endif
 	MODE_TREBLE,
-#if defined(TDA7439)
-	MODE_PREAMP,
-#elif defined(TDA7313) || defined(TDA7318)
-	MODE_FRONTREAR,
-#endif
 	MODE_BALANCE,
+	MODE_FRONTREAR,
+	MODE_GAIN0,
+	MODE_GAIN1,
+	MODE_GAIN2,
 
-	MODE_GAIN,
+	MODE_STANDBY,
+	MODE_SPECTRUM,
 
 	MODE_TIME,
 	MODE_TIME_EDIT,

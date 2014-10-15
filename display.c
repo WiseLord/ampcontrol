@@ -165,7 +165,6 @@ void showBrWork(uint8_t **txtLabels)
 {
 	showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
 	ks0066SetXY(13, 0);
-//	showParValue(brWork);
 	ks0066WriteString(mkNumString(brWork, 3, ' '));
 	showParLabel(txtLabels[LABEL_BR_WORK], txtLabels);
 

@@ -2,7 +2,7 @@
 #define KS0066_H
 
 #include <inttypes.h>
-#include "../pins.h"
+#include "pins.h"
 
 #define KS0066_INIT_DATA			0x30
 

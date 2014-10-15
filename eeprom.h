@@ -6,14 +6,12 @@
 /* Parameters values */
 #define eepromVolume	((void*)0x00)
 #define eepromBass		((void*)0x01)
-#define eepromMiddle	((void*)0x02)
-#define eepromTreble	((void*)0x03)
-#define eepromPreamp	((void*)0x04)
-#define eepromBalance	((void*)0x05)
-#define eepromGain0		((void*)0x06)
-#define eepromGain1		((void*)0x07)
-#define eepromGain2		((void*)0x08)
-#define eepromGain3		((void*)0x09)
+#define eepromTreble	((void*)0x02)
+#define eepromBalance	((void*)0x03)
+#define eepromFrontRear	((void*)0x04)
+#define eepromGain0		((void*)0x05)
+#define eepromGain1		((void*)0x06)
+#define eepromGain2		((void*)0x07)
 
 /* Some values stored in EEPROM */
 #define eepromLoudness	((void*)0x0C)
@@ -33,21 +31,19 @@
 /* Text labels (maximum 15 byte followed by \0) */
 #define labelsAddr		((uint8_t*)0x30)
 
-#define EEPROM_SIZE				0x200
+#define EEPROM_SIZE		0x200
 
 /* EEPROM saved labels */
 enum {
 	LABEL_VOLUME,
 	LABEL_BASS,
-	LABEL_MIDDLE,
 	LABEL_TREBLE,
-	LABEL_PREAMP,
-	LABEL_FRONTREAR,
 	LABEL_BALANCE,
+	LABEL_FRONTREAR,
 	LABEL_GAIN0,
 	LABEL_GAIN1,
 	LABEL_GAIN2,
-	LABEL_GAIN3,
+
 	LABEL_MUTE,
 	LABEL_LOUDNESS,
 	LABEL_ON,
@@ -65,6 +61,6 @@ enum {
 	LABEL_BR_WORK
 };
 
-#define LABELS_COUNT			24
+#define LABELS_COUNT			21
 
 #endif /* EEPROM_H */

@@ -1,25 +1,7 @@
-AUDIOPROC = TDA7313
-
-# Lowercase argument
-lc = $(shell echo $1 | tr A-Z a-z)
-
 # Fimware file base name
-TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))
+TARG = ampcontrol_m8-lcd
 
-SPECT_SRC = fft.c adc.c
-CTRL_SRC = input.c rc5.c
-
-ifeq ($(AUDIOPROC), TDA7313)
-  AUDIO_SRC = audio/tda7313.c
-else ifeq ($(AUDIOPROC), TDA7318)
-  AUDIO_SRC = audio/tda7318.c
-else ifeq ($(AUDIOPROC), TDA7439)
-  AUDIO_SRC = audio/tda7439.c
-endif
-
-DISP_SRC = display.c display/ks0066.c
-
-SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC)
+SRCS = main.c i2c.c ds1307.c fft.c adc.c input.c rc5.c tda7313.c display.c ks0066.c
 
 MCU = atmega8
 F_CPU = 8000000L
@@ -53,7 +35,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)

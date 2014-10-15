@@ -8,7 +8,7 @@
 #include "rc5.h"
 #include "i2c.h"
 
-#include "audio/audio.h"
+#include "tda7313.h"
 #include "display.h"
 
 static uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
@@ -136,12 +136,12 @@ int main(void)
 		case CMD_BTN_2:
 		case CMD_RC5_NEXT_INPUT:
 			switch (dispMode) {
-			case MODE_GAIN:
+			case MODE_GAIN0:
 				nextChan();
 				ks0066Clear();
 			default:
 				curSndParam = sndParAddr(SND_GAIN0 + getChan());
-				dispMode = MODE_GAIN;
+				dispMode = MODE_GAIN0;
 				break;
 			}
 			setDisplayTime(DISPLAY_TIME_GAIN);
@@ -173,7 +173,7 @@ int main(void)
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
-			if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
+			if (dispMode < MODE_FRONTREAR) {
 				curSndParam++;
 				dispMode++;
 			} else {
@@ -187,7 +187,6 @@ int main(void)
 			dispMode = MODE_BR;
 			setDisplayTime(DISPLAY_TIME_BR);
 			break;
-#if defined(TDA7313)
 		case CMD_BTN_4_LONG:
 		case CMD_RC5_LOUDNESS:
 			ks0066Clear();
@@ -195,7 +194,6 @@ int main(void)
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
-#endif
 		case CMD_BTN_TEST:
 			switch (dispMode) {
 			case MODE_STANDBY:
@@ -207,13 +205,10 @@ int main(void)
 		case CMD_RC5_INPUT_0:
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
-#if !defined(TDA7313)
-		case CMD_RC5_INPUT_3:
-#endif
 			setChan(cmd - CMD_RC5_INPUT_0);
 			ks0066Clear();
 			curSndParam = sndParAddr(SND_GAIN0 + getChan());
-			dispMode = MODE_GAIN;
+			dispMode = MODE_GAIN0;
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
 		}
