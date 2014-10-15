@@ -26,30 +26,30 @@ static void setVolume(int8_t val)
 {
 	int8_t spFrontLeft = 0;
 	int8_t spFrontRight = 0;
-
 	int8_t spRearLeft = 0;
 	int8_t spRearRight = 0;
 
 	if (sndPar[SND_BALANCE].value > 0) {
-		spFrontRight -= sndPar[SND_BALANCE].value;
-		spRearRight -= sndPar[SND_BALANCE].value;
+		spFrontRight += sndPar[SND_BALANCE].value;
+		spRearRight += sndPar[SND_BALANCE].value;
 	} else {
-		spFrontLeft += sndPar[SND_BALANCE].value;
-		spRearLeft += sndPar[SND_BALANCE].value;
+		spFrontLeft -= sndPar[SND_BALANCE].value;
+		spRearLeft -= sndPar[SND_BALANCE].value;
 	}
 	if (sndPar[SND_FRONTREAR].value > 0) {
-		spRearLeft -= sndPar[SND_FRONTREAR].value;
-		spRearRight -= sndPar[SND_FRONTREAR].value;
+		spRearLeft += sndPar[SND_FRONTREAR].value;
+		spRearRight += sndPar[SND_FRONTREAR].value;
 	} else {
-		spFrontLeft += sndPar[SND_FRONTREAR].value;
-		spFrontRight += sndPar[SND_FRONTREAR].value;
+		spFrontLeft -= sndPar[SND_FRONTREAR].value;
+		spFrontRight -= sndPar[SND_FRONTREAR].value;
 	}
+
 	I2CStart(TDA7313_ADDR);
 	I2CWriteByte(TDA7313_VOLUME | -val);
-	I2CWriteByte(TDA7313_SP_FRONT_LEFT | -spFrontLeft);
-	I2CWriteByte(TDA7313_SP_FRONT_RIGHT | -spFrontRight);
-	I2CWriteByte(TDA7313_SP_REAR_LEFT | -spRearLeft);
-	I2CWriteByte(TDA7313_SP_REAR_RIGHT | -spRearRight);
+	I2CWriteByte(TDA7313_SP_FRONT_LEFT | spFrontLeft);
+	I2CWriteByte(TDA7313_SP_FRONT_RIGHT | spFrontRight);
+	I2CWriteByte(TDA7313_SP_REAR_LEFT | spRearLeft);
+	I2CWriteByte(TDA7313_SP_REAR_RIGHT | spRearRight);
 	I2CStop();
 
 	return;
@@ -81,14 +81,14 @@ static void setTreble(int8_t val)
 	return;
 }
 
-static void setBalanceFrontRear(int8_t val)
+static void setBalance(int8_t val)
 {
 	setVolume(sndPar[SND_VOLUME].value);
 
 	return;
 }
 
-static void setBalance(int8_t val)
+static void seFrontRear(int8_t val)
 {
 	setVolume(sndPar[SND_VOLUME].value);
 
@@ -98,7 +98,7 @@ static void setBalance(int8_t val)
 static void setSwitch(int8_t gain)
 {
 	I2CStart(TDA7313_ADDR);
-	I2CWriteByte(TDA7313_SW | (CHAN_CNT - gain) << 3 | loud << 2 | chan);
+	I2CWriteByte(TDA7313_SW | ((CHAN_CNT - gain) << 3) | (loud << 2) | chan);
 	I2CStop();
 
 	return;
@@ -210,17 +210,10 @@ void loadAudioParams(uint8_t **txtLabels)
 {
 	uint8_t i;
 
-	for (i = 0; i < SND_PARAM_COUNT; i++)
+	for (i = 0; i < SND_PARAM_COUNT; i++) {
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
-
-	sndPar[SND_VOLUME].label = txtLabels[LABEL_VOLUME];
-	sndPar[SND_BASS].label = txtLabels[LABEL_BASS];
-	sndPar[SND_TREBLE].label = txtLabels[LABEL_TREBLE];
-	sndPar[SND_FRONTREAR].label = txtLabels[LABEL_FRONTREAR];
-	sndPar[SND_BALANCE].label = txtLabels[LABEL_BALANCE];
-	sndPar[SND_GAIN0].label = txtLabels[LABEL_GAIN0];
-	sndPar[SND_GAIN1].label = txtLabels[LABEL_GAIN1];
-	sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
+		sndPar[i].label = txtLabels[i];
+	}
 
 	chan = eeprom_read_byte(eepromChannel);
 	loud = eeprom_read_byte(eepromLoudness);
@@ -228,8 +221,8 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_VOLUME].set = setVolume;
 	sndPar[SND_BASS].set = setBass;
 	sndPar[SND_TREBLE].set = setTreble;
-	sndPar[SND_FRONTREAR].set = setBalanceFrontRear;
 	sndPar[SND_BALANCE].set = setBalance;
+	sndPar[SND_FRONTREAR].set = seFrontRear;
 
 	for (i = 0; i < 3; i++) {
 		sndPar[SND_GAIN0 + i].set = setGain;
@@ -238,7 +231,7 @@ void loadAudioParams(uint8_t **txtLabels)
 	muteVolume();
 	setChan(chan);
 	setBass(sndPar[SND_BASS].value);
-	setBalanceFrontRear(0);
+	seFrontRear(0);
 	setTreble(sndPar[SND_TREBLE].value);
 
 	return;
