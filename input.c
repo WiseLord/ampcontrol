@@ -122,7 +122,7 @@ ISR (TIMER2_COMP_vect)
 			encCnt++;
 		break;
 */	}
-	encPrev = encNow;				/* Save current encoder state */
+	encPrev = encNow; /* Save current encoder state */
 
 	/* If button event has happened, place it to command buffer */
 	if (btnNow) {
@@ -180,7 +180,6 @@ ISR (TIMER2_COMP_vect)
 	uint16_t rc5Buf = getRC5RawBuf();
 	if (rc5Buf != RC5_BUF_EMPTY)
 		rc5SaveBuf = rc5Buf;
-
 
 	static uint8_t togBitNow = 0;
 	static uint8_t togBitPrev = 0;

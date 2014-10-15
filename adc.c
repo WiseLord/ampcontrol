@@ -6,9 +6,9 @@
 #include "fft.h"
 #include "pins.h"
 
-static int16_t f_l[FFT_SIZE];			/* Real values for left channel */
-static int16_t f_i[FFT_SIZE];			/* Imaginary values */
-static uint8_t buf[FFT_SIZE / 4];		/* Previous fft results: both left and right */
+static int16_t fr[FFT_SIZE];						/* Real values for left channel */
+static int16_t fi[FFT_SIZE];						/* Imaginary values */
+static uint8_t buf[FFT_SIZE / 4];					/* Buffer with previous fft results */
 
 static const uint8_t hannTable[] PROGMEM = {
 	  0,   1,   3,   6,  10,  16,  22,  30,
@@ -21,8 +21,9 @@ static uint8_t _br;
 
 void adcInit()
 {
-	TIMSK |= (1<<TOIE0);						/* Enable Timer0 overflow interrupt */
-	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);	/* Set timer prescaller to 8 (1MHz) */
+	/* Enable Timer0 overflow interrupt with prescaller 8 (1MHz) */
+	TIMSK |= (1<<TOIE0);
+	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);
 
 	/* Enable ADC with prescaler 16 */
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
@@ -42,21 +43,21 @@ ISR (TIMER0_OVF_vect)
 
 	static uint8_t br;
 
-	if (++br >= DISP_MAX_BR)					/* Loop brightness */
+	if (++br >= DISP_MAX_BR)						/* Loop brightness */
 		br = DISP_MIN_BR;
 
 	if (br >= _br)
-		PORT(BCKL) &= ~BCKL_LINE;				/* Turn backlight off */
+		PORT(BCKL) &= ~BCKL_LINE;					/* Turn backlight off */
 	else
-		PORT(BCKL) |= BCKL_LINE;						/* Turn backlight on */
+		PORT(BCKL) |= BCKL_LINE;					/* Turn backlight on */
 
 	return;
 };
 
 static uint8_t revBits(uint8_t x)
 {
-	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);	/* 00abcdef => 00badcfe */
-	x = (x & 0x0C) | swap(x & 0x33);			/* 00badcfe => 00fedcba */
+	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);		/* 00abcdef => 00badcfe */
+	x = (x & 0x0C) | swap(x & 0x33);				/* 00badcfe => 00fedcba */
 
 	return x;
 }
@@ -66,7 +67,7 @@ static void getValues()
 	uint8_t i = 0, j;
 	uint8_t hv;
 
-	while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
+	while (!(ADCSRA & (1<<ADSC)));					/* Wait for start measure */
 
 	do {
 		j = revBits(i);
@@ -75,12 +76,12 @@ static void getValues()
 		else
 			hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
 
-		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
-		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
-		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
-		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
+		while (ADCSRA & (1<<ADSC));					/* Wait for finish measure */
+		fr[j] = ADCH - DC_CORR;						/* Read left channel value */
+		fr[j] = ((int32_t)hv * fr[j]) >> 6;			/* Apply Hann window */
+		while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
 
-		f_i[i++] = 0;
+		fi[i++] = 0;
 	} while (i < FFT_SIZE);
 
 	return;
@@ -93,7 +94,7 @@ static void slowFall()
 	int16_t fl;
 
 	for (i = 0; i < FFT_SIZE / 4; i++) {
-		fl = f_l[2 * i] + f_l[2 * i + 1];
+		fl = fr[2 * i] + fr[2 * i + 1];
 		if (fl < buf[i])
 			buf[i]--;
 		else
@@ -107,8 +108,8 @@ uint8_t *getSpData()
 {
 	getValues();
 
-	fftRad4(f_l, f_i);
-	cplx2dB(f_l, f_i);
+	fftRad4(fr, fi);
+	cplx2dB(fr, fi);
 
 	slowFall();
 
