@@ -6,7 +6,7 @@
 
 #define swap(x) (__builtin_avr_swap(x))		/*  Swaps nibbles in byte */
 
-#define DC_CORR 126 /* Raw value from ADC when no signal */
+#define DC_CORR				128 /* Raw value from ADC when no signal */
 
 #define DISP_MIN_BR			0
 #define DISP_MAX_BR			48

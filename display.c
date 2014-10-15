@@ -9,6 +9,7 @@
 
 static int8_t brStby;							/* Brightness in standby mode */
 static int8_t brWork;							/* Brightness in working mode */
+
 static uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
 static const uint8_t timeCurPos[] PROGMEM = {
@@ -16,7 +17,7 @@ static const uint8_t timeCurPos[] PROGMEM = {
 };
 
 static const uint8_t barSymbols[] PROGMEM = {
-	0x00, 0x10, 0x14, 0x15,
+	0x00, 0x10, 0x14, 0x15, 0x05, 0x01,
 };
 
 static void writeStringEeprom(const uint8_t *string)
@@ -55,15 +56,15 @@ static void lcdGenBar(void)
 	ks0066WriteCommand(KS0066_SET_CGRAM);
 
 	uint8_t i;
-	uint8_t sym;
 
-	for (i = 0; i < 8 * 4; i++) {
-		sym = i / 8;
-		if (i % 8 == 3)
-			sym = 3;
-		if (i % 8 == 7)
-			sym = 0;
-		ks0066WriteData(pgm_read_byte(&barSymbols[sym]));
+	for (i = 0; i < 48; i++) {
+			if ((i & 0x07) == 0x03) {
+					ks0066WriteData(0x15);
+			} else if ((i & 0x07) == 0x07) {
+					ks0066WriteData(0x00);
+			} else {
+				ks0066WriteData(pgm_read_byte(&barSymbols[i>>3]));
+			}
 	}
 
 	return;
@@ -111,16 +112,44 @@ static void showBar(int8_t min, int8_t max, int8_t value)
 	lcdGenBar();
 	ks0066SetXY(0, 1);
 
-	value = (int16_t)(value - min) * 48 / (max - min);
-	for (i = 0; i < 16; i++) {
-		if (value / 3 > i) {
-			ks0066WriteData(0x03);
-		} else {
-			if (value / 3 < i) {
+	if (min + max) {
+		value = (int16_t)48 * (value - min) / (max - min);
+		for (i = 0; i < 16; i++)
+			if (value / 3 > i)
+				ks0066WriteData(0x03);
+			else
+				if (value / 3 < i)
+					ks0066WriteData(0x00);
+				else
+					ks0066WriteData(value % 3);
+	} else {
+		value = (int16_t)23 * value / max;
+		if (value >= 0) {
+			value++;
+			for (i = 0; i < 7; i++)
 				ks0066WriteData(0x00);
-			} else {
-				ks0066WriteData(value % 3);
-			}
+			ks0066WriteData(0x05);
+			for (i = 0; i < 8; i++)
+				if (value / 3 > i)
+					ks0066WriteData(0x03);
+				else
+					if (value / 3 < i)
+						ks0066WriteData(0x00);
+					else
+						ks0066WriteData(value % 3);
+		} else {
+			value += 23;
+			for (i = 0; i < 8; i++)
+				if (value / 3 > i)
+					ks0066WriteData(0x00);
+				else
+					if (value / 3 < i)
+						ks0066WriteData(0x03);
+					else
+						ks0066WriteData(value % 3 + 3);
+			ks0066WriteData(0x01);
+			for (i = 0; i < 7; i++)
+				ks0066WriteData(0x00);
 		}
 	}
 
