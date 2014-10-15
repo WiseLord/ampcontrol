@@ -45,8 +45,8 @@ enum {
 
 sndParam *sndParAddr(uint8_t index);
 
-uint8_t getChan();
-uint8_t getMute();
+uint8_t getChan(void);
+uint8_t getMute(void);
 
 void changeParam(sndParam *sndPar, int8_t diff);
 
