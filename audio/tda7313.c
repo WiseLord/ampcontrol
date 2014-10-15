@@ -119,17 +119,17 @@ sndParam *sndParAddr(uint8_t index)
 }
 
 
-uint8_t getChan()
+uint8_t getChan(void)
 {
 	return chan;
 }
 
-uint8_t getMute()
+uint8_t getMute(void)
 {
 	return mute;
 }
 
-uint8_t getLoudness()
+uint8_t getLoudness(void)
 {
 	return loud;
 }
