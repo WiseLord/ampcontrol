@@ -290,11 +290,9 @@ int main(void)
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
 			break;
-#if defined(TDA7313)
 		case MODE_LOUDNESS:
 			showBoolParam(!getLoudness(), txtLabels[LABEL_LOUDNESS], txtLabels);
 			break;
-#endif
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime(txtLabels);
