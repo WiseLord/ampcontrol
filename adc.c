@@ -28,8 +28,8 @@ void adcInit()
 	/* Enable ADC with prescaler 16 */
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
 
-	/* Set mux to ADC3 with adjusting result to left */
-	ADMUX = (1<<ADLAR) | (1<<MUX1) | (1<<MUX0);
+	/* Set mux to ADC2 with adjusting result to left */
+	ADMUX = (1<<ADLAR) | (0<<MUX3) | (0<<MUX2) | (1<<MUX1) | (0<<MUX0);
 
 	return;
 }
