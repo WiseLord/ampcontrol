@@ -261,8 +261,14 @@ int main(void)
 		}
 
 		/* Clear screen if mode has changed */
-		if (dispMode != dispModePrev)
+		if (dispMode != dispModePrev && dispMode != MODE_TIME_EDIT)
 			ks0066Clear();
+
+		/* Stop time edit */
+		if (dispMode != MODE_TIME_EDIT) {
+			stopEditTime();
+			ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
+		}
 
 		/* Show things */
 		switch (dispMode) {

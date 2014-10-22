@@ -38,9 +38,9 @@
 
 /* Encoder definitions */
 #define ENCODER_A			C
-#define ENCODER_A_LINE		(1<<0)
+#define ENCODER_A_LINE		(1<<1)
 #define ENCODER_B			C
-#define ENCODER_B_LINE		(1<<1)
+#define ENCODER_B_LINE		(1<<0)
 
 /* Buttons definitions */
 #define BUTTON_1			B
