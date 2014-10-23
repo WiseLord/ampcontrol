@@ -20,7 +20,7 @@
 #define BTN_14			(BTN_1 | BTN_4)
 
 /* RC5 support definitions */
-#define RC5_CMD_COUNT	31
+#define RC5_CMD_COUNT	12
 
 enum {
 	CMD_RC5_STBY,
@@ -31,11 +31,9 @@ enum {
 	CMD_RC5_INPUT_0,
 	CMD_RC5_INPUT_1,
 	CMD_RC5_INPUT_2,
-	CMD_RC5_INPUT_3,
 	CMD_RC5_NEXT_INPUT,
 	CMD_RC5_TIME,
 	CMD_RC5_BACKLIGHT,
-	CMD_RC5_SP_MODE,
 	CMD_RC5_LOUDNESS,
 
 	CMD_BTN_1,
