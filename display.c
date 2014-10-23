@@ -350,35 +350,20 @@ void showTime(uint8_t **txtLabels)
 		ks0066WriteString(mkNumString(time[YEAR], 2, '0'));
 
 		ks0066WriteCommand(KS0066_SET_CGRAM);
-		switch (time[WEEK]) {
-		case 1:
+		if (time[WEEK] < 5) {
 			lcdGenLetter(cyr_P);
 			lcdGenLetter(cyr_D);
 			lcdGenLetter(cyr_L);
 			lcdGenLetter(cyr_I);
-			break;
-		case 2:
-			lcdGenLetter(cyr_I);
-			break;
-		case 3:
-			lcdGenLetter(cyr_D);
-			break;
-		case 4:
 			lcdGenLetter(cyr_CH);
 			lcdGenLetter(cyr_G);
-			break;
-		case 5:
+		} else {
 			lcdGenLetter(cyr_P);
 			lcdGenLetter(cyr_YA);
 			lcdGenLetter(cyr_I);
 			lcdGenLetter(cyr_TS);
-			break;
-		case 6:
 			lcdGenLetter(cyr_U);
 			lcdGenLetter(cyr_B);
-			break;
-		default:
-			break;
 		}
 
 		ks0066SetXY(0, 1);
