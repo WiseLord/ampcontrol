@@ -130,12 +130,14 @@ uint8_t getMute(void)
 
 uint8_t getLoudness(void)
 {
-	return loud;
+	return !loud;
 }
 
 
-void changeParam(sndParam *param, int8_t diff)
+void changeParam(uint8_t index, int8_t diff)
 {
+	sndParam *param = &sndPar[index];
+
 	param->value += diff;
 	if (param->value > param->max)
 		param->value = param->max;

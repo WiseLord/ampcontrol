@@ -48,7 +48,7 @@ uint8_t getChan(void);
 uint8_t getMute(void);
 uint8_t getLoudness(void);
 
-void changeParam(sndParam *sndPar, int8_t diff);
+void changeParam(uint8_t index, int8_t diff);
 
 void setChan(uint8_t ch);
 void nextChan(void);

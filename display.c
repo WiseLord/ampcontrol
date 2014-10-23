@@ -20,6 +20,20 @@ static const uint8_t barSymbols[] PROGMEM = {
 	0x00, 0x10, 0x14, 0x15, 0x05, 0x01,
 };
 
+static const uint8_t cyr_P[]  PROGMEM = {0x1F, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x00};
+static const uint8_t cyr_D[]  PROGMEM = {0x07, 0x09, 0x09, 0x09, 0x09, 0x09, 0x1F, 0x11};
+static const uint8_t cyr_L[]  PROGMEM = {0x07, 0x09, 0x09, 0x09, 0x09, 0x09, 0x11, 0x00};
+static const uint8_t cyr_I[]  PROGMEM = {0x11, 0x11, 0x13, 0x15, 0x19, 0x11, 0x11, 0x00};
+static const uint8_t cyr_CH[] PROGMEM = {0x11, 0x11, 0x11, 0x0F, 0x01, 0x01, 0x01, 0x00};
+static const uint8_t cyr_G[]  PROGMEM = {0x1F, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x00};
+static const uint8_t cyr_YA[] PROGMEM = {0x0F, 0x11, 0x11, 0x0F, 0x05, 0x09, 0x11, 0x00};
+static const uint8_t cyr_TS[] PROGMEM = {0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x1F, 0x01};
+static const uint8_t cyr_U[]  PROGMEM = {0x11, 0x11, 0x11, 0x0F, 0x01, 0x11, 0x0E, 0x00};
+static const uint8_t cyr_B[]  PROGMEM = {0x1F, 0x10, 0x10, 0x1E, 0x11, 0x11, 0x1E, 0x00};
+static const uint8_t cyr_F[]  PROGMEM = {0x04, 0x0E, 0x15, 0x15, 0x15, 0x0E, 0x04, 0x00};
+static const uint8_t cyr_YU[]  PROGMEM = {0x12, 0x15, 0x15, 0x1D, 0x15, 0x15, 0x12, 0x00};
+static const uint8_t cyr_SH[]  PROGMEM = {0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x1F, 0x00};
+
 static void writeStringEeprom(const uint8_t *string)
 {
 	uint8_t i = 0;
@@ -57,7 +71,7 @@ static void lcdGenBar(void)
 
 	uint8_t i;
 
-	for (i = 0; i < 48; i++) {
+	for (i = 0; i < 8 * sizeof(barSymbols); i++) {
 			if ((i & 0x07) == 0x03) {
 					ks0066WriteData(0x15);
 			} else if ((i & 0x07) == 0x07) {
@@ -66,6 +80,32 @@ static void lcdGenBar(void)
 				ks0066WriteData(pgm_read_byte(&barSymbols[i>>3]));
 			}
 	}
+
+	return;
+}
+
+static void lcdGenLetter(const uint8_t *letter)
+{
+	uint8_t i;
+
+	for (i = 0; i < 8; i++)
+		ks0066WriteData(pgm_read_byte(&letter[i]));
+
+	return;
+}
+
+static void lcdGenMuteLoudLabels(void)
+{
+	ks0066WriteCommand(KS0066_SET_CGRAM);
+
+	lcdGenLetter(cyr_TS);
+	lcdGenLetter(cyr_I);
+	lcdGenLetter(cyr_YA);
+	lcdGenLetter(cyr_P);
+	lcdGenLetter(cyr_G);
+	lcdGenLetter(cyr_L);
+	lcdGenLetter(cyr_U);
+	lcdGenLetter(cyr_SH);
 
 	return;
 }
@@ -109,7 +149,6 @@ static void showBar(int8_t min, int8_t max, int8_t value)
 {
 	uint8_t i;
 
-	lcdGenBar();
 	ks0066SetXY(0, 1);
 
 	if (min + max) {
@@ -176,10 +215,27 @@ void showRC5Info(uint16_t rc5Buf)
 	return;
 }
 
-void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
+void showMute(uint8_t value, uint8_t **txtLabels)
 {
+	lcdGenMuteLoudLabels();
+
 	ks0066SetXY(0, 0);
-	writeStringEeprom(parLabel);
+	writeStringEeprom(txtLabels[LABEL_MUTE]);
+	ks0066SetXY(1, 1);
+	if (value)
+		writeStringEeprom(txtLabels[LABEL_ON]);
+	else
+		writeStringEeprom(txtLabels[LABEL_OFF]);
+
+	return;
+}
+
+void showLoudness(uint8_t value, uint8_t **txtLabels)
+{
+	lcdGenMuteLoudLabels();
+
+	ks0066SetXY(0, 0);
+	writeStringEeprom(txtLabels[LABEL_LOUDNESS]);
 	ks0066SetXY(1, 1);
 	if (value)
 		writeStringEeprom(txtLabels[LABEL_ON]);
@@ -192,6 +248,8 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 /* Show brightness control */
 void showBrWork(uint8_t **txtLabels)
 {
+	lcdGenBar();
+	lcdGenLetter(cyr_YA);
 	showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
 	ks0066SetXY(13, 0);
 	ks0066WriteString(mkNumString(brWork, 3, ' '));
@@ -213,14 +271,43 @@ void changeBrWork(int8_t diff)
 }
 
 /* Show audio parameter */
-void showSndParam(sndParam *param, uint8_t **txtLabels)
+void showSndParam(uint8_t index, uint8_t **txtLabels)
 {
+	volatile sndParam *param = sndParAddr(index);
+
+	lcdGenBar();
+	switch (index) {
+	case SND_VOLUME:
+	case SND_FRONTREAR:
+		lcdGenLetter(cyr_G);
+		lcdGenLetter(cyr_F);
+		break;
+	case SND_BASS:
+	case SND_TREBLE:
+		lcdGenLetter(cyr_B);
+		lcdGenLetter(cyr_CH);
+		break;
+	case SND_BALANCE:
+		lcdGenLetter(cyr_B);
+		lcdGenLetter(cyr_L);
+		break;
+	case SND_GAIN0:
+	case SND_GAIN1:
+		lcdGenLetter(cyr_P);
+		lcdGenLetter(cyr_YU);
+		break;
+	case SND_GAIN2:
+		lcdGenLetter(cyr_P);
+		lcdGenLetter(cyr_L);
+		break;
+	}
+
 	showBar(param->min, param->max, param->value);
 	ks0066SetXY(11, 0);
 	ks0066WriteString(mkNumString(((int16_t)(param->value) * param->step + 4) >> 3, 3, ' '));
 	showParLabel(param->label, txtLabels);
 	ks0066SetXY(14, 0);
-	writeStringEeprom(txtLabels[LABEL_DB]);
+	ks0066WriteString((uint8_t*)"dB");
 
 	return;
 }
@@ -262,8 +349,40 @@ void showTime(uint8_t **txtLabels)
 		ks0066WriteString((uint8_t*)"20");
 		ks0066WriteString(mkNumString(time[YEAR], 2, '0'));
 
+		ks0066WriteCommand(KS0066_SET_CGRAM);
+		switch (time[WEEK]) {
+		case 1:
+			lcdGenLetter(cyr_P);
+			lcdGenLetter(cyr_D);
+			lcdGenLetter(cyr_L);
+			lcdGenLetter(cyr_I);
+			break;
+		case 2:
+			lcdGenLetter(cyr_I);
+			break;
+		case 3:
+			lcdGenLetter(cyr_D);
+			break;
+		case 4:
+			lcdGenLetter(cyr_CH);
+			lcdGenLetter(cyr_G);
+			break;
+		case 5:
+			lcdGenLetter(cyr_P);
+			lcdGenLetter(cyr_YA);
+			lcdGenLetter(cyr_I);
+			lcdGenLetter(cyr_TS);
+			break;
+		case 6:
+			lcdGenLetter(cyr_U);
+			lcdGenLetter(cyr_B);
+			break;
+		default:
+			break;
+		}
+
 		ks0066SetXY(0, 1);
-		writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
+		writeStringEeprom(txtLabels[LABEL_SUNDAY + time[WEEK] % 7]);
 
 		if (getEtm() == NOEDIT) {
 			ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);

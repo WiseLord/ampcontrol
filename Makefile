@@ -46,8 +46,5 @@ flash: $(TARG)
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xe4:m -U hfuse:w:0xc1:m
 
-eeprom_en:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_en.bin:r
-
-eeprom_ru:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ru.bin:r
+eep:
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom.bin:r

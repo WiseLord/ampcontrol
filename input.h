@@ -15,8 +15,9 @@
 #define BTN_3			0b00100
 #define BTN_4			0b00010
 #define BTN_5			0b00001
-#define BTN_12			0b11000
-#define BTN_13			0b10100
+#define BTN_12			(BTN_1 | BTN_2)
+#define BTN_13			(BTN_1 | BTN_3)
+#define BTN_14			(BTN_1 | BTN_4)
 
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	31
@@ -47,7 +48,8 @@ enum {
 	CMD_BTN_3_LONG,
 	CMD_BTN_4_LONG,
 	CMD_BTN_5_LONG,
-	CMD_BTN_TEST,
+	CMD_BTN_12_LONG,
+	CMD_BTN_14_LONG,
 
 	CMD_EMPTY = 0xEF
 };

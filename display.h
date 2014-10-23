@@ -55,12 +55,14 @@ enum {
 #define STR_BUFSIZE		16
 
 void showRC5Info(uint16_t rc5Buf);
-void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
+
+void showMute(uint8_t value, uint8_t **txtLabels);
+void showLoudness(uint8_t value, uint8_t **txtLabels);
 
 void showBrWork(uint8_t **txtLabels);
 void changeBrWork(int8_t diff);
 
-void showSndParam(sndParam *param, uint8_t **txtLabels);
+void showSndParam(uint8_t index, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
 void showSpectrum(uint8_t *buf);

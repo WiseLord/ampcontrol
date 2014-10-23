@@ -22,14 +22,17 @@
 #define eepromBrStby	((void*)0x12)
 #define eepromBrWork	((void*)0x13)
 
+#define eepromLang		((void*)0x18)
+
 #define eepromRC5Addr	((void*)0x1C)
 #define eepromTempTH	((void*)0x1D)
 
 /* RC5 commands array */
-#define eepromRC5Cmd	((uint8_t*)0x20)
+#define eepromRC5Cmd	((uint8_t*)0x020)
 
-/* Text labels (maximum 15 byte followed by \0) */
-#define labelsAddr		((uint8_t*)0x30)
+/* Text labels (maximum 15 bytes followed by \0) */
+#define labelsAddrEn	((uint8_t*)0x040)
+#define labelsAddrRu	((uint8_t*)0x110)
 
 #define EEPROM_SIZE		0x200
 
@@ -48,7 +51,6 @@ enum {
 	LABEL_LOUDNESS,
 	LABEL_ON,
 	LABEL_OFF,
-	LABEL_DB,
 
 	LABEL_SUNDAY,
 	LABEL_MONDAY,
@@ -61,6 +63,6 @@ enum {
 	LABEL_BR_WORK
 };
 
-#define LABELS_COUNT			21
+#define LABELS_COUNT			20
 
 #endif /* EEPROM_H */
