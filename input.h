@@ -56,11 +56,14 @@ enum {
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
 
+void loadRC5Codes(void);
 void inputInit();
 
 int8_t getEncoder(void);
 uint8_t getBtnCmd(void);
+
 uint16_t getRC5Buf(void);
+void setRC5Buf(uint8_t addr, uint8_t cmd);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);

@@ -54,7 +54,9 @@ enum {
 
 #define STR_BUFSIZE		16
 
-void showRC5Info(uint16_t rc5Buf);
+void nextRC5Cmd(void);
+void startTestMode(void);
+void showRC5Info();
 
 void showMute(uint8_t value, uint8_t **txtLabels);
 void showLoudness(uint8_t value, uint8_t **txtLabels);

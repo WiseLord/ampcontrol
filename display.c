@@ -31,8 +31,40 @@ static const uint8_t cyr_TS[] PROGMEM = {0x12, 0x12, 0x12, 0x12, 0x12, 0x12, 0x1
 static const uint8_t cyr_U[]  PROGMEM = {0x11, 0x11, 0x11, 0x0F, 0x01, 0x11, 0x0E, 0x00};
 static const uint8_t cyr_B[]  PROGMEM = {0x1F, 0x10, 0x10, 0x1E, 0x11, 0x11, 0x1E, 0x00};
 static const uint8_t cyr_F[]  PROGMEM = {0x04, 0x0E, 0x15, 0x15, 0x15, 0x0E, 0x04, 0x00};
-static const uint8_t cyr_YU[]  PROGMEM = {0x12, 0x15, 0x15, 0x1D, 0x15, 0x15, 0x12, 0x00};
-static const uint8_t cyr_SH[]  PROGMEM = {0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x1F, 0x00};
+static const uint8_t cyr_YU[] PROGMEM = {0x12, 0x15, 0x15, 0x1D, 0x15, 0x15, 0x12, 0x00};
+static const uint8_t cyr_SH[] PROGMEM = {0x15, 0x15, 0x15, 0x15, 0x15, 0x15, 0x1F, 0x00};
+
+static uint8_t rc5CmdInd;
+static uint8_t rc5Cmd;
+static uint8_t rc5Addr;
+
+static const uint8_t labelSTBY[]   PROGMEM = "Standby";
+static const uint8_t labelMUTE[]   PROGMEM = "Mute";
+static const uint8_t labelMENU[]   PROGMEM = "Menu";
+static const uint8_t labelVOLUP[]  PROGMEM = "Volume up";
+static const uint8_t labelVOLDN[]  PROGMEM = "Volume down";
+static const uint8_t labelIN_0[]   PROGMEM = "Input 1";
+static const uint8_t labelIN_1[]   PROGMEM = "Input 2";
+static const uint8_t labelIN_2[]   PROGMEM = "Input 3";
+static const uint8_t labelNEXTIN[] PROGMEM = "Next input";
+static const uint8_t labelTIME[]   PROGMEM = "Time";
+static const uint8_t labelBCKL[]   PROGMEM = "Backlight";
+static const uint8_t labelBRIGHT[] PROGMEM = "Loudness";
+
+static const uint8_t *const labelsRC5[] PROGMEM = {
+	labelSTBY,
+	labelMUTE,
+	labelMENU,
+	labelVOLUP,
+	labelVOLDN,
+	labelIN_0,
+	labelIN_1,
+	labelIN_2,
+	labelNEXTIN,
+	labelTIME,
+	labelBCKL,
+	labelBRIGHT
+};
 
 static void writeStringEeprom(const uint8_t *string)
 {
@@ -40,6 +72,18 @@ static void writeStringEeprom(const uint8_t *string)
 
 	for (i = 0; i < STR_BUFSIZE; i++)
 		strbuf[i] = eeprom_read_byte(&string[i]);
+
+	ks0066WriteString(strbuf);
+
+	return;
+}
+
+static void writeStringPgm(const uint8_t *string)
+{
+	uint8_t i = 0;
+
+	for (i = 0; i < STR_BUFSIZE; i++)
+		strbuf[i] = pgm_read_byte(&string[i]);
 
 	ks0066WriteString(strbuf);
 
@@ -138,9 +182,15 @@ static uint8_t *mkNumString(int8_t value, uint8_t width, uint8_t lead)
 
 static uint8_t *mkHexString(uint8_t value)
 {
+	uint8_t numdiv;
+
 	strbuf[2] = '\0';
-	strbuf[1] = value % 16 + 0x30;
-	strbuf[0] = value / 16 % 16 + 0x30;
+	numdiv = value % 16;
+	if (numdiv >= 10)
+		numdiv += 7;
+	strbuf[1] = numdiv + 0x30;
+	numdiv = value / 16 % 16;
+	strbuf[0] = numdiv + 0x30;
 
 	return strbuf;
 }
@@ -203,14 +253,55 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 	return;
 }
 
-void showRC5Info(uint16_t rc5Buf)
+void nextRC5Cmd(void)
 {
+	eeprom_update_byte(eepromRC5Cmd + rc5CmdInd, rc5Cmd);
+	eeprom_update_byte(eepromRC5Addr, rc5Addr);
+
+	rc5CmdInd++;
+	if (rc5CmdInd >= CMD_BTN_1)
+		rc5CmdInd = CMD_RC5_STBY;
+
+	rc5Addr = eeprom_read_byte(eepromRC5Addr);
+	rc5Cmd = eeprom_read_byte(eepromRC5Cmd + rc5CmdInd);
+
+	setRC5Buf(rc5Addr, rc5Cmd);
+
+	return;
+}
+
+void startTestMode(void)
+{
+	rc5CmdInd = CMD_RC5_STBY;
+	rc5Addr = eeprom_read_byte(eepromRC5Addr);
+	rc5Cmd = eeprom_read_byte(eepromRC5Cmd + rc5CmdInd);
+
+	setRC5Buf(rc5Addr, rc5Cmd);
+
+	return;
+}
+
+void showRC5Info()
+{
+	uint16_t rc5Buf = getRC5Buf();
+
+	rc5Addr = (rc5Buf & 0x07C0)>>6;
+	rc5Cmd = rc5Buf & 0x003F;
+
 	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"RC=");
-	ks0066WriteString(mkHexString((rc5Buf >> 6) & 0x1F));
+	writeStringPgm((const uint8_t *)pgm_read_word(&labelsRC5[rc5CmdInd]));
+
+	ks0066SetXY(13, 0);
+	ks0066WriteString((uint8_t*)"RC5");
+
 	ks0066SetXY(0, 1);
-	ks0066WriteString((uint8_t*)"CM=");
-	ks0066WriteString(mkHexString(rc5Buf & 0x3F));
+	ks0066WriteString(mkHexString(rc5Cmd));
+	ks0066WriteString((uint8_t*)"=>");
+	ks0066WriteString(mkHexString(eeprom_read_byte(eepromRC5Cmd + rc5CmdInd)));
+	ks0066SetXY(10, 1);
+	ks0066WriteString(mkHexString(rc5Addr));
+	ks0066WriteString((uint8_t*)"=>");
+	ks0066WriteString(mkHexString(eeprom_read_byte(eepromRC5Addr)));
 
 	return;
 }

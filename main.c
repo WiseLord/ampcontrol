@@ -134,11 +134,12 @@ int main(void)
 		cmd = getBtnCmd();
 		rc5Buf = getRC5Buf();
 
-		/* Don't handle any command in test mode */
+		/* Don't handle any command in test mode except BTN_5 and BTN_1_LONG */
 		if (dispMode == MODE_TEST) {
 			if (cmd != CMD_EMPTY)
 				setDisplayTime(DISPLAY_TIME_TEST);
-			cmd = CMD_EMPTY;
+			if (cmd != CMD_BTN_5 && cmd != CMD_BTN_1_LONG)
+				cmd = CMD_EMPTY;
 		}
 
 		/* Don't handle any command in standby mode except power on and test */
@@ -202,16 +203,31 @@ int main(void)
 			break;
 		case CMD_BTN_5:
 		case CMD_RC5_MENU:
-			if (dispMode < MODE_FRONTREAR) {
-				curSndParam++;
-				dispMode++;
+			if (dispMode == MODE_TEST && cmd == CMD_BTN_5) {
+				ks0066Clear();
+				nextRC5Cmd();
 			} else {
-				curSndParam = SND_VOLUME;
-				dispMode = MODE_VOLUME;
+				if (dispMode < MODE_FRONTREAR) {
+					curSndParam++;
+					dispMode++;
+				} else {
+					curSndParam = SND_VOLUME;
+					dispMode = MODE_VOLUME;
+				}
+				setDisplayTime(DISPLAY_TIME_AUDIO);
 			}
-			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case CMD_BTN_1_LONG:
+			switch (dispMode) {
+			case MODE_TEST:
+				setDisplayTime(0);
+				break;
+			default:
+				dispMode = MODE_BR;
+				setDisplayTime(DISPLAY_TIME_BR);
+				break;
+			}
+			break;
 		case CMD_RC5_BACKLIGHT:
 			dispMode = MODE_BR;
 			setDisplayTime(DISPLAY_TIME_BR);
@@ -226,6 +242,7 @@ int main(void)
 		case CMD_BTN_12_LONG:
 			if (dispMode == MODE_STANDBY) {
 				dispMode = MODE_TEST;
+				startTestMode();
 				setDisplayTime(DISPLAY_TIME_TEST);
 			}
 			break;
@@ -283,7 +300,8 @@ int main(void)
 			case MODE_STANDBY:
 				break;
 			case MODE_TEST:
-				setStbyBrightness();
+				loadRC5Codes();
+				dispMode = MODE_STANDBY;
 				break;
 			default:
 				dispMode = MODE_SPECTRUM;
@@ -309,7 +327,7 @@ int main(void)
 				setStbyBrightness();
 			break;
 		case MODE_TEST:
-			showRC5Info(rc5Buf);
+			showRC5Info();
 			setWorkBrightness();
 			if (rc5Buf != rc5BufPrev)
 				setDisplayTime(DISPLAY_TIME_TEST);

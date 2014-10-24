@@ -20,10 +20,21 @@ static volatile uint16_t displayTime;
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
 
-void inputInit()
+/* Load RC5 device address and commands from eeprom */
+void loadRC5Codes(void)
 {
 	uint8_t i;
 
+	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
+	for (i = 0; i < RC5_CMD_COUNT; i++) {
+		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
+	}
+
+	return;
+}
+
+void inputInit()
+{
 	/* Setup buttons and encoder as inputs with pull-up resistors */
 	DDR(BUTTON_1) &= ~BUTTON_1_LINE;
 	DDR(BUTTON_2) &= ~BUTTON_2_LINE;
@@ -43,17 +54,13 @@ void inputInit()
 	PORT(ENCODER_A) |= ENCODER_A_LINE;
 	PORT(ENCODER_B) |= ENCODER_B_LINE;
 
+	loadRC5Codes();
+
 	/* Set timer prescaller to 128 (62.5 kHz) and reset on match*/
 	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
 	OCR2 = 62;						/* 62500/62 => 1008 polls/sec */
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
-
-	/* Load RC5 device address and commands from eeprom */
-	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-	for (i = 0; i < RC5_CMD_COUNT; i++) {
-		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
-	}
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;
@@ -243,6 +250,14 @@ uint8_t getBtnCmd(void)
 uint16_t getRC5Buf(void)
 {
 	return rc5SaveBuf;
+}
+
+void setRC5Buf(uint8_t addr, uint8_t cmd)
+{
+	rc5SaveBuf &= (RC5_STBT_MASK | RC5_TOGB_MASK);
+	rc5SaveBuf |= ((addr<<6) | cmd);
+
+	return;
 }
 
 void setDisplayTime(uint8_t value)
