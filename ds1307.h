@@ -19,6 +19,8 @@ typedef enum {
 	NOEDIT = 7
 } timeMode;
 
+void ds1307Init(void);
+
 int8_t getTime(timeMode tm);
 timeMode getEtm();
 

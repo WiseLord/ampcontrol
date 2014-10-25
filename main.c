@@ -96,6 +96,7 @@ static void hwInit(void)
 	loadLabels(txtLabels);				/* Load text labels from EEPROM */
 
 	I2CInit();							/* I2C bus */
+	ds1307Init();						/* RTC */
 	ks0066Init();						/* Display */
 	rc5Init();							/* IR Remote control */
 	adcInit();							/* Analog-to-digital converter */

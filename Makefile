@@ -48,3 +48,6 @@ fuse:
 
 eep:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom.bin:r
+
+lock:
+	$(AVRDUDE) $(AD_CMDLINE) -U lock:w:0x3C:m

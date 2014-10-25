@@ -5,16 +5,6 @@
 static int8_t time[7];
 static timeMode _etm = NOEDIT;
 
-int8_t getTime(timeMode tm)
-{
-	return time[tm];
-}
-
-timeMode getEtm()
-{
-	return _etm;
-}
-
 static void calcWeekDay(void)
 {
 	uint8_t a, y, m;
@@ -45,23 +35,6 @@ static uint8_t daysInMonth()
 	return 31;
 }
 
-int8_t *readTime(void)
-{
-	uint8_t temp;
-	uint8_t i;
-
-	for (i = SEC; i <= YEAR; i++) {
-		I2CStart(DS1307_ADDR);
-		I2CWriteByte(i);
-		I2CStart(DS1307_ADDR | I2C_READ);
-		I2CReadByte(&temp, I2C_NOACK);
-		I2CStop();
-		time[i] = BD2D(temp);
-	}
-
-	return time;
-}
-
 static void writeTime(void)
 {
 	uint8_t i;
@@ -79,6 +52,52 @@ static void writeTime(void)
 	}
 
 	return;
+}
+
+void ds1307Init(void)
+{
+	readTime();
+
+	if (D2BD(time[SEC]) & 0x80) {
+		time[HOUR] = 0;
+		time[MIN] = 0;
+		time[SEC] = 0;
+		time[DAY] = 1;
+		time[MONTH] = 1;
+		time[YEAR] = 0;
+		calcWeekDay();
+	}
+
+	writeTime();
+
+	return;
+}
+
+int8_t getTime(timeMode tm)
+{
+	return time[tm];
+}
+
+timeMode getEtm()
+{
+	return _etm;
+}
+
+int8_t *readTime(void)
+{
+	uint8_t temp;
+	uint8_t i;
+
+	for (i = SEC; i <= YEAR; i++) {
+		I2CStart(DS1307_ADDR);
+		I2CWriteByte(i);
+		I2CStart(DS1307_ADDR | I2C_READ);
+		I2CReadByte(&temp, I2C_NOACK);
+		I2CStop();
+		time[i] = BD2D(temp);
+	}
+
+	return time;
 }
 
 void stopEditTime(void)

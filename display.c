@@ -421,7 +421,7 @@ void showTime(uint8_t **txtLabels)
 		}
 	}
 
-	if (flag) {
+	if (flag || !isETM()) {
 		if (lastTime[WEEK] != time[WEEK])
 			ks0066Clear();
 
