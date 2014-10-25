@@ -80,7 +80,7 @@ void ks0066Init(void)
 	_delay_us(120);
 	ks0066writeStrob();
 
-	ks0066WriteCommand(swap(KS0066_FUNCTION | KS0066_4BIT));
+	ks0066WriteCommand(KS0066_FUNCTION | KS0066_4BIT);
 	ks0066WriteCommand(KS0066_FUNCTION | KS0066_4BIT | KS0066_2LINES);
 	ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
 	ks0066Clear();
