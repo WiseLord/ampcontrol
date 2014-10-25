@@ -2,6 +2,7 @@
 
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
+#include <util/delay.h>
 
 #include "eeprom.h"
 #include "input.h"
@@ -497,6 +498,8 @@ void showSpectrum(uint8_t *buf)
 		else
 			ks0066WriteData(0xFF);
 	}
+
+	_delay_ms(10);
 
 	return;
 }

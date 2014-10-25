@@ -19,6 +19,7 @@
 
 #define MUTE_ON					1
 #define MUTE_OFF				0
+#define MUTE_VAL				0x1F
 
 typedef struct {
 	int8_t value;

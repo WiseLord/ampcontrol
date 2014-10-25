@@ -46,10 +46,17 @@ static void setVolume(int8_t val)
 
 	I2CStart(TDA7313_ADDR);
 	I2CWriteByte(TDA7313_VOLUME | -val);
-	I2CWriteByte(TDA7313_SP_FRONT_LEFT | spFrontLeft);
-	I2CWriteByte(TDA7313_SP_FRONT_RIGHT | spFrontRight);
-	I2CWriteByte(TDA7313_SP_REAR_LEFT | spRearLeft);
-	I2CWriteByte(TDA7313_SP_REAR_RIGHT | spRearRight);
+	if (mute == MUTE_ON) {
+		I2CWriteByte(TDA7313_SP_FRONT_LEFT | MUTE_VAL);
+		I2CWriteByte(TDA7313_SP_FRONT_RIGHT | MUTE_VAL);
+		I2CWriteByte(TDA7313_SP_REAR_LEFT | MUTE_VAL);
+		I2CWriteByte(TDA7313_SP_REAR_RIGHT | MUTE_VAL);
+	} else {
+		I2CWriteByte(TDA7313_SP_FRONT_LEFT | spFrontLeft);
+		I2CWriteByte(TDA7313_SP_FRONT_RIGHT | spFrontRight);
+		I2CWriteByte(TDA7313_SP_REAR_LEFT | spRearLeft);
+		I2CWriteByte(TDA7313_SP_REAR_RIGHT | spRearRight);
+	}
 	I2CStop();
 
 	return;
@@ -171,18 +178,18 @@ void nextChan(void)
 
 void muteVolume(void)
 {
-	setVolume(sndPar[SND_VOLUME].min);
 	mute = MUTE_ON;
 	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
+	setVolume(sndPar[SND_VOLUME].min);
 
 	return;
 }
 
 void unmuteVolume(void)
 {
-	setVolume(sndPar[SND_VOLUME].value);
 	mute = MUTE_OFF;
 	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
+	setVolume(sndPar[SND_VOLUME].value);
 
 	return;
 }
@@ -230,11 +237,11 @@ void loadAudioParams(uint8_t **txtLabels)
 		sndPar[SND_GAIN0 + i].set = setGain;
 	}
 
-	muteVolume();
 	setChan(chan);
 	setBass(sndPar[SND_BASS].value);
 	seFrontRear(0);
 	setTreble(sndPar[SND_TREBLE].value);
+	muteVolume();
 
 	return;
 }

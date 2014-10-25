@@ -106,8 +106,6 @@ static void hwInit(void)
 
 	sei();								/* Gloabl interrupt enable */
 
-	muteVolume();
-
 	return;
 }
 
@@ -285,6 +283,9 @@ int main(void)
 				break;
 			case MODE_SPECTRUM:
 			case MODE_TIME:
+			case MODE_MUTE:
+			case MODE_LOUDNESS:
+				unmuteVolume();
 				curSndParam = SND_VOLUME;
 				dispMode = MODE_VOLUME;
 			default:
@@ -334,7 +335,6 @@ int main(void)
 			break;
 		case MODE_SPECTRUM:
 			showSpectrum(getSpData());
-			_delay_ms(20);
 			break;
 		case MODE_MUTE:
 			showMute(getMute(), txtLabels);
