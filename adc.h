@@ -9,7 +9,7 @@
 #define DC_CORR				128 /* Raw value from ADC when no signal */
 
 #define DISP_MIN_BR			0
-#define DISP_MAX_BR			48
+#define DISP_MAX_BR			12
 
 void adcInit();
 uint8_t *getSpData();
