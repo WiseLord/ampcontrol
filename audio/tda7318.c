@@ -229,7 +229,7 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_FRONTREAR].set = setBalanceFrontRear;
 	sndPar[SND_BALANCE].set = setBalance;
 
-	for (i = 0; i < 4; i++) {
+	for (i = 0; i < CHAN_CNT; i++) {
 		sndPar[SND_GAIN0 + i].set = setGain;
 	}
 
