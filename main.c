@@ -13,46 +13,9 @@
 #include "tuner.h"
 #include "temp.h"
 
+#include "actions.h"
+
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
-
-/* Save data to EEPROM */
-void saveParams(void)
-{
-	saveAudioParams();
-	saveDisplayParams();
-#if !defined(NOTUNER)
-	saveTunerParams();
-#endif
-
-	return;
-}
-
-/* Handle leaving standby mode */
-static void powerOn(void)
-{
-	PORT(STMU_STBY) |= STMU_STBY_LINE;
-	_delay_ms(50);
-	setWorkBrightness();
-#if !defined(NOTUNER)
-	loadTunerParams();
-#endif
-	unmuteVolume();
-
-	return;
-}
-
-/* Handle entering standby mode */
-static void powerOff(void)
-{
-	muteVolume();
-	_delay_ms(50);
-	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
-	setStbyBrightness();
-	stopEditTime();
-	saveParams();
-
-	return;
-}
 
 /* Load text labels from EEPROM */
 static void loadLabels(uint8_t **txtLabels)
@@ -169,93 +132,144 @@ int main(void)
 
 		/* Handle command */
 		switch (cmd) {
-		case CMD_BTN_1:
 		case CMD_RC5_STBY:
-			switch (dispMode) {
-			case MODE_STANDBY:
-				powerOn();
-				dispMode = MODE_SPECTRUM;
-				break;
-			default:
-				powerOff();
-				dispMode = MODE_STANDBY;
-				break;
-			}
+			handleSwitchPower(&dispMode);
 			break;
-		case CMD_BTN_2:
+		case CMD_RC5_MUTE:
+			handleSwitchMute(&dispMode);
+			break;
+		case CMD_RC5_MENU:
+			handleNextSndParam(&dispMode, &curSndParam);
+			break;
+		/* CMD_VOL_UP and CMD_VOL_DOWN are processed below as encoder actions */
+		case CMD_RC5_INPUT_0:
+		case CMD_RC5_INPUT_1:
+		case CMD_RC5_INPUT_2:
+#if !defined(TDA7313)
+		case CMD_RC5_INPUT_3:
+#endif
+			setChan(cmd - CMD_RC5_INPUT_0);
+			gdClear();
+			curSndParam = sndParAddr(SND_GAIN0 + getChan());
+			dispMode = MODE_GAIN;
+			setDisplayTime(DISPLAY_TIME_GAIN);
+			break;
+#if defined(TDA7313)
+		case CMD_RC5_INPUT_3:
+			gdClear();
+			switchLoudness();
+			dispMode = MODE_LOUDNESS;
+			setDisplayTime(DISPLAY_TIME_AUDIO);
+			break;
+#endif
 		case CMD_RC5_NEXT_INPUT:
-			switch (dispMode) {
-			case MODE_GAIN:
-				nextChan();
-				gdClear();
-			default:
-				curSndParam = sndParAddr(SND_GAIN0 + getChan());
-				dispMode = MODE_GAIN;
-				setDisplayTime(DISPLAY_TIME_GAIN);
-				break;
-			}
+			handleNextInput (&dispMode);
+			curSndParam = sndParAddr(SND_GAIN0 + getChan());
 			break;
-		case CMD_BTN_3:
 		case CMD_RC5_TIME:
-			switch (dispMode) {
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
-				editTime();
-				dispMode = MODE_TIME_EDIT;
-				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-				if (!isETM())
-					setDisplayTime(DISPLAY_TIME_TIME);
-				break;
+			handleEditTime(&dispMode);
+			break;
+		case CMD_RC5_BACKLIGHT:
+			dispMode = MODE_BR;
+			setDisplayTime(DISPLAY_TIME_BR);
+			break;
+		case CMD_RC5_SP_MODE:
+			handleSwitchSpMode(&dispMode);
+			break;
+		case CMD_RC5_DISPLAY:
+			handleSetDefDisplay(&dispMode);
+			break;
 #if !defined(NOTUNER)
-			case MODE_FM_RADIO:
-				if (cmd == CMD_BTN_3) {
-					tunerDecFreq();
-					setDisplayTime(DISPLAY_TIME_FM_RADIO);
+		case CMD_RC5_FM_CHAN_UP:
+		case CMD_RC5_FM_CHAN_DOWN:
+			setChan(0);
+			if (dispMode == MODE_FM_RADIO) {
+				switch (cmd) {
+				case CMD_RC5_FM_CHAN_UP:
+					scanStoredFreq(SEARCH_UP);
+					break;
+				case CMD_RC5_FM_CHAN_DOWN:
+					scanStoredFreq(SEARCH_DOWN);
 					break;
 				}
+			}
+			dispMode = MODE_FM_RADIO;
+			setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			break;
+		case CMD_RC5_FM_TUNE:
+			handleSwitchFmMode(&dispMode);
+			break;
+		case CMD_RC5_FM_MONO:
+			if (getChan() == 0) {
+				tunerSwitchMono();
+				dispMode = MODE_FM_RADIO;
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			}
+			break;
+		case CMD_RC5_FM_STORE:
+			if (dispMode == MODE_FM_RADIO) {
+				storeStation();
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			}
+			break;
+		case CMD_RC5_FM_1:
+		case CMD_RC5_FM_2:
+		case CMD_RC5_FM_3:
+		case CMD_RC5_FM_4:
+		case CMD_RC5_FM_5:
+		case CMD_RC5_FM_6:
+		case CMD_RC5_FM_7:
+		case CMD_RC5_FM_8:
+		case CMD_RC5_FM_9:
+		case CMD_RC5_FM_0:
+			setChan(0);
+			loadStation(cmd - CMD_RC5_FM_1);
+			dispMode = MODE_FM_RADIO;
+			setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			break;
+#endif
+		case CMD_BTN_1:
+			handleSwitchPower(&dispMode);
+			break;
+		case CMD_BTN_2:
+			handleNextInput(&dispMode);
+			curSndParam = sndParAddr(SND_GAIN0 + getChan());
+			break;
+		case CMD_BTN_3:
+			switch (dispMode) {
+#if !defined(NOTUNER)
+			case MODE_FM_RADIO:
+				scanStoredFreq(SEARCH_DOWN);
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				break;
 #endif
 			default:
-				stopEditTime();
-				dispMode = MODE_TIME;
-				setDisplayTime(DISPLAY_TIME_TIME);
+				handleEditTime(&dispMode);
 				break;
 			}
 			break;
 		case CMD_BTN_4:
-		case CMD_RC5_MUTE:
 			switch (dispMode) {
 #if !defined(NOTUNER)
 			case MODE_FM_RADIO:
-				if (cmd == CMD_BTN_4) {
-					tunerIncFreq();
-					setDisplayTime(DISPLAY_TIME_FM_RADIO);
-					break;
-				}
+				scanStoredFreq(SEARCH_UP);
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				break;
 #endif
 			default:
-				gdClear();
-				switchMute();
-				dispMode = MODE_MUTE;
-				setDisplayTime(DISPLAY_TIME_AUDIO);
+				handleSwitchMute(&dispMode);
 				break;
 			}
 			break;
 		case CMD_BTN_5:
-		case CMD_RC5_MENU:
-			if (dispMode == MODE_TEST && cmd == CMD_BTN_5) {
+			if (dispMode == MODE_TEST) {
 				gdClear();
 				nextRC5Cmd();
 			} else {
-				if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
-					curSndParam++;
-					dispMode++;
-				} else {
-					curSndParam = sndParAddr(SND_VOLUME);
-					dispMode = MODE_VOLUME;
-				}
-				setDisplayTime(DISPLAY_TIME_AUDIO);
+				handleNextSndParam(&dispMode, &curSndParam);
 			}
 			break;
+
 		case CMD_BTN_1_LONG:
 			switch (dispMode) {
 			case MODE_TEST:
@@ -268,57 +282,21 @@ int main(void)
 				break;
 			}
 			break;
-		case CMD_RC5_BACKLIGHT:
-			dispMode = MODE_BR;
-			setDisplayTime(DISPLAY_TIME_BR);
-			break;
 		case CMD_BTN_2_LONG:
-		case CMD_RC5_DISPLAY:
-			switch (getDefDisplay()) {
-			case MODE_SPECTRUM:
-#if !defined(NOTUNER)
-				if (getChan() == 0) {
-					setDefDisplay(MODE_FM_RADIO);
-					break;
-				}
-			case MODE_FM_RADIO:
-#endif
-				setDefDisplay(MODE_TIME);
-				break;
-			default:
-				setDefDisplay(MODE_SPECTRUM);
-				break;
-			}
-			dispMode = getDefDisplay();
+			handleSetDefDisplay(&dispMode);
 			break;
 		case CMD_BTN_3_LONG:
+			handleSwitchSpMode(&dispMode);
+			break;
 		case CMD_BTN_4_LONG:
+			handleSwitchFmMode(&dispMode);
+			break;
 		case CMD_BTN_5_LONG:
-		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
 #if !defined(NOTUNER)
-				if (cmd == CMD_BTN_3_LONG)
-					scanStoredFreq(SEARCH_DOWN);
-				else if (cmd == CMD_BTN_4_LONG)
-					scanStoredFreq(SEARCH_UP);
-				else
-					storeStation();
+				storeStation();
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 #endif
-			} else {
-				if (cmd == CMD_BTN_3_LONG) {
-					switchSpMode();
-					gdClear();
-					dispMode = MODE_SPECTRUM;
-					setDisplayTime(DISPLAY_TIME_SP);
-#if defined(TDA7313)
-				} else if (cmd == CMD_BTN_4_LONG) {
-					gdClear();
-					switchLoudness();
-					dispMode = MODE_LOUDNESS;
-					setDisplayTime(DISPLAY_TIME_AUDIO);
-#endif
-				}
 			}
 			break;
 		case CMD_BTN_TEST:
@@ -338,80 +316,6 @@ int main(void)
 				break;
 			}
 			break;
-#if defined(TDA7313)
-		case CMD_RC5_LOUDNESS:
-			gdClear();
-			switchLoudness();
-			dispMode = MODE_LOUDNESS;
-			setDisplayTime(DISPLAY_TIME_AUDIO);
-			break;
-#endif
-		case CMD_RC5_INPUT_0:
-		case CMD_RC5_INPUT_1:
-		case CMD_RC5_INPUT_2:
-#if !defined(TDA7313)
-		case CMD_RC5_INPUT_3:
-#endif
-			setChan(cmd - CMD_RC5_INPUT_0);
-			gdClear();
-			curSndParam = sndParAddr(SND_GAIN0 + getChan());
-			dispMode = MODE_GAIN;
-			setDisplayTime(DISPLAY_TIME_GAIN);
-			break;
-		case CMD_RC5_SP_MODE:
-			switchSpMode();
-			gdClear();
-			dispMode = MODE_SPECTRUM;
-			setDisplayTime(DISPLAY_TIME_SP);
-			break;
-#if !defined(NOTUNER)
-		case CMD_RC5_FM_INC:
-		case CMD_RC5_FM_DEC:
-		case CMD_RC5_CHAN_UP:
-		case CMD_RC5_CHAN_DOWN:
-			setChan(0);
-			if (dispMode == MODE_FM_RADIO) {
-				switch (cmd) {
-				case CMD_RC5_FM_INC:
-					tunerIncFreq();
-					break;
-				case CMD_RC5_FM_DEC:
-					tunerDecFreq();
-					break;
-				case CMD_RC5_CHAN_UP:
-					scanStoredFreq(SEARCH_UP);
-					break;
-				case CMD_RC5_CHAN_DOWN:
-					scanStoredFreq(SEARCH_DOWN);
-					break;
-				}
-			}
-			dispMode = MODE_FM_RADIO;
-			setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			break;
-		case CMD_RC5_FM_MONO:
-			if (getChan() == 0) {
-				tunerSwitchMono();
-				dispMode = MODE_FM_RADIO;
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			}
-			break;
-		case CMD_RC5_1:
-		case CMD_RC5_2:
-		case CMD_RC5_3:
-		case CMD_RC5_4:
-		case CMD_RC5_5:
-		case CMD_RC5_6:
-		case CMD_RC5_7:
-		case CMD_RC5_8:
-		case CMD_RC5_9:
-		case CMD_RC5_0:
-			setChan(0);
-			loadStation(cmd - CMD_RC5_1);
-			dispMode = MODE_FM_RADIO;
-			setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			break;
-#endif
 		}
 
 		/* Emulate RC5 VOL_UP/VOL_DOWN as encoder actions */
@@ -441,6 +345,15 @@ int main(void)
 			case MODE_BR:
 				changeBrWork(encCnt);
 				setDisplayTime(DISPLAY_TIME_BR);
+				break;
+			case MODE_FM_TUNE:
+#if !defined(NOTUNER)
+				if (encCnt > 0)
+					tunerIncFreq();
+				else
+					tunerDecFreq();
+				setDisplayTime(DISPLAY_TIME_FM_TUNE);
+#endif
 				break;
 			case MODE_MUTE:
 			case MODE_LOUDNESS:
@@ -506,7 +419,11 @@ int main(void)
 #if !defined(NOTUNER)
 		case MODE_FM_RADIO:
 			tunerReadStatus();
-			showRadio(getSpData());
+			showRadio(getSpData(), 0);
+			break;
+		case MODE_FM_TUNE:
+			tunerReadStatus();
+			showRadio(getSpData(), 1);
 			break;
 #endif
 		case MODE_MUTE:

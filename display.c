@@ -265,7 +265,7 @@ void showTemp(uint8_t **txtLabels)
 #endif
 
 #if !defined(NOTUNER)
-void showRadio(uint8_t *buf)
+void showRadio(uint8_t *buf, uint8_t tune)
 {
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
@@ -310,6 +310,11 @@ void showRadio(uint8_t *buf)
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4, buf);
+
+	if (tune) {
+		gdSetXY(103, 56);
+		gdWriteString((uint8_t*)"\xDB\xDB\xD0\xDC\xDC");
+	}
 
 	return;
 }

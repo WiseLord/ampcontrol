@@ -15,6 +15,7 @@
 #define DISPLAY_TIME_TIME		3
 #define DISPLAY_TIME_TIME_EDIT	10
 #define DISPLAY_TIME_FM_RADIO	5
+#define DISPLAY_TIME_FM_TUNE	10
 #define DISPLAY_TIME_CHAN		2
 #define DISPLAY_TIME_AUDIO		3
 #define DISPLAY_TIME_SP			3
@@ -39,6 +40,7 @@ enum {
 	MODE_STANDBY,
 	MODE_SPECTRUM,
 	MODE_FM_RADIO,
+	MODE_FM_TUNE,
 
 	MODE_VOLUME,
 	MODE_BASS,
@@ -85,7 +87,7 @@ void startTestMode(void);
 void showRC5Info(uint8_t **txtLabels);
 void showTemp(uint8_t **txtLabels);
 
-void showRadio(uint8_t *buf);
+void showRadio(uint8_t *buf, uint8_t tune);
 
 void showMute(uint8_t **txtLabels, uint8_t *buf);
 #if defined(TDA7313)

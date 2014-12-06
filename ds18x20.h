@@ -1,7 +1,7 @@
 #ifndef DS18X20_H
 #define DS18X20_H
 
-#include <stdint.h>
+#include <inttypes.h>
 #include "pins.h"
 
 //#define DS18X20_PARASITE_POWER

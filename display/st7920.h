@@ -1,7 +1,7 @@
 #ifndef ST7920_H
 #define ST7920_H
 
-#include <stdint.h>
+#include <inttypes.h>
 #include "../pins.h"
 
 /* Basic instructions */

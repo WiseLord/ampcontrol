@@ -1,7 +1,7 @@
 #ifndef KS0108_H
 #define KS0108_H
 
-#include <stdint.h>
+#include <inttypes.h>
 #include "../pins.h"
 
 #ifdef KS0108B

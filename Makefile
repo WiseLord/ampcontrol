@@ -1,6 +1,6 @@
 AUDIOPROC = TDA7439
-DISPLAY = KS0108A
-TUNER = TEA5767
+DISPLAY = ST7920
+TUNER = NOTUNER
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -43,7 +43,7 @@ ifneq ($(TUNER), LM7001)
 TEMP_SRC = ds18x20.c temp.c
 endif
 
-SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC) $(TEMP_SRC)
+SRCS = main.c actions.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC) $(TEMP_SRC)
 
 MCU = atmega32
 F_CPU = 16000000L
