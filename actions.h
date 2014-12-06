@@ -14,6 +14,7 @@ void handleSetDefDisplay(uint8_t *dispMode);
 void handleSwitchSpMode(uint8_t *dispMode);
 void handleSwitchFmMode(uint8_t *dispMode);
 void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer);
+void handleStoreStation(uint8_t *dispMode);
 
 
 #endif /* ACTIONS_H */

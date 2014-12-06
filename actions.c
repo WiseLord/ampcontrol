@@ -204,3 +204,22 @@ void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer)
 
 	return;
 }
+
+void handleStoreStation(uint8_t *dispMode)
+{
+#if !defined(NOTUNER)
+	if (getChan() == 0) {
+		switch (*dispMode) {
+		case MODE_FM_TUNE:
+			setDisplayTime(DISPLAY_TIME_FM_TUNE);
+			storeStation();
+			break;
+		case MODE_FM_RADIO:
+			setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			storeStation();
+			break;
+		}
+	}
+#endif
+	return;
+}

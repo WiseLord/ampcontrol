@@ -1,6 +1,6 @@
 AUDIOPROC = TDA7439
 DISPLAY = ST7920
-TUNER = NOTUNER
+TUNER = RDA5807
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)

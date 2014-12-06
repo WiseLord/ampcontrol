@@ -217,10 +217,7 @@ int main(void)
 			}
 			break;
 		case CMD_RC5_FM_STORE:
-			if (dispMode == MODE_FM_RADIO) {
-				storeStation();
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			}
+			handleStoreStation(&dispMode);
 			break;
 		case CMD_RC5_FM_1:
 		case CMD_RC5_FM_2:
@@ -317,12 +314,7 @@ int main(void)
 			handleSwitchFmMode(&dispMode);
 			break;
 		case CMD_BTN_5_LONG:
-			if (dispMode == MODE_FM_RADIO) {
-#if !defined(NOTUNER)
-				storeStation();
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
-#endif
-			}
+			handleStoreStation(&dispMode);
 			break;
 		case CMD_BTN_TEST:
 			switch (dispMode) {
