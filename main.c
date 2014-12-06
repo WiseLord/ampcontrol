@@ -86,6 +86,8 @@ int main(void)
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_EMPTY;
 
+	int16_t stbyTimer = STBY_TIMER_OFF;
+
 #if !defined(NOTUNER)
 	loadTunerParams();
 #endif
@@ -96,6 +98,11 @@ int main(void)
 	while (1) {
 		encCnt = getEncoder();
 		cmd = getBtnCmd();
+
+		/* Emulate poweroff if standy timer expired */
+		stbyTimer = getStbyTimer();
+		if (stbyTimer == 0)
+			cmd = CMD_RC5_STBY;
 
 #if !defined(LM7001)
 		ds18x20Process();
@@ -179,6 +186,9 @@ int main(void)
 		case CMD_RC5_DISPLAY:
 			handleSetDefDisplay(&dispMode);
 			break;
+		case CMD_RC5_TIMER:
+			handleChangeTimer(&dispMode, stbyTimer);
+			break;
 #if !defined(NOTUNER)
 		case CMD_RC5_FM_CHAN_UP:
 		case CMD_RC5_FM_CHAN_DOWN:
@@ -237,6 +247,9 @@ int main(void)
 			break;
 		case CMD_BTN_3:
 			switch (dispMode) {
+			case MODE_TIMER:
+				handleChangeTimer(&dispMode, stbyTimer);
+				break;
 #if !defined(NOTUNER)
 			case MODE_FM_RADIO:
 				scanStoredFreq(SEARCH_DOWN);
@@ -286,7 +299,19 @@ int main(void)
 			handleSetDefDisplay(&dispMode);
 			break;
 		case CMD_BTN_3_LONG:
-			handleSwitchSpMode(&dispMode);
+			switch (dispMode) {
+			case MODE_TIME:
+			case MODE_TIME_EDIT:
+				dispMode = MODE_TIMER;
+				handleChangeTimer(&dispMode, stbyTimer);
+				break;
+			case MODE_TIMER:
+				handleEditTime(&dispMode);
+				break;
+			default:
+				handleSwitchSpMode(&dispMode);
+				break;
+			}
 			break;
 		case CMD_BTN_4_LONG:
 			handleSwitchFmMode(&dispMode);
@@ -359,6 +384,7 @@ int main(void)
 			case MODE_LOUDNESS:
 			case MODE_SPECTRUM:
 			case MODE_TIME:
+			case MODE_TIMER:
 			case MODE_FM_RADIO:
 				curSndParam = sndParAddr(SND_VOLUME);
 				dispMode = MODE_VOLUME;
@@ -396,6 +422,13 @@ int main(void)
 		/* Clear screen if mode has changed */
 		if (dispMode != dispModePrev)
 			gdClear();
+
+		/* Switch to timer mode if it expires (less then minute) */
+		if (stbyTimer >= 0 && stbyTimer <= 60 && getDisplayTime() == 0) {
+			gdClear();
+			dispMode = MODE_TIMER;
+			setDisplayTime(DISPLAY_TIME_TIMER_EXP);
+		}
 
 		/* Show things */
 		switch (dispMode) {
@@ -437,6 +470,9 @@ int main(void)
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime(txtLabels);
+			break;
+		case MODE_TIMER:
+			showTimer(getSpData());
 			break;
 		case MODE_BR:
 			showBrWork(txtLabels, getSpData());

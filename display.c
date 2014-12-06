@@ -461,6 +461,49 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
+void showTimer(uint8_t *buf)
+{
+	uint8_t x, xbase;
+	uint8_t y, ybase;
+
+	int16_t stbyTimer = getStbyTimer();
+
+	gdSetXY(4, 0);
+
+	gdLoadFont(font_digits_32, 1, FONT_DIR_0);
+	if (stbyTimer >= 0) {
+		gdWriteString(mkNumString(stbyTimer / 3600, 2, '0', 10));
+		gdWriteString((uint8_t*)"\x7F:\x7F");
+		gdWriteString(mkNumString(stbyTimer / 60 % 60, 2, '0', 10));
+		gdWriteString((uint8_t*)"\x7F:\x7F");
+		gdWriteString(mkNumString(stbyTimer % 60, 2, '0', 10));
+	} else {
+		gdWriteString((uint8_t*)"--");
+		gdWriteString((uint8_t*)"\x7F:\x7F");
+		gdWriteString((uint8_t*)"--");
+		gdWriteString((uint8_t*)"\x7F:\x7F");
+		gdWriteString((uint8_t*)"--");
+	}
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+
+	for (y = 0; y < GD_SIZE_Y / 2; y++) {
+		for (x = 0; x < GD_SIZE_X / 4; x++) {
+			xbase = x << 2;
+			ybase = 63 - y;
+			if (buf[x] + buf[x + 32] >= y * 2) {
+				gdDrawPixel(xbase + 0, ybase, 1);
+				gdDrawPixel(xbase + 1, ybase, 1);
+				gdDrawPixel(xbase + 2, ybase, 1);
+			} else {
+				gdDrawPixel(xbase + 0, ybase, 0);
+				gdDrawPixel(xbase + 1, ybase, 0);
+				gdDrawPixel(xbase + 2, ybase, 0);
+			}
+		}
+	}
+	return;
+}
+
 void drawSpectrum(uint8_t *buf, uint8_t **txtLabels)
 {
 	uint8_t x, xbase;

@@ -9,17 +9,19 @@
 #include "display/gdfb.h"
 
 /* Timers fo different screens */
-#define DISPLAY_TIME_TEST		20
-#define DISPLAY_TIME_TEMP		10
-#define DISPLAY_TIME_GAIN		3
-#define DISPLAY_TIME_TIME		3
-#define DISPLAY_TIME_TIME_EDIT	10
-#define DISPLAY_TIME_FM_RADIO	5
-#define DISPLAY_TIME_FM_TUNE	10
-#define DISPLAY_TIME_CHAN		2
-#define DISPLAY_TIME_AUDIO		3
-#define DISPLAY_TIME_SP			3
-#define DISPLAY_TIME_BR			3
+#define DISPLAY_TIME_TEST		20000U
+#define DISPLAY_TIME_TEMP		10000U
+#define DISPLAY_TIME_GAIN		3000U
+#define DISPLAY_TIME_TIME		3000U
+#define DISPLAY_TIME_TIME_EDIT	10000U
+#define DISPLAY_TIME_TIMER		5000U
+#define DISPLAY_TIME_TIMER_EXP	64000U
+#define DISPLAY_TIME_FM_RADIO	5000U
+#define DISPLAY_TIME_FM_TUNE	10000U
+#define DISPLAY_TIME_CHAN		2000U
+#define DISPLAY_TIME_AUDIO		3000U
+#define DISPLAY_TIME_SP			3000U
+#define DISPLAY_TIME_BR			3000U
 
 #define BACKLIGHT_ON			1
 #define BACKLIGHT_OFF			0
@@ -59,6 +61,7 @@ enum {
 
 	MODE_TIME,
 	MODE_TIME_EDIT,
+	MODE_TIMER,
 	MODE_MUTE,
 	MODE_LOUDNESS,
 	MODE_TEST,
@@ -100,6 +103,7 @@ void changeBrWork(int8_t diff);
 void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf);
 
 void showTime(uint8_t **txtLabels);
+void showTimer(uint8_t *buf);
 void drawSpectrum(uint8_t *buf, uint8_t **txtLabels);
 
 void setWorkBrightness(void);

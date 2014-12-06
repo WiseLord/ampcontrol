@@ -75,6 +75,8 @@ enum {
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
 
+#define STBY_TIMER_OFF	-1
+
 void inputInit();
 
 int8_t getEncoder(void);
@@ -86,10 +88,15 @@ uint16_t getEncBuf(void);
 
 void setRC5Buf(uint8_t addr, uint8_t cmd);
 
-void setDisplayTime(uint8_t value);
-uint8_t getDisplayTime(void);
+void setDisplayTime(uint16_t value);
+uint16_t getDisplayTime(void);
 
 uint16_t getTempTimer(void);
 void setTempTimer(uint16_t val);
+
+int16_t getStbyTimer(void);
+void setStbyTimer(int16_t val);
+
+void setSecTimer(uint16_t val);
 
 #endif /* INPUT_H */

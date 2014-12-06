@@ -19,6 +19,8 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 static volatile uint16_t displayTime;
 
 static volatile uint16_t tempTimer;			/* Timer of temperature measuring process */
+static volatile int16_t stbyTimer = -1;			/* Standby timer */
+static volatile uint16_t secTimer;			/* 1 second timer */
 
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
@@ -234,6 +236,14 @@ ISR (TIMER2_COMP_vect)
 	if (tempTimer)
 		tempTimer--;
 
+	if (secTimer) {
+		secTimer--;
+	} else {
+		secTimer = 1000;
+		if (stbyTimer >= 0)
+			stbyTimer--;
+	}
+
 	return;
 };
 
@@ -275,15 +285,16 @@ void setRC5Buf(uint8_t addr, uint8_t cmd)
 	return;
 }
 
-void setDisplayTime(uint8_t value)
+void setDisplayTime(uint16_t value)
 {
 	displayTime = value;
-	displayTime <<= 10;
+
+	return;
 }
 
-uint8_t getDisplayTime(void)
+uint16_t getDisplayTime(void)
 {
-	return (displayTime | 0x3F) >> 10;
+	return displayTime;
 }
 
 uint16_t getTempTimer(void)
@@ -294,4 +305,25 @@ uint16_t getTempTimer(void)
 void setTempTimer(uint16_t val)
 {
 	tempTimer = val;
+
+	return;
+}
+
+int16_t getStbyTimer(void)
+{
+	return stbyTimer;
+}
+
+void setStbyTimer(int16_t val)
+{
+	stbyTimer = val;
+
+	return;
+}
+
+void setSecTimer(uint16_t val)
+{
+	secTimer = val;
+
+	return;
 }

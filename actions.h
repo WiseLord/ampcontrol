@@ -13,6 +13,7 @@ void handleNextSndParam(uint8_t *dispMode, sndParam **curSndParam);
 void handleSetDefDisplay(uint8_t *dispMode);
 void handleSwitchSpMode(uint8_t *dispMode);
 void handleSwitchFmMode(uint8_t *dispMode);
+void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer);
 
 
 #endif /* ACTIONS_H */

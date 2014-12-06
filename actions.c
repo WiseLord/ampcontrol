@@ -40,6 +40,7 @@ static void powerOff(void)
 	setStbyBrightness();
 	stopEditTime();
 	saveParams();
+	setStbyTimer(STBY_TIMER_OFF);
 
 	return;
 }
@@ -166,6 +167,40 @@ void handleSwitchFmMode(uint8_t *dispMode)
 		*dispMode = MODE_FM_RADIO;
 		setDisplayTime(DISPLAY_TIME_FM_RADIO);
 	}
+
+	return;
+}
+
+void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer)
+{
+	stopEditTime();
+	if (*dispMode == MODE_TIMER) {
+		setSecTimer(2000);
+		if (stbyTimer < 120)		// 2 min
+			setStbyTimer(120);
+		else if (stbyTimer < 300)	// 5 min
+			setStbyTimer(300);
+		else if (stbyTimer < 600)	// 10 min
+			setStbyTimer(600);
+		else if (stbyTimer < 1200)	// 20 min
+			setStbyTimer(1200);
+		else if (stbyTimer < 2400)	// 40 min
+			setStbyTimer(2400);
+		else if (stbyTimer < 3600)	// 1 hour
+			setStbyTimer(3600);
+		else if (stbyTimer < 5400)	// 1.5 hours
+			setStbyTimer(5400);
+		else if (stbyTimer < 7200)	// 2 hours
+			setStbyTimer(7200);
+		else if (stbyTimer < 10800)	// 3 hours
+			setStbyTimer(10800);
+		else if (stbyTimer < 18000)	// 5 hours
+			setStbyTimer(18000);
+		else
+			setStbyTimer(STBY_TIMER_OFF);
+	}
+	*dispMode = MODE_TIMER;
+	setDisplayTime(DISPLAY_TIME_TIMER);
 
 	return;
 }
