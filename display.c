@@ -419,7 +419,7 @@ void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf)
 	return;
 }
 
-static void drawTm(timeMode tm, const uint8_t *font)
+static void drawTm(uint8_t tm, const uint8_t *font)
 {
 	if (getEtm() == tm)
 		gdLoadFont(font, 0, FONT_DIR_0);
@@ -437,28 +437,28 @@ void showTime(uint8_t **txtLabels)
 
 	gdSetXY(4, 0);
 
-	drawTm(HOUR, font_digits_32);
+	drawTm(DS1307_HOUR, font_digits_32);
 	gdWriteString((uint8_t*)"\x7F:\x7F");
-	drawTm(MIN, font_digits_32);
+	drawTm(DS1307_MIN, font_digits_32);
 	gdWriteString((uint8_t*)"\x7F:\x7F");
-	drawTm(SEC, font_digits_32);
+	drawTm(DS1307_SEC, font_digits_32);
 
 	gdSetXY(9, 32);
 
-	drawTm(DAY, font_ks0066_ru_24);
+	drawTm(DS1307_DATE, font_ks0066_ru_24);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
-	drawTm(MONTH, font_ks0066_ru_24);
+	drawTm(DS1307_MONTH, font_ks0066_ru_24);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
-	if (getEtm() == YEAR)
+	if (getEtm() == DS1307_YEAR)
 		gdLoadFont(font_ks0066_ru_24, 0, FONT_DIR_0);
 	gdWriteString((uint8_t*)"20");
 	gdWriteString((uint8_t*)"\x7F");
-	drawTm(YEAR, font_ks0066_ru_24);
+	drawTm(DS1307_YEAR, font_ks0066_ru_24);
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(32, 56);
 
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(DS1307_WDAY) % 7]);
 
 	return;
 }
