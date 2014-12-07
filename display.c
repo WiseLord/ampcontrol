@@ -477,7 +477,8 @@ static void drawAm(uint8_t am, const uint8_t *font)
 
 void showAlarm(uint8_t **txtLabels)
 {
-	uint8_t i;
+	uint8_t i, j;
+	uint8_t *label;
 
 	readAlarm();
 
@@ -505,15 +506,26 @@ void showAlarm(uint8_t **txtLabels)
 
 	/* Draw weekdays selection rectangle */
 	if (getEam() == DS1307_A0_WDAY) {
-		gdDrawRect(0, 44, 128, 20, 1);
-		gdDrawRect(1, 45, 126, 18, 1);
+		gdDrawRect(0, 34, 128, 30, 1);
+		gdDrawRect(1, 35, 126, 28, 1);
 	} else {
-		gdDrawRect(0, 44, 128, 20, 0);
-		gdDrawRect(1, 45, 126, 18, 0);
+		gdDrawRect(0, 34, 128, 30, 0);
+		gdDrawRect(1, 35, 126, 28, 0);
 	}
 
 	/* Draw weekdays */
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	for (i = 0; i < 7; i++) {
+		gdSetXY(5 + 18 * i, 38);
+		j = 0;
+		label = txtLabels[LABEL_SUNDAY + (i + 1) % 7];
+		strbuf[0] = eeprom_read_byte(&label[j++]);
+		while (strbuf[0] == ' ')
+			strbuf[0] = eeprom_read_byte(&label[j++]);
+		strbuf[1] = eeprom_read_byte(&label[j++]);
+		strbuf[2] = '\0';
+		gdWriteString(strbuf);
+
 		gdDrawRect(3 + 18 * i, 47, 14, 14, 1);
 		if (getAlarm(DS1307_A0_WDAY) & (0x40 >> i))
 			gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 1);
