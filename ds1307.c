@@ -3,16 +3,29 @@
 #include "i2c.h"
 
 static int8_t time[8];
-static uint8_t _etm = NOEDIT;
+static int8_t alarm[5];
+
+static uint8_t _etm = NOEDIT;	/* Edit time mode */
+static uint8_t _eam = NOEDIT;	/* Edit alarm mode */
 
 int8_t getTime(uint8_t tm)
 {
 	return time[tm];
 }
 
-uint8_t getEtm()
+int8_t getAlarm(uint8_t tm)
+{
+	return alarm[tm - DS1307_A0_SEC];
+}
+
+uint8_t getEtm(void)
 {
 	return _etm;
+}
+
+uint8_t getEam(void)
+{
+	return _eam;
 }
 
 static void calcWeekDay(void)
@@ -58,9 +71,29 @@ int8_t *readTime(void)
 		time[i] = BD2D(temp);
 	}
 	I2CReadByte(&temp, I2C_NOACK);
+	time[DS1307_YEAR] = BD2D(temp);
 	I2CStop();
 
 	return time;
+}
+
+int8_t *readAlarm(void)
+{
+	uint8_t temp;
+	uint8_t i;
+
+	I2CStart(DS1307_ADDR);
+	I2CWriteByte(DS1307_A0_SEC);
+	I2CStart(DS1307_ADDR | I2C_READ);
+	for (i = DS1307_A0_SEC; i < DS1307_A0_INPUT; i++) {
+		I2CReadByte(&temp, I2C_ACK);
+		alarm[i - DS1307_A0_SEC] = BD2D(temp);
+	}
+	I2CReadByte(&temp, I2C_NOACK);
+	alarm[DS1307_A0_INPUT - DS1307_A0_SEC] = BD2D(temp);
+	I2CStop();
+
+	return alarm;
 }
 
 static void writeTime(void)
@@ -81,6 +114,19 @@ static void writeTime(void)
 	return;
 }
 
+static void writeAlarm(void)
+{
+	uint8_t i;
+
+	I2CStart(DS1307_ADDR);
+	I2CWriteByte(DS1307_A0_SEC);
+	for (i = DS1307_A0_SEC; i <= DS1307_A0_INPUT; i++)
+		I2CWriteByte(D2BD(alarm[i - DS1307_A0_SEC]));
+	I2CStop();
+
+	return;
+}
+
 void stopEditTime(void)
 {
 	_etm = NOEDIT;
@@ -88,9 +134,23 @@ void stopEditTime(void)
 	return;
 }
 
+void stopEditAlarm(void)
+{
+	_eam = NOEDIT;
+
+	return;
+}
+
 uint8_t isETM(void)
 {
 	if (_etm == NOEDIT)
+		return 0;
+	return 1;
+}
+
+uint8_t isEAM(void)
+{
+	if (_eam == NOEDIT)
 		return 0;
 	return 1;
 }
@@ -111,6 +171,28 @@ void editTime(void)
 	case DS1307_DATE:
 	case DS1307_MONTH:
 		_etm++;
+		break;
+	default:
+		_etm = NOEDIT;
+		break;
+	}
+}
+
+void editAlarm(void)
+{
+	switch (_eam) {
+	case NOEDIT:
+		_eam = DS1307_A0_HOUR;
+		break;
+	case DS1307_A0_HOUR:
+	case DS1307_A0_MIN:
+		_etm--;
+		break;
+	case DS1307_SEC:
+		_etm = DS1307_WDAY;
+		break;
+	case DS1307_WDAY:
+		_etm = DS1307_A0_INPUT;
 		break;
 	default:
 		_etm = NOEDIT;
@@ -164,4 +246,49 @@ void changeTime(int diff)
 		break;
 	}
 	writeTime();
+}
+
+void changeAlarm(int diff)
+{
+	readAlarm();
+	switch (_eam) {
+	case DS1307_A0_HOUR:
+		alarm[DS1307_A0_HOUR - DS1307_A0_SEC] += diff;
+		if (alarm[DS1307_A0_HOUR - DS1307_A0_SEC] > 23)
+			alarm[DS1307_A0_HOUR - DS1307_A0_SEC] = 0;
+		if (alarm[DS1307_A0_HOUR - DS1307_A0_SEC] < 0)
+			alarm[DS1307_A0_HOUR - DS1307_A0_SEC] = 23;
+		break;
+	case DS1307_A0_MIN:
+		alarm[DS1307_A0_MIN - DS1307_A0_SEC] += diff;
+		if (alarm[DS1307_A0_MIN - DS1307_A0_SEC] > 59)
+			alarm[DS1307_A0_MIN - DS1307_A0_SEC] = 0;
+		if (alarm[DS1307_A0_MIN - DS1307_A0_SEC] < 0)
+			alarm[DS1307_A0_MIN - DS1307_A0_SEC] = 59;
+		break;
+	case DS1307_A0_SEC:
+		alarm[DS1307_A0_SEC - DS1307_A0_SEC] += diff;
+		if (alarm[DS1307_A0_SEC - DS1307_A0_SEC] > 59)
+			alarm[DS1307_A0_SEC - DS1307_A0_SEC] = 0;
+		if (alarm[DS1307_A0_SEC - DS1307_A0_SEC] < 0)
+			alarm[DS1307_A0_SEC - DS1307_A0_SEC] = 59;
+		break;
+	case DS1307_A0_WDAY:
+		alarm[DS1307_A0_WDAY - DS1307_A0_SEC] += diff;
+		if (alarm[DS1307_A0_WDAY - DS1307_A0_SEC] < 0)
+			alarm[DS1307_A0_WDAY - DS1307_A0_SEC] = 127;
+		break;
+	case DS1307_A0_INPUT:
+		alarm[DS1307_A0_INPUT - DS1307_A0_SEC] += diff;
+		if (alarm[DS1307_A0_INPUT - DS1307_A0_SEC] > 3)
+			alarm[DS1307_A0_INPUT - DS1307_A0_SEC] = 0;
+		if (alarm[DS1307_A0_INPUT - DS1307_A0_SEC] < 0)
+			alarm[DS1307_A0_INPUT - DS1307_A0_SEC] = 3;
+		break;
+	default:
+		break;
+	}
+	writeAlarm();
+
+	return;
 }
