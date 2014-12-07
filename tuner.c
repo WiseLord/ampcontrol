@@ -105,7 +105,11 @@ uint8_t tunerLevel()
 #elif defined(LM7001)
 	return 13;
 #elif defined(RDA5807)
-	return (bufFM[0] & RDA5807_RSSI) >> 4;
+	uint8_t rawLevel = (bufFM[2] & RDA5807_RSSI) >> 1;
+	if (rawLevel < 24)
+		return 0;
+	else
+		return (rawLevel - 24) >> 1;
 #endif
 }
 
