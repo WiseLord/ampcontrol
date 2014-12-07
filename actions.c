@@ -226,6 +226,7 @@ void handleStoreStation(uint8_t *dispMode)
 
 void handleChangeFM(uint8_t *dispMode, uint8_t direction)
 {
+#if !defined(NOTUNER)
 	setChan(0);
 	switch (*dispMode) {
 	case MODE_FM_TUNE:
@@ -242,6 +243,6 @@ void handleChangeFM(uint8_t *dispMode, uint8_t direction)
 		setDisplayTime(DISPLAY_TIME_FM_RADIO);
 		break;
 	}
-
+#endif
 	return;
 }

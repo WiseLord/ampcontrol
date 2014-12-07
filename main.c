@@ -237,12 +237,10 @@ int main(void)
 			case MODE_TIMER:
 				handleChangeTimer(&dispMode, stbyTimer);
 				break;
-#if !defined(NOTUNER)
 			case MODE_FM_TUNE:
 			case MODE_FM_RADIO:
 				handleChangeFM(&dispMode, SEARCH_DOWN);
 				break;
-#endif
 			default:
 				handleEditTime(&dispMode);
 				break;
@@ -250,12 +248,10 @@ int main(void)
 			break;
 		case CMD_BTN_4:
 			switch (dispMode) {
-#if !defined(NOTUNER)
 			case MODE_FM_TUNE:
 			case MODE_FM_RADIO:
 				handleChangeFM(&dispMode, SEARCH_UP);
 				break;
-#endif
 			default:
 				handleSwitchMute(&dispMode);
 				break;
