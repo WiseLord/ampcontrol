@@ -285,10 +285,12 @@ void showRadio(uint8_t *buf, uint8_t tune)
 	/* Signal level */
 	gdSetXY (112, 0);
 	for (i = 0; i < 16; i+=2) {
-		if (i <= level)
+		if (i <= level) {
 			gdDrawLine(112 + i, 7, 112 + i, 7 - i / 2, 0x01);
-		else
+		} else {
+			gdDrawLine(112 + i, 6, 112 + i, 0, 0x00);
 			gdDrawPixel(112 + i, 7, 0x01);
+		}
 	}
 
 	/* Stereo indicator */
