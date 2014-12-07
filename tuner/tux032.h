@@ -9,21 +9,12 @@
 
 #define TUX032_BUF_STEREO(buf)	(buf[3] & TUX032_STEREO)
 
-
 void tux032Init(void);
 
 void tux032SetFreq(uint16_t freq);
 
 void tux032GoStby();
 void tux032ExitStby();
-
-//void tux032ReadStatus(uint8_t *buf);
-
-//uint8_t tux032ADCLevel(uint8_t *buf);
-
-//uint16_t tux032FreqAvail(uint8_t *buf);
-
-//void tux032Search(uint16_t freq, uint8_t *buf, uint8_t direction);
 
 void tux032ReadStatus(uint8_t *buf);
 
