@@ -191,20 +191,10 @@ int main(void)
 			break;
 #if !defined(NOTUNER)
 		case CMD_RC5_FM_CHAN_UP:
+			handleChangeFM(&dispMode, SEARCH_UP);
+			break;
 		case CMD_RC5_FM_CHAN_DOWN:
-			setChan(0);
-			if (dispMode == MODE_FM_RADIO) {
-				switch (cmd) {
-				case CMD_RC5_FM_CHAN_UP:
-					scanStoredFreq(SEARCH_UP);
-					break;
-				case CMD_RC5_FM_CHAN_DOWN:
-					scanStoredFreq(SEARCH_DOWN);
-					break;
-				}
-			}
-			dispMode = MODE_FM_RADIO;
-			setDisplayTime(DISPLAY_TIME_FM_RADIO);
+			handleChangeFM(&dispMode, SEARCH_DOWN);
 			break;
 		case CMD_RC5_FM_TUNE:
 			handleSwitchFmMode(&dispMode);
@@ -248,9 +238,9 @@ int main(void)
 				handleChangeTimer(&dispMode, stbyTimer);
 				break;
 #if !defined(NOTUNER)
+			case MODE_FM_TUNE:
 			case MODE_FM_RADIO:
-				scanStoredFreq(SEARCH_DOWN);
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				handleChangeFM(&dispMode, SEARCH_DOWN);
 				break;
 #endif
 			default:
@@ -261,9 +251,9 @@ int main(void)
 		case CMD_BTN_4:
 			switch (dispMode) {
 #if !defined(NOTUNER)
+			case MODE_FM_TUNE:
 			case MODE_FM_RADIO:
-				scanStoredFreq(SEARCH_UP);
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				handleChangeFM(&dispMode, SEARCH_UP);
 				break;
 #endif
 			default:
@@ -365,10 +355,7 @@ int main(void)
 				break;
 			case MODE_FM_TUNE:
 #if !defined(NOTUNER)
-				if (encCnt > 0)
-					tunerIncFreq();
-				else
-					tunerDecFreq();
+				tunerChangeFreq(encCnt);
 				setDisplayTime(DISPLAY_TIME_FM_TUNE);
 #endif
 				break;

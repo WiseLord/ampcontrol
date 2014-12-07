@@ -101,16 +101,9 @@ uint8_t tunerLevel()
 #endif
 }
 
-void tunerIncFreq(void)
+void tunerChangeFreq(int8_t mult)
 {
-	tunerSetFreq(tunerGetFreq() + stepFM);
-
-	return;
-}
-
-void tunerDecFreq(void)
-{
-	tunerSetFreq(tunerGetFreq() - stepFM);
+	tunerSetFreq(freqFM + mult * stepFM);
 
 	return;
 }

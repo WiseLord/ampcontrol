@@ -223,3 +223,25 @@ void handleStoreStation(uint8_t *dispMode)
 #endif
 	return;
 }
+
+void handleChangeFM(uint8_t *dispMode, uint8_t direction)
+{
+	setChan(0);
+	switch (*dispMode) {
+	case MODE_FM_TUNE:
+		if (direction == SEARCH_UP)
+			tunerChangeFreq(10);
+		else
+			tunerChangeFreq(-10);
+		setDisplayTime(DISPLAY_TIME_FM_TUNE);
+		break;
+	case MODE_FM_RADIO:
+		scanStoredFreq(direction);
+	default:
+		*dispMode = MODE_FM_RADIO;
+		setDisplayTime(DISPLAY_TIME_FM_RADIO);
+		break;
+	}
+
+	return;
+}
