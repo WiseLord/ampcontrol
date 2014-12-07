@@ -1,9 +1,10 @@
 #include "ds1307.h"
 
 #include "i2c.h"
+#include "audio/audio.h"
 
 static int8_t time[8];
-static int8_t alarm[5];
+static int8_t alarm[4];
 
 static uint8_t _etm = NOEDIT;	/* Edit time mode */
 static uint8_t _eam = NOEDIT;	/* Edit alarm mode */
@@ -13,9 +14,9 @@ int8_t getTime(uint8_t tm)
 	return time[tm];
 }
 
-int8_t getAlarm(uint8_t tm)
+int8_t getAlarm(uint8_t am)
 {
-	return alarm[tm - DS1307_A0_SEC];
+	return alarm[am - DS1307_A0_HOUR];
 }
 
 uint8_t getEtm(void)
@@ -83,14 +84,14 @@ int8_t *readAlarm(void)
 	uint8_t i;
 
 	I2CStart(DS1307_ADDR);
-	I2CWriteByte(DS1307_A0_SEC);
+	I2CWriteByte(DS1307_A0_HOUR);
 	I2CStart(DS1307_ADDR | I2C_READ);
-	for (i = DS1307_A0_SEC; i < DS1307_A0_INPUT; i++) {
+	for (i = DS1307_A0_HOUR; i < DS1307_A0_WDAY; i++) {
 		I2CReadByte(&temp, I2C_ACK);
-		alarm[i - DS1307_A0_SEC] = BD2D(temp);
+		alarm[i - DS1307_A0_HOUR] = temp;
 	}
 	I2CReadByte(&temp, I2C_NOACK);
-	alarm[DS1307_A0_INPUT - DS1307_A0_SEC] = BD2D(temp);
+	alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] = temp;
 	I2CStop();
 
 	return alarm;
@@ -119,9 +120,9 @@ static void writeAlarm(void)
 	uint8_t i;
 
 	I2CStart(DS1307_ADDR);
-	I2CWriteByte(DS1307_A0_SEC);
-	for (i = DS1307_A0_SEC; i <= DS1307_A0_INPUT; i++)
-		I2CWriteByte(D2BD(alarm[i - DS1307_A0_SEC]));
+	I2CWriteByte(DS1307_A0_HOUR);
+	for (i = DS1307_A0_HOUR; i <= DS1307_A0_WDAY; i++)
+		I2CWriteByte(alarm[i - DS1307_A0_HOUR]);
 	I2CStop();
 
 	return;
@@ -176,6 +177,8 @@ void editTime(void)
 		_etm = NOEDIT;
 		break;
 	}
+
+	return;
 }
 
 void editAlarm(void)
@@ -185,19 +188,20 @@ void editAlarm(void)
 		_eam = DS1307_A0_HOUR;
 		break;
 	case DS1307_A0_HOUR:
+		_eam = DS1307_A0_MIN;
+		break;
 	case DS1307_A0_MIN:
-		_etm--;
+		_eam = DS1307_A0_INPUT;
 		break;
-	case DS1307_SEC:
-		_etm = DS1307_WDAY;
-		break;
-	case DS1307_WDAY:
-		_etm = DS1307_A0_INPUT;
+	case DS1307_A0_INPUT:
+		_eam = DS1307_A0_WDAY;
 		break;
 	default:
-		_etm = NOEDIT;
+		_eam = NOEDIT;
 		break;
 	}
+
+	return;
 }
 
 void changeTime(int diff)
@@ -246,6 +250,8 @@ void changeTime(int diff)
 		break;
 	}
 	writeTime();
+
+	return;
 }
 
 void changeAlarm(int diff)
@@ -253,37 +259,32 @@ void changeAlarm(int diff)
 	readAlarm();
 	switch (_eam) {
 	case DS1307_A0_HOUR:
-		alarm[DS1307_A0_HOUR - DS1307_A0_SEC] += diff;
-		if (alarm[DS1307_A0_HOUR - DS1307_A0_SEC] > 23)
-			alarm[DS1307_A0_HOUR - DS1307_A0_SEC] = 0;
-		if (alarm[DS1307_A0_HOUR - DS1307_A0_SEC] < 0)
-			alarm[DS1307_A0_HOUR - DS1307_A0_SEC] = 23;
+		alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] += diff;
+		if (alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] > 23)
+			alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] = 0;
+		if (alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] < 0)
+			alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] = 23;
 		break;
 	case DS1307_A0_MIN:
-		alarm[DS1307_A0_MIN - DS1307_A0_SEC] += diff;
-		if (alarm[DS1307_A0_MIN - DS1307_A0_SEC] > 59)
-			alarm[DS1307_A0_MIN - DS1307_A0_SEC] = 0;
-		if (alarm[DS1307_A0_MIN - DS1307_A0_SEC] < 0)
-			alarm[DS1307_A0_MIN - DS1307_A0_SEC] = 59;
-		break;
-	case DS1307_A0_SEC:
-		alarm[DS1307_A0_SEC - DS1307_A0_SEC] += diff;
-		if (alarm[DS1307_A0_SEC - DS1307_A0_SEC] > 59)
-			alarm[DS1307_A0_SEC - DS1307_A0_SEC] = 0;
-		if (alarm[DS1307_A0_SEC - DS1307_A0_SEC] < 0)
-			alarm[DS1307_A0_SEC - DS1307_A0_SEC] = 59;
-		break;
-	case DS1307_A0_WDAY:
-		alarm[DS1307_A0_WDAY - DS1307_A0_SEC] += diff;
-		if (alarm[DS1307_A0_WDAY - DS1307_A0_SEC] < 0)
-			alarm[DS1307_A0_WDAY - DS1307_A0_SEC] = 127;
+		alarm[DS1307_A0_MIN - DS1307_A0_HOUR] += diff;
+		if (alarm[DS1307_A0_MIN - DS1307_A0_HOUR] > 59)
+			alarm[DS1307_A0_MIN - DS1307_A0_HOUR] = 0;
+		if (alarm[DS1307_A0_MIN - DS1307_A0_HOUR] < 0)
+			alarm[DS1307_A0_MIN - DS1307_A0_HOUR] = 59;
 		break;
 	case DS1307_A0_INPUT:
-		alarm[DS1307_A0_INPUT - DS1307_A0_SEC] += diff;
-		if (alarm[DS1307_A0_INPUT - DS1307_A0_SEC] > 3)
-			alarm[DS1307_A0_INPUT - DS1307_A0_SEC] = 0;
-		if (alarm[DS1307_A0_INPUT - DS1307_A0_SEC] < 0)
-			alarm[DS1307_A0_INPUT - DS1307_A0_SEC] = 3;
+		alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] += diff;
+		if (alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] >= CHAN_CNT)
+			alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] = 0;
+		if (alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] < 0)
+			alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] = CHAN_CNT - 1;
+		break;
+	case DS1307_A0_WDAY:
+		alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] += diff;
+		if (alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] < -64)
+			alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] = 0;
+		if (alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] < 0)
+			alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] = 127;
 		break;
 	default:
 		break;

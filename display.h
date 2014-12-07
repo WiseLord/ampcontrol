@@ -107,7 +107,9 @@ void changeBrWork(int8_t diff);
 void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf);
 
 void showTime(uint8_t **txtLabels);
+void showAlarm(uint8_t **txtLabels);
 void showTimer(uint8_t *buf);
+
 void drawSpectrum(uint8_t *buf, uint8_t **txtLabels);
 
 void setWorkBrightness(void);

@@ -463,6 +463,67 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
+static void drawAm(uint8_t am, const uint8_t *font)
+{
+	if (getEam() == am)
+		gdLoadFont(font, 0, FONT_DIR_0);
+	else
+		gdLoadFont(font, 1, FONT_DIR_0);
+	gdWriteString(mkNumString(getAlarm(am), 2, '0', 10));
+	gdLoadFont(font, 1, FONT_DIR_0);
+
+	return;
+}
+
+void showAlarm(uint8_t **txtLabels)
+{
+	uint8_t i;
+
+	readAlarm();
+
+	gdSetXY(4, 0);
+
+	drawAm(DS1307_A0_HOUR, font_digits_32);
+	gdWriteString((uint8_t*)"\x7F:\x7F");
+	drawAm(DS1307_A0_MIN, font_digits_32);
+
+	/* Draw input icon selection rectangle */
+	if (getEam() == DS1307_A0_INPUT) {
+		gdDrawRect(96, 0, 32, 32, 1);
+		gdDrawRect(97, 1, 30, 30, 1);
+	} else {
+		gdDrawRect(96, 0, 32, 32, 0);
+		gdDrawRect(97, 1, 30, 30, 0);
+	}
+
+	gdSetXY(100, 4);
+	/* Check that input number less than CHAN_CNT */
+	i = getAlarm(DS1307_A0_INPUT);
+	if (i >= CHAN_CNT)
+		i = 0;
+	gdWriteIcon24(sndParAddr(SND_GAIN0 + i)->icon);
+
+	/* Draw weekdays selection rectangle */
+	if (getEam() == DS1307_A0_WDAY) {
+		gdDrawRect(0, 44, 128, 20, 1);
+		gdDrawRect(1, 45, 126, 18, 1);
+	} else {
+		gdDrawRect(0, 44, 128, 20, 0);
+		gdDrawRect(1, 45, 126, 18, 0);
+	}
+
+	/* Draw weekdays */
+	for (i = 0; i < 7; i++) {
+		gdDrawRect(3 + 18 * i, 47, 14, 14, 1);
+		if (getAlarm(DS1307_A0_WDAY) & (0x40 >> i))
+			gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 1);
+		else
+			gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 0);
+	}
+
+	return;
+}
+
 void showTimer(uint8_t *buf)
 {
 	uint8_t x, xbase;

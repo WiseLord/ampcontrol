@@ -17,16 +17,15 @@
 #define DS1307_YEAR			0x06
 #define DS1307_CTRL			0x07
 
-#define DS1307_A0_SEC		0x08
+#define DS1307_A0_HOUR		0x08
 #define DS1307_A0_MIN		0x09
-#define DS1307_A0_HOUR		0x0A
+#define DS1307_A0_INPUT		0x0A
 #define DS1307_A0_WDAY		0x0B
-#define DS1307_A0_INPUT		0x0C
 
 #define NOEDIT				0xFF
 
 int8_t getTime(uint8_t tm);
-int8_t getAlarm(uint8_t tm);
+int8_t getAlarm(uint8_t am);
 
 uint8_t getEtm(void);
 uint8_t getEam(void);

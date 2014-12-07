@@ -50,6 +50,60 @@ inline void gdDrawPixel(uint8_t x, uint8_t y, uint8_t color)
 	return;
 }
 
+void gdDrawHorizLine(uint8_t x1, uint8_t x2, uint8_t y, uint8_t color)
+{
+	uint8_t i;
+
+	/* Swap X */
+	if (x1 > x2) {
+		i = x1;
+		x1 = x2;
+		x2 = i;
+	}
+
+	for (i = x1; i <= x2; i++)
+		gdDrawPixel(i, y, color);
+
+	return;
+}
+
+void gdDrawVertLine(uint8_t x, uint8_t y1, uint8_t y2, uint8_t color)
+{
+	uint8_t i;
+
+	/* Swap Y */
+	if (y1 > y2) {
+		i = y1;
+		y1 = y2;
+		y2 = i;
+	}
+
+	for (i = y1; i <= y2; i++)
+		gdDrawPixel(x, i, color);
+
+	return;
+}
+
+void gdDrawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
+{
+	gdDrawHorizLine(x, x + w - 1, y, color);
+	gdDrawHorizLine(x, x + w - 1, y + h - 1, color);
+	gdDrawVertLine(x, y, y + h - 1, color);
+	gdDrawVertLine(x + w - 1, y, y + h - 1, color);
+
+	return;
+}
+
+void gdDrawFilledRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
+{
+	uint8_t i;
+
+	for (i = 0; i < h; i++)
+		gdDrawHorizLine(x, x + w - 1, y + i, color);
+
+	return;
+}
+
 void gdDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
 {
 	int8_t sX, sY, dX, dY, err;

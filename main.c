@@ -109,6 +109,11 @@ int main(void)
 		tempControlProcess();
 #endif
 
+		/* Check alarm and emulate output with command */
+		if (dispMode == MODE_STANDBY) {
+			checkAlarm(&dispMode);
+		}
+
 		/* Don't handle any command in test mode except BTN_5 and BTN_1_LONG */
 		if (dispMode == MODE_TEST) {
 			if (cmd != CMD_EMPTY)
@@ -189,6 +194,9 @@ int main(void)
 		case CMD_RC5_TIMER:
 			handleChangeTimer(&dispMode, stbyTimer);
 			break;
+		case CMD_RC5_ALARM:
+			handleEditAlarm(&dispMode);
+			break;
 #if !defined(NOTUNER)
 		case CMD_RC5_FM_CHAN_UP:
 			handleChangeFM(&dispMode, SEARCH_UP);
@@ -245,6 +253,10 @@ int main(void)
 			case MODE_TIME_EDIT:
 				handleEditTime(&dispMode);
 				break;
+			case MODE_ALARM:
+			case MODE_ALARM_EDIT:
+				handleEditAlarm(&dispMode);
+				break;
 			default:
 				handleSwitchSpMode(&dispMode);
 				break;
@@ -292,6 +304,10 @@ int main(void)
 				handleChangeTimer(&dispMode, stbyTimer);
 				break;
 			case MODE_TIMER:
+				handleEditAlarm(&dispMode);
+				break;
+			case MODE_ALARM:
+			case MODE_ALARM_EDIT:
 				handleEditTime(&dispMode);
 				break;
 			default:
@@ -347,6 +363,10 @@ int main(void)
 			case MODE_TIME_EDIT:
 				changeTime(encCnt);
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
+				break;
+			case MODE_ALARM_EDIT:
+				changeAlarm(encCnt);
+				setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
 				break;
 			case MODE_BR:
 				changeBrWork(encCnt);
@@ -451,6 +471,10 @@ int main(void)
 			break;
 		case MODE_TIMER:
 			showTimer(getSpData());
+			break;
+		case MODE_ALARM:
+		case MODE_ALARM_EDIT:
+			showAlarm(txtLabels);
 			break;
 		case MODE_BR:
 			showBrWork(txtLabels, getSpData());

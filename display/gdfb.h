@@ -55,7 +55,14 @@ inline void gdClear(void);
 void gdSetBrightness(uint8_t br);
 
 inline void gdDrawPixel(uint8_t x, uint8_t y, uint8_t color);
+
+void gdDrawHorizLine(uint8_t x1, uint8_t x2, uint8_t y, uint8_t color);
+void gdDrawVertLine(uint8_t x, uint8_t y1, uint8_t y2, uint8_t color);
 void gdDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color);
+
+void gdDrawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
+void gdDrawFilledRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color);
+
 void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color);
 
 void gdSetXY(uint8_t x, uint8_t y);

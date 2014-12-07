@@ -246,3 +246,44 @@ void handleChangeFM(uint8_t *dispMode, uint8_t direction)
 #endif
 	return;
 }
+
+/* Next alarm edit parameter */
+void handleEditAlarm(uint8_t *dispMode)
+{
+	switch (*dispMode) {
+	case MODE_ALARM:
+	case MODE_ALARM_EDIT:
+		editAlarm();
+		*dispMode = MODE_ALARM_EDIT;
+		setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
+		if (!isEAM())
+			setDisplayTime(DISPLAY_TIME_ALARM);
+		break;
+	default:
+		stopEditAlarm();
+		*dispMode = MODE_ALARM;
+		setDisplayTime(DISPLAY_TIME_ALARM);
+		break;
+	}
+
+	return;
+}
+
+void checkAlarm(uint8_t *dispMode)
+{
+	readTime();
+	readAlarm();
+
+	if ((getTime(DS1307_SEC) == 0) &&
+	    (getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
+	    (getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
+	    (getAlarm(DS1307_A0_WDAY) & (0x80 >> getTime(DS1307_WDAY)))
+	   ) {
+		setChan(getAlarm(DS1307_A0_INPUT));
+		powerOn();
+		*dispMode = MODE_TIME;
+		setDisplayTime(DISPLAY_TIME_TIME);
+	}
+
+	return;
+}
