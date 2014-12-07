@@ -241,8 +241,12 @@ int main(void)
 			case MODE_FM_RADIO:
 				handleChangeFM(&dispMode, SEARCH_DOWN);
 				break;
-			default:
+			case MODE_TIME:
+			case MODE_TIME_EDIT:
 				handleEditTime(&dispMode);
+				break;
+			default:
+				handleSwitchSpMode(&dispMode);
 				break;
 			}
 			break;
@@ -285,14 +289,13 @@ int main(void)
 			switch (dispMode) {
 			case MODE_TIME:
 			case MODE_TIME_EDIT:
-				dispMode = MODE_TIMER;
 				handleChangeTimer(&dispMode, stbyTimer);
 				break;
 			case MODE_TIMER:
 				handleEditTime(&dispMode);
 				break;
 			default:
-				handleSwitchSpMode(&dispMode);
+				handleEditTime(&dispMode);
 				break;
 			}
 			break;
