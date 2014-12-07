@@ -1,16 +1,19 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 
 #include "adc.h"
 #include "fft.h"
-
-#include "display/st7920.h"
+#include "eeprom.h"
 
 static int16_t f_l[FFT_SIZE];	/* Real values for left channel */
 static int16_t f_r[FFT_SIZE];	/* Real values for right channel */
 static int16_t f_i[FFT_SIZE];	/* Imaginary values */
 static uint8_t buf[FFT_SIZE];	/* Previous fft results: both left and right */
+
+static uint8_t adcCorrLeft;
+static uint8_t adcCorrRight;
 
 static const uint8_t hannTable[] PROGMEM = {
 	  0,   1,   3,   6,  10,  16,  22,  30,
@@ -27,6 +30,9 @@ void adcInit()
 
 	TIMSK |= (1<<TOIE0);						/* Enable Timer0 overflow interrupt */
 	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);	/* Set timer prescaller to 8 (2MHz) */
+
+	adcCorrLeft = eeprom_read_byte(eepromAdcCorrL);
+	adcCorrRight = eeprom_read_byte(eepromAdcCorrR);
 
 	return;
 }
@@ -56,13 +62,13 @@ static void getValues()
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		ADMUX |= (1<<MUX0);						/* Switch to right channel */
-		f_l[j] = ADCH - DC_CORR;				/* Read left channel value */
+		f_l[j] = ADCH - adcCorrLeft;			/* Read left channel value */
 		f_l[j] = ((int32_t)hv * f_l[j]) >> 6;	/* Apply Hann window */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
 		while (ADCSRA & (1<<ADSC));				/* Wait for finish measure */
 		ADMUX &= ~(1<<MUX0);					/* Switch to left channel */
-		f_r[j] = ADCH - DC_CORR;				/* Read right channel value */
+		f_r[j] = ADCH - adcCorrRight;			/* Read right channel value */
 		f_r[j] = ((int32_t)hv * f_r[j]) >> 6;	/* Apply Hann window */
 		while (!(ADCSRA & (1<<ADSC)));			/* Wait for start measure */
 
