@@ -37,7 +37,7 @@ static void calcWeekDay(void)
 	y = 12 + time[DS1307_YEAR] - a;
 	m = time[DS1307_MONTH] + 12 * a - 2;
 
-	time[DS1307_WDAY] = (time[DS1307_DATE] + y + (y / 4) - 1 + ((31 * m) / 12)) % 7;
+	time[DS1307_WDAY] = (time[DS1307_DATE] + y + (y / 4) + ((31 * m) / 12)) % 7;
 	if (time[DS1307_WDAY] == 0)
 		time[DS1307_WDAY] = 7;
 

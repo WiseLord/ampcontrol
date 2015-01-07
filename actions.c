@@ -277,7 +277,7 @@ void checkAlarm(uint8_t *dispMode)
 	if ((getTime(DS1307_SEC) == 0) &&
 	    (getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
 	    (getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
-	    (getAlarm(DS1307_A0_WDAY) & (0x80 >> getTime(DS1307_WDAY)))
+	    (getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
 	   ) {
 		setChan(getAlarm(DS1307_A0_INPUT));
 		powerOn();
