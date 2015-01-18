@@ -18,4 +18,4 @@ void tux032ExitStby();
 
 void tux032ReadStatus(uint8_t *buf);
 
-#endif // TUX032_H
+#endif /* TUX032_H */

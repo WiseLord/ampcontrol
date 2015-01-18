@@ -171,7 +171,7 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 	/* Walk through all 64 bits */
 	for (currBit = 0; currBit < 64; currBit++)
 	{
-		// Read bit from bus twice.
+		/* Read bit from bus twice. */
 		bitA = ds18x20GetBit();
 		bitB = ds18x20GetBit();
 
@@ -193,10 +193,10 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 				*bitPattern &= ~bitMask;
 		}
 
-		// Send the selected bit to the bus.
+		/* Send the selected bit to the bus. */
 		ds18x20SendBit(*bitPattern & bitMask);
 
-		// Adjust bitMask and bitPattern pointer.
+		/* Adjust bitMask and bitPattern pointer. */
 		bitMask <<= 1;
 		if (!bitMask)
 		{

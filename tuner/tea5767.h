@@ -69,4 +69,4 @@ void tea5767Init(void);
 void tea5767SetFreq(uint16_t freq, uint8_t mono);
 void tea5767ReadStatus(uint8_t *buf);
 
-#endif // TEA5767_H
+#endif /* TEA5767_H */

@@ -71,7 +71,7 @@ enum {
 	CMD_EMPTY = 0xEF
 };
 
-// Handling long press actions */
+/* Handling long press actions */
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
 

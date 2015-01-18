@@ -30,4 +30,4 @@ void rc5Init(void);
 
 uint16_t getRC5RawBuf(void);
 
-#endif // RC5_H
+#endif /* RC5_H */
