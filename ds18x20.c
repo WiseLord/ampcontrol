@@ -4,13 +4,29 @@
 
 #include <util/delay.h>
 
-static ds18x20Dev devs[DS18X20_MAX_DEV] = {
-	{{0}, 0},
-	{{0}, 0},
-};
+static ds18x20Dev devs[DS18X20_MAX_DEV];
 static uint8_t devCount = 0;
 
 static uint8_t isResult = 0;							/* It conversion has been done */
+
+static uint8_t calcCRC8 (uint8_t *arr, uint8_t arr_size)
+{
+	uint8_t bit, byte;
+	uint8_t data, crc = 0, cb;
+
+	for (byte = 0; byte < arr_size; byte++) {
+		data = arr[byte];
+		for (bit = 0; bit < 8; bit++) {
+			cb = (crc ^ data) & 0x01;
+			crc >>= 1;
+			data >>= 1;
+			if (cb)
+				crc ^= 0b10001100; /* Polinom CRC8 = X⁸ + X⁵ + X⁴ + X⁰ */
+		}
+	}
+
+	return crc;
+}
 
 static uint8_t ds18x20IsOnBus(void)
 {
@@ -101,13 +117,22 @@ static void ds18x20Select(ds18x20Dev *dev)
 
 static void getAllTemps()
 {
-	uint8_t i;
+	uint8_t i, j;
+
+	uint8_t arr[9];
 
 	for (i = 0; i < devCount; i++) {
 		if (ds18x20IsOnBus()) {
 			ds18x20Select(&devs[i]);
-			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);	// Get temperature from device
-			devs[i].tempData = ds18x20GetByte() | (ds18x20GetByte() << 8);
+			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
+
+			for (j = 0; j < 9; j++)
+				arr[j] = ds18x20GetByte();
+
+			if (!calcCRC8(arr, sizeof(arr))) {
+				for (j = 0; j < 9; j++)
+					devs[i].sp[j] = arr[j];
+			}
 		}
 	}
 
@@ -186,8 +211,8 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 void ds18x20SearchDevices(void)
 {
 	uint8_t i, j;
-	uint8_t * newID;
-	uint8_t * currentID;
+	uint8_t *newID;
+	uint8_t *currentID;
 	uint8_t lastDeviation;
 	uint8_t count = 0;
 
@@ -241,12 +266,17 @@ uint8_t ds18x20Process(void)
 
 int16_t ds18x20GetTemp(uint8_t num)
 {
-	int16_t ret;
+	int16_t ret = 0;
 
-	if (devs[num].id[0] == 0x28)
-		ret = devs[num].tempData * 5 / 8;
-	else
-		ret = devs[num].tempData * 2;
+	if (devs[num].id[0] == 0x28) /* DS18B20 */
+		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 5 / 8;
+	else if (devs[num].id[0] == 0x10) /* DS18S20 */
+		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 2;
 
 	return ret / 10;
+}
+
+ds18x20Dev ds18x20GetDev(uint8_t num)
+{
+	return devs[num];
 }

@@ -241,11 +241,13 @@ void showTemp(uint8_t **txtLabels)
 	tempTH = getTempTH();
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+
 	gdSetXY(0, 48);
 	writeStringEeprom(txtLabels[LABEL_SENSOR]);
 	gdWriteString((uint8_t*)" 1: ");
 	gdWriteString(mkNumString(ds18x20GetTemp(0), 3, ' ', 10));
 	gdWriteString((uint8_t*)" \xDF""C");
+
 	gdSetXY(0, 56);
 	writeStringEeprom(txtLabels[LABEL_SENSOR]);
 	gdWriteString((uint8_t*)" 2: ");

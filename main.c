@@ -47,11 +47,11 @@ static void loadLabels(uint8_t **txtLabels)
 static void hwInit(void)
 {
 	sei();								/* Gloabl interrupt enable */
-	inputInit();						/* Buttons/encoder polling */
 #if !defined(LM7001)
 	ds18x20SearchDevices();
 	tempInit();							/* Init temperature control */
 #endif
+	inputInit();						/* Buttons/encoder polling */
 
 	loadLabels(txtLabels);				/* Load text labels from EEPROM */
 

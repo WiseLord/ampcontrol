@@ -6,8 +6,8 @@
 #include <inttypes.h>
 #include "pins.h"
 
-#define MAX_TEMP 90
-#define MIN_TEMP 30
+#define MAX_TEMP 120
+#define MIN_TEMP 20
 
 void loadTempParams(void);
 void saveTempParams(void);
@@ -19,4 +19,4 @@ void setTempTH(int8_t temp);
 int8_t getTempTH(void);
 void changeTempTH(int8_t diff);
 
-#endif // TEMP_H
+#endif /* TEMP_H */
