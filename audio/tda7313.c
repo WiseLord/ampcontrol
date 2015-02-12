@@ -96,7 +96,7 @@ static void setBalance(int8_t val)
 	return;
 }
 
-static void setSwitch(int8_t gain)
+static void setGain(int8_t gain)
 {
 	I2CStart(TDA7313_ADDR);
 	I2CWriteByte(TDA7313_SW | (CHAN_CNT - gain) << 3 | loud << 2 | chan);
@@ -104,14 +104,6 @@ static void setSwitch(int8_t gain)
 
 	return;
 }
-
-static void setGain(int8_t val)
-{
-	setSwitch(val);
-
-	return;
-}
-
 
 sndParam *sndParAddr(uint8_t index)
 {
@@ -151,8 +143,7 @@ void changeParam(sndParam *param, int8_t diff)
 void setChan(uint8_t ch)
 {
 	chan = ch;
-	setGain(sndPar[SND_GAIN0 + ch].value);
-	setSwitch(sndPar[SND_GAIN0 + chan].value);
+	setGain(sndPar[SND_GAIN0 + chan].value);
 
 	return;
 }
@@ -201,7 +192,7 @@ void switchMute(void)
 void switchLoudness(void)
 {
 	loud = !loud;
-	setSwitch(sndPar[SND_GAIN0 + chan].value);
+	setGain(sndPar[SND_GAIN0 + chan].value);
 
 	return;
 }
