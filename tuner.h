@@ -44,6 +44,7 @@ void loadStation(uint8_t num);
 void storeStation(void);
 
 void loadTunerParams(void);
+void setTunerParams(void);
 void saveTunerParams(void);
 
 #endif /* TUNER_H */

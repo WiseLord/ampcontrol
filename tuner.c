@@ -197,6 +197,11 @@ void loadTunerParams(void)
 	freqFM = eeprom_read_word(eepromFMFreq);
 	monoFM = eeprom_read_byte(eepromFMMono);
 
+	return;
+}
+
+void setTunerParams(void)
+{
 	tunerSetFreq(freqFM);
 
 	return;
