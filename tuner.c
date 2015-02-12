@@ -206,6 +206,11 @@ void loadTunerParams(void)
 	monoFM = eeprom_read_byte(eepromFMMono);
 	stepFM = eeprom_read_byte(eepromFMStep);
 
+	return;
+}
+
+void setTunerParams(void)
+{
 	tunerSetFreq(freqFM);
 
 	return;

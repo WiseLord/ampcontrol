@@ -5,6 +5,7 @@
 
 #include "audio/audio.h"
 
+void powerOff(void);
 void handleSwitchPower(uint8_t *dispMode);
 void handleNextInput(uint8_t *dispMode);
 void handleEditTime(uint8_t *dispMode);

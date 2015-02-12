@@ -64,6 +64,7 @@ void switchMute(void);
 void switchLoudness(void);
 
 void loadAudioParams(uint8_t **txtLabels);
+void setAudioParams(void);
 void saveAudioParams(void);
 
 #endif /* TDA7313_H */

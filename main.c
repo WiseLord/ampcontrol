@@ -67,17 +67,19 @@ static void hwInit(void)
 	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 
-	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
+	loadAudioParams(txtLabels);			/* Load labels/icons/etc */
+	loadDispParams();					/* Load display params */
+#if !defined(NOTUNER)
+	loadTunerParams();
+#endif
 
-	muteVolume();
+	powerOff();
 
 	return;
 }
 
 int main(void)
 {
-	hwInit();
-
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = dispMode;
 
@@ -88,12 +90,7 @@ int main(void)
 
 	int16_t stbyTimer = STBY_TIMER_OFF;
 
-#if !defined(NOTUNER)
-	loadTunerParams();
-#endif
-	loadAudioParams(txtLabels);
-	loadDispParams();
-	setStbyBrightness();
+	hwInit();
 
 	while (1) {
 		encCnt = getEncoder();

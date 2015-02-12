@@ -20,26 +20,28 @@ static void saveParams(void)
 /* Leave standby mode */
 static void powerOn(void)
 {
+	setWorkBrightness();
+	setAudioParams();
+#if !defined(NOTUNER)
+	setTunerParams();
+#endif
+
 	PORT(STMU_STBY) |= STMU_STBY_LINE;
 	_delay_ms(50);
-	setWorkBrightness();
-#if !defined(NOTUNER)
-	loadTunerParams();
-#endif
 	unmuteVolume();
 
 	return;
 }
 
 /* Entering standby mode */
-static void powerOff(void)
+void powerOff(void)
 {
 	muteVolume();
 	_delay_ms(50);
 	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
+
 	setStbyBrightness();
 	stopEditTime();
-	saveParams();
 	setStbyTimer(STBY_TIMER_OFF);
 
 	return;
@@ -55,6 +57,7 @@ void handleSwitchPower(uint8_t *dispMode)
 		break;
 	default:
 		powerOff();
+		saveParams();
 		*dispMode = MODE_STANDBY;
 		break;
 	}
