@@ -224,10 +224,14 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_PREAMP].set = setPreamp;
 	sndPar[SND_BALANCE].set = setBalance;
 
-	for (i = 0; i < CHAN_CNT; i++) {
+	for (i = 0; i < CHAN_CNT; i++)
 		sndPar[SND_GAIN0 + i].set = setGain;
-	}
 
+	return;
+}
+
+void setAudioParams(void)
+{
 	muteVolume();
 	setChan(chan);
 	setBass(sndPar[SND_BASS].value);
