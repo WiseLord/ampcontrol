@@ -11,7 +11,7 @@
 static int8_t brStby;							/* Brightness in standby mode */
 static int8_t brWork;							/* Brightness in working mode */
 
-static uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
+static char strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
 static const uint8_t timeCurPos[] PROGMEM = {
 	7, 4, 1, 0, 12, 15, 79
@@ -155,7 +155,7 @@ static void lcdGenMuteLoudLabels(void)
 	return;
 }
 
-static uint8_t *mkNumString(int8_t value, uint8_t width, uint8_t lead)
+static char *mkNumString(int8_t value, uint8_t width, uint8_t lead)
 {
 	uint8_t sign = lead;
 	int8_t pos;
@@ -181,7 +181,7 @@ static uint8_t *mkNumString(int8_t value, uint8_t width, uint8_t lead)
 	return strbuf;
 }
 
-static uint8_t *mkHexString(uint8_t value)
+static char *mkHexString(uint8_t value)
 {
 	uint8_t numdiv;
 
@@ -293,15 +293,15 @@ void showRC5Info()
 	writeStringPgm((const uint8_t *)pgm_read_word(&labelsRC5[rc5CmdInd]));
 
 	ks0066SetXY(13, 0);
-	ks0066WriteString((uint8_t*)"RC5");
+	ks0066WriteString("RC5");
 
 	ks0066SetXY(0, 1);
 	ks0066WriteString(mkHexString(rc5Cmd));
-	ks0066WriteString((uint8_t*)"=>");
+	ks0066WriteString("=>");
 	ks0066WriteString(mkHexString(eeprom_read_byte(eepromRC5Cmd + rc5CmdInd)));
 	ks0066SetXY(10, 1);
 	ks0066WriteString(mkHexString(rc5Addr));
-	ks0066WriteString((uint8_t*)"=>");
+	ks0066WriteString("=>");
 	ks0066WriteString(mkHexString(eeprom_read_byte(eepromRC5Addr)));
 
 	return;
@@ -399,7 +399,7 @@ void showSndParam(uint8_t index, uint8_t **txtLabels)
 	ks0066WriteString(mkNumString(((int16_t)(param->value) * param->step + 4) >> 3, 3, ' '));
 	showParLabel(param->label, txtLabels);
 	ks0066SetXY(14, 0);
-	ks0066WriteString((uint8_t*)"dB");
+	ks0066WriteString("dB");
 
 	return;
 }
@@ -438,7 +438,7 @@ void showTime(uint8_t **txtLabels)
 		ks0066WriteString(mkNumString(time[MONTH], 2, '0'));
 
 		ks0066SetXY(12, 1);
-		ks0066WriteString((uint8_t*)"20");
+		ks0066WriteString("20");
 		ks0066WriteString(mkNumString(time[YEAR], 2, '0'));
 
 		ks0066WriteCommand(KS0066_SET_CGRAM);
