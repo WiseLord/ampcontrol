@@ -95,14 +95,7 @@ static void setBalance(int8_t val)
 	return;
 }
 
-static void seFrontRear(int8_t val)
-{
-	setVolume(sndPar[SND_VOLUME].value);
-
-	return;
-}
-
-static void setSwitch(int8_t gain)
+static void setGain(int8_t gain)
 {
 	I2CStart(TDA7313_ADDR);
 	I2CWriteByte(TDA7313_SW | ((CHAN_CNT - gain) << 3) | (loud << 2) | chan);
@@ -110,14 +103,6 @@ static void setSwitch(int8_t gain)
 
 	return;
 }
-
-static void setGain(int8_t val)
-{
-	setSwitch(val);
-
-	return;
-}
-
 
 sndParam *sndParAddr(uint8_t index)
 {
@@ -159,8 +144,7 @@ void changeParam(uint8_t index, int8_t diff)
 void setChan(uint8_t ch)
 {
 	chan = ch;
-	setGain(sndPar[SND_GAIN0 + ch].value);
-	setSwitch(sndPar[SND_GAIN0 + chan].value);
+	setGain(sndPar[SND_GAIN0 + chan].value);
 
 	return;
 }
@@ -209,7 +193,7 @@ void switchMute(void)
 void switchLoudness(void)
 {
 	loud = !loud;
-	setSwitch(sndPar[SND_GAIN0 + chan].value);
+	setGain(sndPar[SND_GAIN0 + chan].value);
 
 	return;
 }
@@ -231,17 +215,21 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_BASS].set = setBass;
 	sndPar[SND_TREBLE].set = setTreble;
 	sndPar[SND_BALANCE].set = setBalance;
-	sndPar[SND_FRONTREAR].set = seFrontRear;
+	sndPar[SND_FRONTREAR].set = setBalance;
 
-	for (i = 0; i < 3; i++) {
+	for (i = 0; i < CHAN_CNT; i++)
 		sndPar[SND_GAIN0 + i].set = setGain;
-	}
 
+	return;
+}
+
+void setAudioParams(void)
+{
+	muteVolume();
 	setChan(chan);
 	setBass(sndPar[SND_BASS].value);
-	seFrontRear(0);
 	setTreble(sndPar[SND_TREBLE].value);
-	muteVolume();
+	setBalance(0);
 
 	return;
 }

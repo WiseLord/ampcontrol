@@ -17,10 +17,20 @@
 static uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 static uint8_t lang = LANG_EN;
 
+/* Save parameters to EEPROM */
+static void saveParams(void)
+{
+	saveAudioParams();
+	saveDisplayParams();
+
+	return;
+}
+
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
 	setWorkBrightness();
+	setAudioParams();
 	unmuteVolume();
 
 	return;
@@ -32,9 +42,6 @@ static void powerOff(void)
 	muteVolume();
 	setStbyBrightness();
 	stopEditTime();
-
-	saveAudioParams();
-	saveDisplayParams();
 
 	return;
 }
@@ -107,13 +114,16 @@ static void hwInit(void)
 
 	sei();								/* Gloabl interrupt enable */
 
+	loadAudioParams(txtLabels);			/* Load labels/icons/etc */
+	loadDispParams();					/* Load display params */
+
+	powerOff();
+
 	return;
 }
 
 int main(void)
 {
-	hwInit();
-
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = dispMode;
 
@@ -124,9 +134,7 @@ int main(void)
 	uint16_t rc5Buf = RC5_BUF_EMPTY;
 	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
 
-	loadAudioParams(txtLabels);
-	loadDispParams();
-	setStbyBrightness();
+	hwInit();
 
 	while (1) {
 		encCnt = getEncoder();
@@ -158,6 +166,7 @@ int main(void)
 				break;
 			default:
 				powerOff();
+				saveParams();
 				dispMode = MODE_STANDBY;
 				break;
 			}
