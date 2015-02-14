@@ -142,10 +142,21 @@ void ks0066Init(void)
 #endif
 
 #if defined(KS0066_WIRE_8BIT)
-	ks0066WriteCommand(KS0066_FUNCTION | KS0066_8BIT);
 	ks0066WriteCommand(KS0066_FUNCTION | KS0066_8BIT | KS0066_2LINES);
 #else
-	ks0066WriteCommand(KS0066_FUNCTION);
+#if defined(KS0066_WIRE_PCF8574)
+	I2CStart(PCF8574_ADDR);
+	i2cData &= ~PCF8574_RW_LINE;
+	i2cData &= ~PCF8574_RS_LINE;
+#else
+	PORT(KS0066_RS) &= ~KS0066_RS_LINE;
+	_delay_us(100);
+#endif
+	ks0066SetData(KS0066_FUNCTION);
+	ks0066WriteStrob();
+#if defined(KS0066_WIRE_PCF8574)
+	I2CStop();
+#endif
 	ks0066WriteCommand(KS0066_FUNCTION | KS0066_2LINES);
 #endif
 	ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
