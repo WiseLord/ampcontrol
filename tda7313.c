@@ -163,7 +163,6 @@ void nextChan(void)
 void muteVolume(void)
 {
 	mute = MUTE_ON;
-	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	setVolume(sndPar[SND_VOLUME].min);
 
 	return;
@@ -172,7 +171,6 @@ void muteVolume(void)
 void unmuteVolume(void)
 {
 	mute = MUTE_OFF;
-	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	setVolume(sndPar[SND_VOLUME].value);
 
 	return;
@@ -230,6 +228,7 @@ void setAudioParams(void)
 	setBass(sndPar[SND_BASS].value);
 	setTreble(sndPar[SND_TREBLE].value);
 	setBalance(0);
+	unmuteVolume();
 
 	return;
 }
