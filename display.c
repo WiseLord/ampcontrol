@@ -10,7 +10,7 @@
 
 static int8_t brStby;							/* Brightness in standby mode */
 static int8_t brWork;							/* Brightness in working mode */
-static uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
+static char strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
 static const uint8_t timeCurPos[] PROGMEM = {
 	7, 4, 1, 0, 12, 15, 79
@@ -70,7 +70,7 @@ static void lcdGenBar(void)
 	return;
 }
 
-static uint8_t *mkNumString(int8_t value, uint8_t width, uint8_t lead)
+static char *mkNumString(int8_t value, uint8_t width, uint8_t lead)
 {
 	uint8_t sign = lead;
 	int8_t pos;
@@ -96,7 +96,7 @@ static uint8_t *mkNumString(int8_t value, uint8_t width, uint8_t lead)
 	return strbuf;
 }
 
-static uint8_t *mkHexString(uint8_t value)
+static char *mkHexString(uint8_t value)
 {
 	strbuf[2] = '\0';
 	strbuf[1] = value % 16 + 0x30;
@@ -139,10 +139,10 @@ static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
 void showRC5Info(uint16_t rc5Buf)
 {
 	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"RC=");
+	ks0066WriteString("RC=");
 	ks0066WriteString(mkHexString((rc5Buf >> 6) & 0x1F));
 	ks0066SetXY(0, 1);
-	ks0066WriteString((uint8_t*)"CM=");
+	ks0066WriteString("CM=");
 	ks0066WriteString(mkHexString(rc5Buf & 0x3F));
 
 	return;
@@ -158,16 +158,16 @@ void showRadio(void)
 
 	/* Frequency value */
 	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"FM ");
+	ks0066WriteString("FM ");
 	ks0066WriteString(mkNumString(freq / 100, 3, ' '));
 	ks0066WriteData('.');
 	ks0066WriteString(mkNumString(freq / 10 % 10, 1, ' '));
 
 	/* Stereo indicator */
 	if (tunerStereo())
-		ks0066WriteString((uint8_t*)" S ");
+		ks0066WriteString(" S ");
 	else
-		ks0066WriteString((uint8_t*)"   ");
+		ks0066WriteString("   ");
 
 	/* Signal level */
 	lev = tunerLevel() * 13 / 32;
@@ -183,7 +183,7 @@ void showRadio(void)
 	if (num) {
 		ks0066WriteString(mkNumString(num, 3, ' '));
 	} else {
-		ks0066WriteString((uint8_t*)" --");
+		ks0066WriteString(" --");
 	}
 
 	/* Frequency scale */
@@ -268,7 +268,7 @@ void showTime(uint8_t **txtLabels)
 	drawTm(MONTH);
 
 	ks0066SetXY(12, 1);
-	ks0066WriteString((uint8_t*)"20");
+	ks0066WriteString(mkNumString(20, 2, '0'));
 	drawTm(YEAR);
 
 	ks0066SetXY(0, 1);

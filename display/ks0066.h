@@ -2,16 +2,43 @@
 #define KS0066_H
 
 #include <inttypes.h>
-#include "../pins.h"
 
-#define KS0066_INIT_DATA			0x30
+/* Display size */
+#define KS0066_SCREEN_WIDTH			16
+#define KS0066_SCREEN_HEIGHT		2
+
+/* KS0066 wiring type, if not set any, autoselect PCF8574 */
+#ifndef KS0066_WIRE_8BIT
+#ifndef KS0066_WIRE_4BIT
+#ifndef KS0066_WIRE_PCF8574
+#define KS0066_WIRE_4BIT
+#endif
+#endif
+#endif
+
+#if defined(KS0066_WIRE_PCF8574)
+#include "../i2c.h"
+/* PCF8574 expander address inputs - 0 if soldered to ground, 1 if not */
+#define PCF8574_A2					(0 << 3)
+#define PCF8574_A1					(0 << 2)
+#define PCF8574_A0					(0 << 1)
+#define PCF8574_ADDR				(0x40 | PCF8574_A2 | PCF8574_A1 | PCF8574_A0)
+#define PCF8574_BL_LINE				(1<<3)
+#define PCF8574_E_LINE				(1<<2)
+#define PCF8574_RW_LINE				(1<<1)
+#define PCF8574_RS_LINE				(1<<0)
+#else
+#include "../pins.h"
+#endif
+
+/* KS0066 instruction registers */
+#define KS0066_NO_COMMAND			0x00
 
 #define KS0066_CLEAR				0x01
 #define KS0066_HOME					0x02
 
 #define KS0066_SET_MODE				0x04
 	#define KS0066_INC_ADDR			0x02
-	#define KS0066_DEC_ADDR			0x00
 	#define KS0066_SHIFT_WINDOW		0x01
 
 #define KS0066_DISPLAY				0x08
@@ -21,31 +48,36 @@
 
 #define KS0066_SHIFT				0x10
 	#define KS0066_SHIFT_DISPLAY	0x08
-	#define KS0066_SHIFT_CURSOR		0x00
 	#define KS0066_SHIFT_RIGHT		0x04
-	#define KS0066_SHIFT_LEFT		0x00
 
 #define KS0066_FUNCTION				0x20
 	#define KS0066_8BIT				0x10
-	#define KS0066_4BIT				0x00
 	#define KS0066_2LINES			0x08
-	#define KS0066_1LINE			0x00
 	#define KS0066_5X10				0x04
-	#define KS0066_5X8				0x00
 
 #define KS0066_SET_CGRAM			0x40
-#define KS0066_SET_DDRAM			0x80
-	#define KS0066_LINE_WIDTH		0x40
 
+#define KS0066_SET_DDRAM			0x80
+
+/* Some useful defines */
+#define KS0066_LINE_WIDTH			0x40
 #define KS0066_STA_BUSY				0x80
 
-void ks0066WriteCommand(uint8_t command);
+#define KS0066_BCKL_OFF				0
+#define KS0066_BCKL_ON				1
+
+/* Functions */
+void ks0066WriteCommand(uint8_t cmd);
 void ks0066WriteData(uint8_t data);
 
 void ks0066Clear(void);
 void ks0066Init(void);
 
 void ks0066SetXY(uint8_t x, uint8_t y);
-void ks0066WriteString(uint8_t *string);
+void ks0066WriteString(char *string);
+
+void ks0066WriteHex(uint8_t data);
+
+void ks0066SetBacklight(uint8_t value);
 
 #endif /* KS0066_H */

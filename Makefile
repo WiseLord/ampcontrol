@@ -1,11 +1,13 @@
 AUDIOPROC = TDA7313
 TUNER = TEA5767
 
+WIRE = 4BIT
+
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m8_$(call lc,$(AUDIOPROC))_$(call lc,$(TUNER))
+TARG = ampcontrol_m8_$(call lc,$(WIRE))_$(call lc,$(AUDIOPROC))_$(call lc,$(TUNER))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
@@ -64,7 +66,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(TUNER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(TUNER) -DKS0066_WIRE_$(WIRE) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)
