@@ -29,12 +29,15 @@ static void saveParams(void)
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
+	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	setWorkBrightness();
-	setAudioParams();
+
+	_delay_ms(500);
+
 #if !defined(NOTUNER)
 	loadTunerParams();
 #endif
-	unmuteVolume();
+	setAudioParams();
 
 	return;
 }
@@ -43,6 +46,11 @@ static void powerOn(void)
 static void powerOff(void)
 {
 	muteVolume();
+
+	_delay_ms(100);
+
+	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
+
 	setStbyBrightness();
 	stopEditTime();
 
