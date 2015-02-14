@@ -20,15 +20,15 @@ static void saveParams(void)
 /* Leave standby mode */
 static void powerOn(void)
 {
+	PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
 	setWorkBrightness();
-	setAudioParams();
+
+	_delay_ms(500);						/* Wait while power is being set up */
+
 #if !defined(NOTUNER)
 	setTunerParams();
 #endif
-
-	PORT(STMU_STBY) |= STMU_STBY_LINE;
-	_delay_ms(50);
-	unmuteVolume();
+	setAudioParams();
 
 	return;
 }
@@ -37,7 +37,9 @@ static void powerOn(void)
 void powerOff(void)
 {
 	muteVolume();
-	_delay_ms(50);
+
+	_delay_ms(100);
+
 	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
 
 	setStbyBrightness();

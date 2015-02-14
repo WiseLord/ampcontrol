@@ -245,6 +245,7 @@ void setAudioParams(void)
 	setBass(sndPar[SND_BASS].value);
 	setBalanceFrontRear(0);
 	setTreble(sndPar[SND_TREBLE].value);
+	unmuteVolume();
 
 	return;
 }
