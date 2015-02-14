@@ -238,6 +238,7 @@ void setAudioParams(void)
 	setPreamp(sndPar[SND_PREAMP].value);
 	setMiddle(sndPar[SND_MIDDLE].value);
 	setTreble(sndPar[SND_TREBLE].value);
+	unmuteVolume();
 
 	return;
 }
