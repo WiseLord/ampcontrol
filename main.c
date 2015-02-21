@@ -456,6 +456,8 @@ int main(void)
 #endif
 		case MODE_MUTE:
 			showMute(txtLabels, getSpData());
+			if (getMute())
+				setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 #if defined(TDA7313)
 		case MODE_LOUDNESS:
