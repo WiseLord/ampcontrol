@@ -23,7 +23,7 @@ static void powerOn(void)
 	PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
 	setWorkBrightness();
 
-	_delay_ms(500);						/* Wait while power is being set up */
+	_delay_ms(100);						/* Wait while power is being set up */
 
 #if !defined(NOTUNER)
 	setTunerParams();
