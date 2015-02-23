@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #include "ds1307.h"
-#include "audio/audio.h"
+#include "audio/audioproc.h"
 
 #include "display/gdfb.h"
 
@@ -48,18 +48,15 @@ enum {
 
 	MODE_VOLUME,
 	MODE_BASS,
-#if defined(TDA7439)
 	MODE_MIDDLE,
-#endif
 	MODE_TREBLE,
-#if defined(TDA7439)
 	MODE_PREAMP,
-#elif defined(TDA7313) || defined(TDA7318)
 	MODE_FRONTREAR,
-#endif
 	MODE_BALANCE,
-
-	MODE_GAIN,
+	MODE_GAIN0,
+	MODE_GAIN1,
+	MODE_GAIN2,
+	MODE_GAIN3,
 
 	MODE_TIME,
 	MODE_TIME_EDIT,
@@ -97,9 +94,7 @@ void showTemp(uint8_t **txtLabels);
 void showRadio(uint8_t *buf, uint8_t tune);
 
 void showMute(uint8_t **txtLabels, uint8_t *buf);
-#if defined(TDA7313)
 void showLoudness(uint8_t **txtLabels, uint8_t *buf);
-#endif
 
 void showBrWork(uint8_t **txtLabels, uint8_t *buf);
 void changeBrWork(int8_t diff);

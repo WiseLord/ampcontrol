@@ -71,11 +71,14 @@ void handleSwitchPower(uint8_t *dispMode)
 void handleNextInput(uint8_t *dispMode)
 {
 	switch (*dispMode) {
-	case MODE_GAIN:
+	case MODE_GAIN0:
+	case MODE_GAIN1:
+	case MODE_GAIN2:
+	case MODE_GAIN3:
 		nextChan();
 		gdClear();
 	default:
-		*dispMode = MODE_GAIN;
+		*dispMode = MODE_GAIN0 + getChan();
 		setDisplayTime(DISPLAY_TIME_GAIN);
 		break;
 	}

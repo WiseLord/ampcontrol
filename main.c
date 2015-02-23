@@ -160,24 +160,20 @@ int main(void)
 		case CMD_RC5_INPUT_0:
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
-#if !defined(TDA7313)
 		case CMD_RC5_INPUT_3:
-#endif
 			setChan(cmd - CMD_RC5_INPUT_0);
 			gdClear();
 			curSndParam = sndParAddr(SND_GAIN0 + getChan());
-			dispMode = MODE_GAIN;
+			dispMode = (MODE_GAIN0 + getChan());
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
-#if defined(TDA7313)
-		case CMD_RC5_INPUT_3:
+/*		case CMD_RC5_INPUT_3:
 			gdClear();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
-#endif
-		case CMD_RC5_NEXT_INPUT:
+*/		case CMD_RC5_NEXT_INPUT:
 			handleNextInput (&dispMode);
 			curSndParam = sndParAddr(SND_GAIN0 + getChan());
 			break;
@@ -465,11 +461,9 @@ int main(void)
 			if (getMute())
 				setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
-#if defined(TDA7313)
 		case MODE_LOUDNESS:
 			showLoudness(txtLabels, getSpData());
 			break;
-#endif
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime(txtLabels);

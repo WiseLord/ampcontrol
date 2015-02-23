@@ -3,7 +3,7 @@
 
 #include "inttypes.h"
 
-#include "audio/audio.h"
+#include "audio/audioproc.h"
 
 void powerOff(void);
 void handleSwitchPower(uint8_t *dispMode);

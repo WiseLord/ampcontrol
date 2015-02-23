@@ -365,7 +365,6 @@ void showMute(uint8_t **txtLabels, uint8_t *buf)
 	return;
 }
 
-#if defined(TDA7313)
 void showLoudness(uint8_t **txtLabels, uint8_t *buf)
 {
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
@@ -382,7 +381,6 @@ void showLoudness(uint8_t **txtLabels, uint8_t *buf)
 
 	return;
 }
-#endif
 
 /* Show brightness control */
 void showBrWork(uint8_t **txtLabels, uint8_t *buf)

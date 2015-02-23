@@ -1,4 +1,3 @@
-AUDIOPROC = TDA7439
 DISPLAY = ST7920
 TUNER = RDA5807
 
@@ -6,18 +5,12 @@ TUNER = RDA5807
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m32fb_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
+TARG = ampcontrol_m32fb_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
 
-ifeq ($(AUDIOPROC), TDA7313)
-  AUDIO_SRC = audio/tda7313.c
-else ifeq ($(AUDIOPROC), TDA7318)
-  AUDIO_SRC = audio/tda7318.c
-else ifeq ($(AUDIOPROC), TDA7439)
-  AUDIO_SRC = audio/tda7439.c
-endif
+AUDIO_SRC = audio/audioproc.c
 
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ICONS = icons-24.c icons-32.c
@@ -77,7 +70,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)

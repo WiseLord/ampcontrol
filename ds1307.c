@@ -1,7 +1,7 @@
 #include "ds1307.h"
 
 #include "i2c.h"
-#include "audio/audio.h"
+#include "audio/audioproc.h"
 
 static int8_t time[8];
 static int8_t alarm[4];
