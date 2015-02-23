@@ -7,19 +7,20 @@
 static uint8_t chan;
 static uint8_t mute;
 
-static sndParam sndPar[MODE_SND_END] = {
-	{0x00, 0xB1, 0x00, 0x08},	/* Volume */
-	{0x00, 0xF9, 0x07, 0x10},	/* Bass */
-	{0x00, 0xF9, 0x07, 0x10},	/* Middle */
-	{0x00, 0xF9, 0x07, 0x10},	/* Treble */
-	{0x00, 0xD1, 0x00, 0x08},	/* Preamp */
-	{0x00, 0xEB, 0x15, 0x08},	/* FrontRear */
-	{0x00, 0xEB, 0x15, 0x08},	/* Balance */
-	{0x00, 0x00, 0x0F, 0x10},	/* Gain 0 */
-	{0x00, 0x00, 0x0F, 0x10},	/* Gain 1 */
-	{0x00, 0x00, 0x0F, 0x10},	/* Gain 2 */
-	{0x00, 0x00, 0x0F, 0x10},	/* Gain 3 */
+static sndGrid grid[MODE_SND_END] = {
+	{0xB1, 0x00, 0x08},	/* Volume */
+	{0xF9, 0x07, 0x10},	/* Bass */
+	{0xF9, 0x07, 0x10},	/* Middle */
+	{0xF9, 0x07, 0x10},	/* Treble */
+	{0xD1, 0x00, 0x08},	/* Preamp */
+	{0xEB, 0x15, 0x08},	/* FrontRear */
+	{0xEB, 0x15, 0x08},	/* Balance */
+	{0x00, 0x0F, 0x10},	/* Gain 0 */
+	{0x00, 0x0F, 0x10},	/* Gain 1 */
+	{0x00, 0x0F, 0x10},	/* Gain 2 */
+	{0x00, 0x0F, 0x10},	/* Gain 3 */
 };
+static sndParam sndPar[MODE_SND_END];
 
 
 static void setVolume(int8_t val)
@@ -92,10 +93,10 @@ void changeParam(uint8_t dispMode, int8_t diff)
 {
 	sndParam *param = sndParAddr(dispMode);
 	param->value += diff;
-	if (param->value > param->max)
-		param->value = param->max;
-	if (param->value < param->min)
-		param->value = param->min;
+	if (param->value > param->grid->max)
+		param->value = param->grid->max;
+	if (param->value < param->grid->min)
+		param->value = param->grid->min;
 	param->set(param->value);
 
 	return;
@@ -122,7 +123,7 @@ void nextChan(void)
 
 void muteVolume(void)
 {
-	setVolume(sndPar[MODE_SND_VOLUME].min);
+	setVolume(sndPar[MODE_SND_VOLUME].grid->min);
 	mute = MUTE_ON;
 //	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 
@@ -154,6 +155,9 @@ void switchMute(void)
 void loadAudioParams(uint8_t **txtLabels)
 {
 	uint8_t i;
+
+	for (i = 0; i < MODE_SND_END; i++)
+		sndPar[i].grid = &grid[i];
 
 	for (i = 0; i < MODE_SND_END; i++)
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);

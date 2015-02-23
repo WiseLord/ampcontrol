@@ -9,10 +9,14 @@
 #define MUTE_OFF				0
 
 typedef struct {
-	int8_t value;
 	int8_t min;
 	int8_t max;
 	uint8_t step;
+} sndGrid;
+
+typedef struct {
+	int8_t value;
+	sndGrid *grid;
 	uint8_t *label;
 	const uint8_t *icon;
 	void (*set)(int8_t value);
