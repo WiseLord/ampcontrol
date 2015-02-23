@@ -17,7 +17,7 @@ const sndGrid *tda7313SndGrid(sndMode index)
 		ret = &tda7313Grid[0];
 	else if (index == MODE_SND_BASS || index == MODE_SND_TREBLE)
 		ret = &tda7313Grid[1];
-	else if (index == MODE_SND_BALANCE || index == MODE_SND_BALANCE)
+	else if (index == MODE_SND_FRONTREAR || index == MODE_SND_BALANCE)
 		ret = &tda7313Grid[2];
 	else if (index == MODE_SND_GAIN0 || index == MODE_SND_GAIN1 ||
 	         index == MODE_SND_GAIN2)

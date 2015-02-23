@@ -12,6 +12,10 @@ typedef enum {
 	AUDIOPROC_TDA7318
 } audioProc;
 
+void audioprocInit(uint8_t **txtLabels);
+
+
+
 
 
 #define CHAN_CNT				4
@@ -34,7 +38,6 @@ void unmuteVolume(void);
 
 void switchMute(void);
 
-void audioprocInit(uint8_t **txtLabels);
 void setAudioParams(void);
 void saveAudioParams(void);
 
