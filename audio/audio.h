@@ -1,6 +1,8 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
+#include <inttypes.h>
+
 typedef struct {
 	const int8_t min;
 	const int8_t max;

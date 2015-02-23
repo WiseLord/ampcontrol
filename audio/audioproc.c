@@ -5,24 +5,16 @@
 #include "../eeprom.h"
 #include "../display/icons.h"
 
+static audioProc proc = AUDIOPROC_TDA7313;
+static const sndGrid zeroGrid PROGMEM = {0, 0, 0};
+
+
+
+
 static uint8_t chan;
 static uint8_t mute;
 
-static const sndGrid grid[MODE_SND_END] PROGMEM = {
-	{-79,  0, 1 * 8},	/* Volume */
-	{ -7,  7, 2 * 8},	/* Bass */
-	{ -7,  7, 2 * 8},	/* Middle */
-	{ -7,  7, 2 * 8},	/* Treble */
-	{-47,  0, 1 * 8},	/* Preamp */
-	{  0,  0, 0 * 8},	/* FrontRear */
-	{-21, 21, 1 * 8},	/* Balance */
-	{  0, 15, 2 * 8},	/* Gain 0 */
-	{  0, 15, 2 * 8},	/* Gain 1 */
-	{  0, 15, 2 * 8},	/* Gain 2 */
-	{  0, 15, 2 * 8},	/* Gain 3 */
-};
 static sndParam sndPar[MODE_SND_END];
-
 
 static void setVolume(int8_t val)
 {
@@ -153,27 +145,35 @@ void switchMute(void)
 }
 
 
-void loadAudioParams(uint8_t **txtLabels)
+void audioprocInit(uint8_t **txtLabels)
 {
 	uint8_t i;
 
+	/* Setup audio parameter grid */
+	switch (proc) {
+	case AUDIOPROC_TDA7439:
+		for (i = 0; i < MODE_SND_END; i++)
+			sndPar[i].grid = tda7439SndGrid(i);
+		break;
+	case AUDIOPROC_TDA7313:
+		for (i = 0; i < MODE_SND_END; i++)
+			sndPar[i].grid = tda7313SndGrid(i);
+		break;
+	case AUDIOPROC_TDA7318:
+		for (i = 0; i < MODE_SND_END; i++)
+			sndPar[i].grid = tda7318SndGrid(i);
+		break;
+	}
+	/* All not used parameters will have zero grid */
 	for (i = 0; i < MODE_SND_END; i++)
-		sndPar[i].grid = &grid[i];
+		if (!sndPar[i].grid)
+			sndPar[i].grid = &zeroGrid;
 
-	for (i = 0; i < MODE_SND_END; i++)
+	/* Setup audio parameters stored in eeprom */
+	for (i = 0; i < MODE_SND_END; i++) {
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
-
-	sndPar[MODE_SND_VOLUME].label = txtLabels[LABEL_VOLUME];
-	sndPar[MODE_SND_BASS].label = txtLabels[LABEL_BASS];
-	sndPar[MODE_SND_MIDDLE].label = txtLabels[LABEL_MIDDLE];
-	sndPar[MODE_SND_TREBLE].label = txtLabels[LABEL_TREBLE];
-	sndPar[MODE_SND_PREAMP].label = txtLabels[LABEL_PREAMP];
-	sndPar[MODE_SND_FRONTREAR].label = txtLabels[LABEL_FRONTREAR];
-	sndPar[MODE_SND_BALANCE].label = txtLabels[LABEL_BALANCE];
-	sndPar[MODE_SND_GAIN0].label = txtLabels[LABEL_GAIN0];
-	sndPar[MODE_SND_GAIN1].label = txtLabels[LABEL_GAIN1];
-	sndPar[MODE_SND_GAIN2].label = txtLabels[LABEL_GAIN2];
-	sndPar[MODE_SND_GAIN3].label = txtLabels[LABEL_GAIN3];
+		sndPar[i].label = txtLabels[LABEL_VOLUME + i];
+	}
 
 	sndPar[MODE_SND_VOLUME].icon = icons_24_volume;
 	sndPar[MODE_SND_BASS].icon = icons_24_bass;

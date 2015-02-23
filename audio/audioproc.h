@@ -2,7 +2,17 @@
 #define AUDIOPROC_H
 
 #include <inttypes.h>
-#include "audio.h"
+#include "tda7439.h"
+#include "tda7313.h"
+#include "tda7318.h"
+
+typedef enum {
+	AUDIOPROC_TDA7439,
+	AUDIOPROC_TDA7313,
+	AUDIOPROC_TDA7318
+} audioProc;
+
+
 
 #define CHAN_CNT				4
 
@@ -24,7 +34,7 @@ void unmuteVolume(void);
 
 void switchMute(void);
 
-void loadAudioParams(uint8_t **txtLabels);
+void audioprocInit(uint8_t **txtLabels);
 void setAudioParams(void);
 void saveAudioParams(void);
 

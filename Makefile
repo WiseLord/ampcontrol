@@ -10,7 +10,7 @@ TARG = ampcontrol_m32fb_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
 
-AUDIO_SRC = audio/audioproc.c
+AUDIO_SRC = audio/audioproc.c audio/tda7439.c audio/tda7313.c audio/tda7318.c
 
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ICONS = icons-24.c icons-32.c

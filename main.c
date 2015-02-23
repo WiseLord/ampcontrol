@@ -67,7 +67,7 @@ static void hwInit(void)
 	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 
-	loadAudioParams(txtLabels);			/* Load labels/icons/etc */
+	audioprocInit(txtLabels);			/* Load labels/icons/etc */
 	loadDispParams();					/* Load display params */
 #if !defined(NOTUNER)
 	loadTunerParams();
