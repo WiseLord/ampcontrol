@@ -71,14 +71,14 @@ void handleSwitchPower(uint8_t *dispMode)
 void handleNextInput(uint8_t *dispMode)
 {
 	switch (*dispMode) {
-	case MODE_GAIN0:
-	case MODE_GAIN1:
-	case MODE_GAIN2:
-	case MODE_GAIN3:
+	case MODE_SND_GAIN0:
+	case MODE_SND_GAIN1:
+	case MODE_SND_GAIN2:
+	case MODE_SND_GAIN3:
 		nextChan();
 		gdClear();
 	default:
-		*dispMode = MODE_GAIN0 + getChan();
+		*dispMode = MODE_SND_GAIN0 + getChan();
 		setDisplayTime(DISPLAY_TIME_GAIN);
 		break;
 	}
@@ -118,14 +118,12 @@ void handleSwitchMute(uint8_t *dispMode)
 	return;
 }
 
-void handleNextSndParam(uint8_t *dispMode, sndParam **curSndParam)
+void handleNextSndParam(uint8_t *dispMode)
 {
-	if (*dispMode >= MODE_VOLUME && *dispMode < MODE_BALANCE) {
-		(*curSndParam)++;
+	if (*dispMode < MODE_SND_END - 1) {
 		(*dispMode)++;
 	} else {
-		*curSndParam = sndParAddr(SND_VOLUME);
-		*dispMode = MODE_VOLUME;
+		*dispMode = MODE_SND_VOLUME;
 	}
 	setDisplayTime(DISPLAY_TIME_AUDIO);
 

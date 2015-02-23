@@ -407,8 +407,9 @@ void changeBrWork(int8_t diff)
 
 
 /* Show audio parameter */
-void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf)
+void showSndParam(uint8_t dispMode, uint8_t **txtLabels, uint8_t *buf)
 {
+	sndParam *param = sndParAddr(dispMode);
 	showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
 	showBar(param->min, param->max, param->value, buf);
 	showParLabel(param->label);
@@ -498,7 +499,7 @@ void showAlarm(uint8_t **txtLabels)
 	i = getAlarm(DS1307_A0_INPUT);
 	if (i >= CHAN_CNT)
 		i = 0;
-	gdWriteIcon24(sndParAddr(SND_GAIN0 + i)->icon);
+	gdWriteIcon24(sndParAddr(MODE_SND_GAIN0 + i)->icon);
 
 	/* Draw weekdays selection rectangle */
 	if (getEam() == DS1307_A0_WDAY) {

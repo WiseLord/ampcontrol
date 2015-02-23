@@ -18,27 +18,27 @@ typedef struct {
 	void (*set)(int8_t value);
 } sndParam;
 
-enum {
-	SND_VOLUME,
-	SND_BASS,
-	SND_MIDDLE,
-	SND_TREBLE,
-	SND_PREAMP,
-	SND_FRONTREAR,
-	SND_BALANCE,
-	SND_GAIN0,
-	SND_GAIN1,
-	SND_GAIN2,
-	SND_GAIN3,
-	SND_END
-};
+typedef enum {
+	MODE_SND_VOLUME,
+	MODE_SND_BASS,
+	MODE_SND_MIDDLE,
+	MODE_SND_TREBLE,
+	MODE_SND_PREAMP,
+	MODE_SND_FRONTREAR,
+	MODE_SND_BALANCE,
+	MODE_SND_GAIN0,
+	MODE_SND_GAIN1,
+	MODE_SND_GAIN2,
+	MODE_SND_GAIN3,
+	MODE_SND_END
+} sndMode;
 
 sndParam *sndParAddr(uint8_t index);
 
 uint8_t getChan(void);
 uint8_t getMute(void);
 
-void changeParam(sndParam *sndPar, int8_t diff);
+void changeParam(uint8_t dispMode, int8_t diff);
 
 void setChan(uint8_t ch);
 void nextChan(void);

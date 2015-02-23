@@ -83,8 +83,6 @@ int main(void)
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = dispMode;
 
-	sndParam *curSndParam = sndParAddr(SND_VOLUME);
-
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_EMPTY;
 
@@ -154,7 +152,7 @@ int main(void)
 			handleSwitchMute(&dispMode);
 			break;
 		case CMD_RC5_MENU:
-			handleNextSndParam(&dispMode, &curSndParam);
+			handleNextSndParam(&dispMode);
 			break;
 		/* CMD_VOL_UP and CMD_VOL_DOWN are processed below as encoder actions */
 		case CMD_RC5_INPUT_0:
@@ -163,8 +161,7 @@ int main(void)
 		case CMD_RC5_INPUT_3:
 			setChan(cmd - CMD_RC5_INPUT_0);
 			gdClear();
-			curSndParam = sndParAddr(SND_GAIN0 + getChan());
-			dispMode = (MODE_GAIN0 + getChan());
+			dispMode = MODE_SND_GAIN0 + getChan();
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
 /*		case CMD_RC5_INPUT_3:
@@ -175,7 +172,6 @@ int main(void)
 			break;
 */		case CMD_RC5_NEXT_INPUT:
 			handleNextInput (&dispMode);
-			curSndParam = sndParAddr(SND_GAIN0 + getChan());
 			break;
 		case CMD_RC5_TIME:
 			handleEditTime(&dispMode);
@@ -237,7 +233,6 @@ int main(void)
 			break;
 		case CMD_BTN_2:
 			handleNextInput(&dispMode);
-			curSndParam = sndParAddr(SND_GAIN0 + getChan());
 			break;
 		case CMD_BTN_3:
 			switch (dispMode) {
@@ -277,7 +272,7 @@ int main(void)
 				gdClear();
 				nextRC5Cmd();
 			} else {
-				handleNextSndParam(&dispMode, &curSndParam);
+				handleNextSndParam(&dispMode);
 			}
 			break;
 
@@ -383,12 +378,11 @@ int main(void)
 			case MODE_TIME:
 			case MODE_TIMER:
 			case MODE_FM_RADIO:
-				curSndParam = sndParAddr(SND_VOLUME);
-				dispMode = MODE_VOLUME;
+				dispMode = MODE_SND_VOLUME;
 			default:
 				if (getMute())
 					unmuteVolume();
-				changeParam(curSndParam, encCnt);
+				changeParam(dispMode, encCnt);
 				setDisplayTime(DISPLAY_TIME_GAIN);
 				break;
 			}
@@ -479,7 +473,7 @@ int main(void)
 			showBrWork(txtLabels, getSpData());
 			break;
 		default:
-			showSndParam(curSndParam, txtLabels, getSpData());
+			showSndParam(dispMode, txtLabels, getSpData());
 			break;
 		}
 

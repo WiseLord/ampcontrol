@@ -41,22 +41,10 @@ enum {
 
 /* Display modes */
 enum {
-	MODE_STANDBY,
+	MODE_STANDBY = MODE_SND_END,
 	MODE_SPECTRUM,
 	MODE_FM_RADIO,
 	MODE_FM_TUNE,
-
-	MODE_VOLUME,
-	MODE_BASS,
-	MODE_MIDDLE,
-	MODE_TREBLE,
-	MODE_PREAMP,
-	MODE_FRONTREAR,
-	MODE_BALANCE,
-	MODE_GAIN0,
-	MODE_GAIN1,
-	MODE_GAIN2,
-	MODE_GAIN3,
 
 	MODE_TIME,
 	MODE_TIME_EDIT,
@@ -99,7 +87,7 @@ void showLoudness(uint8_t **txtLabels, uint8_t *buf);
 void showBrWork(uint8_t **txtLabels, uint8_t *buf);
 void changeBrWork(int8_t diff);
 
-void showSndParam(sndParam *param, uint8_t **txtLabels, uint8_t *buf);
+void showSndParam(uint8_t dispMode, uint8_t **txtLabels, uint8_t *buf);
 
 void showTime(uint8_t **txtLabels);
 void showAlarm(uint8_t **txtLabels);

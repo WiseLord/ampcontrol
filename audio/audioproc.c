@@ -7,7 +7,7 @@
 static uint8_t chan;
 static uint8_t mute;
 
-static sndParam sndPar[SND_END] = {
+static sndParam sndPar[MODE_SND_END] = {
 	{0x00, 0xB1, 0x00, 0x08},	/* Volume */
 	{0x00, 0xF9, 0x07, 0x10},	/* Bass */
 	{0x00, 0xF9, 0x07, 0x10},	/* Middle */
@@ -52,6 +52,12 @@ static void setPreamp(int8_t val)
 	return;
 }
 
+static void setFrontRear(int8_t val)
+{
+
+	return;
+}
+
 static void setBalance(int8_t val)
 {
 
@@ -82,8 +88,9 @@ uint8_t getMute(void)
 }
 
 
-void changeParam(sndParam *param, int8_t diff)
+void changeParam(uint8_t dispMode, int8_t diff)
 {
+	sndParam *param = sndParAddr(dispMode);
 	param->value += diff;
 	if (param->value > param->max)
 		param->value = param->max;
@@ -115,7 +122,7 @@ void nextChan(void)
 
 void muteVolume(void)
 {
-	setVolume(sndPar[SND_VOLUME].min);
+	setVolume(sndPar[MODE_SND_VOLUME].min);
 	mute = MUTE_ON;
 //	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 
@@ -124,7 +131,7 @@ void muteVolume(void)
 
 void unmuteVolume(void)
 {
-	setVolume(sndPar[SND_VOLUME].value);
+	setVolume(sndPar[MODE_SND_VOLUME].value);
 	mute = MUTE_OFF;
 //	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 
@@ -148,44 +155,45 @@ void loadAudioParams(uint8_t **txtLabels)
 {
 	uint8_t i;
 
-	for (i = 0; i < SND_END; i++)
+	for (i = 0; i < MODE_SND_END; i++)
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
 
-	sndPar[SND_VOLUME].label = txtLabels[LABEL_VOLUME];
-	sndPar[SND_BASS].label = txtLabels[LABEL_BASS];
-	sndPar[SND_MIDDLE].label = txtLabels[LABEL_MIDDLE];
-	sndPar[SND_TREBLE].label = txtLabels[LABEL_TREBLE];
-	sndPar[SND_PREAMP].label = txtLabels[LABEL_PREAMP];
-	sndPar[SND_FRONTREAR].label = txtLabels[LABEL_FRONTREAR];
-	sndPar[SND_BALANCE].label = txtLabels[LABEL_BALANCE];
-	sndPar[SND_GAIN0].label = txtLabels[LABEL_GAIN0];
-	sndPar[SND_GAIN1].label = txtLabels[LABEL_GAIN1];
-	sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
-	sndPar[SND_GAIN3].label = txtLabels[LABEL_GAIN3];
+	sndPar[MODE_SND_VOLUME].label = txtLabels[LABEL_VOLUME];
+	sndPar[MODE_SND_BASS].label = txtLabels[LABEL_BASS];
+	sndPar[MODE_SND_MIDDLE].label = txtLabels[LABEL_MIDDLE];
+	sndPar[MODE_SND_TREBLE].label = txtLabels[LABEL_TREBLE];
+	sndPar[MODE_SND_PREAMP].label = txtLabels[LABEL_PREAMP];
+	sndPar[MODE_SND_FRONTREAR].label = txtLabels[LABEL_FRONTREAR];
+	sndPar[MODE_SND_BALANCE].label = txtLabels[LABEL_BALANCE];
+	sndPar[MODE_SND_GAIN0].label = txtLabels[LABEL_GAIN0];
+	sndPar[MODE_SND_GAIN1].label = txtLabels[LABEL_GAIN1];
+	sndPar[MODE_SND_GAIN2].label = txtLabels[LABEL_GAIN2];
+	sndPar[MODE_SND_GAIN3].label = txtLabels[LABEL_GAIN3];
 
-	sndPar[SND_VOLUME].icon = icons_24_volume;
-	sndPar[SND_BASS].icon = icons_24_bass;
-	sndPar[SND_MIDDLE].icon = icons_24_middle;
-	sndPar[SND_TREBLE].icon = icons_24_treble;
-	sndPar[SND_PREAMP].icon = icons_24_preamp;
-	sndPar[SND_FRONTREAR].icon = icons_24_frontrear;
-	sndPar[SND_BALANCE].icon = icons_24_balance;
-	sndPar[SND_GAIN0].icon = icons_24_tuner;
-	sndPar[SND_GAIN1].icon = icons_24_pc;
-	sndPar[SND_GAIN2].icon = icons_24_tv;
-	sndPar[SND_GAIN3].icon = icons_24_dvd;
+	sndPar[MODE_SND_VOLUME].icon = icons_24_volume;
+	sndPar[MODE_SND_BASS].icon = icons_24_bass;
+	sndPar[MODE_SND_MIDDLE].icon = icons_24_middle;
+	sndPar[MODE_SND_TREBLE].icon = icons_24_treble;
+	sndPar[MODE_SND_PREAMP].icon = icons_24_preamp;
+	sndPar[MODE_SND_FRONTREAR].icon = icons_24_frontrear;
+	sndPar[MODE_SND_BALANCE].icon = icons_24_balance;
+	sndPar[MODE_SND_GAIN0].icon = icons_24_tuner;
+	sndPar[MODE_SND_GAIN1].icon = icons_24_pc;
+	sndPar[MODE_SND_GAIN2].icon = icons_24_tv;
+	sndPar[MODE_SND_GAIN3].icon = icons_24_dvd;
 
 	chan = eeprom_read_byte(eepromChannel);
 
-	sndPar[SND_VOLUME].set = setVolume;
-	sndPar[SND_BASS].set = setBass;
-	sndPar[SND_MIDDLE].set = setMiddle;
-	sndPar[SND_TREBLE].set = setTreble;
-	sndPar[SND_PREAMP].set = setPreamp;
-	sndPar[SND_BALANCE].set = setBalance;
+	sndPar[MODE_SND_VOLUME].set = setVolume;
+	sndPar[MODE_SND_BASS].set = setBass;
+	sndPar[MODE_SND_MIDDLE].set = setMiddle;
+	sndPar[MODE_SND_TREBLE].set = setTreble;
+	sndPar[MODE_SND_PREAMP].set = setPreamp;
+	sndPar[MODE_SND_FRONTREAR].set = setFrontRear;
+	sndPar[MODE_SND_BALANCE].set = setBalance;
 
 	for (i = 0; i < CHAN_CNT; i++)
-		sndPar[SND_GAIN0 + i].set = setGain;
+		sndPar[MODE_SND_GAIN0 + i].set = setGain;
 
 	return;
 }
@@ -194,10 +202,10 @@ void setAudioParams(void)
 {
 	muteVolume();
 	setChan(chan);
-	setBass(sndPar[SND_BASS].value);
-	setPreamp(sndPar[SND_PREAMP].value);
-	setMiddle(sndPar[SND_MIDDLE].value);
-	setTreble(sndPar[SND_TREBLE].value);
+	setBass(sndPar[MODE_SND_BASS].value);
+	setPreamp(sndPar[MODE_SND_PREAMP].value);
+	setMiddle(sndPar[MODE_SND_MIDDLE].value);
+	setTreble(sndPar[MODE_SND_TREBLE].value);
 	unmuteVolume();
 
 	return;
@@ -207,7 +215,7 @@ void saveAudioParams(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < SND_END; i++)
+	for (i = 0; i < MODE_SND_END; i++)
 		eeprom_update_byte(eepromVolume + i, sndPar[i].value);
 
 	eeprom_update_byte(eepromChannel, chan);
