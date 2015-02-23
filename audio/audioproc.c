@@ -1,24 +1,25 @@
 #include "audioproc.h"
 
 #include <avr/eeprom.h>
+#include <avr/pgmspace.h>
 #include "../eeprom.h"
 #include "../display/icons.h"
 
 static uint8_t chan;
 static uint8_t mute;
 
-static sndGrid grid[MODE_SND_END] = {
-	{0xB1, 0x00, 0x08},	/* Volume */
-	{0xF9, 0x07, 0x10},	/* Bass */
-	{0xF9, 0x07, 0x10},	/* Middle */
-	{0xF9, 0x07, 0x10},	/* Treble */
-	{0xD1, 0x00, 0x08},	/* Preamp */
-	{0xEB, 0x15, 0x08},	/* FrontRear */
-	{0xEB, 0x15, 0x08},	/* Balance */
-	{0x00, 0x0F, 0x10},	/* Gain 0 */
-	{0x00, 0x0F, 0x10},	/* Gain 1 */
-	{0x00, 0x0F, 0x10},	/* Gain 2 */
-	{0x00, 0x0F, 0x10},	/* Gain 3 */
+static const sndGrid grid[MODE_SND_END] PROGMEM = {
+	{-79,  0, 1 * 8},	/* Volume */
+	{ -7,  7, 2 * 8},	/* Bass */
+	{ -7,  7, 2 * 8},	/* Middle */
+	{ -7,  7, 2 * 8},	/* Treble */
+	{-47,  0, 1 * 8},	/* Preamp */
+	{  0,  0, 0 * 8},	/* FrontRear */
+	{-21, 21, 1 * 8},	/* Balance */
+	{  0, 15, 2 * 8},	/* Gain 0 */
+	{  0, 15, 2 * 8},	/* Gain 1 */
+	{  0, 15, 2 * 8},	/* Gain 2 */
+	{  0, 15, 2 * 8},	/* Gain 3 */
 };
 static sndParam sndPar[MODE_SND_END];
 
@@ -93,10 +94,10 @@ void changeParam(uint8_t dispMode, int8_t diff)
 {
 	sndParam *param = sndParAddr(dispMode);
 	param->value += diff;
-	if (param->value > param->grid->max)
-		param->value = param->grid->max;
-	if (param->value < param->grid->min)
-		param->value = param->grid->min;
+	if (param->value > (int8_t)pgm_read_byte(&param->grid->max))
+		param->value = (int8_t)pgm_read_byte(&param->grid->max);
+	if (param->value < (int8_t)pgm_read_byte(&param->grid->min))
+		param->value = (int8_t)pgm_read_byte(&param->grid->min);
 	param->set(param->value);
 
 	return;
@@ -123,7 +124,7 @@ void nextChan(void)
 
 void muteVolume(void)
 {
-	setVolume(sndPar[MODE_SND_VOLUME].grid->min);
+	setVolume((int8_t)pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min));
 	mute = MUTE_ON;
 //	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 

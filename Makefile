@@ -41,7 +41,7 @@ SRCS = main.c actions.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(D
 MCU = atmega32
 F_CPU = 16000000L
 
-OPTIMIZE = -O2 -mcall-prologues -fshort-enums
+OPTIMIZE = -Os -mcall-prologues -fshort-enums
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 LDFLAGS = $(DEBUG) -mmcu=$(MCU)

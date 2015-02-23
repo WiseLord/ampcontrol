@@ -410,8 +410,8 @@ void changeBrWork(int8_t diff)
 void showSndParam(uint8_t dispMode, uint8_t **txtLabels, uint8_t *buf)
 {
 	sndParam *param = sndParAddr(dispMode);
-	showParValue(((int16_t)(param->value) * param->grid->step + 4) >> 3);
-	showBar(param->grid->min, param->grid->max, param->value, buf);
+	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
+	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value, buf);
 	showParLabel(param->label);
 	showParIcon(param->icon);
 	gdSetXY(116, 56);
