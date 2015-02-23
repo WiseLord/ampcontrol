@@ -80,10 +80,13 @@ static void ks0108Write(uint8_t type, uint8_t data)
 
 ISR (TIMER0_OVF_vect)
 {
-	/* 2MHz / (255 - 155) = 20000Hz => 10kHz Fourier analysis */
-	TCNT0 = 155;									/* 20000Hz / 8 / 2 / 66 = 18.9 FPS */
+	/* 2MHz / (256 - 156) = 20000Hz => 20000Hz / 8 / 2 / 66 = 18.9 FPS */
+	TCNT0 = 156;
 
-	ADCSRA |= 1<<ADSC;
+	static uint8_t run = 1;
+	if (run)
+		ADCSRA |= 1<<ADSC;							/* Start ADC every second interrupt */
+	run = !run;
 
 	static uint8_t i;
 	static uint8_t j;
@@ -105,7 +108,7 @@ ISR (TIMER0_OVF_vect)
 				break;
 			}
 		}
-		PORT(KS0108_DI) &= ~KS0108_DI_LINE;				/* Go to command mode */
+		PORT(KS0108_DI) &= ~KS0108_DI_LINE;			/* Go to command mode */
 		ks0108SetPort(KS0108_SET_PAGE + i);
 	} else if (j == 65) {							/* Phase 2 (X) */
 		ks0108SetPort(KS0108_SET_ADDRESS);
@@ -113,22 +116,22 @@ ISR (TIMER0_OVF_vect)
 		ks0108SetPort(fb[j + 64 * cs][i]);
 	}
 
-	PORT(KS0108_E) |= KS0108_E_LINE;						/* Strob */
+	PORT(KS0108_E) |= KS0108_E_LINE;				/* Strob */
 	asm("nop");
 	PORT(KS0108_E) &= ~KS0108_E_LINE;
 
 	if (++j >= 66) {
 		j = 0;
-		PORT(KS0108_DI) |= KS0108_DI_LINE;				/* Go to data mode */
+		PORT(KS0108_DI) |= KS0108_DI_LINE;			/* Go to data mode */
 	}
 
 	if (++br >= KS0108_MAX_BRIGTHNESS)				/* Loop brightness */
 		br = KS0108_MIN_BRIGHTNESS;
 
 	if (br == _br) {
-		PORT(KS0108_BCKL) &= ~KS0108_BCKL_LINE;			/* Turn backlight off */
+		PORT(KS0108_BCKL) &= ~KS0108_BCKL_LINE;		/* Turn backlight off */
 	} else if (br == 0)
-		PORT(KS0108_BCKL) |= KS0108_BCKL_LINE;			/* Turn backlight on */
+		PORT(KS0108_BCKL) |= KS0108_BCKL_LINE;		/* Turn backlight on */
 
 	return;
 }

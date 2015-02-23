@@ -62,43 +62,46 @@ static void st7920Write(uint8_t type, uint8_t data)
 
 ISR (TIMER0_OVF_vect)
 {
-	/* 2MHz / (255 - 155) = 20000Hz => 10kHz Fourier analysis */
-	TCNT0 = 155;										/* 20000 / 32 / 34 = 18.4 FPS */
+	 /* 2MHz / (256 - 156) = 20000Hz => 20000 / 32 / 34 = 18.4 FPS */
+	TCNT0 = 156;
 
-	ADCSRA |= 1<<ADSC;
+	static uint8_t run = 1;
+	if (run)
+		ADCSRA |= 1<<ADSC;								/* Start ADC every second interrupt */
+	run = !run;
 
 	static uint8_t i = 0;
 	static uint8_t j = 32;
 
 	static uint8_t br;
 
-	if (j == 32) {										/* Phase 1 (Y) */
-		PORT(ST7920_RS) &= ~ST7920_RS_LINE;				/* Go to command mode */
+	if (j == 32) {									/* Phase 1 (Y) */
+		PORT(ST7920_RS) &= ~ST7920_RS_LINE;			/* Go to command mode */
 		if (++i >= 32)
 			i = 0;
-		st7920SetPort(ST7920_SET_GRAPHIC_RAM | i);		/* Set Y */
-	} else if (j == 33) {								/* Phase 2 (X) */
-		st7920SetPort(ST7920_SET_GRAPHIC_RAM);			/* Set X */
-	} else {											/* Phase 3 (32 bytes of data) */
+		st7920SetPort(ST7920_SET_GRAPHIC_RAM | i);	/* Set Y */
+	} else if (j == 33) {							/* Phase 2 (X) */
+		st7920SetPort(ST7920_SET_GRAPHIC_RAM);		/* Set X */
+	} else {										/* Phase 3 (32 bytes of data) */
 		st7920SetPort(fb[j][i]);
 	}
 
-	PORT(ST7920_E) |= ST7920_E_LINE;						/* Strob */
+	PORT(ST7920_E) |= ST7920_E_LINE;				/* Strob */
 	asm("nop");
 	PORT(ST7920_E) &= ~ST7920_E_LINE;
 
 	if (++j >= 34) {
 		j = 0;
-		PORT(ST7920_RS) |= ST7920_RS_LINE;				/* Go to data mode */
+		PORT(ST7920_RS) |= ST7920_RS_LINE;			/* Go to data mode */
 	}
 
-	if (++br >= ST7920_MAX_BRIGTHNESS)					/* Loop brightness */
+	if (++br >= ST7920_MAX_BRIGTHNESS)				/* Loop brightness */
 		br = ST7920_MIN_BRIGHTNESS;
 
 	if (br == _br) {
-		PORT(ST7920_BCKL) &= ~ST7920_BCKL_LINE;			/* Turn backlight off */
+		PORT(ST7920_BCKL) &= ~ST7920_BCKL_LINE;		/* Turn backlight off */
 	} else if (br == 0)
-		PORT(ST7920_BCKL) |= ST7920_BCKL_LINE;			/* Turn backlight on */
+		PORT(ST7920_BCKL) |= ST7920_BCKL_LINE;		/* Turn backlight on */
 
 	return;
 }
