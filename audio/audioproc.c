@@ -12,7 +12,6 @@ static const sndGrid grid[] PROGMEM = {
 	{-47,  0, 1.00 * 8},	/* 3: -47..0dB with 1dB step */
 	{-21, 21, 1.00 * 8},	/* 4: -21..21dB with 1dB step */
 	{  0, 15, 2.00 * 8},	/* 5: 0..30dB with 2dB step */
-
 	{-63,  0, 1.25 * 8},	/* 6: -78.75..0dB with 1.25dB step*/
 	{-15, 15, 1.25 * 8},	/* 7:  -18.75..18.75dB with 1.25dB step */
 	{  0,  3, 3.75 * 8},	/* 8: 0..11.25dB with 3.75dB step */
@@ -149,15 +148,19 @@ uint8_t sndGetInput(void)
 
 void sndSetMute(uint8_t value)
 {
+	int8_t vol;
+
 	if (value == MUTE_ON) {
-//		setVolume((int8_t)pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min));
+		vol = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
 		_mute = MUTE_ON;
 		PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	} else {
-//		setVolume(sndPar[MODE_SND_VOLUME].value);
+		vol = sndPar[MODE_SND_VOLUME].value;
 		_mute = MUTE_OFF;
 		PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	}
+
+	sndPar[MODE_SND_VOLUME].set(vol);
 
 	return;
 }
