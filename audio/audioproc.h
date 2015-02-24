@@ -2,17 +2,20 @@
 #define AUDIOPROC_H
 
 #include <inttypes.h>
+#include "tda731x.h"
 #include "tda7439.h"
-#include "tda7313.h"
-#include "tda7318.h"
 
 typedef enum {
-	AUDIOPROC_TDA7439,
+//	AUDIOPROC_TDA7312,
 	AUDIOPROC_TDA7313,
-	AUDIOPROC_TDA7318
+//	AUDIOPROC_TDA7314,
+	AUDIOPROC_TDA7318,
+	AUDIOPROC_TDA7439
 } audioProc;
 
 void audioprocInit(uint8_t **txtLabels);
+
+
 
 
 

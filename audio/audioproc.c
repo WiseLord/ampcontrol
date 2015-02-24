@@ -5,8 +5,21 @@
 #include "../eeprom.h"
 #include "../display/icons.h"
 
-static audioProc proc = AUDIOPROC_TDA7313;
-static const sndGrid zeroGrid PROGMEM = {0, 0, 0};
+static const sndGrid grid[] PROGMEM = {
+	{  0,  0, 0.00 * 8},	/* 0: Not implemented */
+	{-79,  0, 1.00 * 8},	/* 1: -79..0dB with 1dB step */
+	{ -7,  7, 2.00 * 8},	/* 2: -14..14dB with 2dB step */
+	{-47,  0, 1.00 * 8},	/* 3: -47..0dB with 1dB step */
+	{-21, 21, 1.00 * 8},	/* 4: -21..21dB with 1dB step */
+	{  0, 15, 2.00 * 8},	/* 5: 0..30dB with 2dB step */
+
+	{-63,  0, 1.25 * 8},	/* 6: -78.75..0dB with 1.25dB step*/
+	{-15, 15, 1.25 * 8},	/* 7:  -18.75..18.75dB with 1.25dB step */
+	{  0,  3, 3.75 * 8},	/* 8: 0..11.25dB with 3.75dB step */
+	{  0,  3, 6.25 * 8},	/* 9: 0..18.75dB with 6.25dB step */
+};
+
+static audioProc proc = AUDIOPROC_TDA7439;
 static sndParam sndPar[MODE_SND_END];
 
 static uint8_t chan;
@@ -14,48 +27,65 @@ static uint8_t mute;
 static uint8_t loud;
 
 
-
-static void setVolume(int8_t val) {}
-static void setBass(int8_t val) {}
-static void setMiddle(int8_t val) {}
-static void setTreble(int8_t val) {}
-static void setPreamp(int8_t val) {}
-static void setFrontRear(int8_t val) {}
-static void setBalance(int8_t val) {}
-static void setGain(int8_t val) {}
-
+static void setNothing(int8_t val)
+{
+	return;
+}
 
 void audioprocInit(uint8_t **txtLabels)
 {
 	uint8_t i;
 
-	/* Setup audio parameter grid */
-	switch (proc) {
-	case AUDIOPROC_TDA7439:
-		for (i = 0; i < MODE_SND_END; i++)
-			sndPar[i].grid = tda7439SndGrid(i);
-		break;
-	case AUDIOPROC_TDA7313:
-		for (i = 0; i < MODE_SND_END; i++)
-			sndPar[i].grid = tda7313SndGrid(i);
-		break;
-	case AUDIOPROC_TDA7318:
-		for (i = 0; i < MODE_SND_END; i++)
-			sndPar[i].grid = tda7318SndGrid(i);
-		break;
-	}
-	/* All not used parameters will have zero grid */
-	for (i = 0; i < MODE_SND_END; i++)
-		if (!sndPar[i].grid)
-			sndPar[i].grid = &zeroGrid;
-
-	/* Setup audio parameters stored in eeprom */
+	/* Load audio parameters stored in eeprom */
 	for (i = 0; i < MODE_SND_END; i++) {
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
 	chan = eeprom_read_byte(eepromChannel);
 	loud = eeprom_read_byte(eepromLoudness);
+
+	/* Init grid an functions with empty values */
+	for (i = 0; i < MODE_SND_END; i++) {
+		sndPar[i].grid = &grid[0];
+		sndPar[i].set = setNothing;
+	}
+
+	/* Setup audio parameter grid and functions */
+	switch (proc) {
+	case AUDIOPROC_TDA7439:
+		sndPar[MODE_SND_VOLUME].grid = &grid[1];
+		sndPar[MODE_SND_BASS].grid = &grid[2];
+		sndPar[MODE_SND_MIDDLE].grid = &grid[2];
+		sndPar[MODE_SND_TREBLE].grid = &grid[2];
+		sndPar[MODE_SND_PREAMP].grid = &grid[3];
+		sndPar[MODE_SND_BALANCE].grid = &grid[4];
+		sndPar[MODE_SND_GAIN0].grid = &grid[5];
+		sndPar[MODE_SND_GAIN1].grid = &grid[5];
+		sndPar[MODE_SND_GAIN2].grid = &grid[5];
+		sndPar[MODE_SND_GAIN3].grid = &grid[5];
+		break;
+	case AUDIOPROC_TDA7313:
+		sndPar[MODE_SND_VOLUME].grid = &grid[6];
+		sndPar[MODE_SND_BASS].grid = &grid[2];
+		sndPar[MODE_SND_TREBLE].grid = &grid[2];
+		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
+		sndPar[MODE_SND_BALANCE].grid = &grid[7];
+		sndPar[MODE_SND_GAIN0].grid = &grid[8];
+		sndPar[MODE_SND_GAIN1].grid = &grid[8];
+		sndPar[MODE_SND_GAIN2].grid = &grid[8];
+		break;
+	case AUDIOPROC_TDA7318:
+		sndPar[MODE_SND_VOLUME].grid = &grid[6];
+		sndPar[MODE_SND_BASS].grid = &grid[2];
+		sndPar[MODE_SND_TREBLE].grid = &grid[2];
+		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
+		sndPar[MODE_SND_BALANCE].grid = &grid[7];
+		sndPar[MODE_SND_GAIN0].grid = &grid[9];
+		sndPar[MODE_SND_GAIN1].grid = &grid[9];
+		sndPar[MODE_SND_GAIN2].grid = &grid[9];
+		sndPar[MODE_SND_GAIN3].grid = &grid[9];
+		break;
+	}
 
 	/* Setup icons for audio parameters */
 	sndPar[MODE_SND_VOLUME].icon = icons_24_volume;
@@ -70,20 +100,10 @@ void audioprocInit(uint8_t **txtLabels)
 	sndPar[MODE_SND_GAIN2].icon = icons_24_tv;
 	sndPar[MODE_SND_GAIN3].icon = icons_24_dvd;
 
-	/* Associate functions for audio parameters */
-
-	sndPar[MODE_SND_VOLUME].set = setVolume;
-	sndPar[MODE_SND_BASS].set = setBass;
-	sndPar[MODE_SND_MIDDLE].set = setMiddle;
-	sndPar[MODE_SND_TREBLE].set = setTreble;
-	sndPar[MODE_SND_PREAMP].set = setPreamp;
-	sndPar[MODE_SND_FRONTREAR].set = setFrontRear;
-	sndPar[MODE_SND_BALANCE].set = setBalance;
-	for (i = 0; i < CHAN_CNT; i++)
-		sndPar[MODE_SND_GAIN0 + i].set = setGain;
-
 	return;
 }
+
+
 
 
 
@@ -140,7 +160,7 @@ void nextChan(void)
 
 void muteVolume(void)
 {
-	setVolume((int8_t)pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min));
+//	setVolume((int8_t)pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min));
 	mute = MUTE_ON;
 //	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 
@@ -149,7 +169,7 @@ void muteVolume(void)
 
 void unmuteVolume(void)
 {
-	setVolume(sndPar[MODE_SND_VOLUME].value);
+//	setVolume(sndPar[MODE_SND_VOLUME].value);
 	mute = MUTE_OFF;
 //	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 
@@ -173,10 +193,10 @@ void setAudioParams(void)
 {
 	muteVolume();
 	setChan(chan);
-	setBass(sndPar[MODE_SND_BASS].value);
-	setPreamp(sndPar[MODE_SND_PREAMP].value);
-	setMiddle(sndPar[MODE_SND_MIDDLE].value);
-	setTreble(sndPar[MODE_SND_TREBLE].value);
+//	setBass(sndPar[MODE_SND_BASS].value);
+//	setPreamp(sndPar[MODE_SND_PREAMP].value);
+//	setMiddle(sndPar[MODE_SND_MIDDLE].value);
+//	setTreble(sndPar[MODE_SND_TREBLE].value);
 	unmuteVolume();
 
 	return;
