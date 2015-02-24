@@ -8,7 +8,7 @@
 /* Save parameters to EEPROM */
 static void saveParams(void)
 {
-	saveAudioParams();
+	sndPowerOff();
 	saveDisplayParams();
 #if !defined(NOTUNER)
 	saveTunerParams();
@@ -28,7 +28,7 @@ static void powerOn(void)
 #if !defined(NOTUNER)
 	setTunerParams();
 #endif
-	setAudioParams();
+	sndPowerOn();
 
 	return;
 }
@@ -36,7 +36,7 @@ static void powerOn(void)
 /* Entering standby mode */
 void powerOff(void)
 {
-	muteVolume();
+	sndSetMute(MUTE_ON);
 
 	_delay_ms(100);
 
@@ -111,10 +111,7 @@ void handleEditTime(uint8_t *dispMode)
 void handleSwitchMute(uint8_t *dispMode)
 {
 	gdClear();
-	if (getMute() == MUTE_ON)
-		unmuteVolume();
-	else
-		muteVolume();
+	sndSetMute(!sndGetMute());
 	*dispMode = MODE_MUTE;
 	setDisplayTime(DISPLAY_TIME_AUDIO);
 

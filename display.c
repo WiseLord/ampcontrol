@@ -354,7 +354,7 @@ void showMute(uint8_t **txtLabels, uint8_t *buf)
 
 	gdSetXY(96, 32);
 
-	if (getMute()) {
+	if (sndGetMute()) {
 		gdWriteIcon32(icons_32_mute_on);
 	} else {
 		gdWriteIcon32(icons_32_mute_off);
@@ -371,7 +371,7 @@ void showLoudness(uint8_t **txtLabels, uint8_t *buf)
 
 	gdSetXY(96, 32);
 
-	if (getLoudness()) {
+	if (sndGetLoudness()) {
 		gdWriteIcon32(icons_32_loud_on);
 	} else {
 		gdWriteIcon32(icons_32_loud_off);

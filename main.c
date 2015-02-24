@@ -380,9 +380,8 @@ int main(void)
 			case MODE_FM_RADIO:
 				dispMode = MODE_SND_VOLUME;
 			default:
-				if (getMute())
-					unmuteVolume();
-				changeParam(dispMode, encCnt);
+				sndSetMute(MUTE_OFF);
+				sndChangeParam(dispMode, encCnt);
 				setDisplayTime(DISPLAY_TIME_GAIN);
 				break;
 			}
@@ -452,7 +451,7 @@ int main(void)
 #endif
 		case MODE_MUTE:
 			showMute(txtLabels, getSpData());
-			if (getMute())
+			if (sndGetMute())
 				setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case MODE_LOUDNESS:

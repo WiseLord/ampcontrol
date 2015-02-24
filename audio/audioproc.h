@@ -7,9 +7,9 @@
 #include "../pins.h"
 
 typedef enum {
-//	AUDIOPROC_TDA7312,
+	AUDIOPROC_TDA7312,
 	AUDIOPROC_TDA7313,
-//	AUDIOPROC_TDA7314,
+	AUDIOPROC_TDA7314,
 	AUDIOPROC_TDA7318,
 	AUDIOPROC_TDA7439
 } audioProc;
@@ -23,24 +23,15 @@ uint8_t sndInputCnt(void);
 void sndSetInput(uint8_t input);
 uint8_t sndGetInput(void);
 
+void sndSetMute(uint8_t value);
+uint8_t sndGetMute(void);
 
+void sndSetLoudness(uint8_t value);
+uint8_t sndGetLoudness(void);
 
+void sndChangeParam(uint8_t dispMode, int8_t diff);
 
-
-
-
-uint8_t getMute(void);
-
-void changeParam(uint8_t dispMode, int8_t diff);
-
-
-void muteVolume(void);
-void unmuteVolume(void);
-
-
-void setAudioParams(void);
-void saveAudioParams(void);
-
-uint8_t getLoudness();
+void sndPowerOn(void);
+void sndPowerOff(void);
 
 #endif /* AUDIOPROC */

@@ -6,6 +6,9 @@
 #define MUTE_ON					1
 #define MUTE_OFF				0
 
+#define LOUDNESS_ON				1
+#define LOUDNESS_OFF			0
+
 typedef struct {
 	const int8_t min;
 	const int8_t max;
