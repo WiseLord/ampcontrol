@@ -35,6 +35,9 @@ void sndInit(uint8_t **txtLabels)
 {
 	uint8_t i;
 
+	tda7439Init(sndPar);
+	tda731xInit(sndPar);
+
 	/* Load audio parameters stored in eeprom */
 	for (i = 0; i < MODE_SND_END; i++) {
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
@@ -65,7 +68,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_GAIN1].grid = &grid[5];
 		sndPar[MODE_SND_GAIN2].grid = &grid[5];
 		sndPar[MODE_SND_GAIN3].grid = &grid[5];
-		_inCnt = 4;
+		_inCnt = TDA7439_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda7439SetVolume;
 		sndPar[MODE_SND_BASS].set = tda7439SetBass;
 		sndPar[MODE_SND_MIDDLE].set = tda7439SetMiddle;
@@ -82,7 +85,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_BASS].grid = &grid[2];
 		sndPar[MODE_SND_TREBLE].grid = &grid[2];
 		sndPar[MODE_SND_BALANCE].grid = &grid[7];
-		_inCnt = 1;
+		_inCnt = TDA7312_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
@@ -97,7 +100,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_GAIN0].grid = &grid[8];
 		sndPar[MODE_SND_GAIN1].grid = &grid[8];
 		sndPar[MODE_SND_GAIN2].grid = &grid[8];
-		_inCnt = 3;
+		_inCnt = TDA7313_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
@@ -114,7 +117,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
 		sndPar[MODE_SND_BALANCE].grid = &grid[7];
 		sndPar[MODE_SND_GAIN0].grid = &grid[9];
-		_inCnt = 1;
+		_inCnt = TDA7314_IN_CNT;
 		break;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
@@ -132,7 +135,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_GAIN1].grid = &grid[9];
 		sndPar[MODE_SND_GAIN2].grid = &grid[9];
 		sndPar[MODE_SND_GAIN3].grid = &grid[9];
-		_inCnt = 4;
+		_inCnt = TDA7318_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
@@ -179,6 +182,15 @@ void sndSetInput(uint8_t input)
 		input = 0;
 	_input = input;
 
+	sndPar[MODE_SND_GAIN0 + _input].set(sndPar[MODE_SND_GAIN0 + _input].value);
+
+	switch (_aproc) {
+	case AUDIOPROC_TDA7439:
+		tda7439SetInput(input);
+		break;
+	default:
+		break;
+	}
 	return;
 }
 
