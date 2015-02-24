@@ -18,7 +18,8 @@
 
 /* Some values stored in EEPROM */
 #define eepromLoudness	((void*)0x0C)
-#define eepromChannel	((void*)0x0D)
+#define eepromInput		((void*)0x0D)
+#define eepromAudioproc	((void*)0x0E)
 
 #define eepromSpMode	((void*)0x10)
 #define eepromDisplay	((void*)0x11)

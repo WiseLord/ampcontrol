@@ -24,7 +24,7 @@ typedef struct {
 } sndParam;
 
 typedef enum {
-	MODE_SND_VOLUME,
+	MODE_SND_VOLUME = 0,
 	MODE_SND_BASS,
 	MODE_SND_MIDDLE,
 	MODE_SND_TREBLE,

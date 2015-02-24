@@ -13,13 +13,13 @@ static const sndGrid grid[] PROGMEM = {
 	{-21, 21, 1.00 * 8},	/* 4: -21..21dB with 1dB step */
 	{  0, 15, 2.00 * 8},	/* 5: 0..30dB with 2dB step */
 	{-63,  0, 1.25 * 8},	/* 6: -78.75..0dB with 1.25dB step*/
-	{-15, 15, 1.25 * 8},	/* 7:  -18.75..18.75dB with 1.25dB step */
+	{-15, 15, 1.25 * 8},	/* 7: -18.75..18.75dB with 1.25dB step */
 	{  0,  3, 3.75 * 8},	/* 8: 0..11.25dB with 3.75dB step */
 	{  0,  3, 6.25 * 8},	/* 9: 0..18.75dB with 6.25dB step */
 };
 
-static audioProc proc = AUDIOPROC_TDA7439;
 static sndParam sndPar[MODE_SND_END];
+static audioProc _aproc;
 
 static uint8_t _inCnt;
 static uint8_t _input;
@@ -40,8 +40,11 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
-	_input = eeprom_read_byte(eepromChannel);
+	_input = eeprom_read_byte(eepromInput);
 	_loudness = eeprom_read_byte(eepromLoudness);
+	_aproc = eeprom_read_byte(eepromAudioproc);
+	if (_aproc >= AUDIOPROC_END)
+		_aproc = AUDIOPROC_TDA7439;
 
 	/* Init grid and functions with empty values */
 	for (i = 0; i < MODE_SND_END; i++) {
@@ -50,7 +53,30 @@ void sndInit(uint8_t **txtLabels)
 	}
 
 	/* Setup audio parameters grid and functions */
-	switch (proc) {
+	switch (_aproc) {
+	case AUDIOPROC_TDA7439:
+		sndPar[MODE_SND_VOLUME].grid = &grid[1];
+		sndPar[MODE_SND_BASS].grid = &grid[2];
+		sndPar[MODE_SND_MIDDLE].grid = &grid[2];
+		sndPar[MODE_SND_TREBLE].grid = &grid[2];
+		sndPar[MODE_SND_PREAMP].grid = &grid[3];
+		sndPar[MODE_SND_BALANCE].grid = &grid[4];
+		sndPar[MODE_SND_GAIN0].grid = &grid[5];
+		sndPar[MODE_SND_GAIN1].grid = &grid[5];
+		sndPar[MODE_SND_GAIN2].grid = &grid[5];
+		sndPar[MODE_SND_GAIN3].grid = &grid[5];
+		_inCnt = 4;
+		sndPar[MODE_SND_VOLUME].set = tda7439SetVolume;
+		sndPar[MODE_SND_BASS].set = tda7439SetBass;
+		sndPar[MODE_SND_MIDDLE].set = tda7439SetMiddle;
+		sndPar[MODE_SND_TREBLE].set = tda7439SetTreble;
+		sndPar[MODE_SND_PREAMP].set = tda7439SetPreamp;
+		sndPar[MODE_SND_BALANCE].set= tda7439SetBalance;
+		sndPar[MODE_SND_GAIN0].set = tda7439SetGain;
+		sndPar[MODE_SND_GAIN1].set = tda7439SetGain;
+		sndPar[MODE_SND_GAIN2].set = tda7439SetGain;
+		sndPar[MODE_SND_GAIN3].set = tda7439SetGain;
+		break;
 	case AUDIOPROC_TDA7312:
 		sndPar[MODE_SND_VOLUME].grid = &grid[6];
 		sndPar[MODE_SND_BASS].grid = &grid[2];
@@ -116,29 +142,6 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN3].set =tda731xSetGain ;
-		break;
-	case AUDIOPROC_TDA7439:
-		sndPar[MODE_SND_VOLUME].grid = &grid[1];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_MIDDLE].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_PREAMP].grid = &grid[3];
-		sndPar[MODE_SND_BALANCE].grid = &grid[4];
-		sndPar[MODE_SND_GAIN0].grid = &grid[5];
-		sndPar[MODE_SND_GAIN1].grid = &grid[5];
-		sndPar[MODE_SND_GAIN2].grid = &grid[5];
-		sndPar[MODE_SND_GAIN3].grid = &grid[5];
-		_inCnt = 4;
-		sndPar[MODE_SND_VOLUME].set = tda7439SetVolume;
-		sndPar[MODE_SND_BASS].set = tda7439SetBass;
-		sndPar[MODE_SND_MIDDLE].set = tda7439SetMiddle;
-		sndPar[MODE_SND_TREBLE].set = tda7439SetTreble;
-		sndPar[MODE_SND_PREAMP].set = tda7439SetPreamp;
-		sndPar[MODE_SND_BALANCE].set= tda7439SetBalance;
-		sndPar[MODE_SND_GAIN0].set = tda7439SetGain;
-		sndPar[MODE_SND_GAIN1].set = tda7439SetGain;
-		sndPar[MODE_SND_GAIN2].set = tda7439SetGain;
-		sndPar[MODE_SND_GAIN3].set = tda7439SetGain;
 		break;
 	default:
 		break;
@@ -269,8 +272,9 @@ void sndPowerOff(void)
 	for (i = 0; i < MODE_SND_END; i++)
 		eeprom_update_byte(eepromVolume + i, sndPar[i].value);
 
-	eeprom_update_byte(eepromChannel, _input);
+	eeprom_update_byte(eepromInput, _input);
 	eeprom_update_byte(eepromLoudness, _loudness);
+	eeprom_update_byte(eepromAudioproc, _aproc);
 
 	return;
 }
