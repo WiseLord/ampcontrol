@@ -67,7 +67,7 @@ static void hwInit(void)
 	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 
-	sndInit(txtLabels);			/* Load labels/icons/etc */
+	sndInit(txtLabels);					/* Load labels/icons/etc */
 	loadDispParams();					/* Load display params */
 #if !defined(NOTUNER)
 	loadTunerParams();
@@ -152,7 +152,8 @@ int main(void)
 			handleSwitchMute(&dispMode);
 			break;
 		case CMD_RC5_MENU:
-			handleNextSndParam(&dispMode);
+			sndNextParam(&dispMode);
+			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		/* CMD_VOL_UP and CMD_VOL_DOWN are processed below as encoder actions */
 		case CMD_RC5_INPUT_0:
@@ -272,7 +273,8 @@ int main(void)
 				gdClear();
 				nextRC5Cmd();
 			} else {
-				handleNextSndParam(&dispMode);
+				sndNextParam(&dispMode);
+				setDisplayTime(DISPLAY_TIME_AUDIO);
 			}
 			break;
 

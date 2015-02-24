@@ -118,18 +118,6 @@ void handleSwitchMute(uint8_t *dispMode)
 	return;
 }
 
-void handleNextSndParam(uint8_t *dispMode)
-{
-	if (*dispMode < MODE_SND_END - 1) {
-		(*dispMode)++;
-	} else {
-		*dispMode = MODE_SND_VOLUME;
-	}
-	setDisplayTime(DISPLAY_TIME_AUDIO);
-
-	return;
-}
-
 void handleSetDefDisplay(uint8_t *dispMode)
 {
 	switch (getDefDisplay()) {

@@ -43,20 +43,20 @@ void sndInit(uint8_t **txtLabels)
 	_input = eeprom_read_byte(eepromChannel);
 	_loudness = eeprom_read_byte(eepromLoudness);
 
-	/* Init grid an functions with empty values */
+	/* Init grid and functions with empty values */
 	for (i = 0; i < MODE_SND_END; i++) {
 		sndPar[i].grid = &grid[0];
 		sndPar[i].set = setNothing;
 	}
 
-	/* Setup audio parameter grid and functions */
+	/* Setup audio parameters grid and functions */
 	switch (proc) {
 	case AUDIOPROC_TDA7312:
 		sndPar[MODE_SND_VOLUME].grid = &grid[6];
 		sndPar[MODE_SND_BASS].grid = &grid[2];
 		sndPar[MODE_SND_TREBLE].grid = &grid[2];
 		sndPar[MODE_SND_BALANCE].grid = &grid[7];
-		_inCnt = 4;
+		_inCnt = 1;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
@@ -224,9 +224,21 @@ uint8_t sndGetLoudness(void)
 	return _loudness;
 }
 
-void sndChangeParam(uint8_t dispMode, int8_t diff)
+void sndNextParam(uint8_t *mode)
 {
-	sndParam *param = sndParAddr(dispMode);
+	do {					/* Skip unused params (with step = 0) */
+		(*mode)++;
+		if (*mode >= MODE_SND_GAIN0)
+			*mode = MODE_SND_VOLUME;
+	} while((pgm_read_byte(&sndPar[*mode].grid->step) == 0) &&
+	        (*mode < MODE_SND_GAIN0) && (*mode != MODE_SND_VOLUME));
+
+	return;
+}
+
+void sndChangeParam(uint8_t mode, int8_t diff)
+{
+	sndParam *param = sndParAddr(mode);
 	param->value += diff;
 	if (param->value > (int8_t)pgm_read_byte(&param->grid->max))
 		param->value = (int8_t)pgm_read_byte(&param->grid->max);

@@ -30,7 +30,8 @@ uint8_t sndGetMute(void);
 void sndSetLoudness(uint8_t value);
 uint8_t sndGetLoudness(void);
 
-void sndChangeParam(uint8_t dispMode, int8_t diff);
+void sndNextParam(uint8_t *mode);
+void sndChangeParam(uint8_t mode, int8_t diff);
 
 void sndPowerOn(void);
 void sndPowerOff(void);

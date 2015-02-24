@@ -12,7 +12,7 @@
 typedef struct {
 	const int8_t min;
 	const int8_t max;
-	const uint8_t step;
+	const int8_t step;
 } sndGrid;
 
 typedef struct {
