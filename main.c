@@ -67,7 +67,7 @@ static void hwInit(void)
 	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 
-	audioprocInit(txtLabels);			/* Load labels/icons/etc */
+	sndInit(txtLabels);			/* Load labels/icons/etc */
 	loadDispParams();					/* Load display params */
 #if !defined(NOTUNER)
 	loadTunerParams();
@@ -159,9 +159,9 @@ int main(void)
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
 		case CMD_RC5_INPUT_3:
-			setChan(cmd - CMD_RC5_INPUT_0);
+			sndSetInput(cmd - CMD_RC5_INPUT_0);
 			gdClear();
-			dispMode = MODE_SND_GAIN0 + getChan();
+			dispMode = MODE_SND_GAIN0 + sndGetInput();
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
 /*		case CMD_RC5_INPUT_3:
@@ -203,7 +203,7 @@ int main(void)
 			handleSwitchFmMode(&dispMode);
 			break;
 		case CMD_RC5_FM_MONO:
-			if (getChan() == 0) {
+			if (sndGetInput() == 0) {
 				tunerSwitchMono();
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -222,7 +222,7 @@ int main(void)
 		case CMD_RC5_FM_8:
 		case CMD_RC5_FM_9:
 		case CMD_RC5_FM_0:
-			setChan(0);
+			sndSetInput(0);
 			loadStation(cmd - CMD_RC5_FM_1);
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -404,7 +404,7 @@ int main(void)
 #endif
 			default:
 				dispMode = getDefDisplay();
-				if (dispMode == MODE_FM_RADIO && getChan())
+				if (dispMode == MODE_FM_RADIO && sndGetInput())
 					dispMode = MODE_SPECTRUM;
 				break;
 			}

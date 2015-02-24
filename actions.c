@@ -75,10 +75,10 @@ void handleNextInput(uint8_t *dispMode)
 	case MODE_SND_GAIN1:
 	case MODE_SND_GAIN2:
 	case MODE_SND_GAIN3:
-		nextChan();
+		sndSetInput(sndGetInput() + 1);
 		gdClear();
 	default:
-		*dispMode = MODE_SND_GAIN0 + getChan();
+		*dispMode = MODE_SND_GAIN0 + sndGetInput();
 		setDisplayTime(DISPLAY_TIME_GAIN);
 		break;
 	}
@@ -111,7 +111,10 @@ void handleEditTime(uint8_t *dispMode)
 void handleSwitchMute(uint8_t *dispMode)
 {
 	gdClear();
-	switchMute();
+	if (getMute() == MUTE_ON)
+		unmuteVolume();
+	else
+		muteVolume();
 	*dispMode = MODE_MUTE;
 	setDisplayTime(DISPLAY_TIME_AUDIO);
 
@@ -135,7 +138,7 @@ void handleSetDefDisplay(uint8_t *dispMode)
 	switch (getDefDisplay()) {
 	case MODE_SPECTRUM:
 #if !defined(NOTUNER)
-		if (getChan() == 0) {
+		if (sndGetInput() == 0) {
 			setDefDisplay(MODE_FM_RADIO);
 			break;
 		}
@@ -214,7 +217,7 @@ void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer)
 void handleStoreStation(uint8_t *dispMode)
 {
 #if !defined(NOTUNER)
-	if (getChan() == 0) {
+	if (sndGetInput() == 0) {
 		switch (*dispMode) {
 		case MODE_FM_TUNE:
 			setDisplayTime(DISPLAY_TIME_FM_TUNE);
@@ -233,7 +236,7 @@ void handleStoreStation(uint8_t *dispMode)
 void handleChangeFM(uint8_t *dispMode, uint8_t direction)
 {
 #if !defined(NOTUNER)
-	setChan(0);
+	sndSetInput(0);
 	switch (*dispMode) {
 	case MODE_FM_TUNE:
 		if (direction == SEARCH_UP)
@@ -282,7 +285,7 @@ void checkAlarm(uint8_t *dispMode)
 	    (getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
 	    (getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
 	   ) {
-		setChan(getAlarm(DS1307_A0_INPUT));
+		sndSetInput(getAlarm(DS1307_A0_INPUT));
 		powerOn();
 		*dispMode = MODE_TIME;
 		setDisplayTime(DISPLAY_TIME_TIME);

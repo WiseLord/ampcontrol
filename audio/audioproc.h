@@ -4,6 +4,7 @@
 #include <inttypes.h>
 #include "tda731x.h"
 #include "tda7439.h"
+#include "../pins.h"
 
 typedef enum {
 //	AUDIOPROC_TDA7312,
@@ -13,33 +14,29 @@ typedef enum {
 	AUDIOPROC_TDA7439
 } audioProc;
 
-void audioprocInit(uint8_t **txtLabels);
-
-
-
-
-
-
-
-#define CHAN_CNT				4
-
-#define MUTE_ON					1
-#define MUTE_OFF				0
+void sndInit(uint8_t **txtLabels);
 
 sndParam *sndParAddr(uint8_t index);
 
-uint8_t getChan(void);
+uint8_t sndInputCnt(void);
+
+void sndSetInput(uint8_t input);
+uint8_t sndGetInput(void);
+
+
+
+
+
+
+
 uint8_t getMute(void);
 
 void changeParam(uint8_t dispMode, int8_t diff);
 
-void setChan(uint8_t ch);
-void nextChan(void);
 
 void muteVolume(void);
 void unmuteVolume(void);
 
-void switchMute(void);
 
 void setAudioParams(void);
 void saveAudioParams(void);

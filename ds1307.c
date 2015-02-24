@@ -272,10 +272,10 @@ void changeAlarm(int diff)
 		break;
 	case DS1307_A0_INPUT:
 		alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] += diff;
-		if (alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] >= CHAN_CNT)
+		if (alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] >= sndInputCnt())
 			alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] = 0;
 		if (alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] < 0)
-			alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] = CHAN_CNT - 1;
+			alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] = sndInputCnt() - 1;
 		break;
 	case DS1307_A0_WDAY:
 		alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] += diff;

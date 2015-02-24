@@ -22,9 +22,11 @@ static const sndGrid grid[] PROGMEM = {
 static audioProc proc = AUDIOPROC_TDA7439;
 static sndParam sndPar[MODE_SND_END];
 
-static uint8_t chan;
+static uint8_t _inCnt;
+static uint8_t _input;
+
 static uint8_t mute;
-static uint8_t loud;
+static uint8_t loudness;
 
 
 static void setNothing(int8_t val)
@@ -32,7 +34,7 @@ static void setNothing(int8_t val)
 	return;
 }
 
-void audioprocInit(uint8_t **txtLabels)
+void sndInit(uint8_t **txtLabels)
 {
 	uint8_t i;
 
@@ -41,8 +43,8 @@ void audioprocInit(uint8_t **txtLabels)
 		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
-	chan = eeprom_read_byte(eepromChannel);
-	loud = eeprom_read_byte(eepromLoudness);
+	_input = eeprom_read_byte(eepromChannel);
+	loudness = eeprom_read_byte(eepromLoudness);
 
 	/* Init grid an functions with empty values */
 	for (i = 0; i < MODE_SND_END; i++) {
@@ -63,6 +65,7 @@ void audioprocInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_GAIN1].grid = &grid[5];
 		sndPar[MODE_SND_GAIN2].grid = &grid[5];
 		sndPar[MODE_SND_GAIN3].grid = &grid[5];
+		_inCnt = 4;
 		break;
 	case AUDIOPROC_TDA7313:
 		sndPar[MODE_SND_VOLUME].grid = &grid[6];
@@ -73,6 +76,7 @@ void audioprocInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_GAIN0].grid = &grid[8];
 		sndPar[MODE_SND_GAIN1].grid = &grid[8];
 		sndPar[MODE_SND_GAIN2].grid = &grid[8];
+		_inCnt = 3;
 		break;
 	case AUDIOPROC_TDA7318:
 		sndPar[MODE_SND_VOLUME].grid = &grid[6];
@@ -84,6 +88,7 @@ void audioprocInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_GAIN1].grid = &grid[9];
 		sndPar[MODE_SND_GAIN2].grid = &grid[9];
 		sndPar[MODE_SND_GAIN3].grid = &grid[9];
+		_inCnt = 4;
 		break;
 	}
 
@@ -103,22 +108,52 @@ void audioprocInit(uint8_t **txtLabels)
 	return;
 }
 
-
-
-
-
-
-
 sndParam *sndParAddr(uint8_t index)
 {
 	return &sndPar[index];
 }
 
-
-uint8_t getChan(void)
+uint8_t sndInputCnt(void)
 {
-	return chan;
+	return _inCnt;
 }
+
+void sndSetInput(uint8_t input)
+{
+	if (input >= _inCnt)
+		input = 0;
+	_input = input;
+
+	return;
+}
+
+uint8_t sndGetInput(void)
+{
+	return _input;
+}
+
+
+
+
+
+void muteVolume(void)
+{
+//	setVolume((int8_t)pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min));
+	mute = MUTE_ON;
+	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
+
+	return;
+}
+
+void unmuteVolume(void)
+{
+//	setVolume(sndPar[MODE_SND_VOLUME].value);
+	mute = MUTE_OFF;
+	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
+
+	return;
+}
+
 
 uint8_t getMute(void)
 {
@@ -140,59 +175,11 @@ void changeParam(uint8_t dispMode, int8_t diff)
 }
 
 
-void setChan(uint8_t ch)
-{
-	chan = ch;
-
-	return;
-}
-
-void nextChan(void)
-{
-	chan++;
-	if (chan >= CHAN_CNT)
-		chan = 0;
-	setChan(chan);
-
-	return;
-}
-
-
-void muteVolume(void)
-{
-//	setVolume((int8_t)pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min));
-	mute = MUTE_ON;
-//	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
-
-	return;
-}
-
-void unmuteVolume(void)
-{
-//	setVolume(sndPar[MODE_SND_VOLUME].value);
-	mute = MUTE_OFF;
-//	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
-
-	return;
-}
-
-
-void switchMute(void)
-{
-	if (mute == MUTE_ON) {
-		unmuteVolume();
-	} else {
-		muteVolume();
-	}
-
-	return;
-}
-
 
 void setAudioParams(void)
 {
 	muteVolume();
-	setChan(chan);
+	sndSetInput(_input);
 //	setBass(sndPar[MODE_SND_BASS].value);
 //	setPreamp(sndPar[MODE_SND_PREAMP].value);
 //	setMiddle(sndPar[MODE_SND_MIDDLE].value);
@@ -209,7 +196,7 @@ void saveAudioParams(void)
 	for (i = 0; i < MODE_SND_END; i++)
 		eeprom_update_byte(eepromVolume + i, sndPar[i].value);
 
-	eeprom_update_byte(eepromChannel, chan);
+	eeprom_update_byte(eepromChannel, _input);
 
 	return;
 }

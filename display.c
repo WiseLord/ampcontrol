@@ -497,7 +497,7 @@ void showAlarm(uint8_t **txtLabels)
 	gdSetXY(100, 4);
 	/* Check that input number less than CHAN_CNT */
 	i = getAlarm(DS1307_A0_INPUT);
-	if (i >= CHAN_CNT)
+	if (i >= sndInputCnt())
 		i = 0;
 	gdWriteIcon24(sndParAddr(MODE_SND_GAIN0 + i)->icon);
 

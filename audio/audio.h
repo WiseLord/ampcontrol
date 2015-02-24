@@ -3,6 +3,9 @@
 
 #include <inttypes.h>
 
+#define MUTE_ON					1
+#define MUTE_OFF				0
+
 typedef struct {
 	const int8_t min;
 	const int8_t max;
