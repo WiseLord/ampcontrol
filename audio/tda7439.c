@@ -1,7 +1,5 @@
 #include "tda7439.h"
 
-#include <avr/pgmspace.h>
-
 void tda7439SetVolume(int8_t val)
 {
 	return;

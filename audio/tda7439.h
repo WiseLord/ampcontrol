@@ -1,6 +1,7 @@
 #ifndef TDA7439_H
 #define TDA7439_H
 
+#include <inttypes.h>
 #include "audio.h"
 
 void tda7439SetVolume(int8_t val);
@@ -11,4 +12,4 @@ void tda7439SetPreamp(int8_t val);
 void tda7439SetBalance(int8_t val);
 void tda7439SetGain(int8_t val);
 
-#endif // TDA7439_H
+#endif /* TDA7439_H */

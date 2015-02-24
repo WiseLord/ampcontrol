@@ -1,7 +1,5 @@
 #include "tda731x.h"
 
-#include <avr/pgmspace.h>
-
 void tda731xSetVolume(int8_t val)
 {
 	return;
