@@ -11,7 +11,8 @@ typedef enum {
 	AUDIOPROC_TDA7313,
 	AUDIOPROC_TDA7314,
 	AUDIOPROC_TDA7318,
-	AUDIOPROC_TDA7439
+	AUDIOPROC_TDA7439,
+	AUDIOPROC_END
 } audioProc;
 
 void sndInit(uint8_t **txtLabels);
