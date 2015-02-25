@@ -5,14 +5,6 @@
 
 static sndParam *sndPar;
 
-static int8_t calcBMT(int8_t val)
-{
-	if (val > 0)
-		return 15 - val;
-
-	return 7 + val;
-}
-
 void tda7439Init(sndParam *sp)
 {
 	sndPar = sp;
@@ -49,7 +41,7 @@ void tda7439SetBass(int8_t val)
 {
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_BASS);
-	I2CWriteByte(calcBMT(val));
+	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
 	I2CStop();
 
 	return;
@@ -59,7 +51,7 @@ void tda7439SetMiddle(int8_t val)
 {
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_MIDDLE);
-	I2CWriteByte(calcBMT(val));
+	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
 	I2CStop();
 
 	return;
@@ -69,7 +61,7 @@ void tda7439SetTreble(int8_t val)
 {
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_TREBLE);
-	I2CWriteByte(calcBMT(val));
+	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
 	I2CStop();
 
 	return;
@@ -108,6 +100,8 @@ void tda7439SetInput(uint8_t in)
 	I2CWriteByte(TDA7439_INPUT_SELECT);
 	I2CWriteByte(TDA7439_IN_CNT - 1 - in);
 	I2CStop();
+
+	tda7439SetGain(sndPar[MODE_SND_GAIN0 + in].value);
 
 	return;
 }

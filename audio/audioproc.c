@@ -182,11 +182,9 @@ void sndSetInput(uint8_t input)
 		input = 0;
 	_input = input;
 
-	sndPar[MODE_SND_GAIN0 + _input].set(sndPar[MODE_SND_GAIN0 + _input].value);
-
 	switch (_aproc) {
 	case AUDIOPROC_TDA7439:
-		tda7439SetInput(input);
+		tda7439SetInput(_input);
 		break;
 	default:
 		break;
@@ -230,6 +228,9 @@ void sndSetLoudness(uint8_t value)
 		_loudness = LOUDNESS_ON;
 	else
 		_loudness = LOUDNESS_OFF;
+
+	if (_aproc == AUDIOPROC_TDA7313 || _aproc == AUDIOPROC_TDA7314)
+		tda731xSetLoudness(_loudness);
 
 	return;
 }

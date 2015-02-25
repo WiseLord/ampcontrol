@@ -159,19 +159,24 @@ int main(void)
 		case CMD_RC5_INPUT_0:
 		case CMD_RC5_INPUT_1:
 		case CMD_RC5_INPUT_2:
-		case CMD_RC5_INPUT_3:
 			sndSetInput(cmd - CMD_RC5_INPUT_0);
 			gdClear();
 			dispMode = MODE_SND_GAIN0 + sndGetInput();
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
-/*		case CMD_RC5_INPUT_3:
+		case CMD_RC5_INPUT_3:
 			gdClear();
-			switchLoudness();
-			dispMode = MODE_LOUDNESS;
-			setDisplayTime(DISPLAY_TIME_AUDIO);
+			if (sndInputCnt() < 4) {
+				sndSetLoudness(!sndGetLoudness());
+				dispMode = MODE_LOUDNESS;
+				setDisplayTime(DISPLAY_TIME_AUDIO);
+			} else {
+				sndSetInput(cmd - CMD_RC5_INPUT_0);
+				dispMode = MODE_SND_GAIN0 + sndGetInput();
+				setDisplayTime(DISPLAY_TIME_GAIN);
+			}
 			break;
-*/		case CMD_RC5_NEXT_INPUT:
+		case CMD_RC5_NEXT_INPUT:
 			handleNextInput (&dispMode);
 			break;
 		case CMD_RC5_TIME:
