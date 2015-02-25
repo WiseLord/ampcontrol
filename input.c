@@ -21,6 +21,7 @@ static volatile uint16_t displayTime;
 static volatile uint16_t tempTimer;			/* Timer of temperature measuring process */
 static volatile int16_t stbyTimer = -1;			/* Standby timer */
 static volatile uint16_t secTimer;			/* 1 second timer */
+static volatile uint8_t clockTimer;
 
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
@@ -244,6 +245,10 @@ ISR (TIMER2_COMP_vect)
 			stbyTimer--;
 	}
 
+	/* Timer clock update */
+	if (clockTimer)
+		clockTimer--;
+
 	return;
 };
 
@@ -326,4 +331,16 @@ void setSecTimer(uint16_t val)
 	secTimer = val;
 
 	return;
+}
+
+void setClockTimer(uint8_t value)
+{
+	clockTimer = value;
+
+	return;
+}
+
+uint8_t getClockTimer(void)
+{
+	return clockTimer;
 }

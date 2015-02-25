@@ -206,7 +206,6 @@ void editAlarm(void)
 
 void changeTime(int diff)
 {
-	readTime();
 	switch (_etm) {
 	case DS1307_HOUR:
 		time[DS1307_HOUR] += diff;
@@ -256,7 +255,6 @@ void changeTime(int diff)
 
 void changeAlarm(int diff)
 {
-	readAlarm();
 	switch (_eam) {
 	case DS1307_A0_HOUR:
 		alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] += diff;

@@ -99,4 +99,7 @@ void setStbyTimer(int16_t val);
 
 void setSecTimer(uint16_t val);
 
+void setClockTimer(uint8_t value);
+uint8_t getClockTimer(void);
+
 #endif /* INPUT_H */

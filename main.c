@@ -96,7 +96,7 @@ int main(void)
 		encCnt = getEncoder();
 		cmd = getBtnCmd();
 
-		/* Emulate poweroff if standy timer expired */
+		/* Emulate poweroff if standby timer expired */
 		stbyTimer = getStbyTimer();
 		if (stbyTimer == 0)
 			cmd = CMD_RC5_STBY;
@@ -106,9 +106,15 @@ int main(void)
 		tempControlProcess();
 #endif
 
-		/* Check alarm and emulate output with command */
-		if (dispMode == MODE_STANDBY) {
-			checkAlarm(&dispMode);
+		/* Limit update time/alarm interval */
+		if (getClockTimer() == 0) {
+			readTime();
+			readAlarm();
+
+			if (dispMode == MODE_STANDBY)
+				checkAlarm(&dispMode);
+
+			setClockTimer(200);
 		}
 
 		/* Don't handle any command in test mode except BTN_5 and BTN_1_LONG */

@@ -435,8 +435,6 @@ static void drawTm(uint8_t tm, const uint8_t *font)
 
 void showTime(uint8_t **txtLabels)
 {
-	readTime();
-
 	gdSetXY(4, 0);
 
 	drawTm(DS1307_HOUR, font_digits_32);
@@ -481,8 +479,6 @@ void showAlarm(uint8_t **txtLabels)
 {
 	uint8_t i, j;
 	uint8_t *label;
-
-	readAlarm();
 
 	gdSetXY(4, 0);
 

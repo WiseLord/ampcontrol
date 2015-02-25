@@ -276,9 +276,6 @@ void handleEditAlarm(uint8_t *dispMode)
 
 void checkAlarm(uint8_t *dispMode)
 {
-	readTime();
-	readAlarm();
-
 	if ((getTime(DS1307_SEC) == 0) &&
 	    (getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
 	    (getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
