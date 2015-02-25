@@ -104,7 +104,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetFrontrear;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
@@ -122,7 +122,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetFrontrear;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 	case AUDIOPROC_TDA7318:
@@ -139,7 +139,7 @@ void sndInit(uint8_t **txtLabels)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetFrontrear;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
@@ -186,6 +186,12 @@ void sndSetInput(uint8_t input)
 	case AUDIOPROC_TDA7439:
 		tda7439SetInput(_input);
 		break;
+	case AUDIOPROC_TDA7312:
+	case AUDIOPROC_TDA7313:
+	case AUDIOPROC_TDA7314:
+	case AUDIOPROC_TDA7318:
+		tda731xSetInput(_input);
+		break;
 	default:
 		break;
 	}
@@ -213,6 +219,20 @@ void sndSetMute(uint8_t value)
 	}
 
 	sndPar[MODE_SND_VOLUME].set(vol);
+
+	switch (_aproc) {
+	case AUDIOPROC_TDA7439:
+		tda7439SetMute(_mute);
+		break;
+	case AUDIOPROC_TDA7312:
+	case AUDIOPROC_TDA7313:
+	case AUDIOPROC_TDA7314:
+	case AUDIOPROC_TDA7318:
+		tda731xSetMute(_mute);
+		break;
+	default:
+		break;
+	}
 
 	return;
 }
@@ -269,7 +289,7 @@ void sndPowerOn(void)
 {
 	uint8_t i;
 
-	sndSetMute(MUTE_OFF);
+	sndSetMute(MUTE_ON);
 	sndSetInput(_input);
 	for (i = MODE_SND_VOLUME + 1; i < MODE_SND_GAIN0; i++)
 		sndPar[i].set(sndPar[i].value);

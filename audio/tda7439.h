@@ -32,5 +32,6 @@ void tda7439SetPreamp(int8_t val);
 void tda7439SetBalance(int8_t val);
 void tda7439SetGain(int8_t val);
 void tda7439SetInput(uint8_t in);
+void tda7439SetMute(uint8_t val);
 
 #endif /* TDA7439_H */
