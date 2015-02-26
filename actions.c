@@ -5,16 +5,6 @@
 #include "tuner/tuner.h"
 #include "input.h"
 
-/* Save parameters to EEPROM */
-static void saveParams(void)
-{
-	sndPowerOff();
-	saveDisplayParams();
-	saveTunerParams();
-
-	return;
-}
-
 /* Leave standby mode */
 static void powerOn(void)
 {
@@ -23,8 +13,7 @@ static void powerOn(void)
 
 	_delay_ms(100);						/* Wait while power is being set up */
 
-	setTunerParams();
-
+	tunerPowerOn();
 	sndPowerOn();
 
 	return;
@@ -43,6 +32,11 @@ void powerOff(void)
 	stopEditTime();
 	setStbyTimer(STBY_TIMER_OFF);
 
+	saveDisplayParams();
+
+	sndPowerOff();
+	tunerPowerOff();
+
 	return;
 }
 
@@ -56,7 +50,6 @@ void handleSwitchPower(uint8_t *dispMode)
 		break;
 	default:
 		powerOff();
-		saveParams();
 		*dispMode = MODE_STANDBY;
 		break;
 	}
@@ -199,11 +192,11 @@ void handleStoreStation(uint8_t *dispMode)
 		switch (*dispMode) {
 		case MODE_FM_TUNE:
 			setDisplayTime(DISPLAY_TIME_FM_TUNE);
-			storeStation();
+			tunerStoreStation();
 			break;
 		case MODE_FM_RADIO:
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			storeStation();
+			tunerStoreStation();
 			break;
 		}
 	}
@@ -211,20 +204,17 @@ void handleStoreStation(uint8_t *dispMode)
 	return;
 }
 
-void handleChangeFM(uint8_t *dispMode, uint8_t direction)
+void handleChangeFM(uint8_t *dispMode, uint8_t step)
 {
 	sndSetInput(0);
 
 	switch (*dispMode) {
 	case MODE_FM_TUNE:
-		if (direction == SEARCH_UP)
-			tunerIncFreq(1);
-		else
-			tunerDecFreq(-1);
+		tunerChangeFreq(step * 10);
 		setDisplayTime(DISPLAY_TIME_FM_TUNE);
 		break;
 	case MODE_FM_RADIO:
-		scanStoredFreq(direction);
+		tunerNextStation(step);
 	default:
 		*dispMode = MODE_FM_RADIO;
 		setDisplayTime(DISPLAY_TIME_FM_RADIO);

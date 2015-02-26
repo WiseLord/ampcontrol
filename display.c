@@ -268,7 +268,7 @@ void showRadio(uint8_t *buf, uint8_t tune)
 {
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
-	uint8_t num = stationNum();
+	uint8_t num = tunerStationNum();
 
 	uint8_t i;
 

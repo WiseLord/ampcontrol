@@ -6,14 +6,22 @@
 uint8_t *bufFM;
 static tunerIC _tuner;
 
-static uint16_t freqFM;
-static uint8_t monoFM;
-static uint8_t stepFM = 10;
+static uint16_t _freq;
+static uint8_t _mono;
+static uint8_t _step;
 
-void tunerInit()
+void tunerInit(void)
 {
-	_tuner = TUNER_RDA5807;
-	uint8_t ctrl = eeprom_read_byte(eepromFMCtrl);
+	uint8_t ctrl;
+
+	ctrl = eeprom_read_byte(eepromFMCtrl);
+	_tuner = eeprom_read_byte(eepromFMTuner);
+	_freq = eeprom_read_word(eepromFMFreq);
+	_mono = eeprom_read_byte(eepromFMMono);
+	_step = eeprom_read_byte(eepromFMStep);
+
+	if (_tuner >= TUNER_END)
+		_tuner = TUNER_TEA5767;
 
 	switch (_tuner) {
 	case TUNER_TEA5767:
@@ -29,7 +37,14 @@ void tunerInit()
 		break;
 	}
 
+	tunerSetFreq(_freq);
+
 	return;
+}
+
+tunerIC tunerGetType(void)
+{
+	return _tuner;
 }
 
 void tunerSetFreq(uint16_t freq)
@@ -39,45 +54,38 @@ void tunerSetFreq(uint16_t freq)
 	if (freq < FM_FREQ_MIN)
 		freq = FM_FREQ_MIN;
 
+	_freq = freq;
+
 	switch (_tuner) {
 	case TUNER_TEA5767:
-		tea5767SetFreq(freq, monoFM);
+		tea5767SetFreq(_freq, _mono);
 		break;
 	case TUNER_RDA5807:
-		rda5807SetFreq(freq, monoFM);
+		rda5807SetFreq(_freq, _mono);
 		break;
 	case TUNER_TUX032:
-		tux032SetFreq(freq);
+		tux032SetFreq(_freq);
 		break;
 	default:
 		break;
 	}
 
-	freqFM = freq;
+	return;
+}
+
+uint16_t tunerGetFreq(void)
+{
+	return _freq;
+}
+
+void tunerChangeFreq(int8_t mult)
+{
+	tunerSetFreq(_freq + _step * mult);
 
 	return;
 }
 
-uint16_t tunerGetFreq()
-{
-	return freqFM;
-}
-
-void tunerIncFreq(uint8_t mult)
-{
-	tunerSetFreq(freqFM + stepFM * mult);
-
-	return;
-}
-
-void tunerDecFreq(uint8_t mult)
-{
-	tunerSetFreq(freqFM - stepFM * mult);
-
-	return;
-}
-
-void tunerReadStatus()
+void tunerReadStatus(void)
 {
 	switch (_tuner) {
 	case TUNER_TEA5767:
@@ -96,9 +104,9 @@ void tunerReadStatus()
 	return;
 }
 
-void tunerSwitchMono()
+void tunerSwitchMono(void)
 {
-	monoFM = !monoFM;
+	_mono = !_mono;
 
 	if (_tuner == TUNER_TEA5767 || _tuner == TUNER_RDA5807)
 		tunerSetFreq(tunerGetFreq());
@@ -106,16 +114,16 @@ void tunerSwitchMono()
 	return;
 }
 
-uint8_t tunerStereo()
+uint8_t tunerStereo(void)
 {
 	uint8_t ret = 1;
 
 	switch (_tuner) {
 	case TUNER_TEA5767:
-		ret = TEA5767_BUF_STEREO(bufFM) && !monoFM;
+		ret = TEA5767_BUF_STEREO(bufFM) && !_mono;
 		break;
 	case TUNER_RDA5807:
-		ret = RDA5807_BUF_STEREO(bufFM) && !monoFM;
+		ret = RDA5807_BUF_STEREO(bufFM) && !_mono;
 		break;
 	case TUNER_TUX032:
 		ret = !TUX032_BUF_STEREO(bufFM);
@@ -127,7 +135,7 @@ uint8_t tunerStereo()
 	return ret;
 }
 
-uint8_t tunerLevel()
+uint8_t tunerLevel(void)
 {
 	uint8_t ret = 0;
 	uint8_t rawLevel;
@@ -157,7 +165,7 @@ uint8_t tunerLevel()
 }
 
 /* Find station number (1..64) in EEPROM */
-uint8_t stationNum(void)
+uint8_t tunerStationNum(void)
 {
 	uint8_t i;
 
@@ -171,22 +179,22 @@ uint8_t stationNum(void)
 }
 
 /* Find nearest next/prev stored station */
-void scanStoredFreq(uint8_t direction)
+void tunerNextStation(int8_t direction)
 {
 	uint8_t i;
 	uint16_t freqCell;
-	uint16_t freqFound = freqFM;
+	uint16_t freqFound = _freq;
 
 	for (i = 0; i < FM_COUNT; i++) {
 		freqCell = eeprom_read_word(eepromStations + i);
 		if (freqCell != 0xFFFF) {
-			if (direction) {
-				if (freqCell > freqFM) {
+			if (direction == SEARCH_UP) {
+				if (freqCell > _freq) {
 					freqFound = freqCell;
 					break;
 				}
 			} else {
-				if (freqCell < freqFM) {
+				if (freqCell < _freq) {
 					freqFound = freqCell;
 				} else {
 					break;
@@ -201,7 +209,7 @@ void scanStoredFreq(uint8_t direction)
 }
 
 /* Load station by number */
-void loadStation(uint8_t num)
+void tunerLoadStation(uint8_t num)
 {
 	uint16_t freqCell = eeprom_read_word(eepromStations + num);
 
@@ -212,13 +220,13 @@ void loadStation(uint8_t num)
 }
 
 /* Save/delete station from eeprom */
-void storeStation(void)
+void tunerStoreStation(void)
 {
 	uint8_t i, j;
 	uint16_t freqCell;
 	uint16_t freq;
 
-	freq = freqFM;
+	freq = _freq;
 
 	for (i = 0; i < FM_COUNT; i++) {
 		freqCell = eeprom_read_word(eepromStations + i);
@@ -246,30 +254,42 @@ void storeStation(void)
 	return;
 }
 
-void loadTunerParams(void)
+void tunerPowerOn(void)
 {
-	freqFM = eeprom_read_word(eepromFMFreq);
-	monoFM = eeprom_read_byte(eepromFMMono);
-	stepFM = eeprom_read_byte(eepromFMStep);
+	switch (_tuner) {
+	case TUNER_TEA5767:
+		tea5767PowerOn();
+		break;
+	case TUNER_RDA5807:
+		rda5807PowerOn();
+		break;
+	case TUNER_TUX032:
+		tux032PowerOn();
+		break;
+	default:
+		break;
+	}
+
+	tunerSetFreq(_freq);
 
 	return;
 }
 
-void setTunerParams(void)
+void tunerPowerOff(void)
 {
-	tunerSetFreq(freqFM);
-
-	return;
-}
-
-void saveTunerParams(void)
-{
-	eeprom_update_word(eepromFMFreq, freqFM);
-	eeprom_update_byte(eepromFMMono, monoFM);
+	eeprom_update_word(eepromFMFreq, _freq);
+	eeprom_update_byte(eepromFMMono, _mono);
+	eeprom_update_byte(eepromFMTuner, _tuner);
 
 	switch (_tuner) {
+	case TUNER_TEA5767:
+		tea5767PowerOff();
+		break;
+	case TUNER_RDA5807:
+		rda5807PowerOff();
+		break;
 	case TUNER_TUX032:
-		tux032GoStby();
+		tux032PowerOff();
 		break;
 	default:
 		break;

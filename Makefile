@@ -1,4 +1,4 @@
-DISPLAY = KS0108A
+DISPLAY = ST7920
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)

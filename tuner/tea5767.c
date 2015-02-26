@@ -31,7 +31,7 @@ void tea5767Init(uint8_t tea5767Ctrl)
 {
 	ctrl = tea5767Ctrl;
 
-	wrBuf[0] = 0;
+	wrBuf[0] = TEA5767_MUTE;
 
 	wrBuf[1] = 0;
 
@@ -77,7 +77,7 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono)
 	if (mono)
 		wrBuf[2] |= TEA5767_MS;
 	else
-		wrBuf[2] &= TEA5767_MS;
+		wrBuf[2] &= ~TEA5767_MS;
 
 	tea5767WriteI2C();
 
@@ -95,4 +95,34 @@ uint8_t *tea5767ReadStatus(void)
 	I2CStop();
 
 	return rdBuf;
+}
+
+void tea5767SetMute(uint8_t mute)
+{
+	if (mute)
+		wrBuf[0] |= TEA5767_MUTE;
+	else
+		wrBuf[0] &= ~TEA5767_MUTE;
+
+	tea5767WriteI2C();
+
+	return;
+}
+
+void tea5767PowerOn(void)
+{
+	wrBuf[3] &= ~TEA5767_STBY;
+
+	tea5767SetMute(0);
+
+	return;
+}
+
+void tea5767PowerOff(void)
+{
+	wrBuf[3] |= TEA5767_STBY;
+
+	tea5767SetMute(1);
+
+	return;
 }

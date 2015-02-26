@@ -65,7 +65,7 @@
 #define RDA5807_SEEKTH				0x0F   /* Seek SNR threshold, 4bits, default 1000=32dB */
 
 /* 7 register (05L) */
-#define RDA5807_LNA_PORT_SEL		0xC0   /* Only for RDA5807FP 2 bit (10) to select FMIN input */
+#define RDA5807_LNA_PORT_SEL		(2<<6) /* Only for RDA5807FP 2 bit (10) to select FMIN input */
 #define RDA5807_VOLUME				0x0F   /* 4 bits volume (0000 - muted, 1111 - max) */
 
 /* 8 register (06H) */
@@ -146,12 +146,15 @@
 #define RDA5807_BUF_STEREO(buf)	(buf[0] & RDA5807_ST)
 
 void rda5807Init(void);
+
 void rda5807SetFreq(uint16_t freq, uint8_t mono);
 
-void rda5807SetVolume(int8_t value);
-void rda5807MuteVolume(void);
-void rda5807UnmuteVolume(void);
-
 uint8_t *rda5807ReadStatus(void);
+
+void rda5807SetMute(uint8_t mute);
+void rda5807SetVolume(int8_t value);
+
+void rda5807PowerOn(void);
+void rda5807PowerOff(void);
 
 #endif /* RDA5807M_H */

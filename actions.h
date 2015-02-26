@@ -15,7 +15,7 @@ void handleSwitchSpMode(uint8_t *dispMode);
 void handleSwitchFmMode(uint8_t *dispMode);
 void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer);
 void handleStoreStation(uint8_t *dispMode);
-void handleChangeFM(uint8_t *dispMode, uint8_t direction);
+void handleChangeFM(uint8_t *dispMode, uint8_t step);
 void handleEditAlarm(uint8_t *dispMode);
 void checkAlarm(uint8_t *dispMode);
 

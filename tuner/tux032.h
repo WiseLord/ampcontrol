@@ -13,9 +13,9 @@ void tux032Init(void);
 
 void tux032SetFreq(uint16_t freq);
 
-void tux032GoStby();
-void tux032ExitStby();
-
 uint8_t *tux032ReadStatus(void);
+
+void tux032PowerOn(void);
+void tux032PowerOff(void);
 
 #endif /* TUX032_H */

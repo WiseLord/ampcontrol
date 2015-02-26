@@ -19,7 +19,7 @@ static void tux032WriteI2C(uint8_t bytes)
 
 void tux032Init(void)
 {
-	tux032GoStby();
+	tux032PowerOff();
 
 	return;
 }
@@ -37,20 +37,20 @@ void tux032SetFreq(uint16_t freq)
 	return;
 }
 
-void tux032GoStby()
+void tux032PowerOn(void)
 {
 	wrBuf[0] = 0x82;
-	wrBuf[1] = 0x00;
+	wrBuf[1] = 0x64;
 
 	tux032WriteI2C(2);
 
 	return;
 }
 
-void tux032ExitStby()
+void tux032PowerOff(void)
 {
 	wrBuf[0] = 0x82;
-	wrBuf[1] = 0x64;
+	wrBuf[1] = 0x00;
 
 	tux032WriteI2C(2);
 

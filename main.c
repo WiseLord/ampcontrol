@@ -69,8 +69,6 @@ static void hwInit(void)
 	sndInit(txtLabels);					/* Load labels/icons/etc */
 	loadDispParams();					/* Load display params */
 
-	loadTunerParams();
-
 	powerOff();
 
 	return;
@@ -218,7 +216,7 @@ int main(void)
 		case CMD_RC5_FM_9:
 		case CMD_RC5_FM_0:
 			sndSetInput(0);
-			loadStation(cmd - CMD_RC5_FM_1);
+			tunerLoadStation(cmd - CMD_RC5_FM_1);
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
@@ -360,10 +358,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_BR);
 				break;
 			case MODE_FM_TUNE:
-				if (encCnt > 0)
-					tunerIncFreq(1);
-				else
-					tunerDecFreq(1);
+				tunerChangeFreq(encCnt);
 				setDisplayTime(DISPLAY_TIME_FM_TUNE);
 				break;
 			case MODE_MUTE:

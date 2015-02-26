@@ -16,8 +16,8 @@ typedef enum {
 
 #define FM_COUNT			64
 
-#define SEARCH_DOWN			0
 #define SEARCH_UP			1
+#define SEARCH_DOWN			-1
 
 #define FM_MONO				1
 #define FM_STEREO			0
@@ -26,28 +26,24 @@ typedef enum {
 #define FM_FREQ_MAX			10800
 
 void tunerInit(void);
+tunerIC tunerGetType(void);
 
 void tunerSetFreq(uint16_t freq);
-uint16_t tunerGetFreq();
-
-void tunerIncFreq(uint8_t mult);
-void tunerDecFreq(uint8_t mult);
-
-void tunerReadStatus();
-void tunerSwitchMono();
-uint8_t tunerStereo();
-uint8_t tunerLevel();
+uint16_t tunerGetFreq(void);
 
 void tunerChangeFreq(int8_t mult);
 
-uint8_t stationNum(void);
-void scanStoredFreq(uint8_t direction);
-void loadStation(uint8_t num);
-void storeStation(void);
+void tunerReadStatus(void);
+void tunerSwitchMono(void);
+uint8_t tunerStereo(void);
+uint8_t tunerLevel(void);
 
-void loadTunerParams(void);
-void saveTunerParams(void);
+uint8_t tunerStationNum(void);
+void tunerNextStation(int8_t direction);
+void tunerLoadStation(uint8_t num);
+void tunerStoreStation(void);
 
-void setTunerParams(void);
+void tunerPowerOn(void);
+void tunerPowerOff(void);
 
 #endif /* TUNER_H */
