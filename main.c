@@ -137,7 +137,8 @@ int main(void)
 			handleSwitchPower(&dispMode);
 			break;
 		case CMD_BTN_2:
-			sndSetInput(sndGetInput() + 1);
+			if (dispMode >= MODE_SND_GAIN0 && dispMode <= MODE_SND_GAIN3)
+				sndSetInput(sndGetInput() + 1);
 			handleSetInput(&dispMode);
 			break;
 		case CMD_BTN_3:
@@ -266,7 +267,8 @@ int main(void)
 			}
 			break;
 		case CMD_RC5_NEXT_INPUT:
-			sndSetInput(sndGetInput() + 1);
+			if (dispMode >= MODE_SND_GAIN0 && dispMode <= MODE_SND_GAIN3)
+				sndSetInput(sndGetInput() + 1);
 			handleSetInput (&dispMode);
 			break;
 		case CMD_RC5_TIME:
