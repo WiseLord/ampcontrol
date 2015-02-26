@@ -1,16 +1,16 @@
-DISPLAY = ST7920
-TUNER = RDA5807
+DISPLAY = KS0108A
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m32fb_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
+TARG = ampcontrol_m32fb_$(call lc,$(DISPLAY))
 
 SPECT_SRC = fft.c adc.c
 CTRL_SRC = input.c rc5.c
 
 AUDIO_SRC = audio/audioproc.c audio/tda731x.c audio/tda7439.c
+TUNER_SRC = tuner/tuner.c tuner/tea5767.c tuner/rda5807.c tuner/tux032.c
 
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ICONS = icons-24.c icons-32.c
@@ -22,19 +22,7 @@ else ifeq ($(DISPLAY), KS0108B)
   DISP_SRC = display.c $(addprefix display/, gdfb.c ks0108.c $(FONTS) $(ICONS))
 endif
 
-ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner.c tuner/tea5767.c
-else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner.c tuner/tux032.c
-else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner.c tuner/lm7001.c
-else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner.c tuner/rda5807.c
-endif
-
-ifneq ($(TUNER), LM7001)
 TEMP_SRC = ds18x20.c temp.c
-endif
 
 SRCS = main.c actions.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC) $(TEMP_SRC)
 
@@ -70,7 +58,7 @@ $(TARG): $(OBJS)
 
 obj/%.o: %.c
 	mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(DISPLAY) -c -o $@ $<
 
 clean:
 	rm -rf $(OBJDIR)

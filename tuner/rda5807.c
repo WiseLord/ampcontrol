@@ -2,18 +2,16 @@
 
 #include "../i2c.h"
 
-#define CHAN_SPACING 5
+static uint8_t wrBuf[8];
+static uint8_t rdBuf[5];
 
-static uint8_t buf[5];
-
-static void rda5807WriteI2C(uint8_t *buf)
+static void rda5807WriteI2C(void)
 {
 	uint8_t i;
 
 	I2CStart(RDA5807M_ADDR);
-	for (i = 0; i < 5; i++) {
-		I2CWriteByte(buf[i]);
-	}
+	for (i = 0; i < sizeof(wrBuf); i++)
+		I2CWriteByte(wrBuf[i]);
 	I2CStop();
 
 	return;
@@ -21,43 +19,84 @@ static void rda5807WriteI2C(uint8_t *buf)
 
 void rda5807Init(void)
 {
-	/* TODO: Init IC */
+	wrBuf[0] = RDA5807_DHIZ;
+	wrBuf[1] = RDA5807_CLK_MODE_32768 | RDA5807_NEW_METHOD | RDA5807_ENABLE;
+	wrBuf[2] = 0;
+	wrBuf[3] = RDA5807_BAND | RDA5807_SPACE;
+	wrBuf[4] = 0;
+	wrBuf[5] = 0;
+	wrBuf[6] = 0b1000 & RDA5807_SEEKTH;
+	wrBuf[7] = 0b10000000 & RDA5807_LNA_PORT_SEL;
+
+	rda5807WriteI2C();
+
 	return;
 }
 
 void rda5807SetFreq(uint16_t freq, uint8_t mono)
 {
-	uint16_t chan = (freq - 8700) / CHAN_SPACING;
+	uint16_t chan = (freq - RDA5807_FREQ_MIN) / RDA5807_CHAN_SPACING;
 
-	buf[0] = RDA5807_DHIZ | RDA5807_DMUTE | RDA5807_SEEKUP;
 	if (mono)
-		buf[0] |= RDA5807_MONO;
+		wrBuf[0] |= RDA5807_MONO;
+	else
+		wrBuf[0] &= ~RDA5807_MONO;
 
-	buf[1] = RDA5807_CLK_MODE_32768;
-	buf[1] |= RDA5807_NEW_METHOD;
-	buf[1] |= RDA5807_ENABLE;
+	wrBuf[2] = chan >> 2;								/* 8 MSB */
 
-	buf[2] = chan >> 2;						/* 8 MSB */
+	wrBuf[3] &= 0x3F;
+	wrBuf[3] |= RDA5807_TUNE | ((chan & 0x03) << 6);	/* 2 LSB */
 
-	buf[3] = (chan & 0x03) << 6;			/* 2 LSB */
-	buf[3] |= (RDA5807_TUNE | RDA5807_BAND_US_EUROPE | RDA5807_SPACE_50);
-
-	buf[4] = RDA5807_SOFTMUTE_EN;
-
-	rda5807WriteI2C(buf);
+	rda5807WriteI2C();
 
 	return;
 }
 
-void rda5807ReadStatus(uint8_t *buf)
+void rda5807SetVolume(int8_t value)
+{
+	wrBuf[3] &= ~RDA5807_TUNE;
+
+	if (value) {
+		wrBuf[7] &= 0xF0;
+		wrBuf[7] |= (value - 1);
+		wrBuf[0] |= RDA5807_DMUTE;
+	} else {
+		wrBuf[0] &= ~RDA5807_DMUTE;
+	}
+
+	rda5807WriteI2C();
+
+	return;
+}
+
+void rda5807MuteVolume(void)
+{
+	wrBuf[0] &= ~RDA5807_DMUTE;
+
+	rda5807WriteI2C();
+
+	return;
+}
+
+void rda5807UnmuteVolume(void)
+{
+	wrBuf[0] |= RDA5807_DMUTE;
+
+	rda5807WriteI2C();
+
+	return;
+}
+
+uint8_t *rda5807ReadStatus(void)
 {
 	uint8_t i;
 
 	I2CStart(RDA5807M_ADDR | I2C_READ);
-	for (i = 0; i < 4; i++)
-		I2CReadByte(&buf[i], I2C_ACK);
-	I2CReadByte(&buf[4], I2C_NOACK);
+	for (i = 0; i < sizeof(rdBuf) - 1; i++)
+		I2CReadByte(&rdBuf[i], I2C_ACK);
+	I2CReadByte(&rdBuf[sizeof(rdBuf) - 1], I2C_NOACK);
 	I2CStop();
 
-	return;
+	return rdBuf;
 }
+

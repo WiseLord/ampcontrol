@@ -10,7 +10,7 @@
 
 #include "audio/audio.h"
 #include "display.h"
-#include "tuner.h"
+#include "tuner/tuner.h"
 #include "temp.h"
 
 #include "actions.h"
@@ -47,10 +47,10 @@ static void loadLabels(uint8_t **txtLabels)
 static void hwInit(void)
 {
 	sei();								/* Gloabl interrupt enable */
-#if !defined(LM7001)
+
 	ds18x20SearchDevices();
 	tempInit();							/* Init temperature control */
-#endif
+
 	inputInit();						/* Buttons/encoder polling */
 
 	loadLabels(txtLabels);				/* Load text labels from EEPROM */
@@ -60,18 +60,16 @@ static void hwInit(void)
 	rc5Init();							/* IR Remote control */
 	adcInit();							/* Analog-to-digital converter */
 	I2CInit();							/* I2C bus */
-#if !defined(NOTUNER)
+
 	tunerInit();						/* Tuner */
-#endif
 
 	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 
 	sndInit(txtLabels);					/* Load labels/icons/etc */
 	loadDispParams();					/* Load display params */
-#if !defined(NOTUNER)
+
 	loadTunerParams();
-#endif
 
 	powerOff();
 
@@ -99,10 +97,8 @@ int main(void)
 		if (stbyTimer == 0)
 			cmd = CMD_RC5_STBY;
 
-#if !defined(LM7001)
 		ds18x20Process();
 		tempControlProcess();
-#endif
 
 		/* Limit update time/alarm interval */
 		if (getClockTimer() == 0) {
@@ -132,15 +128,9 @@ int main(void)
 
 		/* Don't handle commands in standby mode except STBY, TEST and TEMP */
 		if (dispMode == MODE_STANDBY) {
-#if !defined(LM7001)
 			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
 				cmd != CMD_BTN_TEST && cmd != CMD_BTN_TEMP)
 				cmd = CMD_EMPTY;
-#else
-			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
-				cmd != CMD_BTN_TEST)
-				cmd = CMD_EMPTY;
-#endif
 		}
 
 		/* Handle command */
@@ -198,7 +188,6 @@ int main(void)
 		case CMD_RC5_ALARM:
 			handleEditAlarm(&dispMode);
 			break;
-#if !defined(NOTUNER)
 		case CMD_RC5_FM_CHAN_UP:
 			handleChangeFM(&dispMode, SEARCH_UP);
 			break;
@@ -233,7 +222,6 @@ int main(void)
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;
-#endif
 		case CMD_BTN_1:
 			handleSwitchPower(&dispMode);
 			break;
@@ -355,12 +343,10 @@ int main(void)
 			case MODE_TEST:
 				setDisplayTime(DISPLAY_TIME_TEST);
 				break;
-#if !defined(LM7001)
 			case MODE_TEMP:
 				changeTempTH(encCnt);
 				setDisplayTime(DISPLAY_TIME_TEMP);
 				break;
-#endif
 			case MODE_TIME_EDIT:
 				changeTime(encCnt);
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
@@ -374,10 +360,11 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_BR);
 				break;
 			case MODE_FM_TUNE:
-#if !defined(NOTUNER)
-				tunerChangeFreq(encCnt);
+				if (encCnt > 0)
+					tunerIncFreq(1);
+				else
+					tunerDecFreq(1);
 				setDisplayTime(DISPLAY_TIME_FM_TUNE);
-#endif
 				break;
 			case MODE_MUTE:
 			case MODE_LOUDNESS:
@@ -402,12 +389,10 @@ int main(void)
 			case MODE_TEST:
 				dispMode = MODE_STANDBY;
 				break;
-#if !defined(LM7001)
 			case MODE_TEMP:
 				saveTempParams();
 				dispMode = MODE_STANDBY;
 				break;
-#endif
 			default:
 				dispMode = getDefDisplay();
 				if (dispMode == MODE_FM_RADIO && sndGetInput())
@@ -437,16 +422,13 @@ int main(void)
 			showRC5Info(txtLabels);
 			setWorkBrightness();
 			break;
-#if !defined(LM7001)
 		case MODE_TEMP:
 			showTemp(txtLabels);
 			setWorkBrightness();
 			break;
-#endif
 		case MODE_SPECTRUM:
 			drawSpectrum(getSpData(), txtLabels);
 			break;
-#if !defined(NOTUNER)
 		case MODE_FM_RADIO:
 			tunerReadStatus();
 			showRadio(getSpData(), 0);
@@ -455,7 +437,6 @@ int main(void)
 			tunerReadStatus();
 			showRadio(getSpData(), 1);
 			break;
-#endif
 		case MODE_MUTE:
 			showMute(txtLabels, getSpData());
 			if (sndGetMute())

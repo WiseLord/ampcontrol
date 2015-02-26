@@ -5,7 +5,7 @@
 
 #include "eeprom.h"
 #include "input.h"
-#include "tuner.h"
+#include "tuner/tuner.h"
 #include "ds18x20.h"
 #include "temp.h"
 
@@ -233,7 +233,6 @@ void showRC5Info(uint8_t **txtLabels)
 	return;
 }
 
-#if !defined(LM7001)
 void showTemp(uint8_t **txtLabels)
 {
 	int8_t tempTH;
@@ -264,14 +263,12 @@ void showTemp(uint8_t **txtLabels)
 
 	return;
 }
-#endif
 
-#if !defined(NOTUNER)
 void showRadio(uint8_t *buf, uint8_t tune)
 {
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
-	uint8_t num = stationNum(freq);
+	uint8_t num = stationNum();
 
 	uint8_t i;
 
@@ -322,7 +319,6 @@ void showRadio(uint8_t *buf, uint8_t tune)
 
 	return;
 }
-#endif
 
 static void drawMiniSpectrum(uint8_t *buf)
 {

@@ -2,7 +2,7 @@
 
 #include <util/delay.h>
 #include "display.h"
-#include "tuner.h"
+#include "tuner/tuner.h"
 #include "input.h"
 
 /* Save parameters to EEPROM */
@@ -10,9 +10,7 @@ static void saveParams(void)
 {
 	sndPowerOff();
 	saveDisplayParams();
-#if !defined(NOTUNER)
 	saveTunerParams();
-#endif
 
 	return;
 }
@@ -25,9 +23,8 @@ static void powerOn(void)
 
 	_delay_ms(100);						/* Wait while power is being set up */
 
-#if !defined(NOTUNER)
 	setTunerParams();
-#endif
+
 	sndPowerOn();
 
 	return;
@@ -122,13 +119,10 @@ void handleSetDefDisplay(uint8_t *dispMode)
 {
 	switch (getDefDisplay()) {
 	case MODE_SPECTRUM:
-#if !defined(NOTUNER)
-		if (sndGetInput() == 0) {
+		if (sndGetInput() == 0)
 			setDefDisplay(MODE_FM_RADIO);
-			break;
-		}
+		break;
 	case MODE_FM_RADIO:
-#endif
 		setDefDisplay(MODE_TIME);
 		break;
 	default:
@@ -201,7 +195,6 @@ void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer)
 
 void handleStoreStation(uint8_t *dispMode)
 {
-#if !defined(NOTUNER)
 	if (sndGetInput() == 0) {
 		switch (*dispMode) {
 		case MODE_FM_TUNE:
@@ -214,20 +207,20 @@ void handleStoreStation(uint8_t *dispMode)
 			break;
 		}
 	}
-#endif
+
 	return;
 }
 
 void handleChangeFM(uint8_t *dispMode, uint8_t direction)
 {
-#if !defined(NOTUNER)
 	sndSetInput(0);
+
 	switch (*dispMode) {
 	case MODE_FM_TUNE:
 		if (direction == SEARCH_UP)
-			tunerChangeFreq(10);
+			tunerIncFreq(1);
 		else
-			tunerChangeFreq(-10);
+			tunerDecFreq(-1);
 		setDisplayTime(DISPLAY_TIME_FM_TUNE);
 		break;
 	case MODE_FM_RADIO:
@@ -237,7 +230,7 @@ void handleChangeFM(uint8_t *dispMode, uint8_t direction)
 		setDisplayTime(DISPLAY_TIME_FM_RADIO);
 		break;
 	}
-#endif
+
 	return;
 }
 

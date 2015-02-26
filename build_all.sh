@@ -2,11 +2,8 @@
 
 for DISPLAY in KS0108A KS0108B ST7920
 do
-	for TUNER in LM7001 NOTUNER RDA5807 TEA5767 TUX032
-	do
-		make clean
-		make AUDIOPROC=${AUDIOPROC} DISPLAY=${DISPLAY} TUNER=${TUNER}
-	done
+	make clean
+	make DISPLAY=${DISPLAY}
 done
 
 make clean

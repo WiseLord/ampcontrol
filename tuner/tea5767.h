@@ -5,6 +5,9 @@
 
 #define TEA5767_ADDR			0b11000000
 
+#define TEA5767_FREQ_MIN		7600
+#define TEA5767_FREQ_MAX		10800
+
 /* Write mode register values */
 
 /* 0 register */
@@ -65,8 +68,8 @@
 #define TEA5767_BUF_READY(buf)	(buf[0] & TEA5767_RF)
 #define TEA5767_BUF_STEREO(buf)	(buf[2] & TEA5767_STEREO)
 
-void tea5767Init(void);
+void tea5767Init(uint8_t tea5767Ctrl);
 void tea5767SetFreq(uint16_t freq, uint8_t mono);
-void tea5767ReadStatus(uint8_t *buf);
+uint8_t *tea5767ReadStatus(void);
 
 #endif /* TEA5767_H */

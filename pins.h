@@ -85,16 +85,6 @@
 #define STMU_STBY			C
 #define STMU_STBY_LINE		(1<<6)
 
-/* LM7001 definitions */
-#if defined(LM7001)
-#define LM7001_DATA			C
-#define LM7001_DATA_LINE	(1<<2)
-#define LM7001_CL			C
-#define LM7001_CL_LINE		(1<<3)
-#define LM7001_CE			C
-#define LM7001_CE_LINE		(1<<4)
-#endif
-
 /* Encoder definitions */
 #define ENCODER_A			D
 #define ENCODER_A_LINE		(1<<2)
@@ -114,13 +104,11 @@
 #define BUTTON_5_LINE		(1<<7)
 
 /* 1-wire definitions */
-#if !defined(LM7001)
 #define ONE_WIRE			C
 #define ONE_WIRE_LINE		(1<<2)
 #define FAN1				C
 #define FAN1_WIRE			(1<<3)
 #define FAN2				C
 #define FAN2_WIRE			(1<<4)
-#endif
 
 #endif /* PINS_H */
