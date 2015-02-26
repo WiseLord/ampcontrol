@@ -137,6 +137,7 @@ int main(void)
 			handleSwitchPower(&dispMode);
 			break;
 		case CMD_BTN_2:
+			sndSetInput(sndGetInput() + 1);
 			handleSetInput(&dispMode);
 			break;
 		case CMD_BTN_3:
