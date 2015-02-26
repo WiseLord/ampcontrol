@@ -112,12 +112,13 @@ void handleSetDefDisplay(uint8_t *dispMode)
 {
 	switch (getDefDisplay()) {
 	case MODE_SPECTRUM:
-		if (sndGetInput() == 0)
-			setDefDisplay(MODE_FM_RADIO);
-		break;
-	case MODE_FM_RADIO:
 		setDefDisplay(MODE_TIME);
 		break;
+	case MODE_TIME:
+		if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
+			setDefDisplay(MODE_FM_RADIO);
+			break;
+		}
 	default:
 		setDefDisplay(MODE_SPECTRUM);
 		break;
@@ -188,17 +189,9 @@ void handleChangeTimer(uint8_t *dispMode, int16_t stbyTimer)
 
 void handleStoreStation(uint8_t *dispMode)
 {
-	if (sndGetInput() == 0) {
-		switch (*dispMode) {
-		case MODE_FM_TUNE:
-			setDisplayTime(DISPLAY_TIME_FM_TUNE);
-			tunerStoreStation();
-			break;
-		case MODE_FM_RADIO:
-			setDisplayTime(DISPLAY_TIME_FM_RADIO);
-			tunerStoreStation();
-			break;
-		}
+	if (*dispMode == MODE_FM_TUNE) {
+		setDisplayTime(DISPLAY_TIME_FM_TUNE);
+		tunerStoreStation();
 	}
 
 	return;
@@ -206,8 +199,6 @@ void handleStoreStation(uint8_t *dispMode)
 
 void handleChangeFM(uint8_t *dispMode, uint8_t step)
 {
-	sndSetInput(0);
-
 	switch (*dispMode) {
 	case MODE_FM_TUNE:
 		tunerChangeFreq(step * 10);
