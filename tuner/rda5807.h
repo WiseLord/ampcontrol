@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-#define RDA5807M_ADDR				0b00100000
+#define RDA5807M_I2C_ADDR			0b00100000
 
 /* Write mode register values */
 
@@ -121,7 +121,7 @@
  */
 
 #define RDA5807_SPACE				RDA5807_SPACE_50
-#define RDA5807_BAND				RDA5807_BAND_US_EUROPE
+#define RDA5807_BAND				RDA5807_BAND_WORLDWIDE
 
 #if RDA5807_SPACE == RDA5807_SPACE_50
 #define RDA5807_CHAN_SPACING		5

@@ -7,30 +7,53 @@ static uint8_t rdBuf[5];
 
 static uint8_t ctrl = 0x71;
 
-#define TEA5767_HCC_CTRL		(1<<6)
-#define TEA5767_SNC_CTRL		(1<<5)
-#define TEA5767_SMUTE_CTRL		(1<<4)
-#define TEA5767_DTC_CTRL		(1<<3)
-#define TEA5767_BL_CTRL			(1<<2)
-#define TEA5767_PLLREF_CTRL		(1<<1)
-#define TEA5767_XTAL_CTRL		(1<<0)
+#define TEA5767_CTRL_HCC		(1<<6)
+#define TEA5767_CTRL_SNC		(1<<5)
+#define TEA5767_CTRL_SMUTE		(1<<4)
+#define TEA5767_CTRL_DTC		(1<<3)
+#define TEA5767_CTRL_BL			(1<<2)
+#define TEA5767_CTRL_PLLREF		(1<<1)
+#define TEA5767_CTRL_XTAL		(1<<0)
+
+static void tea5767WriteI2C(void)
+{
+	uint8_t i;
+
+	I2CStart(TEA5767_I2C_ADDR);
+	for (i = 0; i < sizeof(wrBuf); i++)
+		I2CWriteByte(wrBuf[i]);
+	I2CStop();
+
+	return;
+}
 
 void tea5767Init(uint8_t tea5767Ctrl)
 {
 	ctrl = tea5767Ctrl;
 
-	return;
-}
+	wrBuf[0] = 0;
 
-static void tea5767WriteI2C(uint8_t *buf)
-{
-	uint8_t i;
+	wrBuf[1] = 0;
 
-	I2CStart(TEA5767_ADDR);
-	for (i = 0; i < 5; i++) {
-		I2CWriteByte(buf[i]);
-	}
-	I2CStop();
+	wrBuf[2] = TEA5767_HLSI;
+
+	wrBuf[3] = 0;
+	if (ctrl & TEA5767_CTRL_HCC)
+		wrBuf[3] |= TEA5767_HCC;
+	if (ctrl & TEA5767_CTRL_SNC)
+		wrBuf[3] |= TEA5767_SNC;
+	if (ctrl & TEA5767_CTRL_SMUTE)
+		wrBuf[3] |= TEA5767_SMUTE;
+	if (ctrl & TEA5767_CTRL_BL)
+		wrBuf[3] |= TEA5767_BL;
+	if (ctrl & TEA5767_CTRL_XTAL)
+		wrBuf[3] |= TEA5767_XTAL;
+
+	wrBuf[4] = 0;
+	if (ctrl & TEA5767_CTRL_DTC)
+		wrBuf[4] |= TEA5767_DTC;
+	if (ctrl & TEA5767_CTRL_PLLREF)
+		wrBuf[4] |= TEA5767_PLLREF;
 
 	return;
 }
@@ -41,38 +64,22 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono)
 
 	uint32_t fq = (uint32_t)freq * 10000 + 225000;
 
-	if (ctrl & TEA5767_XTAL_CTRL)
+	if (ctrl & TEA5767_CTRL_XTAL)
 		div = fq / 8192;
 	else
 		div = fq / 12500;
 
-	wrBuf[0] = (div >> 8) & 0x3F;
+	wrBuf[0] &= 0xC0;
+	wrBuf[0] |= (div >> 8) & 0x3F;
 
-	wrBuf[1] = div & 0xff;
+	wrBuf[1] = div & 0xFF;
 
-	wrBuf[2] = TEA5767_HLSI;
 	if (mono)
 		wrBuf[2] |= TEA5767_MS;
+	else
+		wrBuf[2] &= TEA5767_MS;
 
-	wrBuf[3] = 0;
-	if (ctrl & TEA5767_HCC_CTRL)
-		wrBuf[3] |= TEA5767_HCC;
-	if (ctrl & TEA5767_SNC_CTRL)
-		wrBuf[3] |= TEA5767_SNC;
-	if (ctrl & TEA5767_SMUTE_CTRL)
-		wrBuf[3] |= TEA5767_SMUTE;
-	if (ctrl & TEA5767_BL_CTRL)
-		wrBuf[3] |= TEA5767_BL;
-	if (ctrl & TEA5767_XTAL_CTRL)
-		wrBuf[3] |= TEA5767_XTAL;
-
-	wrBuf[4] = 0;
-	if (ctrl & TEA5767_DTC_CTRL)
-		wrBuf[4] |= TEA5767_DTC;
-	if (ctrl & TEA5767_PLLREF_CTRL)
-		wrBuf[4] |= TEA5767_PLLREF;
-
-	tea5767WriteI2C(wrBuf);
+	tea5767WriteI2C();
 
 	return;
 }
@@ -81,7 +88,7 @@ uint8_t *tea5767ReadStatus(void)
 {
 	uint8_t i;
 
-	I2CStart(TEA5767_ADDR | I2C_READ);
+	I2CStart(TEA5767_I2C_ADDR | I2C_READ);
 	for (i = 0; i < sizeof(rdBuf) - 1; i++)
 		I2CReadByte(&rdBuf[i], I2C_ACK);
 	I2CReadByte(&rdBuf[sizeof(rdBuf) - 1], I2C_NOACK);

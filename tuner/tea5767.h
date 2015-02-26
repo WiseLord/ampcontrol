@@ -3,10 +3,7 @@
 
 #include <inttypes.h>
 
-#define TEA5767_ADDR			0b11000000
-
-#define TEA5767_FREQ_MIN		7600
-#define TEA5767_FREQ_MAX		10800
+#define TEA5767_I2C_ADDR		0b11000000
 
 /* Write mode register values */
 

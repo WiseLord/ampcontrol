@@ -8,7 +8,7 @@ static tunerIC _tuner;
 
 static uint16_t freqFM;
 static uint8_t monoFM;
-static uint8_t stepFM;
+static uint8_t stepFM = 10;
 
 void tunerInit()
 {
@@ -65,14 +65,14 @@ uint16_t tunerGetFreq()
 
 void tunerIncFreq(uint8_t mult)
 {
-	tunerSetFreq(freqFM + FM_STEP * mult);
+	tunerSetFreq(freqFM + stepFM * mult);
 
 	return;
 }
 
 void tunerDecFreq(uint8_t mult)
 {
-	tunerSetFreq(freqFM - FM_STEP * mult);
+	tunerSetFreq(freqFM - stepFM * mult);
 
 	return;
 }

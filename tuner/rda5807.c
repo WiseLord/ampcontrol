@@ -9,7 +9,7 @@ static void rda5807WriteI2C(void)
 {
 	uint8_t i;
 
-	I2CStart(RDA5807M_ADDR);
+	I2CStart(RDA5807M_I2C_ADDR);
 	for (i = 0; i < sizeof(wrBuf); i++)
 		I2CWriteByte(wrBuf[i]);
 	I2CStop();
@@ -91,7 +91,7 @@ uint8_t *rda5807ReadStatus(void)
 {
 	uint8_t i;
 
-	I2CStart(RDA5807M_ADDR | I2C_READ);
+	I2CStart(RDA5807M_I2C_ADDR | I2C_READ);
 	for (i = 0; i < sizeof(rdBuf) - 1; i++)
 		I2CReadByte(&rdBuf[i], I2C_ACK);
 	I2CReadByte(&rdBuf[sizeof(rdBuf) - 1], I2C_NOACK);
