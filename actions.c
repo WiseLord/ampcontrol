@@ -58,20 +58,10 @@ void handleSwitchPower(uint8_t *dispMode)
 }
 
 /* Next input */
-void handleNextInput(uint8_t *dispMode)
+void handleSetInput(uint8_t *dispMode)
 {
-	switch (*dispMode) {
-	case MODE_SND_GAIN0:
-	case MODE_SND_GAIN1:
-	case MODE_SND_GAIN2:
-	case MODE_SND_GAIN3:
-		sndSetInput(sndGetInput() + 1);
-		gdClear();
-	default:
-		*dispMode = MODE_SND_GAIN0 + sndGetInput();
-		setDisplayTime(DISPLAY_TIME_GAIN);
-		break;
-	}
+	*dispMode = MODE_SND_GAIN0 + sndGetInput();
+	setDisplayTime(DISPLAY_TIME_GAIN);
 
 	return;
 }
@@ -199,17 +189,13 @@ void handleStoreStation(uint8_t *dispMode)
 
 void handleChangeFM(uint8_t *dispMode, uint8_t step)
 {
-	switch (*dispMode) {
-	case MODE_FM_TUNE:
+	if (*dispMode == MODE_FM_TUNE) {
 		tunerChangeFreq(step * 10);
 		setDisplayTime(DISPLAY_TIME_FM_TUNE);
-		break;
-	case MODE_FM_RADIO:
+	} else {
 		tunerNextStation(step);
-	default:
 		*dispMode = MODE_FM_RADIO;
 		setDisplayTime(DISPLAY_TIME_FM_RADIO);
-		break;
 	}
 
 	return;

@@ -7,7 +7,7 @@
 
 void powerOff(void);
 void handleSwitchPower(uint8_t *dispMode);
-void handleNextInput(uint8_t *dispMode);
+void handleSetInput(uint8_t *dispMode);
 void handleEditTime(uint8_t *dispMode);
 void handleSwitchMute(uint8_t *dispMode);
 void handleSetDefDisplay(uint8_t *dispMode);
