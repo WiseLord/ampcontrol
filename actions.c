@@ -63,6 +63,11 @@ void handleSetInput(uint8_t *dispMode)
 	*dispMode = MODE_SND_GAIN0 + sndGetInput();
 	setDisplayTime(DISPLAY_TIME_GAIN);
 
+	if (*dispMode == MODE_SND_GAIN0)
+		tunerSetMute(MUTE_OFF);
+	else
+		tunerSetMute(MUTE_ON);
+
 	return;
 }
 

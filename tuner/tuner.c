@@ -254,6 +254,25 @@ void tunerStoreStation(void)
 	return;
 }
 
+void tunerSetMute(uint8_t mute)
+{
+	switch (_tuner) {
+	case TUNER_TEA5767:
+		tea5767SetMute(mute);
+		break;
+	case TUNER_RDA5807:
+		rda5807SetMute(mute);
+		break;
+	case TUNER_TUX032:
+		tux032SetMute(mute);
+		break;
+	default:
+		break;
+	}
+
+	return;
+}
+
 void tunerPowerOn(void)
 {
 	switch (_tuner) {

@@ -71,6 +71,8 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono);
 
 uint8_t *tea5767ReadStatus(void);
 
+void tea5767SetMute(uint8_t mute);
+
 void tea5767PowerOn();
 void tea5767PowerOff();
 

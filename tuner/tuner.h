@@ -43,6 +43,8 @@ void tunerNextStation(int8_t direction);
 void tunerLoadStation(uint8_t num);
 void tunerStoreStation(void);
 
+void tunerSetMute(uint8_t mute);
+
 void tunerPowerOn(void);
 void tunerPowerOff(void);
 

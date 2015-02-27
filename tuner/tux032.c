@@ -37,6 +37,29 @@ void tux032SetFreq(uint16_t freq)
 	return;
 }
 
+uint8_t *tux032ReadStatus(void)
+{
+	uint8_t i;
+
+	I2CStart(TUX032_I2C_ADDR | I2C_READ);
+	for (i = 0; i < sizeof(rdBuf) - 1; i++)
+		I2CReadByte(&rdBuf[i], I2C_ACK);
+	I2CReadByte(&rdBuf[sizeof(rdBuf) - 1], I2C_NOACK);
+	I2CStop();
+
+	return rdBuf;
+}
+
+void tux032SetMute(uint8_t mute)
+{
+	if (mute)
+		tux032PowerOff();
+	else
+		tux032PowerOn();
+
+	return;
+}
+
 void tux032PowerOn(void)
 {
 	wrBuf[0] = 0x82;
@@ -55,17 +78,4 @@ void tux032PowerOff(void)
 	tux032WriteI2C(2);
 
 	return;
-}
-
-uint8_t *tux032ReadStatus(void)
-{
-	uint8_t i;
-
-	I2CStart(TUX032_I2C_ADDR | I2C_READ);
-	for (i = 0; i < sizeof(rdBuf) - 1; i++)
-		I2CReadByte(&rdBuf[i], I2C_ACK);
-	I2CReadByte(&rdBuf[sizeof(rdBuf) - 1], I2C_NOACK);
-	I2CStop();
-
-	return rdBuf;
 }
