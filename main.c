@@ -15,34 +15,6 @@
 
 #include "actions.h"
 
-uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
-
-/* Load text labels from EEPROM */
-static void loadLabels(uint8_t **txtLabels)
-{
-	uint8_t i;
-	uint8_t *addr;
-
-	addr = labelsAddr;
-	i = 0;
-
-	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {
-		if (eeprom_read_byte(addr) != '\0') {
-			txtLabels[i] = addr;
-			addr++;
-			i++;
-			while (eeprom_read_byte(addr) != '\0' &&
-				   addr < (uint8_t*)EEPROM_SIZE) {
-				addr++;
-			}
-		} else {
-			addr++;
-		}
-	}
-
-	return;
-}
-
 /* Hardware initialization */
 static void hwInit(void)
 {
@@ -53,21 +25,17 @@ static void hwInit(void)
 
 	inputInit();						/* Buttons/encoder polling */
 
-	loadLabels(txtLabels);				/* Load text labels from EEPROM */
-
-	gdInit();
-
 	rc5Init();							/* IR Remote control */
 	adcInit();							/* Analog-to-digital converter */
 	I2CInit();							/* I2C bus */
+
+	displayInit();			/* Load display params, text labels */
 
 	tunerInit();						/* Tuner */
 
 	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
-
-	sndInit(txtLabels);					/* Load labels/icons/etc */
-	loadDispParams();					/* Load display params */
+	sndInit();					/* Load labels/icons/etc */
 
 	powerOff();
 
@@ -415,19 +383,19 @@ int main(void)
 		/* Show things */
 		switch (dispMode) {
 		case MODE_STANDBY:
-			showTime(txtLabels);
+			showTime();
 			setStbyBrightness();
 			break;
 		case MODE_TEST:
-			showRC5Info(txtLabels);
+			showRC5Info();
 			setWorkBrightness();
 			break;
 		case MODE_TEMP:
-			showTemp(txtLabels);
+			showTemp();
 			setWorkBrightness();
 			break;
 		case MODE_SPECTRUM:
-			showSpectrum(txtLabels);
+			showSpectrum();
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();
@@ -438,29 +406,29 @@ int main(void)
 			showRadio(MODE_RADIO_TUNE);
 			break;
 		case MODE_MUTE:
-			showMute(txtLabels);
+			showMute();
 			if (sndGetMute())
 				setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case MODE_LOUDNESS:
-			showLoudness(txtLabels);
+			showLoudness();
 			break;
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
-			showTime(txtLabels);
+			showTime();
 			break;
 		case MODE_TIMER:
 			showTimer();
 			break;
 		case MODE_ALARM:
 		case MODE_ALARM_EDIT:
-			showAlarm(txtLabels);
+			showAlarm();
 			break;
 		case MODE_BR:
-			showBrWork(txtLabels);
+			showBrWork();
 			break;
 		default:
-			showSndParam(dispMode, txtLabels);
+			showSndParam(dispMode);
 			break;
 		}
 

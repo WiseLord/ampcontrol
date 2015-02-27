@@ -60,36 +60,38 @@ enum {
 	MODE_TEMP
 };
 
+void displayInit(void);
+uint8_t **getTxtLabels(void);
+
 void setDefDisplay(uint8_t value);
 uint8_t getDefDisplay();
 
 void nextRC5Cmd(void);
 void startTestMode(void);
-void showRC5Info(uint8_t **txtLabels);
+void showRC5Info(void);
 
-void showTemp(uint8_t **txtLabels);
+void showTemp(void);
 
 void showRadio(uint8_t tune);
 
-void showMute(uint8_t **txtLabels);
-void showLoudness(uint8_t **txtLabels);
+void showMute(void);
+void showLoudness(void);
 
-void showBrWork(uint8_t **txtLabels);
+void showBrWork(void);
 void changeBrWork(int8_t diff);
 
-void showSndParam(uint8_t dispMode, uint8_t **txtLabels);
+void showSndParam(uint8_t dispMode);
 
-void showTime(uint8_t **txtLabels);
-void showAlarm(uint8_t **txtLabels);
+void showTime(void);
+void showAlarm(void);
 void showTimer(void);
 
 void switchSpMode(void);
-void showSpectrum(uint8_t **txtLabels);
+void showSpectrum(void);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);
 
-void loadDispParams(void);
-void saveDisplayParams(void);
+void displayPowerOff(void);
 
 #endif /* DISPLAY_H */

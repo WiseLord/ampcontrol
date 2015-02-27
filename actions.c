@@ -32,10 +32,9 @@ void powerOff(void)
 	stopEditTime();
 	setStbyTimer(STBY_TIMER_OFF);
 
-	saveDisplayParams();
-
 	sndPowerOff();
 	tunerPowerOff();
+	displayPowerOff();
 
 	return;
 }

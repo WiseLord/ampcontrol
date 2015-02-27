@@ -3,7 +3,7 @@
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
 #include "../eeprom.h"
-#include "../display/icons.h"
+#include "../display.h"
 
 static const sndGrid grid[] PROGMEM = {
 	{  0,  0, 0.00 * 8},	/* 0: Not implemented */
@@ -31,9 +31,11 @@ static void setNothing(int8_t val)
 	return;
 }
 
-void sndInit(uint8_t **txtLabels)
+void sndInit(void)
 {
 	uint8_t i;
+
+	uint8_t **txtLabels = getTxtLabels();
 
 	tda7439Init(sndPar);
 	tda731xInit(sndPar);

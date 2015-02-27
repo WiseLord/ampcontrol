@@ -21,6 +21,8 @@ static uint8_t rc5Addr;
 
 static uint8_t defDisplay = MODE_SPECTRUM;	/* Default display mode */
 
+uint8_t *txtLabels[LABELS_COUNT];			/* Array with text label pointers */
+
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
 	uint8_t i, j;
@@ -153,6 +155,43 @@ static void drawAm(uint8_t am, const uint8_t *font)
 	return;
 }
 
+void displayInit(void)
+{
+	uint8_t i;
+	uint8_t *addr;
+
+	addr = labelsAddr;
+	i = 0;
+
+	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {
+		if (eeprom_read_byte(addr) != '\0') {
+			txtLabels[i] = addr;
+			addr++;
+			i++;
+			while (eeprom_read_byte(addr) != '\0' &&
+				   addr < (uint8_t*)EEPROM_SIZE) {
+				addr++;
+			}
+		} else {
+			addr++;
+		}
+	}
+
+	gdInit();
+
+	brStby = eeprom_read_byte(eepromBrStby);
+	brWork = eeprom_read_byte(eepromBrWork);
+	spMode  = eeprom_read_byte(eepromSpMode);
+	defDisplay = eeprom_read_byte(eepromDisplay);
+
+	return;
+}
+
+uint8_t **getTxtLabels(void)
+{
+	return txtLabels;
+}
+
 void setDefDisplay(uint8_t value)
 {
 	defDisplay = value;
@@ -193,7 +232,7 @@ void startTestMode(void)
 	return;
 }
 
-void showRC5Info(uint8_t **txtLabels)
+void showRC5Info(void)
 {
 	uint16_t rc5Buf = getRC5Buf();
 	uint8_t btnBuf = getBtnBuf();
@@ -242,7 +281,7 @@ void showRC5Info(uint8_t **txtLabels)
 	return;
 }
 
-void showTemp(uint8_t **txtLabels)
+void showTemp(void)
 {
 	int8_t tempTH;
 
@@ -329,7 +368,7 @@ void showRadio(uint8_t tune)
 	return;
 }
 
-void showMute(uint8_t **txtLabels)
+void showMute(void)
 {
 	showParLabel(txtLabels[LABEL_MUTE]);
 
@@ -346,7 +385,7 @@ void showMute(uint8_t **txtLabels)
 	return;
 }
 
-void showLoudness(uint8_t **txtLabels)
+void showLoudness(void)
 {
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
 
@@ -363,7 +402,7 @@ void showLoudness(uint8_t **txtLabels)
 	return;
 }
 
-void showBrWork(uint8_t **txtLabels)
+void showBrWork(void)
 {
 	showParValue(brWork);
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
@@ -385,7 +424,7 @@ void changeBrWork(int8_t diff)
 	return;
 }
 
-void showSndParam(uint8_t dispMode, uint8_t **txtLabels)
+void showSndParam(uint8_t dispMode)
 {
 	sndParam *param = sndParAddr(dispMode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
@@ -398,7 +437,7 @@ void showSndParam(uint8_t dispMode, uint8_t **txtLabels)
 	return;
 }
 
-void showTime(uint8_t **txtLabels)
+void showTime(void)
 {
 	gdSetXY(4, 0);
 
@@ -428,7 +467,7 @@ void showTime(uint8_t **txtLabels)
 	return;
 }
 
-void showAlarm(uint8_t **txtLabels)
+void showAlarm(void)
 {
 	uint8_t i, j;
 	uint8_t *label;
@@ -541,7 +580,7 @@ void switchSpMode(void)
 	return;
 }
 
-void showSpectrum(uint8_t **txtLabels)
+void showSpectrum(void)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
@@ -646,17 +685,7 @@ void setStbyBrightness(void)
 	return;
 }
 
-void loadDispParams(void)
-{
-	brStby = eeprom_read_byte(eepromBrStby);
-	brWork = eeprom_read_byte(eepromBrWork);
-	spMode  = eeprom_read_byte(eepromSpMode);
-	defDisplay = eeprom_read_byte(eepromDisplay);
-
-	return;
-}
-
-void saveDisplayParams(void)
+void displayPowerOff(void)
 {
 	eeprom_update_byte(eepromBrStby, brStby);
 	eeprom_update_byte(eepromBrWork, brWork);
