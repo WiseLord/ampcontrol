@@ -10,18 +10,12 @@
 #include "temp.h"
 #include "adc.h"
 
-int8_t brStby;											/* Brightness in standby mode */
-int8_t brWork;											/* Brightness in working mode */
+int8_t brStby;								/* Brightness in standby mode */
+int8_t brWork;								/* Brightness in working mode */
 
-uint8_t spMode;											/* Spectrum mode */
-uint8_t strbuf[STR_BUFSIZE + 1] = "                ";	/* String buffer */
+uint8_t spMode;								/* Spectrum mode */
 
-uint8_t defDisplay = MODE_SPECTRUM;						/* Default display */
-
-uint8_t getDefDisplay()
-{
-	return defDisplay;
-}
+static uint8_t defDisplay = MODE_SPECTRUM;	/* Default display mode */
 
 void setDefDisplay(uint8_t value)
 {
@@ -30,47 +24,9 @@ void setDefDisplay(uint8_t value)
 	return;
 }
 
-static void writeStringEeprom(const uint8_t *string)
+uint8_t getDefDisplay()
 {
-	uint8_t i = 0;
-
-	for (i = 0; i < STR_BUFSIZE; i++)
-		strbuf[i] = eeprom_read_byte(&string[i]);
-
-	gdWriteString(strbuf);
-
-	return;
-}
-
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
-{
-	uint8_t numdiv;
-	uint8_t sign = lead;
-	int8_t i;
-
-	if (number < 0) {
-		sign = '-';
-		number = -number;
-	}
-
-	for (i = 0; i < width; i++)
-		strbuf[i] = lead;
-	strbuf[width] = '\0';
-	i = width - 1;
-
-	while (number > 0 || i == width - 1) {
-		numdiv = number % radix;
-		strbuf[i] = numdiv + 0x30;
-		if (numdiv >= 10)
-			strbuf[i] += 7;
-		i--;
-		number /= radix;
-	}
-
-	if (i >= 0)
-		strbuf[i] = sign;
-
-	return strbuf;
+	return defDisplay;
 }
 
 static void showBar(int16_t min, int16_t max, int16_t value)
@@ -131,7 +87,7 @@ static void showParValue(int8_t value)
 {
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(94, 32);
-	gdWriteString(mkNumString(value, 3, ' ', 10));
+	gdWriteNum(value, 3, ' ', 10);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	return;
@@ -141,7 +97,7 @@ static void showParLabel(const uint8_t *parLabel)
 {
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
-	writeStringEeprom(parLabel);
+	gdWriteStringEeprom(parLabel);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	return;
@@ -195,43 +151,43 @@ void showRC5Info(uint8_t **txtLabels)
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
-	writeStringEeprom(txtLabels[LABEL_IN_STATUS]);
+	gdWriteStringEeprom(txtLabels[LABEL_IN_STATUS]);
 	gdSetXY(4, 9);
-	writeStringEeprom(txtLabels[LABEL_REMOTE]);
+	gdWriteStringEeprom(txtLabels[LABEL_REMOTE]);
 	gdSetXY(45, 9);
-	gdWriteString(mkNumString(rc5Buf, 14, '0', 2));
+	gdWriteNum(rc5Buf, 14, '0', 2);
 
 	gdSetXY(4, 18);
-	writeStringEeprom(txtLabels[LABEL_BUTTONS]);
+	gdWriteStringEeprom(txtLabels[LABEL_BUTTONS]);
 	gdSetXY(75, 18);
-	gdWriteString(mkNumString(btnBuf, 5, '0', 2));
+	gdWriteNum(btnBuf, 5, '0', 2);
 	gdSetXY(108, 18);
 	gdWriteString((uint8_t*)"/");
 	gdSetXY(117, 18);
-	gdWriteString(mkNumString(encBuf, 2, '0', 2));
+	gdWriteNum(encBuf, 2, '0', 2);
 
 	gdSetXY(0, 30);
-	writeStringEeprom(txtLabels[LABEL_LEARN_MODE]);
+	gdWriteStringEeprom(txtLabels[LABEL_LEARN_MODE]);
 	gdSetXY(4, 39);
-	writeStringEeprom(txtLabels[LABEL_BUTTON]);
+	gdWriteStringEeprom(txtLabels[LABEL_BUTTON]);
 	gdSetXY(48, 39);
-	writeStringEeprom(txtLabels[LABEL_RC5_STBY + rc5CmdInd]);
+	gdWriteStringEeprom(txtLabels[LABEL_RC5_STBY + rc5CmdInd]);
 
 	gdSetXY(8, 48);
-	writeStringEeprom(txtLabels[LABEL_ADDRESS]);
+	gdWriteStringEeprom(txtLabels[LABEL_ADDRESS]);
 	gdSetXY(64, 48);
 	rc5Addr = (rc5Buf & 0x07C0)>>6;
-	gdWriteString(mkNumString(rc5Addr, 2, '0', 16));
+	gdWriteNum(rc5Addr, 2, '0', 16);
 	gdWriteString((uint8_t*)" => ");
-	gdWriteString(mkNumString(eeprom_read_byte(eepromRC5Addr), 2, '0', 16));
+	gdWriteNum(eeprom_read_byte(eepromRC5Addr), 2, '0', 16);
 
 	gdSetXY(8, 56);
-	writeStringEeprom(txtLabels[LABEL_COMMAND]);
+	gdWriteStringEeprom(txtLabels[LABEL_COMMAND]);
 	gdSetXY(64, 56);
 	rc5Cmd = rc5Buf & 0x003F;
-	gdWriteString(mkNumString(rc5Cmd, 2, '0', 16));
+	gdWriteNum(rc5Cmd, 2, '0', 16);
 	gdWriteString((uint8_t*)" => ");
-	gdWriteString(mkNumString(eeprom_read_byte(eepromRC5Cmd + rc5CmdInd), 2, '0', 16));
+	gdWriteNum(eeprom_read_byte(eepromRC5Cmd + rc5CmdInd), 2, '0', 16);
 
 	return;
 }
@@ -245,15 +201,15 @@ void showTemp(uint8_t **txtLabels)
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	gdSetXY(0, 48);
-	writeStringEeprom(txtLabels[LABEL_SENSOR]);
+	gdWriteStringEeprom(txtLabels[LABEL_SENSOR]);
 	gdWriteString((uint8_t*)" 1: ");
-	gdWriteString(mkNumString(ds18x20GetTemp(0), 3, ' ', 10));
+	gdWriteNum(ds18x20GetTemp(0), 3, ' ', 10);
 	gdWriteString((uint8_t*)" \xDF""C");
 
 	gdSetXY(0, 56);
-	writeStringEeprom(txtLabels[LABEL_SENSOR]);
+	gdWriteStringEeprom(txtLabels[LABEL_SENSOR]);
 	gdWriteString((uint8_t*)" 2: ");
-	gdWriteString(mkNumString(ds18x20GetTemp(1), 3, ' ', 10));
+	gdWriteNum(ds18x20GetTemp(1), 3, ' ', 10);
 	gdWriteString((uint8_t*)" \xDF""C");
 
 	showParValue(tempTH);
@@ -279,9 +235,9 @@ void showRadio(uint8_t tune)
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	gdWriteString((uint8_t*)"FM ");
-	gdWriteString(mkNumString(freq / 100, 3, ' ', 10));
+	gdWriteNum(freq / 100, 3, ' ', 10);
 	gdWriteString((uint8_t*)"\x7F.\x7F");
-	gdWriteString(mkNumString(freq % 100, 2, '0', 10));
+	gdWriteNum(freq % 100, 2, '0', 10);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	/* Signal level */
@@ -416,7 +372,7 @@ void showSndParam(uint8_t dispMode, uint8_t **txtLabels)
 	showParLabel(param->label);
 	showParIcon(param->icon);
 	gdSetXY(116, 56);
-	writeStringEeprom(txtLabels[LABEL_DB]);
+	gdWriteStringEeprom(txtLabels[LABEL_DB]);
 
 	return;
 }
@@ -427,7 +383,7 @@ static void drawTm(uint8_t tm, const uint8_t *font)
 		gdLoadFont(font, 0, FONT_DIR_0);
 	else
 		gdLoadFont(font, 1, FONT_DIR_0);
-	gdWriteString(mkNumString(getTime(tm), 2, '0', 10));
+	gdWriteNum(getTime(tm), 2, '0', 10);
 	gdLoadFont(font, 1, FONT_DIR_0);
 
 	return;
@@ -458,7 +414,7 @@ void showTime(uint8_t **txtLabels)
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(32, 56);
 
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
+	gdWriteStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
 
 	return;
 }
@@ -469,7 +425,7 @@ static void drawAm(uint8_t am, const uint8_t *font)
 		gdLoadFont(font, 0, FONT_DIR_0);
 	else
 		gdLoadFont(font, 1, FONT_DIR_0);
-	gdWriteString(mkNumString(getAlarm(am), 2, '0', 10));
+	gdWriteNum(getAlarm(am), 2, '0', 10);
 	gdLoadFont(font, 1, FONT_DIR_0);
 
 	return;
@@ -479,6 +435,7 @@ void showAlarm(uint8_t **txtLabels)
 {
 	uint8_t i, j;
 	uint8_t *label;
+	uint8_t ch;
 
 	gdSetXY(4, 0);
 
@@ -517,12 +474,12 @@ void showAlarm(uint8_t **txtLabels)
 		gdSetXY(5 + 18 * i, 38);
 		j = 0;
 		label = txtLabels[LABEL_SUNDAY + (i + 1) % 7];
-		strbuf[0] = eeprom_read_byte(&label[j++]);
-		while (strbuf[0] == ' ')
-			strbuf[0] = eeprom_read_byte(&label[j++]);
-		strbuf[1] = eeprom_read_byte(&label[j++]);
-		strbuf[2] = '\0';
-		gdWriteString(strbuf);
+		do {
+			ch = eeprom_read_byte(&label[j++]);
+		} while (ch == ' ');
+		gdWriteChar(ch);
+		gdWriteChar(0x7F);
+		gdWriteChar(eeprom_read_byte(&label[j++]));
 
 		gdDrawRect(3 + 18 * i, 47, 14, 14, 1);
 		if (getAlarm(DS1307_A0_WDAY) & (0x40 >> i))
@@ -547,11 +504,11 @@ void showTimer(void)
 
 	gdLoadFont(font_digits_32, 1, FONT_DIR_0);
 	if (stbyTimer >= 0) {
-		gdWriteString(mkNumString(stbyTimer / 3600, 2, '0', 10));
+		gdWriteNum(stbyTimer / 3600, 2, '0', 10);
 		gdWriteString((uint8_t*)"\x7F:\x7F");
-		gdWriteString(mkNumString(stbyTimer / 60 % 60, 2, '0', 10));
+		gdWriteNum(stbyTimer / 60 % 60, 2, '0', 10);
 		gdWriteString((uint8_t*)"\x7F:\x7F");
-		gdWriteString(mkNumString(stbyTimer % 60, 2, '0', 10));
+		gdWriteNum(stbyTimer % 60, 2, '0', 10);
 	} else {
 		gdWriteString((uint8_t*)"--");
 		gdWriteString((uint8_t*)"\x7F:\x7F");
@@ -618,9 +575,9 @@ void drawSpectrum(uint8_t **txtLabels)
 	case SP_MODE_METER:
 		gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 		gdSetXY(0, 0);
-		writeStringEeprom(txtLabels[LABEL_LEFT_CHANNEL]);
+		gdWriteStringEeprom(txtLabels[LABEL_LEFT_CHANNEL]);
 		gdSetXY(0, 36);
-		writeStringEeprom(txtLabels[LABEL_RIGHT_CHANNEL]);
+		gdWriteStringEeprom(txtLabels[LABEL_RIGHT_CHANNEL]);
 		left = 0;
 		right = 0;
 		for (x = 0; x < GD_SIZE_X / 4; x++) {

@@ -1,11 +1,13 @@
 #include "gdfb.h"
 
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 
 const uint8_t *_font;
 static uint8_t fp[FONT_PARAM_COUNT];
 
 static uint8_t _x, _y;
+uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
 inline void gdInit(void)
 {
@@ -273,6 +275,51 @@ void gdWriteString(uint8_t *string)
 		gdWriteChar(fp[FONT_LTSPPOS]);
 		gdWriteChar(*string++);
 	}
+
+	return;
+}
+
+void gdWriteStringEeprom(const uint8_t *string)
+{
+	uint8_t i = 0;
+
+	for (i = 0; i < STR_BUFSIZE; i++)
+		strbuf[i] = eeprom_read_byte(&string[i]);
+
+	gdWriteString(strbuf);
+
+	return;
+}
+
+void gdWriteNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
+{
+	uint8_t numdiv;
+	uint8_t sign = lead;
+	int8_t i;
+
+	if (number < 0) {
+		sign = '-';
+		number = -number;
+	}
+
+	for (i = 0; i < width; i++)
+		strbuf[i] = lead;
+	strbuf[width] = '\0';
+	i = width - 1;
+
+	while (number > 0 || i == width - 1) {
+		numdiv = number % radix;
+		strbuf[i] = numdiv + 0x30;
+		if (numdiv >= 10)
+			strbuf[i] += 7;
+		i--;
+		number /= radix;
+	}
+
+	if (i >= 0)
+		strbuf[i] = sign;
+
+	gdWriteString(strbuf);
 
 	return;
 }

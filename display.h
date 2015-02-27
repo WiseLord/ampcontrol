@@ -2,13 +2,11 @@
 #define DISPLAY_H
 
 #include <inttypes.h>
-
+#include "display/gdfb.h"
 #include "ds1307.h"
 #include "audio/audioproc.h"
 
-#include "display/gdfb.h"
-
-/* Timers fo different screens */
+/* Timers for different screens */
 #define DISPLAY_TIME_TEST		20000U
 #define DISPLAY_TIME_TEMP		20000U
 #define DISPLAY_TIME_GAIN		3000U
@@ -25,14 +23,11 @@
 #define DISPLAY_TIME_SP			3000U
 #define DISPLAY_TIME_BR			3000U
 
+/* Backlight state */
 #define BACKLIGHT_ON			1
 #define BACKLIGHT_OFF			0
 
-/* Data stored in user characters */
-#define LCD_LEVELS				0
-#define LCD_BAR					1
-
-/* Radio mode */
+/* Radio tuning mode */
 #define MODE_RADIO_TUNE			1
 #define MODE_RADIO_CHAN			0
 
@@ -64,18 +59,8 @@ enum {
 	MODE_TEMP
 };
 
-/* Type of string printed (regular/eeprom/flash) */
-#define STR_REG			0
-#define STR_EEP			1
-#define STR_PGM			2
-
-#define STR_BUFSIZE		16
-
-uint8_t getDefDisplay();
-
 void setDefDisplay(uint8_t value);
-
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
+uint8_t getDefDisplay();
 
 void nextRC5Cmd(void);
 void startTestMode(void);
