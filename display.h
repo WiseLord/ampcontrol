@@ -32,6 +32,10 @@
 #define LCD_LEVELS				0
 #define LCD_BAR					1
 
+/* Radio mode */
+#define MODE_RADIO_TUNE			1
+#define MODE_RADIO_CHAN			0
+
 /* Spectrum output mode */
 enum {
 	SP_MODE_STEREO,
@@ -79,21 +83,21 @@ void startTestMode(void);
 void showRC5Info(uint8_t **txtLabels);
 void showTemp(uint8_t **txtLabels);
 
-void showRadio(uint8_t *buf, uint8_t tune);
+void showRadio(uint8_t tune);
 
-void showMute(uint8_t **txtLabels, uint8_t *buf);
-void showLoudness(uint8_t **txtLabels, uint8_t *buf);
+void showMute(uint8_t **txtLabels);
+void showLoudness(uint8_t **txtLabels);
 
-void showBrWork(uint8_t **txtLabels, uint8_t *buf);
+void showBrWork(uint8_t **txtLabels);
 void changeBrWork(int8_t diff);
 
-void showSndParam(uint8_t dispMode, uint8_t **txtLabels, uint8_t *buf);
+void showSndParam(uint8_t dispMode, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
 void showAlarm(uint8_t **txtLabels);
-void showTimer(uint8_t *buf);
+void showTimer(void);
 
-void drawSpectrum(uint8_t *buf, uint8_t **txtLabels);
+void drawSpectrum(uint8_t **txtLabels);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);

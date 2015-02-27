@@ -427,40 +427,40 @@ int main(void)
 			setWorkBrightness();
 			break;
 		case MODE_SPECTRUM:
-			drawSpectrum(getSpData(), txtLabels);
+			drawSpectrum(txtLabels);
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();
-			showRadio(getSpData(), 0);
+			showRadio(MODE_RADIO_CHAN);
 			break;
 		case MODE_FM_TUNE:
 			tunerReadStatus();
-			showRadio(getSpData(), 1);
+			showRadio(MODE_RADIO_TUNE);
 			break;
 		case MODE_MUTE:
-			showMute(txtLabels, getSpData());
+			showMute(txtLabels);
 			if (sndGetMute())
 				setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
 		case MODE_LOUDNESS:
-			showLoudness(txtLabels, getSpData());
+			showLoudness(txtLabels);
 			break;
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime(txtLabels);
 			break;
 		case MODE_TIMER:
-			showTimer(getSpData());
+			showTimer();
 			break;
 		case MODE_ALARM:
 		case MODE_ALARM_EDIT:
 			showAlarm(txtLabels);
 			break;
 		case MODE_BR:
-			showBrWork(txtLabels, getSpData());
+			showBrWork(txtLabels);
 			break;
 		default:
-			showSndParam(dispMode, txtLabels, getSpData());
+			showSndParam(dispMode, txtLabels);
 			break;
 		}
 

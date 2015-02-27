@@ -8,6 +8,7 @@
 #include "tuner/tuner.h"
 #include "ds18x20.h"
 #include "temp.h"
+#include "adc.h"
 
 int8_t brStby;											/* Brightness in standby mode */
 int8_t brWork;											/* Brightness in working mode */
@@ -72,13 +73,15 @@ uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 	return strbuf;
 }
 
-static void showBar(int16_t min, int16_t max, int16_t value, uint8_t *buf)
+static void showBar(int16_t min, int16_t max, int16_t value)
 {
 	uint8_t i, j;
 	uint8_t color;
 
 	uint8_t x, xbase;
 	uint8_t y, ybase;
+
+	volatile uint8_t *buf = getSpData();
 
 	if (min + max) {
 		value = (int16_t)91 * (value - min) / (max - min);
@@ -254,7 +257,7 @@ void showTemp(uint8_t **txtLabels)
 	gdWriteString((uint8_t*)" \xDF""C");
 
 	showParValue(tempTH);
-	showBar(MIN_TEMP, MAX_TEMP, tempTH, 0);
+	showBar(MIN_TEMP, MAX_TEMP, tempTH);
 	showParLabel(txtLabels[LABEL_THRESHOLD]);
 	showParIcon(icons_24_threshold);
 
@@ -264,7 +267,7 @@ void showTemp(uint8_t **txtLabels)
 	return;
 }
 
-void showRadio(uint8_t *buf, uint8_t tune)
+void showRadio(uint8_t tune)
 {
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
@@ -310,9 +313,9 @@ void showRadio(uint8_t *buf, uint8_t tune)
 	}
 
 	/* Frequency scale */
-	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4, buf);
+	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
 
-	if (tune) {
+	if (tune == MODE_RADIO_TUNE) {
 		gdSetXY(103, 56);
 		gdWriteString((uint8_t*)"\xDB\xDB\xD0\xDC\xDC");
 	}
@@ -320,10 +323,12 @@ void showRadio(uint8_t *buf, uint8_t tune)
 	return;
 }
 
-static void drawMiniSpectrum(uint8_t *buf)
+static void drawMiniSpectrum(void)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
+
+	volatile uint8_t *buf = getSpData();
 
 	if (buf) {
 		for (y = 0; y < GD_SIZE_Y / 8 * 4; y++) {
@@ -344,7 +349,7 @@ static void drawMiniSpectrum(uint8_t *buf)
 	return;
 }
 
-void showMute(uint8_t **txtLabels, uint8_t *buf)
+void showMute(uint8_t **txtLabels)
 {
 	showParLabel(txtLabels[LABEL_MUTE]);
 
@@ -356,12 +361,12 @@ void showMute(uint8_t **txtLabels, uint8_t *buf)
 		gdWriteIcon32(icons_32_mute_off);
 	}
 
-	drawMiniSpectrum(buf);
+	drawMiniSpectrum();
 
 	return;
 }
 
-void showLoudness(uint8_t **txtLabels, uint8_t *buf)
+void showLoudness(uint8_t **txtLabels)
 {
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
 
@@ -373,16 +378,16 @@ void showLoudness(uint8_t **txtLabels, uint8_t *buf)
 		gdWriteIcon32(icons_32_loud_off);
 	}
 
-	drawMiniSpectrum(buf);
+	drawMiniSpectrum();
 
 	return;
 }
 
 /* Show brightness control */
-void showBrWork(uint8_t **txtLabels, uint8_t *buf)
+void showBrWork(uint8_t **txtLabels)
 {
 	showParValue(brWork);
-	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork, buf);
+	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
 	showParLabel(txtLabels[LABEL_BR_WORK]);
 	showParIcon(icons_24_brightness);
 
@@ -403,11 +408,11 @@ void changeBrWork(int8_t diff)
 
 
 /* Show audio parameter */
-void showSndParam(uint8_t dispMode, uint8_t **txtLabels, uint8_t *buf)
+void showSndParam(uint8_t dispMode, uint8_t **txtLabels)
 {
 	sndParam *param = sndParAddr(dispMode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
-	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value, buf);
+	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
 	showParLabel(param->label);
 	showParIcon(param->icon);
 	gdSetXY(116, 56);
@@ -529,12 +534,14 @@ void showAlarm(uint8_t **txtLabels)
 	return;
 }
 
-void showTimer(uint8_t *buf)
+void showTimer(void)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
 
 	int16_t stbyTimer = getStbyTimer();
+
+	volatile uint8_t *buf = getSpData();
 
 	gdSetXY(4, 0);
 
@@ -572,11 +579,13 @@ void showTimer(uint8_t *buf)
 	return;
 }
 
-void drawSpectrum(uint8_t *buf, uint8_t **txtLabels)
+void drawSpectrum(uint8_t **txtLabels)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
 	uint16_t left, right;
+
+	volatile uint8_t *buf = getSpData();
 
 	switch (spMode) {
 	case SP_MODE_STEREO:
