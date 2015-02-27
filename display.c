@@ -29,11 +29,6 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	uint8_t i, j;
 	uint8_t color;
 
-	uint8_t x, xbase;
-	uint8_t y, ybase;
-
-	volatile uint8_t *buf = getSpData(fallSpeed);
-
 	if (min + max) {
 		value = (int16_t)91 * (value - min) / (max - min);
 	} else {
@@ -54,22 +49,6 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 					gdDrawPixel(i, j, 1);
 				} else {
 					gdDrawPixel(i, j, color);
-				}
-			}
-		}
-	}
-
-	if (buf) {
-		for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
-			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
-				xbase = x * 3;
-				ybase = 63 - y;
-				if (buf[x] + buf[x + 32] >= y * 3) {
-					gdDrawPixel(xbase + 0, ybase, 1);
-					gdDrawPixel(xbase + 1, ybase, 1);
-				} else {
-					gdDrawPixel(xbase + 0, ybase, 0);
-					gdDrawPixel(xbase + 1, ybase, 0);
 				}
 			}
 		}
@@ -119,6 +98,32 @@ static void drawMiniSpectrum(void)
 				xbase = x * 3;
 				ybase = 63 - y;
 				if (buf[x] + buf[x + 32] >= y * 2) {
+					gdDrawPixel(xbase + 0, ybase, 1);
+					gdDrawPixel(xbase + 1, ybase, 1);
+				} else {
+					gdDrawPixel(xbase + 0, ybase, 0);
+					gdDrawPixel(xbase + 1, ybase, 0);
+				}
+			}
+		}
+	}
+
+	return;
+}
+
+static void drawBarSpectrum(void)
+{
+	uint8_t x, xbase;
+	uint8_t y, ybase;
+
+	volatile uint8_t *buf = getSpData(fallSpeed);
+
+	if (buf) {
+		for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
+			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
+				xbase = x * 3;
+				ybase = 63 - y;
+				if (buf[x] + buf[x + 32] >= y * 3) {
 					gdDrawPixel(xbase + 0, ybase, 1);
 					gdDrawPixel(xbase + 1, ybase, 1);
 				} else {
@@ -363,6 +368,7 @@ void showRadio(uint8_t tune)
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
+	drawBarSpectrum();
 
 	if (tune == MODE_RADIO_TUNE) {
 		gdSetXY(103, 56);
@@ -410,6 +416,7 @@ void showBrWork(void)
 {
 	showParValue(brWork);
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
+	drawBarSpectrum();
 	showParLabel(txtLabels[LABEL_BR_WORK]);
 	showParIcon(icons_24_brightness);
 
@@ -433,6 +440,7 @@ void showSndParam(uint8_t dispMode)
 	sndParam *param = sndParAddr(dispMode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
 	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
+	drawBarSpectrum();
 	showParLabel(param->label);
 	showParIcon(param->icon);
 	gdSetXY(116, 56);

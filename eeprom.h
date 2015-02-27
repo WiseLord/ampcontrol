@@ -25,7 +25,7 @@
 #define eepromDisplay	((void*)0x11)
 #define eepromBrStby	((void*)0x12)
 #define eepromBrWork	((void*)0x13)
-#define eepromFallSpeed	((void*)0x13)
+#define eepromFallSpeed	((void*)0x14)
 
 #define eepromFMFreq	((void*)0x16)
 #define eepromFMCtrl	((void*)0x18)

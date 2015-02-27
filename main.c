@@ -18,6 +18,7 @@
 /* Hardware initialization */
 static void hwInit(void)
 {
+	displayInit();						/* Load params and text labels before fb scan started */
 	sei();								/* Gloabl interrupt enable */
 
 	ds18x20SearchDevices();
@@ -29,7 +30,6 @@ static void hwInit(void)
 	adcInit();							/* Analog-to-digital converter */
 	I2CInit();							/* I2C bus */
 
-	displayInit();			/* Load display params, text labels */
 
 	tunerInit();						/* Tuner */
 
@@ -251,7 +251,6 @@ int main(void)
 			break;
 		case CMD_RC5_FALLSPEED:
 			switchFallSpeed();
-			gdClear();
 			dispMode = MODE_SPECTRUM;
 			setDisplayTime(DISPLAY_TIME_SP);
 			break;
