@@ -19,7 +19,7 @@
 #define BTN_13			0b10100
 
 /* RC5 support definitions */
-#define RC5_CMD_COUNT	31
+#define RC5_CMD_COUNT	32
 
 enum {
 	CMD_RC5_STBY,
@@ -35,6 +35,7 @@ enum {
 	CMD_RC5_TIME,
 	CMD_RC5_BACKLIGHT,
 	CMD_RC5_SP_MODE,
+	CMD_RC5_FALLSPEED,
 	CMD_RC5_DISPLAY,
 	CMD_RC5_TIMER,
 	CMD_RC5_ALARM,

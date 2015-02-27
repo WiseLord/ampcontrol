@@ -33,10 +33,16 @@
 
 /* Spectrum output mode */
 enum {
-	SP_MODE_STEREO,
+	SP_MODE_STEREO = 0,
 	SP_MODE_METER,
 	SP_MODE_MIXED,
 	SP_MODE_END
+};
+
+enum {
+	FALL_SPEED_LOW = 0,
+	FALL_SPEED_MIDDLE,
+	FALL_SPEED_FAST
 };
 
 /* Display modes */
@@ -87,6 +93,7 @@ void showAlarm(void);
 void showTimer(void);
 
 void switchSpMode(void);
+void switchFallSpeed(void);
 void showSpectrum(void);
 
 void setWorkBrightness(void);

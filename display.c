@@ -14,6 +14,7 @@ int8_t brStby;								/* Brightness in standby mode */
 int8_t brWork;								/* Brightness in working mode */
 
 uint8_t spMode;								/* Spectrum mode */
+static uint8_t fallSpeed;					/* Spectrum fall speed */
 
 static uint8_t rc5CmdInd = CMD_RC5_STBY;
 static uint8_t rc5Cmd;
@@ -31,7 +32,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	uint8_t x, xbase;
 	uint8_t y, ybase;
 
-	volatile uint8_t *buf = getSpData();
+	volatile uint8_t *buf = getSpData(fallSpeed);
 
 	if (min + max) {
 		value = (int16_t)91 * (value - min) / (max - min);
@@ -110,7 +111,7 @@ static void drawMiniSpectrum(void)
 	uint8_t x, xbase;
 	uint8_t y, ybase;
 
-	volatile uint8_t *buf = getSpData();
+	volatile uint8_t *buf = getSpData(fallSpeed);
 
 	if (buf) {
 		for (y = 0; y < GD_SIZE_Y / 8 * 4; y++) {
@@ -183,6 +184,9 @@ void displayInit(void)
 	brWork = eeprom_read_byte(eepromBrWork);
 	spMode  = eeprom_read_byte(eepromSpMode);
 	defDisplay = eeprom_read_byte(eepromDisplay);
+	fallSpeed = eeprom_read_byte(eepromFallSpeed);
+	if (fallSpeed > FALL_SPEED_FAST)
+		fallSpeed = FALL_SPEED_FAST;
 
 	return;
 }
@@ -534,7 +538,7 @@ void showTimer(void)
 
 	int16_t stbyTimer = getStbyTimer();
 
-	volatile uint8_t *buf = getSpData();
+	volatile uint8_t *buf = getSpData(fallSpeed);
 
 	gdSetXY(4, 0);
 
@@ -580,13 +584,22 @@ void switchSpMode(void)
 	return;
 }
 
+void switchFallSpeed(void)
+{
+	fallSpeed++;
+	if (fallSpeed > FALL_SPEED_FAST)
+		fallSpeed = FALL_SPEED_LOW;
+
+	return;
+}
+
 void showSpectrum(void)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
 	uint16_t left, right;
 
-	volatile uint8_t *buf = getSpData();
+	volatile uint8_t *buf = getSpData(fallSpeed);
 
 	switch (spMode) {
 	case SP_MODE_STEREO:
@@ -691,6 +704,7 @@ void displayPowerOff(void)
 	eeprom_update_byte(eepromBrWork, brWork);
 	eeprom_update_byte(eepromSpMode, spMode);
 	eeprom_update_byte(eepromDisplay, defDisplay);
+	eeprom_update_byte(eepromFallSpeed, fallSpeed);
 
 	return;
 }

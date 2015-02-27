@@ -25,6 +25,7 @@
 #define eepromDisplay	((void*)0x11)
 #define eepromBrStby	((void*)0x12)
 #define eepromBrWork	((void*)0x13)
+#define eepromFallSpeed	((void*)0x13)
 
 #define eepromFMFreq	((void*)0x16)
 #define eepromFMCtrl	((void*)0x18)
@@ -87,6 +88,7 @@ enum {
 	LABEL_RC5_TIME,
 	LABEL_RC5_BACKLIGHT,
 	LABEL_RC5_SP_MODE,
+	LABEL_RC5_FALLSPEED,
 	LABEL_RC5_DISPLAY,
 	LABEL_RC5_TIMER,
 	LABEL_RC5_ALARM,
@@ -114,6 +116,6 @@ enum {
 	LABEL_SENSOR
 };
 
-#define LABELS_COUNT			66
+#define LABELS_COUNT			67
 
 #endif /* EEPROM_H */

@@ -10,7 +10,7 @@
 
 #define DC_CORR				128
 
-void adcInit();
-uint8_t *getSpData(void);
+void adcInit(void);
+uint8_t *getSpData(uint8_t fallSpeed);
 
 #endif /* ADC_H */

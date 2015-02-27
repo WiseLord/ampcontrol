@@ -28,7 +28,7 @@ static const int16_t dbTable[N_DB - 1] PROGMEM = {
 	1071, 1432, 1915, 2561, 3425, 4580, 6125
 };
 
-void adcInit()
+void adcInit(void)
 {
 	/* Enable ADC with prescaler 16 */
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
@@ -104,7 +104,7 @@ static void cplx2dB(int16_t *fr, int16_t *fi)
 	return;
 }
 
-uint8_t *getSpData(void)
+uint8_t *getSpData(uint8_t fallSpeed)
 {
 	uint8_t i;
 
@@ -112,17 +112,21 @@ uint8_t *getSpData(void)
 	fftRad4(fr, fi);
 	cplx2dB(fr, fi);
 
-	for (i = 0; i < FFT_SIZE / 2; i++)
+	for (i = 0; i < FFT_SIZE / 2; i++) {
+		(buf[i] > fallSpeed) ? (buf[i] -= fallSpeed) : (buf[i] = 1);
 		if (buf[i]-- <= fr[i])
 			buf[i] = fr[i];
+	}
 
 	getValues(MUX_RIGHT);
 	fftRad4(fr, fi);
 	cplx2dB(fr, fi);
 
-	for (i = 0; i < FFT_SIZE / 2; i++)
-		if (buf[i + FFT_SIZE / 2]-- <= fr[i])
-			buf[i + FFT_SIZE / 2] = fr[i];
+	for (i = FFT_SIZE / 2; i < FFT_SIZE; i++) {
+		(buf[i] > fallSpeed) ? (buf[i] -= fallSpeed) : (buf[i] = 1);
+		if (buf[i]-- <= fr[i - FFT_SIZE / 2])
+			buf[i] = fr[i - FFT_SIZE / 2];
+	}
 
 	return buf;
 }

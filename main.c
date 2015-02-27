@@ -249,6 +249,12 @@ int main(void)
 		case CMD_RC5_SP_MODE:
 			handleSwitchSpMode(&dispMode);
 			break;
+		case CMD_RC5_FALLSPEED:
+			switchFallSpeed();
+			gdClear();
+			dispMode = MODE_SPECTRUM;
+			setDisplayTime(DISPLAY_TIME_SP);
+			break;
 		case CMD_RC5_DISPLAY:
 			handleSetDefDisplay(&dispMode);
 			break;
