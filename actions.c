@@ -16,6 +16,11 @@ static void powerOn(void)
 	tunerPowerOn();
 	sndPowerOn();
 
+	if (sndGetInput() == 0)
+		tunerSetMute(MUTE_OFF);
+	else
+		tunerSetMute(MUTE_ON);
+
 	return;
 }
 
