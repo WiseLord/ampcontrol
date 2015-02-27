@@ -294,6 +294,7 @@ void sndPowerOn(void)
 	for (i = MODE_SND_VOLUME + 1; i < MODE_SND_GAIN0; i++)
 		sndPar[i].set(sndPar[i].value);
 	sndSetMute(MUTE_OFF);
+	sndSetLoudness(_loudness);
 
 	return;
 }
