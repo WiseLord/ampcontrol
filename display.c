@@ -15,19 +15,11 @@ int8_t brWork;								/* Brightness in working mode */
 
 uint8_t spMode;								/* Spectrum mode */
 
+static uint8_t rc5CmdInd = CMD_RC5_STBY;
+static uint8_t rc5Cmd;
+static uint8_t rc5Addr;
+
 static uint8_t defDisplay = MODE_SPECTRUM;	/* Default display mode */
-
-void setDefDisplay(uint8_t value)
-{
-	defDisplay = value;
-
-	return;
-}
-
-uint8_t getDefDisplay()
-{
-	return defDisplay;
-}
 
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
@@ -111,9 +103,67 @@ static void showParIcon(const uint8_t *icon)
 	return;
 }
 
-static uint8_t rc5CmdInd = CMD_RC5_STBY;
-static uint8_t rc5Cmd;
-static uint8_t rc5Addr;
+static void drawMiniSpectrum(void)
+{
+	uint8_t x, xbase;
+	uint8_t y, ybase;
+
+	volatile uint8_t *buf = getSpData();
+
+	if (buf) {
+		for (y = 0; y < GD_SIZE_Y / 8 * 4; y++) {
+			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
+				xbase = x * 3;
+				ybase = 63 - y;
+				if (buf[x] + buf[x + 32] >= y * 2) {
+					gdDrawPixel(xbase + 0, ybase, 1);
+					gdDrawPixel(xbase + 1, ybase, 1);
+				} else {
+					gdDrawPixel(xbase + 0, ybase, 0);
+					gdDrawPixel(xbase + 1, ybase, 0);
+				}
+			}
+		}
+	}
+
+	return;
+}
+
+static void drawTm(uint8_t tm, const uint8_t *font)
+{
+	if (getEtm() == tm)
+		gdLoadFont(font, 0, FONT_DIR_0);
+	else
+		gdLoadFont(font, 1, FONT_DIR_0);
+	gdWriteNum(getTime(tm), 2, '0', 10);
+	gdLoadFont(font, 1, FONT_DIR_0);
+
+	return;
+}
+
+static void drawAm(uint8_t am, const uint8_t *font)
+{
+	if (getEam() == am)
+		gdLoadFont(font, 0, FONT_DIR_0);
+	else
+		gdLoadFont(font, 1, FONT_DIR_0);
+	gdWriteNum(getAlarm(am), 2, '0', 10);
+	gdLoadFont(font, 1, FONT_DIR_0);
+
+	return;
+}
+
+void setDefDisplay(uint8_t value)
+{
+	defDisplay = value;
+
+	return;
+}
+
+uint8_t getDefDisplay()
+{
+	return defDisplay;
+}
 
 void nextRC5Cmd(void)
 {
@@ -279,32 +329,6 @@ void showRadio(uint8_t tune)
 	return;
 }
 
-static void drawMiniSpectrum(void)
-{
-	uint8_t x, xbase;
-	uint8_t y, ybase;
-
-	volatile uint8_t *buf = getSpData();
-
-	if (buf) {
-		for (y = 0; y < GD_SIZE_Y / 8 * 4; y++) {
-			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
-				xbase = x * 3;
-				ybase = 63 - y;
-				if (buf[x] + buf[x + 32] >= y * 2) {
-					gdDrawPixel(xbase + 0, ybase, 1);
-					gdDrawPixel(xbase + 1, ybase, 1);
-				} else {
-					gdDrawPixel(xbase + 0, ybase, 0);
-					gdDrawPixel(xbase + 1, ybase, 0);
-				}
-			}
-		}
-	}
-
-	return;
-}
-
 void showMute(uint8_t **txtLabels)
 {
 	showParLabel(txtLabels[LABEL_MUTE]);
@@ -339,7 +363,6 @@ void showLoudness(uint8_t **txtLabels)
 	return;
 }
 
-/* Show brightness control */
 void showBrWork(uint8_t **txtLabels)
 {
 	showParValue(brWork);
@@ -362,8 +385,6 @@ void changeBrWork(int8_t diff)
 	return;
 }
 
-
-/* Show audio parameter */
 void showSndParam(uint8_t dispMode, uint8_t **txtLabels)
 {
 	sndParam *param = sndParAddr(dispMode);
@@ -373,18 +394,6 @@ void showSndParam(uint8_t dispMode, uint8_t **txtLabels)
 	showParIcon(param->icon);
 	gdSetXY(116, 56);
 	gdWriteStringEeprom(txtLabels[LABEL_DB]);
-
-	return;
-}
-
-static void drawTm(uint8_t tm, const uint8_t *font)
-{
-	if (getEtm() == tm)
-		gdLoadFont(font, 0, FONT_DIR_0);
-	else
-		gdLoadFont(font, 1, FONT_DIR_0);
-	gdWriteNum(getTime(tm), 2, '0', 10);
-	gdLoadFont(font, 1, FONT_DIR_0);
 
 	return;
 }
@@ -415,18 +424,6 @@ void showTime(uint8_t **txtLabels)
 	gdSetXY(32, 56);
 
 	gdWriteStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
-
-	return;
-}
-
-static void drawAm(uint8_t am, const uint8_t *font)
-{
-	if (getEam() == am)
-		gdLoadFont(font, 0, FONT_DIR_0);
-	else
-		gdLoadFont(font, 1, FONT_DIR_0);
-	gdWriteNum(getAlarm(am), 2, '0', 10);
-	gdLoadFont(font, 1, FONT_DIR_0);
 
 	return;
 }
@@ -536,7 +533,15 @@ void showTimer(void)
 	return;
 }
 
-void drawSpectrum(uint8_t **txtLabels)
+void switchSpMode(void)
+{
+	if (++spMode >= SP_MODE_END)
+		spMode = SP_MODE_STEREO;
+
+	return;
+}
+
+void showSpectrum(uint8_t **txtLabels)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
@@ -657,15 +662,6 @@ void saveDisplayParams(void)
 	eeprom_update_byte(eepromBrWork, brWork);
 	eeprom_update_byte(eepromSpMode, spMode);
 	eeprom_update_byte(eepromDisplay, defDisplay);
-
-	return;
-}
-
-/* Change spectrum mode */
-void switchSpMode()
-{
-	if (++spMode > SP_MODE_MIXED)
-		spMode = SP_MODE_STEREO;
 
 	return;
 }

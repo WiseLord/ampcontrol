@@ -427,7 +427,7 @@ int main(void)
 			setWorkBrightness();
 			break;
 		case MODE_SPECTRUM:
-			drawSpectrum(txtLabels);
+			showSpectrum(txtLabels);
 			break;
 		case MODE_FM_RADIO:
 			tunerReadStatus();

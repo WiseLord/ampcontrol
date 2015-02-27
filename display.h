@@ -35,7 +35,8 @@
 enum {
 	SP_MODE_STEREO,
 	SP_MODE_METER,
-	SP_MODE_MIXED
+	SP_MODE_MIXED,
+	SP_MODE_END
 };
 
 /* Display modes */
@@ -64,8 +65,8 @@ uint8_t getDefDisplay();
 
 void nextRC5Cmd(void);
 void startTestMode(void);
-
 void showRC5Info(uint8_t **txtLabels);
+
 void showTemp(uint8_t **txtLabels);
 
 void showRadio(uint8_t tune);
@@ -82,14 +83,13 @@ void showTime(uint8_t **txtLabels);
 void showAlarm(uint8_t **txtLabels);
 void showTimer(void);
 
-void drawSpectrum(uint8_t **txtLabels);
+void switchSpMode(void);
+void showSpectrum(uint8_t **txtLabels);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);
 
 void loadDispParams(void);
 void saveDisplayParams(void);
-
-void switchSpMode();
 
 #endif /* DISPLAY_H */
