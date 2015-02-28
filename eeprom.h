@@ -27,6 +27,8 @@
 #define eepromBrWork	((void*)0x13)
 #define eepromFallSpeed	((void*)0x14)
 
+#define eepromEncRes	((void*)0x15)
+
 #define eepromFMFreq	((void*)0x16)
 #define eepromFMCtrl	((void*)0x18)
 #define eepromFMMono	((void*)0x19)

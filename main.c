@@ -1,14 +1,10 @@
-#include <util/delay.h>
 #include <avr/interrupt.h>
-#include <avr/eeprom.h>
 
-#include "eeprom.h"
 #include "adc.h"
 #include "input.h"
 #include "rc5.h"
 #include "i2c.h"
 
-#include "audio/audio.h"
 #include "display.h"
 #include "tuner/tuner.h"
 #include "temp.h"

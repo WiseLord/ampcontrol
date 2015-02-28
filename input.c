@@ -9,6 +9,7 @@
 
 static volatile int8_t encCnt;
 static volatile uint8_t cmdBuf;
+static volatile int8_t encRes;
 
 /* Previous state */
 static volatile uint16_t rc5SaveBuf;
@@ -19,7 +20,7 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 static volatile uint16_t displayTime;
 
 static volatile uint16_t tempTimer;			/* Timer of temperature measuring process */
-static volatile int16_t stbyTimer = -1;			/* Standby timer */
+static volatile int16_t stbyTimer = -1;		/* Standby timer */
 static volatile uint16_t secTimer;			/* 1 second timer */
 static volatile uint8_t clockTimer;
 
@@ -57,9 +58,10 @@ void inputInit()
 
 	/* Load RC5 device address and commands from eeprom */
 	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-	for (i = 0; i < RC5_CMD_COUNT; i++) {
+	for (i = 0; i < RC5_CMD_COUNT; i++)
 		rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
-	}
+
+	encRes = eeprom_read_byte(eepromEncRes);
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;
@@ -105,32 +107,16 @@ ISR (TIMER2_COMP_vect)
 		btnNow |= BTN_5;
 
 	/* If encoder event has happened, inc/dec encoder counter */
-	switch (encNow) {
-	case ENC_AB:
-		if (encPrev == ENC_B)
-			encCnt++;
-		if (encPrev == ENC_A)
-			encCnt--;
-		break;
-/*	case ENC_A:
-		if (encPrev == ENC_AB)
-			encCnt++;
-		if (encPrev == ENC_0)
-			encCnt--;
-		break;
-	case ENC_B:
-		if (encPrev == ENC_0)
-			encCnt++;
-		if (encPrev == ENC_AB)
-			encCnt++;
-		break;
-	case ENC_0:
-		if (encPrev == ENC_A)
-			encCnt++;
-		if (encPrev == ENC_B)
-			encCnt++;
-		break;
-*/	}
+	if ((encPrev == ENC_0 && encNow == ENC_A) ||
+	    (encPrev == ENC_A && encNow == ENC_AB) ||
+	    (encPrev == ENC_AB && encNow == ENC_B) ||
+	    (encPrev == ENC_B && encNow == ENC_0))
+		encCnt++;
+	if ((encPrev == ENC_0 && encNow == ENC_B) ||
+	    (encPrev == ENC_B && encNow == ENC_AB) ||
+	    (encPrev == ENC_AB && encNow == ENC_A) ||
+	    (encPrev == ENC_A && encNow == ENC_0))
+		encCnt--;
 	encPrev = encNow;				/* Save current encoder state */
 
 	/* If button event has happened, place it to command buffer */
@@ -194,7 +180,6 @@ ISR (TIMER2_COMP_vect)
 	if (rc5Buf != RC5_BUF_EMPTY)
 		rc5SaveBuf = rc5Buf;
 
-
 	static uint8_t togBitNow = 0;
 	static uint8_t togBitPrev = 0;
 
@@ -221,9 +206,8 @@ ISR (TIMER2_COMP_vect)
 		togBitPrev = togBitNow;
 	}
 
-	if (cmdBuf == CMD_EMPTY) {
+	if (cmdBuf == CMD_EMPTY)
 		cmdBuf = rc5CmdBuf;
-	}
 
 	/* Timer of current display mode */
 	if (displayTime)
@@ -255,8 +239,28 @@ ISR (TIMER2_COMP_vect)
 
 int8_t getEncoder(void)
 {
-	int8_t ret = encCnt;
-	encCnt = 0;
+	int8_t ret = 0;
+
+	if (encRes > 0) {
+		while (encCnt >= encRes) {
+			ret++;
+			encCnt -= encRes;
+		}
+		while (encCnt <= -encRes) {
+			ret--;
+			encCnt += encRes;
+		}
+	} else {
+		while (encCnt <= encRes) {
+			ret++;
+			encCnt -= encRes;
+		}
+		while (encCnt >= -encRes) {
+			ret--;
+			encCnt += encRes;
+		}
+	}
+
 	return ret;
 }
 

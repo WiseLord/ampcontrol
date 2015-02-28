@@ -87,9 +87,9 @@
 
 /* Encoder definitions */
 #define ENCODER_A			D
-#define ENCODER_A_LINE		(1<<2)
+#define ENCODER_A_LINE		(1<<1)
 #define ENCODER_B			D
-#define ENCODER_B_LINE		(1<<1)
+#define ENCODER_B_LINE		(1<<2)
 
 /* Buttons definitions */
 #define BUTTON_1			D
