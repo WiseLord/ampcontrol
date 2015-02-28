@@ -323,6 +323,8 @@ void showTemp(void)
 
 void showRadio(uint8_t tune)
 {
+	tunerReadStatus();
+
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();

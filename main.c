@@ -41,7 +41,7 @@ static void hwInit(void)
 int main(void)
 {
 	uint8_t dispMode = MODE_STANDBY;
-	uint8_t dispModePrev = dispMode;
+	uint8_t dispModePrev = MODE_STANDBY;
 
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_EMPTY;
@@ -73,87 +73,34 @@ int main(void)
 			setClockTimer(200);
 		}
 
-		/* Don't handle any command in test mode except BTN_5 and BTN_1_LONG */
-		if (dispMode == MODE_TEST) {
-			if (cmd != CMD_EMPTY)
-				setDisplayTime(DISPLAY_TIME_TEST);
-			if (cmd != CMD_BTN_5 && cmd != CMD_BTN_1_LONG)
-				cmd = CMD_EMPTY;
-		}
-		/* Don't handle any command in temp mode except BTN_1_LONG */
-		if (dispMode == MODE_TEMP) {
-			if (cmd != CMD_EMPTY)
-				setDisplayTime(DISPLAY_TIME_TEMP);
-			if (cmd != CMD_BTN_1_LONG)
-				cmd = CMD_EMPTY;
-		}
-
-		/* Don't handle commands in standby mode except STBY, TEST and TEMP */
-		if (dispMode == MODE_STANDBY) {
-			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
-				cmd != CMD_BTN_TEST && cmd != CMD_BTN_TEMP)
-				cmd = CMD_EMPTY;
-		}
-
-		/* Remap commands */
+		/* Remap input commands to internal commands */
 		switch (cmd) {
 		case CMD_BTN_1:
-		case CMD_RC5_STBY:
 			if (dispMode == MODE_STANDBY)
 				cmd = CMD_POWER_ON;
 			else
 				cmd = CMD_POWER_OFF;
 			break;
 		case CMD_BTN_2:
-		case CMD_RC5_NEXT_INPUT:
 			cmd = CMD_NEXT_INPUT;
 			break;
 		case CMD_BTN_3:
-			switch (dispMode) {
-			case MODE_TIMER:
+			if (dispMode == MODE_TIMER)
 				cmd = CMD_CHANGE_TIMER;
-				break;
-			case MODE_FM_TUNE:
-			case MODE_FM_RADIO:
+			else if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
 				cmd = CMD_CHANGE_FM_DOWN;
-				break;
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
+			else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
 				cmd = CMD_EDIT_TIME;
-				break;
-			case MODE_ALARM:
-			case MODE_ALARM_EDIT:
+			else if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT)
 				cmd = CMD_EDIT_ALARM;
-				break;
-			default:
+			else
 				cmd = CMD_CHANGE_SPMODE;
-				break;
-			}
-			break;
-		case CMD_BTN_3_LONG:
-			switch (dispMode) {
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
-				cmd = CMD_CHANGE_TIMER;
-				break;
-			case MODE_TIMER:
-				cmd = CMD_EDIT_ALARM;
-				break;
-			default:
-				cmd = CMD_EDIT_TIME;
-				break;
-			}
 			break;
 		case CMD_BTN_4:
-			switch (dispMode) {
-			case MODE_FM_TUNE:
-			case MODE_FM_RADIO:
+			if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
 				cmd = CMD_CHANGE_FM_UP;
-				break;
-			default:
+			else
 				cmd = CMD_SWITCH_MUTE;
-				break;
-			}
 			break;
 		case CMD_BTN_5:
 			if (dispMode == MODE_TEST)
@@ -162,19 +109,23 @@ int main(void)
 				cmd = CMD_NEXT_SND_PARAM;
 			}
 			break;
+
 		case CMD_BTN_1_LONG:
-			switch (dispMode) {
-			case MODE_TEST:
-			case MODE_TEMP:
+			if (dispMode == MODE_TEST || dispMode == MODE_TEMP)
 				cmd = CMD_ZERO_DISPLAY_TIME;
-				break;
-			default:
+			else
 				cmd = CMD_DISP_BRIGHTNESS;
-				break;
-			}
 			break;
 		case CMD_BTN_2_LONG:
 			cmd = CMD_DEF_DISPLAY;
+			break;
+		case CMD_BTN_3_LONG:
+			if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
+				cmd = CMD_CHANGE_TIMER;
+			else if (dispMode == MODE_TIMER)
+				cmd = CMD_EDIT_ALARM;
+			else
+				cmd = CMD_EDIT_TIME;
 			break;
 		case CMD_BTN_4_LONG:
 			cmd = CMD_CHANGE_FM_MODE;
@@ -183,53 +134,107 @@ int main(void)
 			cmd = CMD_STORE_FM_STATION;
 			break;
 
+		case CMD_BTN_TEST:
+			cmd = CMD_TESTMODE;
+			break;
+		case CMD_BTN_TEMP:
+			cmd = CMD_TEMPMODE;
+			break;
 
-		case CMD_RC5_TIMER:
-			cmd = CMD_CHANGE_TIMER;
-			break;
-		case CMD_RC5_FM_CHAN_UP:
-			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO)
-				cmd = CMD_CHANGE_FM_UP;
-			break;
-		case CMD_RC5_FM_CHAN_DOWN:
-			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO)
-				cmd = CMD_CHANGE_FM_DOWN;
-			break;
-		case CMD_RC5_FM_TUNE:
-			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO)
-			cmd = CMD_CHANGE_FM_MODE;
-			break;
-		case CMD_RC5_FM_STORE:
-			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO)
-				cmd = CMD_STORE_FM_STATION;
-			break;
-		case CMD_RC5_FM_MONO:
-			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO)
-				cmd = CMD_FM_MONO;
-			break;
-		case CMD_RC5_TIME:
-			cmd = CMD_EDIT_TIME;
-			break;
-		case CMD_RC5_ALARM:
-			cmd = CMD_EDIT_ALARM;
-			break;
-		case CMD_RC5_SP_MODE:
-			cmd = CMD_CHANGE_SPMODE;
-			break;
-		case CMD_RC5_MENU:
-			cmd = CMD_NEXT_SND_PARAM;
-			break;
-		case CMD_RC5_BACKLIGHT:
-			cmd = CMD_DISP_BRIGHTNESS;
-			break;
-		case CMD_RC5_DISPLAY:
-			cmd = CMD_DEF_DISPLAY;
+		case CMD_RC5_STBY:
+			if (dispMode == MODE_STANDBY)
+				cmd = CMD_POWER_ON;
+			else
+				cmd = CMD_POWER_OFF;
 			break;
 		case CMD_RC5_MUTE:
 			cmd = CMD_SWITCH_MUTE;
 			break;
+		case CMD_RC5_MENU:
+			cmd = CMD_NEXT_SND_PARAM;
+			break;
+		case CMD_RC5_VOL_UP:
+			cmd = CMD_VOLUME_UP;
+			break;
+		case CMD_RC5_VOL_DOWN:
+			cmd = CMD_VOLUME_DOWN;
+			break;
+		case CMD_RC5_INPUT_0:
+			cmd = CMD_INPUT_0;
+			break;
+		case CMD_RC5_INPUT_1:
+			cmd = CMD_INPUT_1;
+			break;
+		case CMD_RC5_INPUT_2:
+			cmd = CMD_INPUT_2;
+			break;
+		case CMD_RC5_INPUT_3:
+			if (sndInputCnt() < 4) {
+				cmd = CMD_LOUDNESS;
+			} else {
+				cmd = CMD_INPUT_3;
+			}
+			break;
+		case CMD_RC5_NEXT_INPUT:
+			cmd = CMD_NEXT_INPUT;
+			break;
+		case CMD_RC5_TIME:
+			cmd = CMD_EDIT_TIME;
+			break;
+		case CMD_RC5_BACKLIGHT:
+			cmd = CMD_DISP_BRIGHTNESS;
+			break;
+		case CMD_RC5_SP_MODE:
+			cmd = CMD_CHANGE_SPMODE;
+			break;
+		case CMD_RC5_FALLSPEED:
+			cmd = CMD_FALLSPEED;
+			break;
+		case CMD_RC5_DISPLAY:
+			cmd = CMD_DEF_DISPLAY;
+			break;
+		case CMD_RC5_TIMER:
+			cmd = CMD_CHANGE_TIMER;
+			break;
+		case CMD_RC5_ALARM:
+			cmd = CMD_EDIT_ALARM;
+			break;
+		case CMD_RC5_FM_CHAN_UP:
+			cmd = CMD_CHANGE_FM_UP;
+			break;
+		case CMD_RC5_FM_CHAN_DOWN:
+			cmd = CMD_CHANGE_FM_DOWN;
+			break;
+		case CMD_RC5_FM_TUNE:
+			cmd = CMD_CHANGE_FM_MODE;
+			break;
+		case CMD_RC5_FM_MONO:
+			cmd = CMD_FM_MONO;
+			break;
+		case CMD_RC5_FM_STORE:
+			cmd = CMD_STORE_FM_STATION;
+			break;
 		}
 
+		/* Don't handle any command in test mode except CMD_NEXT_RC5_CMD and CMD_ZERO_DISPLAY_TIME */
+		if (dispMode == MODE_TEST) {
+			if (cmd != CMD_EMPTY)
+				setDisplayTime(DISPLAY_TIME_TEST);
+			if (cmd != CMD_NEXT_RC5_CMD && cmd != CMD_ZERO_DISPLAY_TIME)
+				cmd = CMD_EMPTY;
+		}
+		/* Don't handle any command in temp mode except CMD_ZERO_DISPLAY_TIME */
+		if (dispMode == MODE_TEMP) {
+			if (cmd != CMD_EMPTY)
+				setDisplayTime(DISPLAY_TIME_TEMP);
+			if (cmd != CMD_ZERO_DISPLAY_TIME)
+				cmd = CMD_EMPTY;
+		}
+		/* Don't handle commands in standby mode except POWERON, TESTMODE and TEMPMODE */
+		if (dispMode == MODE_STANDBY) {
+			if (cmd != CMD_POWER_ON && cmd != CMD_TESTMODE && cmd != CMD_TEMPMODE)
+				cmd = CMD_EMPTY;
+		}
 
 		/* Handle command */
 		switch (cmd) {
@@ -276,12 +281,6 @@ int main(void)
 			dispMode = MODE_TIMER;
 			setDisplayTime(DISPLAY_TIME_TIMER);
 			break;
-		case CMD_CHANGE_FM_UP:
-			handleChangeFM(&dispMode, SEARCH_UP);
-			break;
-		case CMD_CHANGE_FM_DOWN:
-			handleChangeFM(&dispMode, SEARCH_DOWN);
-			break;
 		case CMD_EDIT_TIME:
 			handleEditTime(&dispMode);
 			break;
@@ -315,21 +314,24 @@ int main(void)
 		case CMD_DEF_DISPLAY:
 			handleSetDefDisplay(&dispMode);
 			break;
-		case CMD_CHANGE_FM_MODE:
-			handleSwitchFmMode(&dispMode);
+		case CMD_INPUT_0:
+		case CMD_INPUT_1:
+		case CMD_INPUT_2:
+		case CMD_INPUT_3:
+			sndSetInput(cmd - CMD_INPUT_0);
+			handleSetInput(&dispMode);
 			break;
-		case CMD_STORE_FM_STATION:
-			handleStoreStation(&dispMode);
+		case CMD_LOUDNESS:
+			sndSetLoudness(!sndGetLoudness());
+			dispMode = MODE_LOUDNESS;
+			setDisplayTime(DISPLAY_TIME_AUDIO);
 			break;
-		case CMD_FM_MONO:
-			tunerSwitchMono();
-			dispMode = MODE_FM_RADIO;
-			setDisplayTime(DISPLAY_TIME_FM_RADIO);
+		case CMD_FALLSPEED:
+			switchFallSpeed();
+			dispMode = MODE_SPECTRUM;
+			setDisplayTime(DISPLAY_TIME_SP);
 			break;
-
-
-
-		case CMD_BTN_TEST:
+		case CMD_TESTMODE:
 			switch (dispMode) {
 			case MODE_STANDBY:
 				dispMode = MODE_TEST;
@@ -338,35 +340,13 @@ int main(void)
 				break;
 			}
 			break;
-		case CMD_BTN_TEMP:
+		case CMD_TEMPMODE:
 			switch (dispMode) {
 			case MODE_STANDBY:
 				dispMode = MODE_TEMP;
 				setDisplayTime(DISPLAY_TIME_TEMP);
 				break;
 			}
-			break;
-		/* CMD_VOL_UP and CMD_VOL_DOWN are processed below as encoder actions */
-		case CMD_RC5_INPUT_0:
-		case CMD_RC5_INPUT_1:
-		case CMD_RC5_INPUT_2:
-			sndSetInput(cmd - CMD_RC5_INPUT_0);
-			handleSetInput(&dispMode);
-			break;
-		case CMD_RC5_INPUT_3:
-			if (sndInputCnt() < 4) {
-				sndSetLoudness(!sndGetLoudness());
-				dispMode = MODE_LOUDNESS;
-				setDisplayTime(DISPLAY_TIME_AUDIO);
-			} else {
-				sndSetInput(cmd - CMD_RC5_INPUT_0);
-				handleSetInput (&dispMode);
-			}
-			break;
-		case CMD_RC5_FALLSPEED:
-			switchFallSpeed();
-			dispMode = MODE_SPECTRUM;
-			setDisplayTime(DISPLAY_TIME_SP);
 			break;
 		default:
 			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
@@ -385,15 +365,32 @@ int main(void)
 					dispMode = MODE_FM_RADIO;
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
+				case CMD_CHANGE_FM_UP:
+					handleChangeFM(&dispMode, SEARCH_UP);
+					break;
+				case CMD_CHANGE_FM_DOWN:
+					handleChangeFM(&dispMode, SEARCH_DOWN);
+					break;
+				case CMD_CHANGE_FM_MODE:
+					handleSwitchFmMode(&dispMode);
+					break;
+				case CMD_STORE_FM_STATION:
+					handleStoreStation(&dispMode);
+					break;
+				case CMD_FM_MONO:
+					tunerSwitchMono();
+					dispMode = MODE_FM_RADIO;
+					setDisplayTime(DISPLAY_TIME_FM_RADIO);
+					break;
 				}
 			}
 			break;
 		}
 
 		/* Emulate RC5 VOL_UP/VOL_DOWN as encoder actions */
-		if (cmd == CMD_RC5_VOL_UP)
+		if (cmd == CMD_VOLUME_UP)
 			encCnt++;
-		if (cmd == CMD_RC5_VOL_DOWN)
+		if (cmd == CMD_VOLUME_DOWN)
 			encCnt--;
 
 		/* Handle encoder */
@@ -491,11 +488,9 @@ int main(void)
 			showSpectrum();
 			break;
 		case MODE_FM_RADIO:
-			tunerReadStatus();
 			showRadio(MODE_RADIO_CHAN);
 			break;
 		case MODE_FM_TUNE:
-			tunerReadStatus();
 			showRadio(MODE_RADIO_TUNE);
 			break;
 		case MODE_MUTE:
