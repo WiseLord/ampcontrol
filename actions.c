@@ -6,7 +6,7 @@
 #include "input.h"
 
 /* Leave standby mode */
-static void powerOn(void)
+void powerOn(void)
 {
 	PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
 	setWorkBrightness();
@@ -40,23 +40,6 @@ void powerOff(void)
 	sndPowerOff();
 	tunerPowerOff();
 	displayPowerOff();
-
-	return;
-}
-
-/* Switch power */
-void handleSwitchPower(uint8_t *dispMode)
-{
-	switch (*dispMode) {
-	case MODE_STANDBY:
-		powerOn();
-		*dispMode = MODE_SPECTRUM;
-		break;
-	default:
-		powerOff();
-		*dispMode = MODE_STANDBY;
-		break;
-	}
 
 	return;
 }

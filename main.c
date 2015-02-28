@@ -95,16 +95,37 @@ int main(void)
 				cmd = CMD_EMPTY;
 		}
 
-		/* Handle command */
+		/* Remap commands for different display modes */
 		switch (cmd) {
 		case CMD_BTN_1:
-			handleSwitchPower(&dispMode);
+		case CMD_RC5_STBY:
+			if (dispMode == MODE_STANDBY)
+				cmd = CMD_POWER_ON;
+			else
+				cmd = CMD_POWER_OFF;
 			break;
 		case CMD_BTN_2:
+		case CMD_RC5_NEXT_INPUT:
+			cmd = CMD_NEXT_INPUT;
+			break;
+		}
+
+		/* Handle command */
+		switch (cmd) {
+		case CMD_POWER_ON:
+			powerOn();
+			dispMode = getDefDisplay();
+			break;
+		case CMD_POWER_OFF:
+			powerOff();
+			dispMode = MODE_STANDBY;
+			break;
+		case CMD_NEXT_INPUT:
 			if (dispMode >= MODE_SND_GAIN0 && dispMode <= MODE_SND_GAIN3)
 				sndSetInput(sndGetInput() + 1);
 			handleSetInput(&dispMode);
 			break;
+
 		case CMD_BTN_3:
 			switch (dispMode) {
 			case MODE_TIMER:
@@ -203,9 +224,6 @@ int main(void)
 				break;
 			}
 			break;
-		case CMD_RC5_STBY:
-			handleSwitchPower(&dispMode);
-			break;
 		case CMD_RC5_MUTE:
 			handleSwitchMute(&dispMode);
 			break;
@@ -229,11 +247,6 @@ int main(void)
 				sndSetInput(cmd - CMD_RC5_INPUT_0);
 				handleSetInput (&dispMode);
 			}
-			break;
-		case CMD_RC5_NEXT_INPUT:
-			if (dispMode >= MODE_SND_GAIN0 && dispMode <= MODE_SND_GAIN3)
-				sndSetInput(sndGetInput() + 1);
-			handleSetInput (&dispMode);
 			break;
 		case CMD_RC5_TIME:
 			handleEditTime(&dispMode);

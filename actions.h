@@ -5,8 +5,8 @@
 
 #include "audio/audioproc.h"
 
+void powerOn(void);
 void powerOff(void);
-void handleSwitchPower(uint8_t *dispMode);
 void handleSetInput(uint8_t *dispMode);
 void handleEditTime(uint8_t *dispMode);
 void handleSwitchMute(uint8_t *dispMode);
