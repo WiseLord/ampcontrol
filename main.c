@@ -57,7 +57,7 @@ int main(void)
 		/* Emulate poweroff if standby timer expired */
 		stbyTimer = getStbyTimer();
 		if (stbyTimer == 0)
-			cmd = CMD_RC5_STBY;
+			cmd = CMD_POWER_OFF;
 
 		ds18x20Process();
 		tempControlProcess();
@@ -108,6 +108,58 @@ int main(void)
 		case CMD_RC5_NEXT_INPUT:
 			cmd = CMD_NEXT_INPUT;
 			break;
+		case CMD_BTN_3:
+			switch (dispMode) {
+			case MODE_TIMER:
+				cmd = CMD_CHANGE_TIMER;
+				break;
+			case MODE_FM_TUNE:
+			case MODE_FM_RADIO:
+				cmd = CMD_CHANGE_FM_DOWN;
+				break;
+			case MODE_TIME:
+			case MODE_TIME_EDIT:
+				cmd = CMD_EDIT_TIME;
+				break;
+			case MODE_ALARM:
+			case MODE_ALARM_EDIT:
+				cmd = CMD_EDIT_ALARM;
+				break;
+			default:
+				cmd = CMD_CHANGE_SPMODE;
+				break;
+			}
+			break;
+		case CMD_BTN_3_LONG:
+			switch (dispMode) {
+			case MODE_TIME:
+			case MODE_TIME_EDIT:
+				cmd = CMD_CHANGE_TIMER;
+				break;
+			case MODE_TIMER:
+				cmd = CMD_EDIT_ALARM;
+				break;
+			default:
+				cmd = CMD_EDIT_TIME;
+				break;
+			}
+			break;
+		case CMD_RC5_TIMER:
+			cmd = CMD_CHANGE_TIMER;
+			break;
+		case CMD_RC5_FM_CHAN_DOWN:
+			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO)
+				cmd = CMD_CHANGE_FM_DOWN;
+			break;
+		case CMD_RC5_TIME:
+			cmd = CMD_EDIT_TIME;
+			break;
+		case CMD_RC5_ALARM:
+			cmd = CMD_EDIT_ALARM;
+			break;
+		case CMD_RC5_SP_MODE:
+			cmd = CMD_CHANGE_SPMODE;
+			break;
 		}
 
 		/* Handle command */
@@ -125,29 +177,52 @@ int main(void)
 				sndSetInput(sndGetInput() + 1);
 			handleSetInput(&dispMode);
 			break;
-
-		case CMD_BTN_3:
-			switch (dispMode) {
-			case MODE_TIMER:
-				handleChangeTimer(&dispMode, stbyTimer);
-				break;
-			case MODE_FM_TUNE:
-			case MODE_FM_RADIO:
-				handleChangeFM(&dispMode, SEARCH_DOWN);
-				break;
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
-				handleEditTime(&dispMode);
-				break;
-			case MODE_ALARM:
-			case MODE_ALARM_EDIT:
-				handleEditAlarm(&dispMode);
-				break;
-			default:
-				handleSwitchSpMode(&dispMode);
-				break;
+		case CMD_CHANGE_TIMER:
+			stopEditTime();
+			if (dispMode == MODE_TIMER) {
+				setSecTimer(2000);
+				if (stbyTimer < 120)		/* 2 min */
+					setStbyTimer(120);
+				else if (stbyTimer < 300)	/* 5 min */
+					setStbyTimer(300);
+				else if (stbyTimer < 600)	/* 10 min */
+					setStbyTimer(600);
+				else if (stbyTimer < 1200)	/* 20 min */
+					setStbyTimer(1200);
+				else if (stbyTimer < 2400)	/* 40 min */
+					setStbyTimer(2400);
+				else if (stbyTimer < 3600)	/* 1 hour */
+					setStbyTimer(3600);
+				else if (stbyTimer < 5400)	/* 1.5 hours */
+					setStbyTimer(5400);
+				else if (stbyTimer < 7200)	/* 2 hours */
+					setStbyTimer(7200);
+				else if (stbyTimer < 10800)	/* 3 hours */
+					setStbyTimer(10800);
+				else if (stbyTimer < 18000)	/* 5 hours */
+					setStbyTimer(18000);
+				else
+					setStbyTimer(STBY_TIMER_OFF);
 			}
+			dispMode = MODE_TIMER;
+			setDisplayTime(DISPLAY_TIME_TIMER);
 			break;
+		case CMD_CHANGE_FM_DOWN:
+			handleChangeFM(&dispMode, SEARCH_DOWN);
+			break;
+		case CMD_EDIT_TIME:
+			handleEditTime(&dispMode);
+			break;
+		case CMD_EDIT_ALARM:
+			handleEditAlarm(&dispMode);
+			break;
+		case CMD_CHANGE_SPMODE:
+			switchSpMode();
+			gdClear();
+			dispMode = MODE_SPECTRUM;
+			setDisplayTime(DISPLAY_TIME_SP);
+			break;
+
 		case CMD_BTN_4:
 			switch (dispMode) {
 			case MODE_FM_TUNE:
@@ -182,24 +257,6 @@ int main(void)
 			break;
 		case CMD_BTN_2_LONG:
 			handleSetDefDisplay(&dispMode);
-			break;
-		case CMD_BTN_3_LONG:
-			switch (dispMode) {
-			case MODE_TIME:
-			case MODE_TIME_EDIT:
-				handleChangeTimer(&dispMode, stbyTimer);
-				break;
-			case MODE_TIMER:
-				handleEditAlarm(&dispMode);
-				break;
-			case MODE_ALARM:
-			case MODE_ALARM_EDIT:
-				handleEditTime(&dispMode);
-				break;
-			default:
-				handleEditTime(&dispMode);
-				break;
-			}
 			break;
 		case CMD_BTN_4_LONG:
 			handleSwitchFmMode(&dispMode);
@@ -248,15 +305,9 @@ int main(void)
 				handleSetInput (&dispMode);
 			}
 			break;
-		case CMD_RC5_TIME:
-			handleEditTime(&dispMode);
-			break;
 		case CMD_RC5_BACKLIGHT:
 			dispMode = MODE_BR;
 			setDisplayTime(DISPLAY_TIME_BR);
-			break;
-		case CMD_RC5_SP_MODE:
-			handleSwitchSpMode(&dispMode);
 			break;
 		case CMD_RC5_FALLSPEED:
 			switchFallSpeed();
@@ -266,20 +317,11 @@ int main(void)
 		case CMD_RC5_DISPLAY:
 			handleSetDefDisplay(&dispMode);
 			break;
-		case CMD_RC5_TIMER:
-			handleChangeTimer(&dispMode, stbyTimer);
-			break;
-		case CMD_RC5_ALARM:
-			handleEditAlarm(&dispMode);
-			break;
 		default:
 			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
 				switch (cmd) {
 				case CMD_RC5_FM_CHAN_UP:
 					handleChangeFM(&dispMode, SEARCH_UP);
-					break;
-				case CMD_RC5_FM_CHAN_DOWN:
-					handleChangeFM(&dispMode, SEARCH_DOWN);
 					break;
 				case CMD_RC5_FM_TUNE:
 					handleSwitchFmMode(&dispMode);
