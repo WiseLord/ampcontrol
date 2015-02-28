@@ -6,25 +6,14 @@ lc = $(shell echo $1 | tr A-Z a-z)
 # Fimware file base name
 TARG = ampcontrol_m32fb_$(call lc,$(DISPLAY))
 
-SPECT_SRC = fft.c adc.c
-CTRL_SRC = input.c rc5.c
+AUDIO_SRC = $(wildcard audio/*.c)
+TUNER_SRC = $(wildcard tuner/*.c)
 
-AUDIO_SRC = audio/audioproc.c audio/tda731x.c audio/tda7439.c
-TUNER_SRC = tuner/tuner.c tuner/tea5767.c tuner/rda5807.c tuner/tux032.c
+FONTS_SRC = $(wildcard display/font*.c)
+ICONS_SRC = $(wildcard display/icon*.c)
+DISP_SRC = display/gdfb.c display/$(call lc,$(DISPLAY)).c
 
-FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
-ICONS = icons-24.c icons-32.c
-ifeq ($(DISPLAY), ST7920)
-  DISP_SRC = display.c $(addprefix display/, gdfb.c st7920.c $(FONTS) $(ICONS))
-else ifeq ($(DISPLAY), KS0108A)
-  DISP_SRC = display.c $(addprefix display/, gdfb.c ks0108.c $(FONTS) $(ICONS))
-else ifeq ($(DISPLAY), KS0108B)
-  DISP_SRC = display.c $(addprefix display/, gdfb.c ks0108.c $(FONTS) $(ICONS))
-endif
-
-TEMP_SRC = ds18x20.c temp.c
-
-SRCS = main.c actions.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC) $(TEMP_SRC)
+SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC) $(FONTS_SRC) $(ICONS_SRC) $(DISP_SRC)
 
 MCU = atmega32
 F_CPU = 16000000L
