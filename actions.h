@@ -91,9 +91,13 @@ enum {
 };
 
 actionID getAction(uint8_t *dispMode);
-void handleAction(actionID action, uint8_t *dispMode);
 
+void handleAction(actionID action, uint8_t *dispMode);
+void handleEncoder(int8_t encCnt, uint8_t *dispMode);
 void handleChangeFM(uint8_t *dispMode, uint8_t step);
+
 actionID checkAlarmAndTime(uint8_t *dispMode);
+
+void showScreen(uint8_t *dispMode, uint8_t *dispModePrev);
 
 #endif /* ACTIONS_H */

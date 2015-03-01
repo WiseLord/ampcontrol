@@ -14,24 +14,24 @@
 /* Hardware initialization */
 static void hwInit(void)
 {
-	displayInit();						/* Load params and text labels before fb scan started */
-	sei();								/* Gloabl interrupt enable */
+	displayInit();							/* Load params and text labels before fb scan started */
+	sei();									/* Gloabl interrupt enable */
 
 	ds18x20SearchDevices();
-	tempInit();							/* Init temperature control */
+	tempInit();								/* Init temperature control */
 
-	inputInit();						/* Buttons/encoder polling */
+	inputInit();							/* Buttons/encoder polling */
 
-	rc5Init();							/* IR Remote control */
-	adcInit();							/* Analog-to-digital converter */
-	I2CInit();							/* I2C bus */
+	rc5Init();								/* IR Remote control */
+	adcInit();								/* Analog-to-digital converter */
+	I2CInit();								/* I2C bus */
 
 
-	tunerInit();						/* Tuner */
+	tunerInit();							/* Tuner */
 
-	DDR(STMU_STBY) |= STMU_STBY_LINE;	/* Standby port */
-	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
-	sndInit();					/* Load labels/icons/etc */
+	DDR(STMU_STBY) |= STMU_STBY_LINE;		/* Standby port */
+	DDR(STMU_MUTE) |= STMU_MUTE_LINE;		/* Mute port */
+	sndInit();								/* Load labels/icons/etc */
 
 	setStbyTimer(0);
 
@@ -46,10 +46,10 @@ int main(void)
 	int8_t encCnt = 0;
 	actionID action = ACTION_NOACTION;
 
+	/* Init hardware */
 	hwInit();
 
 	while (1) {
-		encCnt = getEncoder();
 
 		/* Control temperature */
 		tempControlProcess();
@@ -69,57 +69,16 @@ int main(void)
 		/* Handle action */
 		handleAction(action, &dispMode);
 
-		/* Emulate RC5 VOL_UP/VOL_DOWN as encoder actions */
-		if (action == ACTION_VOLUME_UP)
+		/* Handle encoder */
+		encCnt = getEncoder();				/* Get value from encoder */
+		if (action == ACTION_VOLUME_UP)		/* Emulate VOLUME_UP action as encoder action */
 			encCnt++;
-		if (action == ACTION_VOLUME_DOWN)
+		if (action == ACTION_VOLUME_DOWN)	/* Emulate VOLUME_DOWN action as encoder action */
 			encCnt--;
+		handleEncoder(encCnt, &dispMode);
 
 		/* Reset handled action */
 		action = ACTION_NOACTION;
-
-		/* Handle encoder */
-		if (encCnt) {
-			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
-			case MODE_TEST:
-				setDisplayTime(DISPLAY_TIME_TEST);
-				break;
-			case MODE_TEMP:
-				changeTempTH(encCnt);
-				setDisplayTime(DISPLAY_TIME_TEMP);
-				break;
-			case MODE_TIME_EDIT:
-				changeTime(encCnt);
-				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-				break;
-			case MODE_ALARM_EDIT:
-				changeAlarm(encCnt);
-				setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
-				break;
-			case MODE_BR:
-				changeBrWork(encCnt);
-				setDisplayTime(DISPLAY_TIME_BR);
-				break;
-			case MODE_FM_TUNE:
-				tunerChangeFreq(encCnt);
-				setDisplayTime(DISPLAY_TIME_FM_TUNE);
-				break;
-			case MODE_MUTE:
-			case MODE_LOUDNESS:
-			case MODE_SPECTRUM:
-			case MODE_TIME:
-			case MODE_TIMER:
-			case MODE_FM_RADIO:
-				dispMode = MODE_SND_VOLUME;
-			default:
-				sndSetMute(MUTE_OFF);
-				sndChangeParam(dispMode, encCnt);
-				setDisplayTime(DISPLAY_TIME_GAIN);
-				break;
-			}
-		}
 
 		/* Exit to default mode and save params to EEPROM*/
 		if (getDisplayTime() == 0) {
@@ -154,60 +113,8 @@ int main(void)
 		if (dispMode != dispModePrev)
 			gdClear();
 
-
 		/* Show things */
-		switch (dispMode) {
-		case MODE_STANDBY:
-			showTime();
-			setStbyBrightness();
-			break;
-		case MODE_TEST:
-			showRC5Info();
-			setWorkBrightness();
-			break;
-		case MODE_TEMP:
-			showTemp();
-			setWorkBrightness();
-			break;
-		case MODE_SPECTRUM:
-			showSpectrum();
-			break;
-		case MODE_FM_RADIO:
-			showRadio(MODE_RADIO_CHAN);
-			break;
-		case MODE_FM_TUNE:
-			showRadio(MODE_RADIO_TUNE);
-			break;
-		case MODE_MUTE:
-			showMute();
-			if (sndGetMute())
-				setDisplayTime(DISPLAY_TIME_AUDIO);
-			break;
-		case MODE_LOUDNESS:
-			showLoudness();
-			break;
-		case MODE_TIME:
-		case MODE_TIME_EDIT:
-			showTime();
-			break;
-		case MODE_TIMER:
-			showTimer();
-			break;
-		case MODE_ALARM:
-		case MODE_ALARM_EDIT:
-			showAlarm();
-			break;
-		case MODE_BR:
-			showBrWork();
-			break;
-		default:
-			showSndParam(dispMode);
-			break;
-		}
-
-		/* Save current mode */
-		dispModePrev = dispMode;
-		/* Save current RC5 raw buf */
+		showScreen(&dispMode, &dispModePrev);
 	}
 
 	return 0;

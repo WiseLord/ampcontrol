@@ -3,6 +3,7 @@
 #include <util/delay.h>
 #include "display.h"
 #include "tuner/tuner.h"
+#include "temp.h"
 
 actionID getAction(uint8_t *dispMode)
 {
@@ -356,6 +357,53 @@ void handleAction(actionID action, uint8_t *dispMode)
 
 }
 
+void handleEncoder(int8_t encCnt, uint8_t *dispMode)
+{
+	if (encCnt) {
+		switch (*dispMode) {
+		case MODE_STANDBY:
+			break;
+		case MODE_TEST:
+			setDisplayTime(DISPLAY_TIME_TEST);
+			break;
+		case MODE_TEMP:
+			changeTempTH(encCnt);
+			setDisplayTime(DISPLAY_TIME_TEMP);
+			break;
+		case MODE_TIME_EDIT:
+			changeTime(encCnt);
+			setDisplayTime(DISPLAY_TIME_TIME_EDIT);
+			break;
+		case MODE_ALARM_EDIT:
+			changeAlarm(encCnt);
+			setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
+			break;
+		case MODE_BR:
+			changeBrWork(encCnt);
+			setDisplayTime(DISPLAY_TIME_BR);
+			break;
+		case MODE_FM_TUNE:
+			tunerChangeFreq(encCnt);
+			setDisplayTime(DISPLAY_TIME_FM_TUNE);
+			break;
+		case MODE_MUTE:
+		case MODE_LOUDNESS:
+		case MODE_SPECTRUM:
+		case MODE_TIME:
+		case MODE_TIMER:
+		case MODE_FM_RADIO:
+			*dispMode = MODE_SND_VOLUME;
+		default:
+			sndSetMute(MUTE_OFF);
+			sndChangeParam(*dispMode, encCnt);
+			setDisplayTime(DISPLAY_TIME_GAIN);
+			break;
+		}
+	}
+
+	return;
+}
+
 void handleChangeFM(uint8_t *dispMode, uint8_t step)
 {
 	if (*dispMode == MODE_FM_TUNE) {
@@ -393,4 +441,61 @@ actionID checkAlarmAndTime(uint8_t *dispMode)
 	}
 
 	return ret;
+}
+
+void showScreen(uint8_t *dispMode, uint8_t *dispModePrev)
+{
+	switch (*dispMode) {
+	case MODE_STANDBY:
+		showTime();
+		setStbyBrightness();
+		break;
+	case MODE_TEST:
+		showRC5Info();
+		setWorkBrightness();
+		break;
+	case MODE_TEMP:
+		showTemp();
+		setWorkBrightness();
+		break;
+	case MODE_SPECTRUM:
+		showSpectrum();
+		break;
+	case MODE_FM_RADIO:
+		showRadio(MODE_RADIO_CHAN);
+		break;
+	case MODE_FM_TUNE:
+		showRadio(MODE_RADIO_TUNE);
+		break;
+	case MODE_MUTE:
+		showMute();
+		if (sndGetMute())
+			setDisplayTime(DISPLAY_TIME_AUDIO);
+		break;
+	case MODE_LOUDNESS:
+		showLoudness();
+		break;
+	case MODE_TIME:
+	case MODE_TIME_EDIT:
+		showTime();
+		break;
+	case MODE_TIMER:
+		showTimer();
+		break;
+	case MODE_ALARM:
+	case MODE_ALARM_EDIT:
+		showAlarm();
+		break;
+	case MODE_BR:
+		showBrWork();
+		break;
+	default:
+		showSndParam(*dispMode);
+		break;
+	}
+
+	/* Save current mode */
+	*dispModePrev = *dispMode;
+
+	return;
 }
