@@ -141,10 +141,10 @@ ISR (TIMER2_COMP_vect)
 					cmdBuf = CMD_BTN_5_LONG;
 					break;
 				case BTN_12:
-					cmdBuf = CMD_BTN_TEST;
+					cmdBuf = CMD_BTN_12_LONG;
 					break;
 				case BTN_13:
-					cmdBuf = CMD_BTN_TEMP;
+					cmdBuf = CMD_BTN_13_LONG;
 					break;
 				}
 			}
