@@ -164,15 +164,25 @@ uint8_t tunerLevel(void)
 	return ret;
 }
 
-/* Find station number (1..64) in EEPROM */
+/* Find station number (1..50) in EEPROM */
 uint8_t tunerStationNum(void)
 {
 	uint8_t i;
 
-	uint16_t freq = tunerGetFreq();
+	for (i = 0; i < FM_COUNT; i++)
+		if (eeprom_read_word(eepromStations + i) == _freq)
+			return i + 1;
+
+	return 0;
+}
+
+/* Find favourite station number (1..10) in EEPROM */
+uint8_t tunerFavStationNum(void)
+{
+	uint8_t i;
 
 	for (i = 0; i < FM_COUNT; i++)
-		if (eeprom_read_word(eepromStations + i) == freq)
+		if (eeprom_read_word(eepromFavStations + i) == _freq)
 			return i + 1;
 
 	return 0;
@@ -215,6 +225,26 @@ void tunerLoadStation(uint8_t num)
 
 	if (freqCell != 0xFFFF)
 		tunerSetFreq(freqCell);
+
+	return;
+}
+
+/* Load favourite station by number */
+void tunerLoadFavStation(uint8_t num)
+{
+	if (eeprom_read_word(eepromFavStations + num) != 0)
+		tunerSetFreq(eeprom_read_word(eepromFavStations + num));
+
+	return;
+}
+
+/* Load favourite station by number */
+void tunerStoreFavStation(uint8_t num)
+{
+	if (eeprom_read_word(eepromFavStations + num) == _freq)
+		eeprom_update_word(eepromFavStations + num, 0);
+	else
+		eeprom_update_word(eepromFavStations + num, _freq);
 
 	return;
 }

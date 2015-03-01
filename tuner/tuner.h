@@ -14,7 +14,7 @@ typedef enum {
 	TUNER_END
 } tunerIC;
 
-#define FM_COUNT			64
+#define FM_COUNT			50
 
 #define SEARCH_UP			1
 #define SEARCH_DOWN			-1
@@ -42,6 +42,10 @@ uint8_t tunerStationNum(void);
 void tunerNextStation(int8_t direction);
 void tunerLoadStation(uint8_t num);
 void tunerStoreStation(void);
+
+uint8_t tunerFavStationNum(void);
+void tunerLoadFavStation(uint8_t num);
+void tunerStoreFavStation(uint8_t num);
 
 void tunerSetMute(uint8_t mute);
 

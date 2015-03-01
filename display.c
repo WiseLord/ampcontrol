@@ -22,7 +22,7 @@ static uint8_t rc5Addr;
 
 static uint8_t defDisplay;					/* Default display mode */
 
-uint8_t *txtLabels[LABELS_COUNT];			/* Array with text label pointers */
+uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
@@ -169,7 +169,7 @@ void displayInit(void)
 	addr = labelsAddr;
 	i = 0;
 
-	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {
+	while (i < LABEL_END && addr < (uint8_t*)EEPROM_SIZE) {
 		if (eeprom_read_byte(addr) != '\0') {
 			txtLabels[i] = addr;
 			addr++;
@@ -328,6 +328,7 @@ void showRadio(uint8_t tune)
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();
+	uint8_t favNum = tunerFavStationNum();
 
 	uint8_t i;
 
@@ -352,21 +353,29 @@ void showRadio(uint8_t tune)
 	}
 
 	/* Stereo indicator */
-	gdSetXY(114, 16);
+	gdSetXY(116, 12);
 	if (tunerStereo())
 		gdWriteString((uint8_t*)"ST");
 	else
 		gdWriteString((uint8_t*)"  ");
 
+	/* Favourite station number */
+	gdSetXY(114, 23);
+	gdWriteChar(0xF5);						/* Heart symbol */
+	gdSetXY(122, 23);
+	if (favNum)
+		gdWriteNum(favNum % 10, 1, ' ', 10);
+	else
+		gdWriteString((uint8_t*)"-");
+
 	/* Station number */
-	if (num) {
-		showParValue(num);
-	} else {
-		gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-		gdSetXY(94, 32);
+	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
+	gdSetXY(94, 32);
+	if (num)
+		gdWriteNum(num, 3, ' ', 10);
+	else
 		gdWriteString((uint8_t*)" --");
-		gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
-	}
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);

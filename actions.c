@@ -319,9 +319,14 @@ void handleAction(actionID action)
 			case ACTION_FM_STATION_8:
 			case ACTION_FM_STATION_9:
 			case ACTION_FM_STATION_0:
-				tunerLoadStation(action - ACTION_FM_STATION_1);
-				dispMode = MODE_FM_RADIO;
-				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				if (dispMode == MODE_FM_TUNE) {
+					tunerStoreFavStation(action - ACTION_FM_STATION_1);
+					setDisplayTime(DISPLAY_TIME_FM_TUNE);
+				} else {
+					tunerLoadFavStation(action - ACTION_FM_STATION_1);
+					dispMode = MODE_FM_RADIO;
+					setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				}
 				break;
 			case ACTION_INC_FM:
 				handleChangeFM(SEARCH_UP);
