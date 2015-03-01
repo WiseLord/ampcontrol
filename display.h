@@ -54,7 +54,7 @@ void showSndParam(sndMode mode);
 
 void showTime(void);
 void showAlarm(void);
-void showTimer(void);
+void showTimer(int16_t timer);
 
 void switchSpMode(void);
 void switchFallSpeed(void);

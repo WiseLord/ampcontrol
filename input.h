@@ -79,6 +79,7 @@ typedef enum {
 #define LONG_PRESS		600
 
 #define STBY_TIMER_OFF	-1
+#define SILENCE_TIMER	180
 
 void inputInit();
 
@@ -104,5 +105,8 @@ void setSecTimer(uint16_t val);
 
 void setClockTimer(uint8_t value);
 uint8_t getClockTimer(void);
+
+void setSilenceTimer(int16_t value);
+int16_t getSilenceTimer(void);
 
 #endif /* INPUT_H */

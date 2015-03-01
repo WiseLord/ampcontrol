@@ -23,6 +23,7 @@ static volatile uint16_t tempTimer;					/* Timer of temperature measuring proces
 static volatile int16_t stbyTimer = STBY_TIMER_OFF;	/* Standby timer */
 static volatile uint16_t secTimer;					/* 1 second timer */
 static volatile uint8_t clockTimer;
+static volatile int16_t silenceTimer;				/* Timer to check silence */
 
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];				/* Array with rc5 commands */
@@ -225,13 +226,18 @@ ISR (TIMER2_COMP_vect)
 		secTimer--;
 	} else {
 		secTimer = 1000;
+		/* Timer of standby mode */
 		if (stbyTimer >= 0)
 			stbyTimer--;
+		/* Silence timer */
+		if (silenceTimer >= 0)
+			silenceTimer--;
 	}
 
 	/* Timer clock update */
 	if (clockTimer)
 		clockTimer--;
+
 
 	return;
 };
@@ -347,4 +353,16 @@ void setClockTimer(uint8_t value)
 uint8_t getClockTimer(void)
 {
 	return clockTimer;
+}
+
+void setSilenceTimer(int16_t value)
+{
+	silenceTimer = value;
+
+	return;
+}
+
+int16_t getSilenceTimer(void)
+{
+	return silenceTimer;
 }

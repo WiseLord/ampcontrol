@@ -130,3 +130,14 @@ uint8_t *getSpData(uint8_t fallSpeed)
 
 	return buf;
 }
+
+uint16_t getSignalLevel(void)
+{
+	uint16_t ret = 0;
+	uint8_t i;
+
+	for (i = 0; i < sizeof(buf); i++)
+		ret += buf[i];
+
+	return ret * 3 / 64;
+}

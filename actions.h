@@ -79,6 +79,7 @@ enum {
 	MODE_TIME,
 	MODE_TIME_EDIT,
 	MODE_TIMER,
+	MODE_SILENCE_TIMER,
 	MODE_ALARM,
 	MODE_ALARM_EDIT,
 	MODE_MUTE,
@@ -100,6 +101,7 @@ actionID checkAlarmAndTime(void);
 
 void handleExitDefaultMode(void);
 void handleTimerExpires(void);
+void handleSilenceTimer(void);
 void handleModeChange(void);
 
 void showScreen(void);

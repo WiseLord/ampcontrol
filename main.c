@@ -49,8 +49,8 @@ int main(void)
 		/* Control temperature */
 		tempControlProcess();
 
-		/* Emulate poweroff if standby timer expired */
-		if (getStbyTimer() == 0)
+		/* Emulate poweroff if any of timers expired */
+		if (getStbyTimer() == 0 || getSilenceTimer() == 0)
 			action = ACTION_GO_STANDBY;
 
 		/* Check alarm and update time */
@@ -72,6 +72,10 @@ int main(void)
 			encCnt--;
 		handleEncoder(encCnt);
 
+		/* Reset silence timer on any action */
+		if (encCnt || (action != ACTION_NOACTION && action != ACTION_EXIT_STANDBY))
+			setSilenceTimer(SILENCE_TIMER);
+
 		/* Reset handled action */
 		action = ACTION_NOACTION;
 
@@ -80,6 +84,9 @@ int main(void)
 
 		/* Switch to timer mode if it expires (less then minute) */
 		handleTimerExpires();
+
+		/* Switch to timer mode if it expires */
+		handleSilenceTimer();
 
 		/* Clear screen if mode has changed */
 		handleModeChange();

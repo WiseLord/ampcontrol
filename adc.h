@@ -12,5 +12,6 @@
 
 void adcInit(void);
 uint8_t *getSpData(uint8_t fallSpeed);
+uint16_t getSignalLevel(void);
 
 #endif /* ADC_H */

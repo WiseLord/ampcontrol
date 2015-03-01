@@ -4,6 +4,7 @@
 #include "display.h"
 #include "tuner/tuner.h"
 #include "temp.h"
+#include "adc.h"
 
 static uint8_t dispMode = MODE_STANDBY;
 static uint8_t dispModePrev = MODE_STANDBY;
@@ -150,6 +151,9 @@ void handleAction(actionID action)
 			tunerSetMute(MUTE_ON);
 
 		dispMode = getDefDisplay();
+
+		setSilenceTimer(SILENCE_TIMER);
+
 		break;
 	case ACTION_GO_STANDBY:
 		sndSetMute(MUTE_ON);
@@ -161,6 +165,7 @@ void handleAction(actionID action)
 		setStbyBrightness();
 		stopEditTime();
 		setStbyTimer(STBY_TIMER_OFF);
+		setSilenceTimer(STBY_TIMER_OFF);
 
 		sndPowerOff();
 		tunerPowerOff();
@@ -399,6 +404,7 @@ void handleEncoder(int8_t encCnt)
 		case MODE_SPECTRUM:
 		case MODE_TIME:
 		case MODE_TIMER:
+		case MODE_SILENCE_TIMER:
 		case MODE_FM_RADIO:
 			dispMode = MODE_SND_VOLUME;
 		default:
@@ -488,6 +494,23 @@ void handleTimerExpires(void)
 	return;
 }
 
+void handleSilenceTimer(void)
+{
+	if (dispMode != MODE_STANDBY && dispMode != MODE_TEST && dispMode != MODE_TEMP) {
+		if (getSignalLevel() > 5) {
+			setSilenceTimer(SILENCE_TIMER);
+			if (dispMode == MODE_SILENCE_TIMER)
+				dispMode = getDefDisplay();
+		}
+	if (getSilenceTimer() >= 0 && getSilenceTimer() < 60) {
+			dispMode = MODE_SILENCE_TIMER;
+			setDisplayTime(DISPLAY_TIME_TIMER_EXP);
+		}
+	}
+
+	return;
+}
+
 void handleModeChange(void)
 {
 	if (dispMode != dispModePrev)
@@ -533,7 +556,10 @@ void showScreen(void)
 		showTime();
 		break;
 	case MODE_TIMER:
-		showTimer();
+		showTimer(getStbyTimer());
+		break;
+	case MODE_SILENCE_TIMER:
+		showTimer(getSilenceTimer());
 		break;
 	case MODE_ALARM:
 	case MODE_ALARM_EDIT:

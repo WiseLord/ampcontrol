@@ -550,24 +550,22 @@ void showAlarm(void)
 	return;
 }
 
-void showTimer(void)
+void showTimer(int16_t timer)
 {
 	uint8_t x, xbase;
 	uint8_t y, ybase;
-
-	int16_t stbyTimer = getStbyTimer();
 
 	volatile uint8_t *buf = getSpData(fallSpeed);
 
 	gdSetXY(4, 0);
 
 	gdLoadFont(font_digits_32, 1, FONT_DIR_0);
-	if (stbyTimer >= 0) {
-		gdWriteNum(stbyTimer / 3600, 2, '0', 10);
+	if (timer >= 0) {
+		gdWriteNum(timer / 3600, 2, '0', 10);
 		gdWriteString((uint8_t*)"\x7F:\x7F");
-		gdWriteNum(stbyTimer / 60 % 60, 2, '0', 10);
+		gdWriteNum(timer / 60 % 60, 2, '0', 10);
 		gdWriteString((uint8_t*)"\x7F:\x7F");
-		gdWriteNum(stbyTimer % 60, 2, '0', 10);
+		gdWriteNum(timer % 60, 2, '0', 10);
 	} else {
 		gdWriteString((uint8_t*)"--");
 		gdWriteString((uint8_t*)"\x7F:\x7F");
