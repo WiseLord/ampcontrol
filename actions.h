@@ -94,13 +94,11 @@ enum {
 actionID getAction(uint8_t *dispMode);
 void handleAction(actionID action, uint8_t *dispMode);
 
-void handleEditTime(uint8_t *dispMode);
 void handleSwitchMute(uint8_t *dispMode);
 void handleSetDefDisplay(uint8_t *dispMode);
 void handleSwitchFmMode(uint8_t *dispMode);
 void handleStoreStation(uint8_t *dispMode);
 void handleChangeFM(uint8_t *dispMode, uint8_t step);
-void handleEditAlarm(uint8_t *dispMode);
 actionID checkAlarmAndTime(uint8_t *dispMode)
 ;
 

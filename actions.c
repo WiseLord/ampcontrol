@@ -195,10 +195,30 @@ void handleAction(actionID action, uint8_t *dispMode)
 		setDisplayTime(DISPLAY_TIME_TIMER);
 		break;
 	case ACTION_EDIT_TIME:
-		handleEditTime(dispMode);
+		if (*dispMode == MODE_TIME || *dispMode == MODE_TIME_EDIT) {
+			editTime();
+			*dispMode = MODE_TIME_EDIT;
+			setDisplayTime(DISPLAY_TIME_TIME_EDIT);
+			if (!isETM())
+				setDisplayTime(DISPLAY_TIME_TIME);
+		} else {
+			stopEditTime();
+			*dispMode = MODE_TIME;
+			setDisplayTime(DISPLAY_TIME_TIME);
+		}
 		break;
 	case ACTION_EDIT_ALARM:
-		handleEditAlarm(dispMode);
+		if (*dispMode == MODE_ALARM || *dispMode == MODE_ALARM_EDIT) {
+			editAlarm();
+			*dispMode = MODE_ALARM_EDIT;
+			setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
+			if (!isEAM())
+				setDisplayTime(DISPLAY_TIME_ALARM);
+		} else {
+			stopEditAlarm();
+			*dispMode = MODE_ALARM;
+			setDisplayTime(DISPLAY_TIME_ALARM);
+		}
 		break;
 	case ACTION_NEXT_SPMODE:
 		switchSpMode();
@@ -309,28 +329,6 @@ void handleAction(actionID action, uint8_t *dispMode)
 
 }
 
-/* Next time edit parameter */
-void handleEditTime(uint8_t *dispMode)
-{
-	switch (*dispMode) {
-	case MODE_TIME:
-	case MODE_TIME_EDIT:
-		editTime();
-		*dispMode = MODE_TIME_EDIT;
-		setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-		if (!isETM())
-			setDisplayTime(DISPLAY_TIME_TIME);
-		break;
-	default:
-		stopEditTime();
-		*dispMode = MODE_TIME;
-		setDisplayTime(DISPLAY_TIME_TIME);
-		break;
-	}
-
-	return;
-}
-
 void handleSwitchMute(uint8_t *dispMode)
 {
 	gdClear();
@@ -395,28 +393,6 @@ void handleChangeFM(uint8_t *dispMode, uint8_t step)
 		tunerNextStation(step);
 		*dispMode = MODE_FM_RADIO;
 		setDisplayTime(DISPLAY_TIME_FM_RADIO);
-	}
-
-	return;
-}
-
-/* Next alarm edit parameter */
-void handleEditAlarm(uint8_t *dispMode)
-{
-	switch (*dispMode) {
-	case MODE_ALARM:
-	case MODE_ALARM_EDIT:
-		editAlarm();
-		*dispMode = MODE_ALARM_EDIT;
-		setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
-		if (!isEAM())
-			setDisplayTime(DISPLAY_TIME_ALARM);
-		break;
-	default:
-		stopEditAlarm();
-		*dispMode = MODE_ALARM;
-		setDisplayTime(DISPLAY_TIME_ALARM);
-		break;
 	}
 
 	return;
