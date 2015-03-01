@@ -90,18 +90,18 @@ enum {
 	MODE_TEMP
 };
 
-actionID getAction(uint8_t *dispMode);
+actionID getAction(void);
 
-void handleAction(actionID action, uint8_t *dispMode);
-void handleEncoder(int8_t encCnt, uint8_t *dispMode);
-void handleChangeFM(uint8_t *dispMode, uint8_t step);
+void handleAction(actionID action);
+void handleEncoder(int8_t encCnt);
+void handleChangeFM(uint8_t step);
 
-actionID checkAlarmAndTime(uint8_t *dispMode);
+actionID checkAlarmAndTime(void);
 
-void handleExitDefaultMode(uint8_t *dispMode);
-void handleTimerExpires(uint8_t *dispMode);
-void handleModeChange(uint8_t *dispMode, uint8_t *dispModePrev);
+void handleExitDefaultMode(void);
+void handleTimerExpires(void);
+void handleModeChange(void);
 
-void showScreen(uint8_t *dispMode, uint8_t *dispModePrev);
+void showScreen(void);
 
 #endif /* ACTIONS_H */

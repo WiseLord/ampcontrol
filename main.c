@@ -39,9 +39,6 @@ static void hwInit(void)
 
 int main(void)
 {
-	uint8_t dispMode = MODE_STANDBY;
-	uint8_t dispModePrev = MODE_STANDBY;
-
 	int8_t encCnt = 0;
 	actionID action = ACTION_NOACTION;
 
@@ -58,14 +55,14 @@ int main(void)
 
 		/* Check alarm and update time */
 		if (action == ACTION_NOACTION)
-			action = checkAlarmAndTime(&dispMode);
+			action = checkAlarmAndTime();
 
 		/* Convert input command to action */
 		if (action == ACTION_NOACTION)
-			action = getAction(&dispMode);
+			action = getAction();
 
 		/* Handle action */
-		handleAction(action, &dispMode);
+		handleAction(action);
 
 		/* Handle encoder */
 		encCnt = getEncoder();				/* Get value from encoder */
@@ -73,22 +70,22 @@ int main(void)
 			encCnt++;
 		if (action == ACTION_VOLUME_DOWN)	/* Emulate VOLUME_DOWN action as encoder action */
 			encCnt--;
-		handleEncoder(encCnt, &dispMode);
+		handleEncoder(encCnt);
 
 		/* Reset handled action */
 		action = ACTION_NOACTION;
 
 		/* Check if we need exit to default mode*/
-		handleExitDefaultMode(&dispMode);
+		handleExitDefaultMode();
 
 		/* Switch to timer mode if it expires (less then minute) */
-		handleTimerExpires(&dispMode);
+		handleTimerExpires();
 
 		/* Clear screen if mode has changed */
-		handleModeChange(&dispMode, &dispModePrev);
+		handleModeChange();
 
 		/* Show things */
-		showScreen(&dispMode, &dispModePrev);
+		showScreen();
 	}
 
 	return 0;
