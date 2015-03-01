@@ -443,6 +443,51 @@ actionID checkAlarmAndTime(uint8_t *dispMode)
 	return ret;
 }
 
+void handleExitDefaultMode(uint8_t *dispMode)
+{
+	if (getDisplayTime() == 0) {
+		switch (*dispMode) {
+		case MODE_STANDBY:
+			break;
+		case MODE_TEMP:
+			saveTempParams();
+		case MODE_TEST:
+			*dispMode = MODE_STANDBY;
+			break;
+		default:
+			if (getDefDisplay() == MODE_FM_RADIO) {
+				if (sndGetInput() != 0 || tunerGetType() == TUNER_NO)
+					*dispMode = MODE_SPECTRUM;
+				else
+					*dispMode = MODE_FM_RADIO;
+			} else {
+				*dispMode = getDefDisplay();
+			}
+			break;
+		}
+	}
+
+	return;
+}
+
+void handleTimerExpires(uint8_t *dispMode)
+{
+	if (getStbyTimer() >= 0 && getStbyTimer() <= 60 && getDisplayTime() == 0) {
+		*dispMode = MODE_TIMER;
+		setDisplayTime(DISPLAY_TIME_TIMER_EXP);
+	}
+
+	return;
+}
+
+void handleModeChange(uint8_t *dispMode, uint8_t *dispModePrev)
+{
+	if (*dispMode != *dispModePrev)
+		gdClear();
+
+	return;
+}
+
 void showScreen(uint8_t *dispMode, uint8_t *dispModePrev)
 {
 	switch (*dispMode) {

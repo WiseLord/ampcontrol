@@ -26,7 +26,6 @@ static void hwInit(void)
 	adcInit();								/* Analog-to-digital converter */
 	I2CInit();								/* I2C bus */
 
-
 	tunerInit();							/* Tuner */
 
 	DDR(STMU_STBY) |= STMU_STBY_LINE;		/* Standby port */
@@ -50,7 +49,6 @@ int main(void)
 	hwInit();
 
 	while (1) {
-
 		/* Control temperature */
 		tempControlProcess();
 
@@ -80,38 +78,14 @@ int main(void)
 		/* Reset handled action */
 		action = ACTION_NOACTION;
 
-		/* Exit to default mode and save params to EEPROM*/
-		if (getDisplayTime() == 0) {
-			switch (dispMode) {
-			case MODE_STANDBY:
-				break;
-			case MODE_TEMP:
-				saveTempParams();
-			case MODE_TEST:
-				dispMode = MODE_STANDBY;
-				break;
-			default:
-				if (getDefDisplay() == MODE_FM_RADIO) {
-					if (sndGetInput() != 0 || tunerGetType() == TUNER_NO)
-						dispMode = MODE_SPECTRUM;
-					else
-						dispMode = MODE_FM_RADIO;
-				} else {
-					dispMode = getDefDisplay();
-				}
-				break;
-			}
-		}
+		/* Check if we need exit to default mode*/
+		handleExitDefaultMode(&dispMode);
 
 		/* Switch to timer mode if it expires (less then minute) */
-		if (getStbyTimer() >= 0 && getStbyTimer() <= 60 && getDisplayTime() == 0) {
-			dispMode = MODE_TIMER;
-			setDisplayTime(DISPLAY_TIME_TIMER_EXP);
-		}
+		handleTimerExpires(&dispMode);
 
 		/* Clear screen if mode has changed */
-		if (dispMode != dispModePrev)
-			gdClear();
+		handleModeChange(&dispMode, &dispModePrev);
 
 		/* Show things */
 		showScreen(&dispMode, &dispModePrev);

@@ -98,6 +98,10 @@ void handleChangeFM(uint8_t *dispMode, uint8_t step);
 
 actionID checkAlarmAndTime(uint8_t *dispMode);
 
+void handleExitDefaultMode(uint8_t *dispMode);
+void handleTimerExpires(uint8_t *dispMode);
+void handleModeChange(uint8_t *dispMode, uint8_t *dispModePrev);
+
 void showScreen(uint8_t *dispMode, uint8_t *dispModePrev);
 
 #endif /* ACTIONS_H */
