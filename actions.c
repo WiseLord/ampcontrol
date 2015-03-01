@@ -168,25 +168,25 @@ void handleAction(actionID action, uint8_t *dispMode)
 		if (*dispMode == MODE_TIMER) {
 			setSecTimer(2000);
 			stbyTimer = getStbyTimer();
-			if (stbyTimer < 120)	/* 2 min */
+			if (stbyTimer < 120)			/* 2 min */
 				setStbyTimer(120);
-			else if (stbyTimer < 300)	/* 5 min */
+			else if (stbyTimer < 300)		/* 5 min */
 				setStbyTimer(300);
-			else if (stbyTimer < 600)	/* 10 min */
+			else if (stbyTimer < 600)		/* 10 min */
 				setStbyTimer(600);
-			else if (stbyTimer < 1200)	/* 20 min */
+			else if (stbyTimer < 1200)		/* 20 min */
 				setStbyTimer(1200);
-			else if (stbyTimer < 2400)	/* 40 min */
+			else if (stbyTimer < 2400)		/* 40 min */
 				setStbyTimer(2400);
-			else if (stbyTimer < 3600)	/* 1 hour */
+			else if (stbyTimer < 3600)		/* 1 hour */
 				setStbyTimer(3600);
-			else if (stbyTimer < 5400)	/* 1.5 hours */
+			else if (stbyTimer < 5400)		/* 1.5 hours */
 				setStbyTimer(5400);
-			else if (stbyTimer < 7200)	/* 2 hours */
+			else if (stbyTimer < 7200)		/* 2 hours */
 				setStbyTimer(7200);
-			else if (stbyTimer < 10800)	/* 3 hours */
+			else if (stbyTimer < 10800)		/* 3 hours */
 				setStbyTimer(10800);
-			else if (stbyTimer < 18000)	/* 5 hours */
+			else if (stbyTimer < 18000)		/* 5 hours */
 				setStbyTimer(18000);
 			else
 				setStbyTimer(STBY_TIMER_OFF);
@@ -227,7 +227,10 @@ void handleAction(actionID action, uint8_t *dispMode)
 		setDisplayTime(DISPLAY_TIME_SP);
 		break;
 	case ACTION_SWITCH_MUTE:
-		handleSwitchMute(dispMode);
+		gdClear();
+		sndSetMute(!sndGetMute());
+		*dispMode = MODE_MUTE;
+		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case ACTION_NEXT_RC5_CMD:
 		gdClear();
@@ -245,7 +248,20 @@ void handleAction(actionID action, uint8_t *dispMode)
 		setDisplayTime(DISPLAY_TIME_BR);
 		break;
 	case ACTION_DEF_DISPLAY:
-		handleSetDefDisplay(dispMode);
+		switch (getDefDisplay()) {
+		case MODE_SPECTRUM:
+			setDefDisplay(MODE_TIME);
+			break;
+		case MODE_TIME:
+			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
+				setDefDisplay(MODE_FM_RADIO);
+				break;
+			}
+		default:
+			setDefDisplay(MODE_SPECTRUM);
+			break;
+		}
+		*dispMode = getDefDisplay();
 		break;
 	case ACTION_INPUT_0:
 	case ACTION_INPUT_1:
@@ -310,10 +326,21 @@ void handleAction(actionID action, uint8_t *dispMode)
 				handleChangeFM(dispMode, SEARCH_DOWN);
 				break;
 			case ACTION_CHANGE_FM_MODE:
-				handleSwitchFmMode(dispMode);
+				switch (*dispMode) {
+				case MODE_FM_RADIO:
+					*dispMode = MODE_FM_TUNE;
+					setDisplayTime(DISPLAY_TIME_FM_TUNE);
+					break;
+				case MODE_FM_TUNE:
+					*dispMode = MODE_FM_RADIO;
+					setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				}
 				break;
 			case ACTION_STORE_FM_STATION:
-				handleStoreStation(dispMode);
+				if (*dispMode == MODE_FM_TUNE) {
+					setDisplayTime(DISPLAY_TIME_FM_TUNE);
+					tunerStoreStation();
+				}
 				break;
 			case ACTION_SWITCH_FM_MONO:
 				tunerSwitchMono();
@@ -327,61 +354,6 @@ void handleAction(actionID action, uint8_t *dispMode)
 		break;
 	}
 
-}
-
-void handleSwitchMute(uint8_t *dispMode)
-{
-	gdClear();
-	sndSetMute(!sndGetMute());
-	*dispMode = MODE_MUTE;
-	setDisplayTime(DISPLAY_TIME_AUDIO);
-
-	return;
-}
-
-void handleSetDefDisplay(uint8_t *dispMode)
-{
-	switch (getDefDisplay()) {
-	case MODE_SPECTRUM:
-		setDefDisplay(MODE_TIME);
-		break;
-	case MODE_TIME:
-		if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
-			setDefDisplay(MODE_FM_RADIO);
-			break;
-		}
-	default:
-		setDefDisplay(MODE_SPECTRUM);
-		break;
-	}
-	*dispMode = getDefDisplay();
-
-	return;
-}
-
-void handleSwitchFmMode(uint8_t *dispMode)
-{
-	switch (*dispMode) {
-	case MODE_FM_RADIO:
-		*dispMode = MODE_FM_TUNE;
-		setDisplayTime(DISPLAY_TIME_FM_TUNE);
-		break;
-	case MODE_FM_TUNE:
-		*dispMode = MODE_FM_RADIO;
-		setDisplayTime(DISPLAY_TIME_FM_RADIO);
-	}
-
-	return;
-}
-
-void handleStoreStation(uint8_t *dispMode)
-{
-	if (*dispMode == MODE_FM_TUNE) {
-		setDisplayTime(DISPLAY_TIME_FM_TUNE);
-		tunerStoreStation();
-	}
-
-	return;
 }
 
 void handleChangeFM(uint8_t *dispMode, uint8_t step)
@@ -417,7 +389,7 @@ actionID checkAlarmAndTime(uint8_t *dispMode)
 			}
 		}
 
-		setClockTimer(200);				/* Limit check interval */
+		setClockTimer(200);					/* Limit check interval */
 	}
 
 	return ret;
