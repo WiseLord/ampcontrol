@@ -33,7 +33,7 @@ static void hwInit(void)
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 	sndInit();					/* Load labels/icons/etc */
 
-	powerOff();
+	setStbyTimer(0);
 
 	return;
 }
@@ -46,26 +46,25 @@ int main(void)
 	int8_t encCnt = 0;
 	actionID action = ACTION_NOACTION;
 
-	int16_t stbyTimer = STBY_TIMER_OFF;
-
 	hwInit();
 
 	while (1) {
 		encCnt = getEncoder();
 
-		/* Emulate poweroff if standby timer expired */
-		stbyTimer = getStbyTimer();
-		if (stbyTimer == 0)
-			action = ACTION_GO_STANDBY;
-
 		/* Control temperature */
 		tempControlProcess();
 
+		/* Emulate poweroff if standby timer expired */
+		if (getStbyTimer() == 0)
+			action = ACTION_GO_STANDBY;
+
 		/* Check alarm and update time */
-		checkAlarmAndTime(&dispMode);
+		if (action == ACTION_NOACTION)
+			action = checkAlarmAndTime(&dispMode);
 
 		/* Convert input command to action */
-		action = getAction(&dispMode);
+		if (action == ACTION_NOACTION)
+			action = getAction(&dispMode);
 
 		/* Handle action */
 		handleAction(action, &dispMode);
@@ -145,16 +144,16 @@ int main(void)
 			}
 		}
 
+		/* Switch to timer mode if it expires (less then minute) */
+		if (getStbyTimer() >= 0 && getStbyTimer() <= 60 && getDisplayTime() == 0) {
+			dispMode = MODE_TIMER;
+			setDisplayTime(DISPLAY_TIME_TIMER_EXP);
+		}
+
 		/* Clear screen if mode has changed */
 		if (dispMode != dispModePrev)
 			gdClear();
 
-		/* Switch to timer mode if it expires (less then minute) */
-		if (stbyTimer >= 0 && stbyTimer <= 60 && getDisplayTime() == 0) {
-			gdClear();
-			dispMode = MODE_TIMER;
-			setDisplayTime(DISPLAY_TIME_TIMER_EXP);
-		}
 
 		/* Show things */
 		switch (dispMode) {

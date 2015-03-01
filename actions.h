@@ -52,12 +52,48 @@ typedef enum {
 	ACTION_NOACTION
 } actionID;
 
+/* Display modes */
+enum {
+	MODE_SPECTRUM = MODE_SND_END,
+	MODE_STANDBY,
+	MODE_FM_RADIO,
+	MODE_FM_TUNE,
+
+	MODE_TIME,
+	MODE_TIME_EDIT,
+	MODE_TIMER,
+	MODE_ALARM,
+	MODE_ALARM_EDIT,
+	MODE_MUTE,
+	MODE_LOUDNESS,
+	MODE_TEST,
+
+	MODE_BR,
+
+	MODE_TEMP
+};
+
+/* Timers for different screens */
+#define DISPLAY_TIME_TEST		20000U
+#define DISPLAY_TIME_TEMP		20000U
+#define DISPLAY_TIME_GAIN		3000U
+#define DISPLAY_TIME_TIME		3000U
+#define DISPLAY_TIME_TIME_EDIT	10000U
+#define DISPLAY_TIME_TIMER		5000U
+#define DISPLAY_TIME_TIMER_EXP	64000U
+#define DISPLAY_TIME_ALARM		3000U
+#define DISPLAY_TIME_ALARM_EDIT	10000U
+#define DISPLAY_TIME_FM_RADIO	5000U
+#define DISPLAY_TIME_FM_TUNE	10000U
+#define DISPLAY_TIME_CHAN		2000U
+#define DISPLAY_TIME_AUDIO		3000U
+#define DISPLAY_TIME_SP			3000U
+#define DISPLAY_TIME_BR			3000U
+
+
 actionID getAction(uint8_t *dispMode);
 void handleAction(actionID action, uint8_t *dispMode);
 
-void powerOn(void);
-void powerOff(void);
-void handleSetInput(uint8_t *dispMode);
 void handleEditTime(uint8_t *dispMode);
 void handleSwitchMute(uint8_t *dispMode);
 void handleSetDefDisplay(uint8_t *dispMode);
@@ -65,6 +101,7 @@ void handleSwitchFmMode(uint8_t *dispMode);
 void handleStoreStation(uint8_t *dispMode);
 void handleChangeFM(uint8_t *dispMode, uint8_t step);
 void handleEditAlarm(uint8_t *dispMode);
-void checkAlarmAndTime(uint8_t *dispMode);
+actionID checkAlarmAndTime(uint8_t *dispMode)
+;
 
 #endif /* ACTIONS_H */

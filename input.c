@@ -19,13 +19,13 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 
 static volatile uint16_t displayTime;
 
-static volatile uint16_t tempTimer;			/* Timer of temperature measuring process */
-static volatile int16_t stbyTimer = -1;		/* Standby timer */
-static volatile uint16_t secTimer;			/* 1 second timer */
+static volatile uint16_t tempTimer;					/* Timer of temperature measuring process */
+static volatile int16_t stbyTimer = STBY_TIMER_OFF;	/* Standby timer */
+static volatile uint16_t secTimer;					/* 1 second timer */
 static volatile uint8_t clockTimer;
 
 static uint8_t rc5DeviceAddr;
-static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
+static uint8_t rcCode[RC5_CMD_COUNT];				/* Array with rc5 commands */
 
 void inputInit()
 {
@@ -52,9 +52,9 @@ void inputInit()
 
 	/* Set timer prescaller to 128 (125 kHz) and reset on match*/
 	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
-	OCR2 = 125;						/* 125000/125 => 1000 polls/sec */
-	TCNT2 = 0;						/* Reset timer value */
-	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
+	OCR2 = 125;										/* 125000/125 => 1000 polls/sec */
+	TCNT2 = 0;										/* Reset timer value */
+	TIMSK |= (1<<OCIE2);							/* Enable timer compare match interrupt */
 
 	/* Load RC5 device address and commands from eeprom */
 	rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
@@ -83,7 +83,7 @@ static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
 
 ISR (TIMER2_COMP_vect)
 {
-	static int16_t btnCnt = 0;		/* Buttons press duration value */
+	static int16_t btnCnt = 0;						/* Buttons press duration value */
 	static uint16_t rc5Timer;
 
 	/* Current state */
@@ -117,7 +117,7 @@ ISR (TIMER2_COMP_vect)
 	    (encPrev == ENC_AB && encNow == ENC_A) ||
 	    (encPrev == ENC_A && encNow == ENC_0))
 		encCnt--;
-	encPrev = encNow;				/* Save current encoder state */
+	encPrev = encNow;								/* Save current encoder state */
 
 	/* If button event has happened, place it to command buffer */
 	if (btnNow) {

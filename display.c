@@ -20,7 +20,7 @@ static uint8_t rc5CmdInd = CMD_RC5_STBY;
 static uint8_t rc5Cmd;
 static uint8_t rc5Addr;
 
-static uint8_t defDisplay = MODE_SPECTRUM;	/* Default display mode */
+static uint8_t defDisplay;					/* Default display mode */
 
 uint8_t *txtLabels[LABELS_COUNT];			/* Array with text label pointers */
 
@@ -437,9 +437,9 @@ void changeBrWork(int8_t diff)
 	return;
 }
 
-void showSndParam(uint8_t dispMode)
+void showSndParam(sndMode mode)
 {
-	sndParam *param = sndParAddr(dispMode);
+	sndParam *param = sndParAddr(mode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
 	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
 	drawBarSpectrum();

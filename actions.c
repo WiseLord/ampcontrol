@@ -92,6 +92,16 @@ actionID getAction(uint8_t *dispMode)
 	if (action == ACTION_INPUT_3 && sndInputCnt() < 4)
 		action = ACTION_SWITCH_LOUDNESS;
 
+	/* Remap NEXT_INPUT action to INPUT_X */
+	if (action == ACTION_NEXT_INPUT) {
+		action = ACTION_INPUT_0 + sndGetInput();
+		if (*dispMode >= MODE_SND_GAIN0 && *dispMode <= MODE_SND_GAIN3) {
+			action += 1;
+			if (action > ACTION_INPUT_3)
+				action = ACTION_INPUT_0;
+		}
+	}
+
 	/* Disable actions except NEXT_RC5_CMD and ZERO_DISPLAY_TIME in test mode */
 	if (*dispMode == MODE_TEST) {
 		if (action != ACTION_NOACTION)
@@ -122,24 +132,43 @@ void handleAction(actionID action, uint8_t *dispMode)
 
 	switch (action) {
 	case ACTION_EXIT_STANDBY:
-		powerOn();
+		PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
+		setWorkBrightness();
+
+		_delay_ms(100);						/* Wait while power is being set up */
+
+		tunerPowerOn();
+		sndPowerOn();
+
+		if (sndGetInput() == 0)
+			tunerSetMute(MUTE_OFF);
+		else
+			tunerSetMute(MUTE_ON);
+
 		*dispMode = getDefDisplay();
 		break;
 	case ACTION_GO_STANDBY:
-		powerOff();
+		sndSetMute(MUTE_ON);
+
+		_delay_ms(100);
+
+		PORT(STMU_STBY) &= ~STMU_STBY_LINE;
+
+		setStbyBrightness();
+		stopEditTime();
+		setStbyTimer(STBY_TIMER_OFF);
+
+		sndPowerOff();
+		tunerPowerOff();
+		displayPowerOff();
 		*dispMode = MODE_STANDBY;
-		break;
-	case ACTION_NEXT_INPUT:
-		if (*dispMode >= MODE_SND_GAIN0 && *dispMode <= MODE_SND_GAIN3)
-			sndSetInput(sndGetInput() + 1);
-		handleSetInput(dispMode);
 		break;
 	case ACTION_CHANGE_TIMER:
 		stopEditTime();
 		if (*dispMode == MODE_TIMER) {
 			setSecTimer(2000);
 			stbyTimer = getStbyTimer();
-			if (stbyTimer < 120)		/* 2 min */
+			if (stbyTimer < 120)	/* 2 min */
 				setStbyTimer(120);
 			else if (stbyTimer < 300)	/* 5 min */
 				setStbyTimer(300);
@@ -203,7 +232,12 @@ void handleAction(actionID action, uint8_t *dispMode)
 	case ACTION_INPUT_2:
 	case ACTION_INPUT_3:
 		sndSetInput(action - ACTION_INPUT_0);
-		handleSetInput(dispMode);
+		*dispMode = MODE_SND_GAIN0 + sndGetInput();
+		setDisplayTime(DISPLAY_TIME_GAIN);
+		if (sndGetInput() == 0)
+			tunerSetMute(MUTE_OFF);
+		else
+			tunerSetMute(MUTE_ON);
 		break;
 	case ACTION_SWITCH_LOUDNESS:
 		sndSetLoudness(!sndGetLoudness());
@@ -273,59 +307,6 @@ void handleAction(actionID action, uint8_t *dispMode)
 		break;
 	}
 
-}
-
-/* Leave standby mode */
-void powerOn(void)
-{
-	PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
-	setWorkBrightness();
-
-	_delay_ms(100);						/* Wait while power is being set up */
-
-	tunerPowerOn();
-	sndPowerOn();
-
-	if (sndGetInput() == 0)
-		tunerSetMute(MUTE_OFF);
-	else
-		tunerSetMute(MUTE_ON);
-
-	return;
-}
-
-/* Entering standby mode */
-void powerOff(void)
-{
-	sndSetMute(MUTE_ON);
-
-	_delay_ms(100);
-
-	PORT(STMU_STBY) &= ~STMU_STBY_LINE;
-
-	setStbyBrightness();
-	stopEditTime();
-	setStbyTimer(STBY_TIMER_OFF);
-
-	sndPowerOff();
-	tunerPowerOff();
-	displayPowerOff();
-
-	return;
-}
-
-/* Next input */
-void handleSetInput(uint8_t *dispMode)
-{
-	*dispMode = MODE_SND_GAIN0 + sndGetInput();
-	setDisplayTime(DISPLAY_TIME_GAIN);
-
-	if (*dispMode == MODE_SND_GAIN0)
-		tunerSetMute(MUTE_OFF);
-	else
-		tunerSetMute(MUTE_ON);
-
-	return;
 }
 
 /* Next time edit parameter */
@@ -441,8 +422,10 @@ void handleEditAlarm(uint8_t *dispMode)
 	return;
 }
 
-void checkAlarmAndTime(uint8_t *dispMode)
+actionID checkAlarmAndTime(uint8_t *dispMode)
 {
+	actionID ret = ACTION_NOACTION;
+
 	if (getClockTimer() == 0) {
 		readTime();
 		readAlarm();
@@ -454,14 +437,12 @@ void checkAlarmAndTime(uint8_t *dispMode)
 			    (getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
 			   ) {
 				sndSetInput(getAlarm(DS1307_A0_INPUT));
-				powerOn();
-				*dispMode = MODE_TIME;
-				setDisplayTime(DISPLAY_TIME_TIME);
+				ret = ACTION_EXIT_STANDBY;
 			}
 		}
 
 		setClockTimer(200);				/* Limit check interval */
 	}
 
-	return;
+	return ret;
 }
