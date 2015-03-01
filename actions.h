@@ -65,6 +65,6 @@ void handleSwitchFmMode(uint8_t *dispMode);
 void handleStoreStation(uint8_t *dispMode);
 void handleChangeFM(uint8_t *dispMode, uint8_t step);
 void handleEditAlarm(uint8_t *dispMode);
-void checkAlarm(uint8_t *dispMode);
+void checkAlarmAndTime(uint8_t *dispMode);
 
 #endif /* ACTIONS_H */

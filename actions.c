@@ -441,17 +441,26 @@ void handleEditAlarm(uint8_t *dispMode)
 	return;
 }
 
-void checkAlarm(uint8_t *dispMode)
+void checkAlarmAndTime(uint8_t *dispMode)
 {
-	if ((getTime(DS1307_SEC) == 0) &&
-	    (getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
-	    (getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
-	    (getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
-	   ) {
-		sndSetInput(getAlarm(DS1307_A0_INPUT));
-		powerOn();
-		*dispMode = MODE_TIME;
-		setDisplayTime(DISPLAY_TIME_TIME);
+	if (getClockTimer() == 0) {
+		readTime();
+		readAlarm();
+
+		if (*dispMode == MODE_STANDBY) {
+			if ((getTime(DS1307_SEC) == 0) &&
+			    (getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
+			    (getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
+			    (getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
+			   ) {
+				sndSetInput(getAlarm(DS1307_A0_INPUT));
+				powerOn();
+				*dispMode = MODE_TIME;
+				setDisplayTime(DISPLAY_TIME_TIME);
+			}
+		}
+
+		setClockTimer(200);				/* Limit check interval */
 	}
 
 	return;

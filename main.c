@@ -58,19 +58,11 @@ int main(void)
 		if (stbyTimer == 0)
 			action = ACTION_GO_STANDBY;
 
-		ds18x20Process();
+		/* Control temperature */
 		tempControlProcess();
 
-		/* Limit update time/alarm interval */
-		if (getClockTimer() == 0) {
-			readTime();
-			readAlarm();
-
-			if (dispMode == MODE_STANDBY)
-				checkAlarm(&dispMode);
-
-			setClockTimer(200);
-		}
+		/* Check alarm and update time */
+		checkAlarmAndTime(&dispMode);
 
 		/* Convert input command to action */
 		action = getAction(&dispMode);

@@ -36,6 +36,8 @@ void tempControlProcess(void)
 {
 	int8_t temp1, temp2;
 
+	ds18x20Process();
+
 	temp1 = ds18x20GetTemp(0);
 	temp2 = ds18x20GetTemp(1);
 
