@@ -8,7 +8,7 @@
 #include "eeprom.h"
 
 static volatile int8_t encCnt;
-static volatile uint8_t cmdBuf;
+static volatile cmdID cmdBuf;
 static volatile int8_t encRes;
 
 /* Previous state */
@@ -264,9 +264,9 @@ int8_t getEncoder(void)
 	return ret;
 }
 
-uint8_t getBtnCmd(void)
+cmdID getBtnCmd(void)
 {
-	uint8_t ret = cmdBuf;
+	cmdID ret = cmdBuf;
 	cmdBuf = CMD_EMPTY;
 	return ret;
 }
@@ -286,7 +286,7 @@ uint16_t getEncBuf(void)
 	return encPrev;
 }
 
-void setRC5Buf(uint8_t addr, uint8_t cmd)
+void setRC5Buf(uint8_t addr, cmdID cmd)
 {
 	rc5SaveBuf &= (RC5_STBT_MASK | RC5_TOGB_MASK);
 	rc5SaveBuf |= ((addr<<6) | cmd);

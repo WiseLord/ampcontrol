@@ -3,7 +3,277 @@
 #include <util/delay.h>
 #include "display.h"
 #include "tuner/tuner.h"
-#include "input.h"
+
+actionID getAction(uint8_t *dispMode)
+{
+	actionID action = ACTION_NOACTION;
+	cmdID cmd;
+
+	/* Get command */
+	cmd = getBtnCmd();
+
+	/* Handle commands from remote control */
+	if (cmd < CMD_RC5_END)
+		action = cmd;
+
+	/* Handle commands from buttons*/
+	switch (cmd) {
+	case CMD_BTN_1:
+		action = ACTION_GO_STANDBY;
+		break;
+	case CMD_BTN_2:
+		action = ACTION_NEXT_INPUT;
+		break;
+	case CMD_BTN_3:
+		if (*dispMode == MODE_TIMER)
+			action = ACTION_CHANGE_TIMER;
+		else if (*dispMode == MODE_FM_TUNE || *dispMode == MODE_FM_RADIO)
+			action = ACTION_DEC_FM;
+		else if (*dispMode == MODE_TIME || *dispMode == MODE_TIME_EDIT)
+			action = ACTION_EDIT_TIME;
+		else if (*dispMode == MODE_ALARM || *dispMode == MODE_ALARM_EDIT)
+			action = ACTION_EDIT_ALARM;
+		else
+			action = ACTION_NEXT_SPMODE;
+		break;
+	case CMD_BTN_4:
+		if (*dispMode == MODE_FM_TUNE || *dispMode == MODE_FM_RADIO)
+			action = ACTION_INC_FM;
+		else
+			action = ACTION_SWITCH_MUTE;
+		break;
+	case CMD_BTN_5:
+		if (*dispMode == MODE_TEST)
+			action = ACTION_NEXT_RC5_CMD;
+		else {
+			action = ACTION_NEXT_SNDPARAM;
+		}
+		break;
+
+	case CMD_BTN_1_LONG:
+		if (*dispMode == MODE_TEST || *dispMode == MODE_TEMP)
+			action = ACTION_ZERO_DISPLAYTIME;
+		else
+			action = ACTION_BRIGHTNESS;
+		break;
+	case CMD_BTN_2_LONG:
+		action = ACTION_DEF_DISPLAY;
+		break;
+	case CMD_BTN_3_LONG:
+		if (*dispMode == MODE_TIME || *dispMode == MODE_TIME_EDIT)
+			action = ACTION_CHANGE_TIMER;
+		else if (*dispMode == MODE_TIMER)
+			action = ACTION_EDIT_ALARM;
+		else
+			action = ACTION_EDIT_TIME;
+		break;
+	case CMD_BTN_4_LONG:
+		action = ACTION_CHANGE_FM_MODE;
+		break;
+	case CMD_BTN_5_LONG:
+		action = ACTION_STORE_FM_STATION;
+		break;
+
+	case CMD_BTN_12_LONG:
+		action = ACTION_TESTMODE;
+		break;
+	case CMD_BTN_13_LONG:
+		action = ACTION_TEMPMODE;
+		break;
+	default:
+		break;
+	}
+
+	/* Remap GO_STANDBY command to EXIT_STANDBY if in standby mode */
+	if (action == ACTION_GO_STANDBY && *dispMode == MODE_STANDBY)
+		action = ACTION_EXIT_STANDBY;
+
+	/* Remap INPUT_3 command to SWITCH_LOUDNESS if there is no INPUT_3 */
+	if (action == ACTION_INPUT_3 && sndInputCnt() < 4)
+		action = ACTION_SWITCH_LOUDNESS;
+
+	/* Disable actions except NEXT_RC5_CMD and ZERO_DISPLAY_TIME in test mode */
+	if (*dispMode == MODE_TEST) {
+		if (action != ACTION_NOACTION)
+			setDisplayTime(DISPLAY_TIME_TEST);
+		if (action != ACTION_NEXT_RC5_CMD && action != ACTION_ZERO_DISPLAYTIME)
+			action = ACTION_NOACTION;
+	}
+	/* Disable actions except ZERO_DISPLAY_TIME in temp mode */
+	if (*dispMode == MODE_TEMP) {
+		if (action != ACTION_NOACTION)
+			setDisplayTime(DISPLAY_TIME_TEMP);
+		if (action != ACTION_ZERO_DISPLAYTIME)
+			action = ACTION_NOACTION;
+	}
+	/* Disable actions except POWERON, TESTMODE and TEMPMODE in standby mode */
+	if (*dispMode == MODE_STANDBY) {
+		if (action != ACTION_EXIT_STANDBY && action != ACTION_TESTMODE && action != ACTION_TEMPMODE)
+			action = ACTION_NOACTION;
+	}
+
+	return action;
+}
+
+
+void handleAction(actionID action, uint8_t *dispMode)
+{
+	int16_t stbyTimer = STBY_TIMER_OFF;
+
+	switch (action) {
+	case ACTION_EXIT_STANDBY:
+		powerOn();
+		*dispMode = getDefDisplay();
+		break;
+	case ACTION_GO_STANDBY:
+		powerOff();
+		*dispMode = MODE_STANDBY;
+		break;
+	case ACTION_NEXT_INPUT:
+		if (*dispMode >= MODE_SND_GAIN0 && *dispMode <= MODE_SND_GAIN3)
+			sndSetInput(sndGetInput() + 1);
+		handleSetInput(dispMode);
+		break;
+	case ACTION_CHANGE_TIMER:
+		stopEditTime();
+		if (*dispMode == MODE_TIMER) {
+			setSecTimer(2000);
+			stbyTimer = getStbyTimer();
+			if (stbyTimer < 120)		/* 2 min */
+				setStbyTimer(120);
+			else if (stbyTimer < 300)	/* 5 min */
+				setStbyTimer(300);
+			else if (stbyTimer < 600)	/* 10 min */
+				setStbyTimer(600);
+			else if (stbyTimer < 1200)	/* 20 min */
+				setStbyTimer(1200);
+			else if (stbyTimer < 2400)	/* 40 min */
+				setStbyTimer(2400);
+			else if (stbyTimer < 3600)	/* 1 hour */
+				setStbyTimer(3600);
+			else if (stbyTimer < 5400)	/* 1.5 hours */
+				setStbyTimer(5400);
+			else if (stbyTimer < 7200)	/* 2 hours */
+				setStbyTimer(7200);
+			else if (stbyTimer < 10800)	/* 3 hours */
+				setStbyTimer(10800);
+			else if (stbyTimer < 18000)	/* 5 hours */
+				setStbyTimer(18000);
+			else
+				setStbyTimer(STBY_TIMER_OFF);
+		}
+		*dispMode = MODE_TIMER;
+		setDisplayTime(DISPLAY_TIME_TIMER);
+		break;
+	case ACTION_EDIT_TIME:
+		handleEditTime(dispMode);
+		break;
+	case ACTION_EDIT_ALARM:
+		handleEditAlarm(dispMode);
+		break;
+	case ACTION_NEXT_SPMODE:
+		switchSpMode();
+		gdClear();
+		*dispMode = MODE_SPECTRUM;
+		setDisplayTime(DISPLAY_TIME_SP);
+		break;
+	case ACTION_SWITCH_MUTE:
+		handleSwitchMute(dispMode);
+		break;
+	case ACTION_NEXT_RC5_CMD:
+		gdClear();
+		nextRC5Cmd();
+		break;
+	case ACTION_NEXT_SNDPARAM:
+		sndNextParam(dispMode);
+		setDisplayTime(DISPLAY_TIME_AUDIO);
+		break;
+	case ACTION_ZERO_DISPLAYTIME:
+		setDisplayTime(0);
+		break;
+	case ACTION_BRIGHTNESS:
+		*dispMode = MODE_BR;
+		setDisplayTime(DISPLAY_TIME_BR);
+		break;
+	case ACTION_DEF_DISPLAY:
+		handleSetDefDisplay(dispMode);
+		break;
+	case ACTION_INPUT_0:
+	case ACTION_INPUT_1:
+	case ACTION_INPUT_2:
+	case ACTION_INPUT_3:
+		sndSetInput(action - ACTION_INPUT_0);
+		handleSetInput(dispMode);
+		break;
+	case ACTION_SWITCH_LOUDNESS:
+		sndSetLoudness(!sndGetLoudness());
+		*dispMode = MODE_LOUDNESS;
+		setDisplayTime(DISPLAY_TIME_AUDIO);
+		break;
+	case ACTION_NEXT_FALLSPEED:
+		switchFallSpeed();
+		*dispMode = MODE_SPECTRUM;
+		setDisplayTime(DISPLAY_TIME_SP);
+		break;
+	case ACTION_TESTMODE:
+		switch (*dispMode) {
+		case MODE_STANDBY:
+			*dispMode = MODE_TEST;
+			startTestMode();
+			setDisplayTime(DISPLAY_TIME_TEST);
+			break;
+		}
+		break;
+	case ACTION_TEMPMODE:
+		switch (*dispMode) {
+		case MODE_STANDBY:
+			*dispMode = MODE_TEMP;
+			setDisplayTime(DISPLAY_TIME_TEMP);
+			break;
+		}
+		break;
+	default:
+		if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
+			switch (action) {
+			case ACTION_FM_STATION_1:
+			case ACTION_FM_STATION_2:
+			case ACTION_FM_STATION_3:
+			case ACTION_FM_STATION_4:
+			case ACTION_FM_STATION_5:
+			case ACTION_FM_STATION_6:
+			case ACTION_FM_STATION_7:
+			case ACTION_FM_STATION_8:
+			case ACTION_FM_STATION_9:
+			case ACTION_FM_STATION_0:
+				tunerLoadStation(action - ACTION_FM_STATION_1);
+				*dispMode = MODE_FM_RADIO;
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				break;
+			case ACTION_INC_FM:
+				handleChangeFM(dispMode, SEARCH_UP);
+				break;
+			case ACTION_DEC_FM:
+				handleChangeFM(dispMode, SEARCH_DOWN);
+				break;
+			case ACTION_CHANGE_FM_MODE:
+				handleSwitchFmMode(dispMode);
+				break;
+			case ACTION_STORE_FM_STATION:
+				handleStoreStation(dispMode);
+				break;
+			case ACTION_SWITCH_FM_MONO:
+				tunerSwitchMono();
+				*dispMode = MODE_FM_RADIO;
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
+				break;
+			default:
+				break;
+			}
+		}
+		break;
+	}
+
+}
 
 /* Leave standby mode */
 void powerOn(void)

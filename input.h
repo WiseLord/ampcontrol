@@ -21,7 +21,7 @@
 /* RC5 support definitions */
 #define RC5_CMD_COUNT	32
 
-enum {
+typedef enum {
 	CMD_RC5_STBY,
 	CMD_RC5_MUTE,
 	CMD_RC5_MENU,
@@ -38,8 +38,8 @@ enum {
 	CMD_RC5_FALLSPEED,
 	CMD_RC5_DISPLAY,
 	CMD_RC5_TIMER,
-	CMD_RC5_ALARM,
 
+	CMD_RC5_ALARM,
 	CMD_RC5_FM_CHAN_UP,
 	CMD_RC5_FM_CHAN_DOWN,
 	CMD_RC5_FM_TUNE,
@@ -56,6 +56,8 @@ enum {
 	CMD_RC5_FM_9,
 	CMD_RC5_FM_0,
 
+	CMD_RC5_END,
+
 	CMD_BTN_1,
 	CMD_BTN_2,
 	CMD_BTN_3,
@@ -70,7 +72,7 @@ enum {
 	CMD_BTN_13_LONG,
 
 	CMD_EMPTY = 0xEF
-};
+} cmdID;
 
 /* Handling long press actions */
 #define SHORT_PRESS		100
@@ -81,13 +83,13 @@ enum {
 void inputInit();
 
 int8_t getEncoder(void);
-uint8_t getBtnCmd(void);
+cmdID getBtnCmd(void);
 
 uint16_t getRC5Buf(void);
 uint16_t getBtnBuf(void);
 uint16_t getEncBuf(void);
 
-void setRC5Buf(uint8_t addr, uint8_t cmd);
+void setRC5Buf(uint8_t addr, cmdID cmd);
 
 void setDisplayTime(uint16_t value);
 uint16_t getDisplayTime(void);
