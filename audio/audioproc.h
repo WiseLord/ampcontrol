@@ -4,6 +4,7 @@
 #include <inttypes.h>
 #include "tda731x.h"
 #include "tda7439.h"
+#include "tda7448.h"
 #include "../pins.h"
 
 typedef enum {
@@ -12,6 +13,7 @@ typedef enum {
 	AUDIOPROC_TDA7313,
 	AUDIOPROC_TDA7314,
 	AUDIOPROC_TDA7318,
+	AUDIOPROC_TDA7448,
 	AUDIOPROC_END
 } audioProc;
 

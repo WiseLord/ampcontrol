@@ -148,6 +148,19 @@ void sndInit(void)
 		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN3].set =tda731xSetGain ;
 		break;
+	case AUDIOPROC_TDA7448:
+		sndPar[MODE_SND_VOLUME].grid = &grid[1];
+		sndPar[MODE_SND_FRONTREAR].grid = &grid[4];
+		sndPar[MODE_SND_BALANCE].grid = &grid[4];
+		sndPar[MODE_SND_CENTER].grid = &grid[4];
+		sndPar[MODE_SND_SUBWOOFER].grid = &grid[4];
+		_inCnt = TDA7448_IN_CNT;
+		sndPar[MODE_SND_VOLUME].set = tda7448SetVolume;
+		sndPar[MODE_SND_FRONTREAR].set = tda7448SetFrontRear;
+		sndPar[MODE_SND_BALANCE].set= tda7448SetBalance;
+		sndPar[MODE_SND_CENTER].set = tda7448SetCenter;
+		sndPar[MODE_SND_SUBWOOFER].set = tda7448SetSubwoofer;
+		break;
 	default:
 		break;
 	}
