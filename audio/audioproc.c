@@ -160,6 +160,8 @@ void sndInit(void)
 	sndPar[MODE_SND_PREAMP].icon = icons_24_preamp;
 	sndPar[MODE_SND_FRONTREAR].icon = icons_24_frontrear;
 	sndPar[MODE_SND_BALANCE].icon = icons_24_balance;
+	sndPar[MODE_SND_CENTER].icon = icons_24_center;
+	sndPar[MODE_SND_SUBWOOFER].icon = icons_24_subwoofer;
 	sndPar[MODE_SND_GAIN0].icon = icons_24_tuner;
 	sndPar[MODE_SND_GAIN1].icon = icons_24_pc;
 	sndPar[MODE_SND_GAIN2].icon = icons_24_tv;
