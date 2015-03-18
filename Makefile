@@ -39,19 +39,21 @@ AD_MCU = -p $(MCU)
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
 
 OBJDIR = obj
+SUBDIRS = audio display tuner
 OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
 ELF = $(OBJDIR)/$(TARG).elf
 
 all: $(TARG)
 
-$(TARG): $(OBJS)
+$(TARG): dirs $(OBJS)
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
-	mkdir -p flash
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$@.hex
 	./size.sh $(ELF)
 
+dirs:
+	mkdir -p flash $(addprefix $(OBJDIR)/, $(SUBDIRS))
+
 obj/%.o: %.c
-	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -D$(DISPLAY) -c -o $@ $<
 
 clean:
