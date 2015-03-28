@@ -48,11 +48,11 @@ void tda731xSetBalance(int8_t val)
 	int8_t spRearRight = 0;
 
 	if (sndPar[MODE_SND_BALANCE].value > 0) {
-		spFrontRight -= sndPar[MODE_SND_BALANCE].value;
-		spRearRight -= sndPar[MODE_SND_BALANCE].value;
+		spFrontLeft -= sndPar[MODE_SND_BALANCE].value;
+		spRearLeft -= sndPar[MODE_SND_BALANCE].value;
 	} else {
-		spFrontLeft += sndPar[MODE_SND_BALANCE].value;
-		spRearLeft += sndPar[MODE_SND_BALANCE].value;
+		spFrontRight += sndPar[MODE_SND_BALANCE].value;
+		spRearRight += sndPar[MODE_SND_BALANCE].value;
 	}
 	if (sndPar[MODE_SND_FRONTREAR].value > 0) {
 		spRearLeft -= sndPar[MODE_SND_FRONTREAR].value;

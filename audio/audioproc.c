@@ -16,6 +16,7 @@ static const sndGrid grid[] PROGMEM = {
 	{-15, 15, 1.25 * 8},	/* 7: -18.75..18.75dB with 1.25dB step */
 	{  0,  3, 3.75 * 8},	/* 8: 0..11.25dB with 3.75dB step */
 	{  0,  3, 6.25 * 8},	/* 9: 0..18.75dB with 6.25dB step */
+	{-21,  0, 1.00 * 8},	/* 4: -21..0dB with 1dB step */
 };
 
 static sndParam sndPar[MODE_SND_END];
@@ -39,6 +40,7 @@ void sndInit(void)
 
 	tda7439Init(sndPar);
 	tda731xInit(sndPar);
+	tda7448Init(sndPar);
 
 	/* Load audio parameters stored in eeprom */
 	for (i = 0; i < MODE_SND_END; i++) {
@@ -152,14 +154,14 @@ void sndInit(void)
 		sndPar[MODE_SND_VOLUME].grid = &grid[1];
 		sndPar[MODE_SND_FRONTREAR].grid = &grid[4];
 		sndPar[MODE_SND_BALANCE].grid = &grid[4];
-		sndPar[MODE_SND_CENTER].grid = &grid[4];
-		sndPar[MODE_SND_SUBWOOFER].grid = &grid[4];
+		sndPar[MODE_SND_CENTER].grid = &grid[10];
+		sndPar[MODE_SND_SUBWOOFER].grid = &grid[10];
 		_inCnt = TDA7448_IN_CNT;
-		sndPar[MODE_SND_VOLUME].set = tda7448SetVolume;
-		sndPar[MODE_SND_FRONTREAR].set = tda7448SetFrontRear;
-		sndPar[MODE_SND_BALANCE].set= tda7448SetBalance;
-		sndPar[MODE_SND_CENTER].set = tda7448SetCenter;
-		sndPar[MODE_SND_SUBWOOFER].set = tda7448SetSubwoofer;
+		sndPar[MODE_SND_VOLUME].set = tda7448SetSpeakers;
+		sndPar[MODE_SND_FRONTREAR].set = tda7448SetSpeakers;
+		sndPar[MODE_SND_BALANCE].set= tda7448SetSpeakers;
+		sndPar[MODE_SND_CENTER].set = tda7448SetSpeakers;
+		sndPar[MODE_SND_SUBWOOFER].set = tda7448SetSpeakers;
 		break;
 	default:
 		break;
@@ -247,6 +249,8 @@ void sndSetMute(uint8_t value)
 	case AUDIOPROC_TDA7318:
 		tda731xSetMute(_mute);
 		break;
+	case AUDIOPROC_TDA7448:
+		tda7448SetMute(_mute);
 	default:
 		break;
 	}
