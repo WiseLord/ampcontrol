@@ -82,11 +82,8 @@ int main(void)
 		/* Check if we need exit to default mode*/
 		handleExitDefaultMode();
 
-		/* Switch to timer mode if it expires (less then minute) */
-		handleTimerExpires();
-
 		/* Switch to timer mode if it expires */
-		handleSilenceTimer();
+		handleTimers();
 
 		/* Clear screen if mode has changed */
 		handleModeChange();

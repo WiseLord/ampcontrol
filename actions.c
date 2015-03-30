@@ -493,28 +493,28 @@ void handleExitDefaultMode(void)
 	return;
 }
 
-void handleTimerExpires(void)
+void handleTimers(void)
 {
-	if (getStbyTimer() >= 0 && getStbyTimer() <= 60 && getDisplayTime() == 0) {
-		dispMode = MODE_TIMER;
-		setDisplayTime(DISPLAY_TIME_TIMER_EXP);
-	}
+	int16_t silenceTimer, stbyTimer;
 
-	return;
-}
+	stbyTimer = getStbyTimer();
+	silenceTimer = getSilenceTimer();
 
-void handleSilenceTimer(void)
-{
 	if (dispMode != MODE_STANDBY && dispMode != MODE_TEST && dispMode != MODE_TEMP) {
 		if (getSignalLevel() > 5) {
 			setSilenceTimer(SILENCE_TIMER);
+			silenceTimer = SILENCE_TIMER;
 			if (dispMode == MODE_SILENCE_TIMER)
 				dispMode = defDispMode();
 		}
-	if (getSilenceTimer() >= 0 && getSilenceTimer() < 60) {
+		if (silenceTimer >= 0 && silenceTimer < 60 && (silenceTimer < stbyTimer || stbyTimer == STBY_TIMER_OFF)) {
 			dispMode = MODE_SILENCE_TIMER;
 			setDisplayTime(DISPLAY_TIME_TIMER_EXP);
 		}
+	}
+	if (stbyTimer >= 0 && stbyTimer <= 60 && stbyTimer <= silenceTimer && getDisplayTime() == 0) {
+		dispMode = MODE_TIMER;
+		setDisplayTime(DISPLAY_TIME_TIMER_EXP);
 	}
 
 	return;

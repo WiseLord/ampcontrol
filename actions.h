@@ -100,8 +100,7 @@ void handleChangeFM(uint8_t step);
 actionID checkAlarmAndTime(void);
 
 void handleExitDefaultMode(void);
-void handleTimerExpires(void);
-void handleSilenceTimer(void);
+void handleTimers(void);
 void handleModeChange(void);
 
 void showScreen(void);
