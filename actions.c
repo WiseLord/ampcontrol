@@ -9,6 +9,22 @@
 static uint8_t dispMode = MODE_STANDBY;
 static uint8_t dispModePrev = MODE_STANDBY;
 
+static uint8_t defDispMode(void)
+{
+	uint8_t ret;
+
+	if (getDefDisplay() == MODE_FM_RADIO) {
+		if (sndGetInput() != 0 || tunerGetType() == TUNER_NO)
+			ret = MODE_SPECTRUM;
+		else
+			ret = MODE_FM_RADIO;
+	} else {
+		ret = getDefDisplay();
+	}
+
+	return ret;
+}
+
 actionID getAction(void)
 {
 	actionID action = ACTION_NOACTION;
@@ -150,7 +166,7 @@ void handleAction(actionID action)
 		else
 			tunerSetMute(MUTE_ON);
 
-		dispMode = getDefDisplay();
+		dispMode = defDispMode();
 
 		setSilenceTimer(SILENCE_TIMER);
 
@@ -469,14 +485,7 @@ void handleExitDefaultMode(void)
 			dispMode = MODE_STANDBY;
 			break;
 		default:
-			if (getDefDisplay() == MODE_FM_RADIO) {
-				if (sndGetInput() != 0 || tunerGetType() == TUNER_NO)
-					dispMode = MODE_SPECTRUM;
-				else
-					dispMode = MODE_FM_RADIO;
-			} else {
-				dispMode = getDefDisplay();
-			}
+			dispMode = defDispMode();
 			break;
 		}
 	}
@@ -500,7 +509,7 @@ void handleSilenceTimer(void)
 		if (getSignalLevel() > 5) {
 			setSilenceTimer(SILENCE_TIMER);
 			if (dispMode == MODE_SILENCE_TIMER)
-				dispMode = getDefDisplay();
+				dispMode = defDispMode();
 		}
 	if (getSilenceTimer() >= 0 && getSilenceTimer() < 60) {
 			dispMode = MODE_SILENCE_TIMER;
