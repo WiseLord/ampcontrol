@@ -16,7 +16,8 @@ static const sndGrid grid[] PROGMEM = {
 	{-15, 15, 1.25 * 8},	/* 7: -18.75..18.75dB with 1.25dB step */
 	{  0,  3, 3.75 * 8},	/* 8: 0..11.25dB with 3.75dB step */
 	{  0,  3, 6.25 * 8},	/* 9: 0..18.75dB with 6.25dB step */
-	{-21,  0, 1.00 * 8},	/* 4: -21..0dB with 1dB step */
+	{-21,  0, 1.00 * 8},	/*10: -21..0dB with 1dB step */
+	{-96, 31, 1.00 * 8},	/*11: -96..31dB with 1dB step */
 };
 
 static sndParam sndPar[MODE_SND_END];
@@ -41,6 +42,7 @@ void sndInit(void)
 	tda7439Init(sndPar);
 	tda731xInit(sndPar);
 	tda7448Init(sndPar);
+	pga2310Init(sndPar);
 
 	/* Load audio parameters stored in eeprom */
 	for (i = 0; i < MODE_SND_END; i++) {
@@ -163,6 +165,13 @@ void sndInit(void)
 		sndPar[MODE_SND_CENTER].set = tda7448SetSpeakers;
 		sndPar[MODE_SND_SUBWOOFER].set = tda7448SetSpeakers;
 		break;
+	case AUDIOPROC_PGA2310:
+		sndPar[MODE_SND_VOLUME].grid = &grid[11];
+		sndPar[MODE_SND_BALANCE].grid = &grid[4];
+		_inCnt = PGA2310_IN_CNT;
+		sndPar[MODE_SND_VOLUME].set = pga2310SetSpeakers;
+		sndPar[MODE_SND_BALANCE].set = pga2310SetSpeakers;
+		break;
 	default:
 		break;
 	}
@@ -251,6 +260,8 @@ void sndSetMute(uint8_t value)
 		break;
 	case AUDIOPROC_TDA7448:
 		tda7448SetMute(_mute);
+	case AUDIOPROC_PGA2310:
+		pga2310SetMute(_mute);
 	default:
 		break;
 	}
