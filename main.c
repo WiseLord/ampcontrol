@@ -1,15 +1,21 @@
 #include <avr/interrupt.h>
+#include <avr/eeprom.h>
 
+#include "eeprom.h"
 #include "adc.h"
 #include "input.h"
 #include "rc5.h"
 #include "i2c.h"
-
 #include "display.h"
 #include "tuner/tuner.h"
 #include "temp.h"
-
 #include "actions.h"
+
+#define USE_DS18B20			(1<<0)
+#define USE_LM7001			(1<<1)
+#define USE_PGA2310			(1<<2)
+
+static uint8_t extFunc;
 
 /* Hardware initialization */
 static void hwInit(void)
@@ -17,8 +23,12 @@ static void hwInit(void)
 	displayInit();							/* Load params and text labels before fb scan started */
 	sei();									/* Gloabl interrupt enable */
 
-	ds18x20SearchDevices();
-	tempInit();								/* Init temperature control */
+	extFunc = eeprom_read_byte(eepromExtFunc);
+
+	if (extFunc & USE_DS18B20) {
+		ds18x20SearchDevices();
+		tempInit();							/* Init temperature control */
+	}
 
 	inputInit();							/* Buttons/encoder polling */
 
@@ -47,7 +57,8 @@ int main(void)
 
 	while (1) {
 		/* Control temperature */
-		tempControlProcess();
+		if (extFunc & USE_DS18B20)
+			tempControlProcess();
 
 		/* Emulate poweroff if any of timers expired */
 		if (getStbyTimer() == 0 || getSilenceTimer() == 0)

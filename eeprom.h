@@ -32,6 +32,7 @@
 #define eepromTempTH			((void*)0x3A)
 #define eepromAdcCorrL			((void*)0x3B)
 #define eepromAdcCorrR			((void*)0x3C)
+#define eepromExtFunc			((void*)0x3D)
 
 /* RC5 commands array */
 #define eepromRC5Cmd			((uint8_t*)0x40)
