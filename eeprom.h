@@ -4,41 +4,34 @@
 #include <inttypes.h>
 #include "audio/audio.h"
 
-/* Parameters values */
+/* Audio parameters values */
 #define eepromVolume			((void*)0x00)
-#define eepromBass				((void*)0x01)
-#define eepromMiddle			((void*)0x02)
-#define eepromTreble			((void*)0x03)
-#define eepromPreamp			((void*)0x04)
-#define eepromBalance			((void*)0x05)
-#define eepromGain0				((void*)0x06)
-#define eepromGain1				((void*)0x07)
-#define eepromGain2				((void*)0x08)
-#define eepromGain3				((void*)0x09)
 
-/* Some values stored in EEPROM */
-#define eepromLoudness			((void*)0x0C)
-#define eepromInput				((void*)0x0D)
-#define eepromAudioproc			((void*)0x0E)
+/* FM tuner parameters valus */
+#define eepromFMTuner			((void*)0x20)
+#define eepromFMStep			((void*)0x21)
+#define eepromFMMono			((void*)0x22)
+#define eepromFMCtrl			((void*)0x23)
+#define eepromFMFreq			((uint16_t*)0x24)
 
-#define eepromSpMode			((void*)0x10)
-#define eepromDisplay			((void*)0x11)
-#define eepromBrStby			((void*)0x12)
-#define eepromBrWork			((void*)0x13)
-#define eepromFallSpeed			((void*)0x14)
+/* Audio processor values */
+#define eepromAudioproc			((void*)0x28)
+#define eepromInput				((void*)0x29)
+#define eepromLoudness			((void*)0x2A)
 
-#define eepromEncRes			((void*)0x15)
+/* Display parameters */
+#define eepromSpMode			((void*)0x30)
+#define eepromDisplay			((void*)0x31)
+#define eepromBrStby			((void*)0x32)
+#define eepromBrWork			((void*)0x33)
+#define eepromFallSpeed			((void*)0x34)
 
-#define eepromFMFreq			((void*)0x16)
-#define eepromFMCtrl			((void*)0x18)
-#define eepromFMMono			((void*)0x19)
-#define eepromFMStep			((void*)0x1A)
-#define eepromFMTuner			((void*)0x1B)
-
-#define eepromRC5Addr			((void*)0x1C)
-#define eepromTempTH			((void*)0x1D)
-#define eepromAdcCorrL			((void*)0x1E)
-#define eepromAdcCorrR			((void*)0x1F)
+/* Other parameters */
+#define eepromEncRes			((void*)0x38)
+#define eepromRC5Addr			((void*)0x39)
+#define eepromTempTH			((void*)0x3A)
+#define eepromAdcCorrL			((void*)0x3B)
+#define eepromAdcCorrR			((void*)0x3C)
 
 /* RC5 commands array */
 #define eepromRC5Cmd			((uint8_t*)0x40)
