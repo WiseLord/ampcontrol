@@ -11,10 +11,6 @@
 #include "temp.h"
 #include "actions.h"
 
-#define USE_DS18B20			(1<<0)
-#define USE_LM7001			(1<<1)
-#define USE_PGA2310			(1<<2)
-
 static uint8_t extFunc;
 
 /* Hardware initialization */
@@ -36,7 +32,7 @@ static void hwInit(void)
 	adcInit();								/* Analog-to-digital converter */
 	I2CInit();								/* I2C bus */
 
-	tunerInit();							/* Tuner */
+	tunerInit(extFunc);						/* Tuner */
 
 	DDR(STMU_STBY) |= STMU_STBY_LINE;		/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;		/* Mute port */

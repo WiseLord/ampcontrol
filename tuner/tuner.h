@@ -5,12 +5,14 @@
 #include "tea5767.h"
 #include "rda5807.h"
 #include "tux032.h"
+#include "lm7001.h"
 
 typedef enum {
 	TUNER_NO = 0,
 	TUNER_TEA5767,
 	TUNER_RDA5807,
 	TUNER_TUX032,
+	TUNER_LM7001,
 	TUNER_END
 } tunerIC;
 
@@ -25,7 +27,7 @@ typedef enum {
 #define FM_FREQ_MIN			7600
 #define FM_FREQ_MAX			10800
 
-void tunerInit(void);
+void tunerInit(uint8_t extFunc);
 tunerIC tunerGetType(void);
 
 void tunerSetFreq(uint16_t freq);

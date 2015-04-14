@@ -9,8 +9,9 @@ static tunerIC _tuner;
 static uint16_t _freq;
 static uint8_t _mono;
 static uint8_t _step;
+static uint8_t useLM7001;
 
-void tunerInit(void)
+void tunerInit(uint8_t extFunc)
 {
 	uint8_t ctrl;
 
@@ -19,6 +20,8 @@ void tunerInit(void)
 	_freq = eeprom_read_word(eepromFMFreq);
 	_mono = eeprom_read_byte(eepromFMMono);
 	_step = eeprom_read_byte(eepromFMStep);
+
+	useLM7001 = extFunc & USE_LM7001;
 
 	if (_tuner >= TUNER_END)
 		_tuner = TUNER_TEA5767;
@@ -32,6 +35,10 @@ void tunerInit(void)
 		break;
 	case TUNER_TUX032:
 		tux032Init();
+		break;
+	case TUNER_LM7001:
+		if (useLM7001)
+			lm7001Init();
 		break;
 	default:
 		break;
@@ -66,6 +73,9 @@ void tunerSetFreq(uint16_t freq)
 	case TUNER_TUX032:
 		tux032SetFreq(_freq);
 		break;
+	case TUNER_LM7001:
+		if (useLM7001)
+			lm7001SetFreq(_freq);
 	default:
 		break;
 	}
@@ -151,13 +161,11 @@ uint8_t tunerLevel(void)
 		else
 			ret = (rawLevel - 24) >> 1;
 		break;
-	case TUNER_TUX032:
+	default:
 		if (tunerStereo())
 			ret = 13;
 		else
 			ret = 3;
-		break;
-	default:
 		break;
 	}
 

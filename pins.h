@@ -103,6 +103,11 @@
 #define BUTTON_5			D
 #define BUTTON_5_LINE		(1<<7)
 
+/* Ext function options */
+#define USE_DS18B20			(1<<0)
+#define USE_LM7001			(1<<1)
+#define USE_PGA2310			(1<<2)
+
 /* 1-wire definitions */
 #define ONE_WIRE			C
 #define ONE_WIRE_LINE		(1<<2)
@@ -110,5 +115,13 @@
 #define FAN1_WIRE			(1<<3)
 #define FAN2				C
 #define FAN2_WIRE			(1<<4)
+
+/* LM7001 definitions */
+#define LM7001_DATA			C
+#define LM7001_DATA_LINE	(1<<2)
+#define LM7001_CL			C
+#define LM7001_CL_LINE		(1<<3)
+#define LM7001_CE			C
+#define LM7001_CE_LINE		(1<<4)
 
 #endif /* PINS_H */
