@@ -83,10 +83,9 @@ void rda5807SetVolume(int8_t value)
 {
 	_volume = value;
 
-	if (_volume) {
-		wrBuf[7] &= 0xF0;
+	wrBuf[7] &= ~RDA5807_VOLUME;
+	if (_volume)
 		wrBuf[7] |= (_volume - 1);
-	}
 
 	rda5807SetMute(!_volume);
 

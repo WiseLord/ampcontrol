@@ -161,13 +161,14 @@ void handleAction(actionID action)
 		tunerPowerOn();
 		sndPowerOn();
 
-		if (sndGetInput() == 0)
+		if (sndGetInput() == 0) {
 			tunerSetMute(MUTE_OFF);
-		else
+			tunerSetFreq(tunerGetFreq());
+		} else {
 			tunerSetMute(MUTE_ON);
+		}
 
 		dispMode = defDispMode();
-
 		setSilenceTimer(SILENCE_TIMER);
 
 		break;
