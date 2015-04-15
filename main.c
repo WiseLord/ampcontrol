@@ -36,7 +36,7 @@ static void hwInit(void)
 
 	DDR(STMU_STBY) |= STMU_STBY_LINE;		/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;		/* Mute port */
-	sndInit();								/* Load labels/icons/etc */
+	sndInit(extFunc);								/* Load labels/icons/etc */
 
 	setStbyTimer(0);
 

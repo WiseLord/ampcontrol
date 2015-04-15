@@ -19,7 +19,7 @@ typedef enum {
 	AUDIOPROC_END
 } audioProc;
 
-void sndInit(void);
+void sndInit(uint8_t extFunc);
 
 sndParam *sndParAddr(uint8_t index);
 

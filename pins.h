@@ -124,4 +124,12 @@
 #define LM7001_CE			C
 #define LM7001_CE_LINE		(1<<4)
 
+/* PGA2310 definitions */
+#define PGA2310_SDI			C
+#define PGA2310_SDI_LINE	(1<<2)
+#define PGA2310_SCLK		C
+#define PGA2310_SCLK_LINE	(1<<3)
+#define PGA2310_CS			C
+#define PGA2310_CS_LINE		(1<<4)
+
 #endif /* PINS_H */

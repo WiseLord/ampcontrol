@@ -27,22 +27,18 @@ static uint8_t _inCnt;
 static uint8_t _input;
 static uint8_t _mute;
 static uint8_t _loudness;
+static uint8_t usePGA2310;
 
 static void setNothing(int8_t val)
 {
 	return;
 }
 
-void sndInit(void)
+void sndInit(uint8_t extFunc)
 {
 	uint8_t i;
 
 	uint8_t **txtLabels = getTxtLabels();
-
-	tda7439Init(sndPar);
-	tda731xInit(sndPar);
-	tda7448Init(sndPar);
-	pga2310Init(sndPar);
 
 	/* Load audio parameters stored in eeprom */
 	for (i = 0; i < MODE_SND_END; i++) {
@@ -54,6 +50,27 @@ void sndInit(void)
 	_aproc = eeprom_read_byte(eepromAudioproc);
 	if (_aproc >= AUDIOPROC_END)
 		_aproc = AUDIOPROC_TDA7439;
+
+	switch (_aproc) {
+	case AUDIOPROC_TDA7439:
+		tda7439Init(sndPar);
+		break;
+	case AUDIOPROC_TDA7312:
+	case AUDIOPROC_TDA7313:
+	case AUDIOPROC_TDA7314:
+	case AUDIOPROC_TDA7318:
+		tda731xInit(sndPar);
+		break;
+	case AUDIOPROC_TDA7448:
+		tda7448Init(sndPar);
+		break;
+	case AUDIOPROC_PGA2310:
+		if (usePGA2310)
+			pga2310Init(sndPar);
+		break;
+	default:
+		break;
+	}
 
 	/* Init grid and functions with empty values */
 	for (i = 0; i < MODE_SND_END; i++) {
