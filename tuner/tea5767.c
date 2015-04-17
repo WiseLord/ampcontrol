@@ -5,7 +5,7 @@
 static uint8_t wrBuf[5];
 static uint8_t rdBuf[5];
 
-static uint8_t ctrl = 0x71;
+static uint8_t ctrl = 0x79;
 
 #define TEA5767_CTRL_HCC		(1<<6)
 #define TEA5767_CTRL_SNC		(1<<5)
