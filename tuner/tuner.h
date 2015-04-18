@@ -24,7 +24,7 @@ typedef enum {
 #define FM_MONO				1
 #define FM_STEREO			0
 
-#define FM_FREQ_MIN			7600
+#define FM_FREQ_MIN			8700
 #define FM_FREQ_MAX			10800
 
 void tunerInit(uint8_t extFunc);
