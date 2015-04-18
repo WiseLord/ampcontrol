@@ -9,6 +9,7 @@
 #include "ds18x20.h"
 #include "temp.h"
 #include "adc.h"
+#include "tuner/rds.h"
 
 int8_t brStby;								/* Brightness in standby mode */
 int8_t brWork;								/* Brightness in working mode */
@@ -44,8 +45,8 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			color = 0x01;
 		}
 		if (!(i & 0x01)) {
-			for (j = 29; j < 40; j++) {
-				if (j == 34) {
+			for (j = 28; j < 39; j++) {
+				if (j == 33) {
 					gdDrawPixel(i, j, 1);
 				} else {
 					gdDrawPixel(i, j, color);
@@ -60,7 +61,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 static void showParValue(int8_t value)
 {
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-	gdSetXY(94, 32);
+	gdSetXY(94, 30);
 	gdWriteNum(value, 3, ' ', 10);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
@@ -329,6 +330,7 @@ void showRadio(uint8_t tune)
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();
 	uint8_t favNum = tunerFavStationNum();
+	static uint8_t rdsMode;
 
 	uint8_t i;
 
@@ -370,7 +372,7 @@ void showRadio(uint8_t tune)
 
 	/* Station number */
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-	gdSetXY(94, 32);
+	gdSetXY(94, 30);
 	if (num)
 		gdWriteNum(num, 3, ' ', 10);
 	else
@@ -379,11 +381,30 @@ void showRadio(uint8_t tune)
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
-	drawBarSpectrum();
 
+	/* Select between RDS and spectrum mode */
+	if (rdsMode) {
+		gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
+		gdSetXY(0, 40);
+		gdWriteString(rdsGetText());
+		gdDrawFilledRect(gdGetX(), 40, 103 - gdGetX(), 24, 0);
+		rdsMode = 0;
+	} else {
+		drawBarSpectrum();
+	}
+	rdsMode = rdsGetFlag();
+
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	if (tune == MODE_RADIO_TUNE) {
 		gdSetXY(103, 56);
 		gdWriteString((uint8_t*)"\xDB\xDB\xD0\xDC\xDC");
+	} else {
+		gdSetXY(110, 56);
+		if (rdsMode) {
+			gdWriteString((uint8_t*)"RDS");
+		} else {
+			gdWriteString((uint8_t*)"   ");
+		}
 	}
 
 	return;

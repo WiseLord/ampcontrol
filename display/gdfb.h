@@ -68,6 +68,7 @@ void gdDrawFilledRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
 void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color);
 
 void gdSetXY(uint8_t x, uint8_t y);
+uint8_t gdGetX(void);
 void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
 
 void gdWriteChar(uint8_t code);

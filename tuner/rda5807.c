@@ -1,9 +1,10 @@
 #include "rda5807.h"
 
 #include "../i2c.h"
+#include "rds.h"
 
 static uint8_t wrBuf[8];
-static uint8_t rdBuf[5];
+static uint8_t rdBuf[12];
 static uint8_t _volume = RDA5807_VOL_MAX;
 
 static void rda5807WriteI2C(void)
@@ -21,7 +22,7 @@ static void rda5807WriteI2C(void)
 void rda5807Init(void)
 {
 	wrBuf[0] = RDA5807_DHIZ;
-	wrBuf[1] = RDA5807_CLK_MODE_32768 | RDA5807_NEW_METHOD | RDA5807_ENABLE;
+	wrBuf[1] = RDA5807_CLK_MODE_32768 | RDA5807_RDS_EN | RDA5807_NEW_METHOD | RDA5807_ENABLE;
 	wrBuf[2] = 0;
 	wrBuf[3] = RDA5807_BAND | RDA5807_SPACE;
 	wrBuf[4] = 0;
@@ -50,6 +51,8 @@ void rda5807SetFreq(uint16_t freq, uint8_t mono)
 
 	rda5807WriteI2C();
 
+	rdsDisable();
+
 	return;
 }
 
@@ -62,6 +65,18 @@ uint8_t *rda5807ReadStatus(void)
 		I2CReadByte(&rdBuf[i], I2C_ACK);
 	I2CReadByte(&rdBuf[sizeof(rdBuf) - 1], I2C_NOACK);
 	I2CStop();
+
+	/* If seek/tune is complete and current channel is a station */
+	if ((rdBuf[0] & RDA5807_STC) && (rdBuf[2] & RDA5807_FM_TRUE)) {
+		/* If RDS ready and sync flag are set */
+		if ((rdBuf[0] & RDA5807_RDSR) && (rdBuf[0] & RDA5807_RDSS)) {
+			/* If there are no errors in blocks A and B */
+			if (!(rdBuf[3] & (RDA5807_BLERA | RDA5807_BLERB))) {
+				/* Send rdBuf[4..11] as 16-bit blocks A-D */
+				rdsSetBlocks(&rdBuf[4]);
+			}
+		}
+	}
 
 	return rdBuf;
 }

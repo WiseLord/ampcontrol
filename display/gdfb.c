@@ -193,6 +193,11 @@ void gdSetXY(uint8_t x, uint8_t y)
 	return;
 }
 
+uint8_t gdGetX(void)
+{
+	return _x;
+}
+
 void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction)
 {
 	uint8_t i;
