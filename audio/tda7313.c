@@ -81,13 +81,6 @@ static void setTreble(int8_t val)
 	return;
 }
 
-static void setBalanceFrontRear(int8_t val)
-{
-	setVolume(sndPar[SND_VOLUME].value);
-
-	return;
-}
-
 static void setBalance(int8_t val)
 {
 	setVolume(sndPar[SND_VOLUME].value);
@@ -217,7 +210,7 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_VOLUME].set = setVolume;
 	sndPar[SND_BASS].set = setBass;
 	sndPar[SND_TREBLE].set = setTreble;
-	sndPar[SND_FRONTREAR].set = setBalanceFrontRear;
+	sndPar[SND_FRONTREAR].set = setBalance;
 	sndPar[SND_BALANCE].set = setBalance;
 
 	for (i = 0; i < CHAN_CNT; i++)
@@ -231,7 +224,7 @@ void setAudioParams(void)
 	muteVolume();
 	setChan(chan);
 	setBass(sndPar[SND_BASS].value);
-	setBalanceFrontRear(0);
+	setBalance(0);
 	setTreble(sndPar[SND_TREBLE].value);
 	unmuteVolume();
 

@@ -37,10 +37,10 @@ SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $
 MCU = atmega8
 F_CPU = 8000000L
 
-OPTIMIZE = -Os -mcall-prologues -fshort-enums
+OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
-LDFLAGS = $(DEBUG) -mmcu=$(MCU)
+LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
