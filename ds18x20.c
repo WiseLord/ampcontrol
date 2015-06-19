@@ -271,7 +271,7 @@ int16_t ds18x20GetTemp(uint8_t num)
 	if (devs[num].id[0] == 0x28) /* DS18B20 */
 		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 5 / 8;
 	else if (devs[num].id[0] == 0x10) /* DS18S20 */
-		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 2;
+		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 5;
 
 	return ret / 10;
 }
