@@ -5,12 +5,16 @@
 #include "ds1307.h"
 #include "audio/audioproc.h"
 
+#ifdef KS0066_16X2_PCF8574
+#define KS0066
+#endif
+
 #ifdef KS0066_16X2
 #define KS0066
 #endif
 
 #ifdef KS0066
-
+#include "display/ks0066.h"
 #else
 #include "display/gdfb.h"
 #endif

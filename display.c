@@ -207,6 +207,7 @@ void displayInit(void)
 	}
 
 #ifdef KS0066
+	ks0066Init();
 #else
 	gdInit();
 #endif
@@ -225,6 +226,7 @@ void displayInit(void)
 void displayClear(void)
 {
 #ifdef KS0066
+	ks0066Clear();
 #else
 	gdClear();
 #endif
@@ -334,6 +336,8 @@ void startTestMode(void)
 void showRC5Info(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showRC5Info");
 #else
 	uint16_t rc5Buf = getRC5Buf();
 	uint8_t btnBuf = getBtnBuf();
@@ -385,6 +389,8 @@ void showRC5Info(void)
 void showTemp(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showTemp");
 #else
 	int8_t tempTH;
 
@@ -418,6 +424,8 @@ void showTemp(void)
 void showRadio(uint8_t tune)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showRadio");
 #else
 	tunerReadStatus();
 
@@ -508,6 +516,8 @@ void showRadio(uint8_t tune)
 void showMute(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showMute");
 #else
 	showParLabel(txtLabels[LABEL_MUTE]);
 
@@ -527,6 +537,8 @@ void showMute(void)
 void showLoudness(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showLoudness");
 #else
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
 
@@ -546,6 +558,8 @@ void showLoudness(void)
 void showBrWork(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showBrWork");
 #else
 	showParValue(brWork);
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
@@ -573,6 +587,8 @@ void changeBrWork(int8_t diff)
 void showSndParam(sndMode mode)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showSndParam");
 #else
 	sndParam *param = sndParAddr(mode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
@@ -589,6 +605,8 @@ void showSndParam(sndMode mode)
 void showTime(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showTime");
 #else
 	gdSetXY(4, 0);
 
@@ -621,6 +639,8 @@ void showTime(void)
 void showAlarm(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showAlarm");
 #else
 	uint8_t i, j;
 	uint8_t *label;
@@ -683,6 +703,8 @@ void showAlarm(void)
 void showTimer(int16_t timer)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showTimer");
 #else
 	uint8_t x, xbase;
 	uint8_t y, ybase;
@@ -746,6 +768,8 @@ void switchFallSpeed(void)
 void showSpectrum(void)
 {
 #ifdef KS0066
+	ks0066SetXY(0, 0);
+	ks0066WriteString("showSpectrum");
 #else
 	uint8_t x, xbase;
 	uint8_t y, ybase;

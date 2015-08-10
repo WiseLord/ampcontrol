@@ -1,10 +1,10 @@
-DISPLAY = ST7920
+DISPLAY = KS0066_16X2
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m32fb_$(call lc,$(DISPLAY))
+TARG = ampcontrol_m32_$(call lc,$(DISPLAY))
 
 AUDIO_SRC = $(wildcard audio/*.c)
 TUNER_SRC = $(wildcard tuner/*.c)
@@ -12,8 +12,10 @@ TUNER_SRC = $(wildcard tuner/*.c)
 FONTS_SRC = $(wildcard display/font*.c)
 ICONS_SRC = $(wildcard display/icon*.c)
 
-ifeq ($(DISPLAY), KS0066_16X20)
-
+ifeq ($(DISPLAY), KS0066_16X2)
+  DISP_SRC = display/ks0066.c
+else ifeq ($(DISPLAY), KS0066_16X2_PCF8574)
+  DISP_SRC = display/ks0066.c
 else ifeq ($(DISPLAY), ST7920)
   DISP_SRC = display/gdfb.c display/st7920.c
 else

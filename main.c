@@ -16,6 +16,7 @@ static uint8_t extFunc;
 /* Hardware initialization */
 static void hwInit(void)
 {
+	I2CInit();								/* I2C bus */
 	displayInit();							/* Load params and text labels before fb scan started */
 	sei();									/* Gloabl interrupt enable */
 
@@ -30,7 +31,6 @@ static void hwInit(void)
 
 	rc5Init();								/* IR Remote control */
 	adcInit();								/* Analog-to-digital converter */
-	I2CInit();								/* I2C bus */
 
 	tunerInit(extFunc);						/* Tuner */
 
