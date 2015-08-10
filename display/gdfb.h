@@ -31,8 +31,6 @@
 #include "fonts.h"
 #include "icons.h"
 
-#define STR_BUFSIZE		16
-
 #define FONT_PARAM_COUNT			7
 enum {
 	FONT_HEIGHT,
@@ -72,11 +70,7 @@ uint8_t gdGetX(void);
 void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
 
 void gdWriteChar(uint8_t code);
-
 void gdWriteString(uint8_t *string);
-void gdWriteStringEeprom(const uint8_t *string);
-
-void gdWriteNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void gdWriteIcon24(const uint8_t *icon);
 void gdWriteIcon32(const uint8_t *icon);

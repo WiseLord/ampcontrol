@@ -15,6 +15,9 @@
 #define MODE_RADIO_TUNE			1
 #define MODE_RADIO_CHAN			0
 
+/* String buffer */
+#define STR_BUFSIZE				16
+
 /* Spectrum output mode */
 enum {
 	SP_MODE_STEREO = 0,
@@ -29,8 +32,12 @@ enum {
 	FALL_SPEED_FAST
 };
 
-
 void displayInit(void);
+
+void writeString(uint8_t *string);
+void writeStringEeprom(const uint8_t *string);
+void writeNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
+
 uint8_t **getTxtLabels(void);
 
 void setDefDisplay(uint8_t value);
