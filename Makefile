@@ -12,7 +12,9 @@ TUNER_SRC = $(wildcard tuner/*.c)
 FONTS_SRC = $(wildcard display/font*.c)
 ICONS_SRC = $(wildcard display/icon*.c)
 
-ifeq ($(DISPLAY), ST7920)
+ifeq ($(DISPLAY), KS0066_16X20)
+
+else ifeq ($(DISPLAY), ST7920)
   DISP_SRC = display/gdfb.c display/st7920.c
 else
   DISP_SRC = display/gdfb.c display/ks0108.c

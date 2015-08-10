@@ -248,18 +248,18 @@ void handleAction(actionID action)
 		break;
 	case ACTION_NEXT_SPMODE:
 		switchSpMode();
-		gdClear();
+		displayClear();
 		dispMode = MODE_SPECTRUM;
 		setDisplayTime(DISPLAY_TIME_SP);
 		break;
 	case ACTION_SWITCH_MUTE:
-		gdClear();
+		displayClear();
 		sndSetMute(!sndGetMute());
 		dispMode = MODE_MUTE;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case ACTION_NEXT_RC5_CMD:
-		gdClear();
+		displayClear();
 		nextRC5Cmd();
 		break;
 	case ACTION_NEXT_SNDPARAM:
@@ -524,7 +524,7 @@ void handleTimers(void)
 void handleModeChange(void)
 {
 	if (dispMode != dispModePrev)
-		gdClear();
+		displayClear();
 
 	return;
 }

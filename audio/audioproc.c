@@ -193,6 +193,7 @@ void sndInit(uint8_t extFunc)
 		break;
 	}
 
+#ifndef KS0066
 	/* Setup icons for audio parameters */
 	sndPar[MODE_SND_VOLUME].icon = icons_24_volume;
 	sndPar[MODE_SND_BASS].icon = icons_24_bass;
@@ -207,7 +208,7 @@ void sndInit(uint8_t extFunc)
 	sndPar[MODE_SND_GAIN1].icon = icons_24_pc;
 	sndPar[MODE_SND_GAIN2].icon = icons_24_tv;
 	sndPar[MODE_SND_GAIN3].icon = icons_24_dvd;
-
+#endif
 	return;
 }
 

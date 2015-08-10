@@ -2,10 +2,18 @@
 #define DISPLAY_H
 
 #include <inttypes.h>
-#include "display/gdfb.h"
 #include "ds1307.h"
 #include "audio/audioproc.h"
 
+#ifdef KS0066_16X2
+#define KS0066
+#endif
+
+#ifdef KS0066
+
+#else
+#include "display/gdfb.h"
+#endif
 
 /* Backlight state */
 #define BACKLIGHT_ON			1
@@ -33,6 +41,7 @@ enum {
 };
 
 void displayInit(void);
+void displayClear(void);
 
 void writeString(uint8_t *string);
 void writeStringEeprom(const uint8_t *string);
