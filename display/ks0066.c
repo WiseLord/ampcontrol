@@ -1,6 +1,7 @@
 #include "ks0066.h"
 
 #include <util/delay.h>
+#include <avr/interrupt.h>
 
 #if defined(KS0066_WIRE_PCF8574)
 static uint8_t i2cData;
@@ -190,6 +191,19 @@ void ks0066SetBacklight(uint8_t value)
 		i2cData &= ~PCF8574_BL_LINE;
 	ks0066WriteCommand(KS0066_NO_COMMAND);
 #endif
+
+	return;
+}
+
+ISR (TIMER0_OVF_vect)
+{
+	 /* 2MHz / (256 - 156) = 20000Hz => 20000 / 32 / 34 = 18.4 FPS */
+	TCNT0 = 156;
+
+	static uint8_t run = 1;
+	if (run)
+		ADCSRA |= 1<<ADSC;								/* Start ADC every second interrupt */
+	run = !run;
 
 	return;
 }
