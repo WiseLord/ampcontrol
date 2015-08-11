@@ -81,10 +81,68 @@ static void lcdGenBar(void)
 }
 #endif
 
-#ifdef KS0066
-#else
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
+#ifdef KS0066
+	uint8_t i;
+
+	if (userSybmols != LCD_BAR)
+		lcdGenBar();
+
+	ks0066SetXY(0, 1);
+
+	if (min + max) {
+		value = (int16_t)48 * (value - min) / (max - min);
+		for (i = 0; i < 16; i++) {
+			if (value / 3 > i) {
+				ks0066WriteData(0x03);
+			} else {
+				if (value / 3 < i) {
+					ks0066WriteData(0x00);
+				} else {
+					ks0066WriteData(value % 3);
+				}
+			}
+		}
+	} else {
+		value = (int16_t)23 * value / max;
+		if (value >= 0) {
+			value++;
+			for (i = 0; i < 7; i++) {
+				ks0066WriteData(0x00);
+			}
+			ks0066WriteData(0x05);
+			for (i = 0; i < 8; i++) {
+				if (value / 3 > i) {
+					ks0066WriteData(0x03);
+				} else {
+					if (value / 3 < i) {
+						ks0066WriteData(0x00);
+					} else {
+						ks0066WriteData(value % 3);
+					}
+				}
+			}
+		} else {
+			value += 23;
+			for (i = 0; i < 8; i++) {
+				if (value / 3 > i) {
+					ks0066WriteData(0x00);
+				} else {
+					if (value / 3 < i) {
+						ks0066WriteData(0x03);
+					} else {
+						ks0066WriteData(value % 3 + 3);
+					}
+				}
+			}
+			ks0066WriteData(0x01);
+			for (i = 0; i < 7; i++) {
+				ks0066WriteData(0x00);
+			}
+		}
+	}
+#else
 	uint8_t i, j;
 	uint8_t color;
 
@@ -113,33 +171,37 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 		}
 	}
 	return;
-}
 #endif
+}
 
-#ifdef KS0066
-#else
 static void showParValue(int8_t value)
 {
+#ifdef KS0066
+	ks0066SetXY(11, 0);
+	writeNum(value, 3, ' ', 10);
+#else
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(94, 30);
 	writeNum(value, 3, ' ', 10);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	return;
-}
-#endif
 
-#ifdef KS0066
-#else
+#endif
+}
 static void showParLabel(const uint8_t *parLabel)
 {
+#ifdef KS0066
+	ks0066SetXY (0, 0);
+	writeStringEeprom(parLabel);
+#else
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	return;
-}
-#endif
 
+#endif
+}
 #ifdef KS0066
 #else
 static void showParIcon(const uint8_t *icon)
@@ -653,19 +715,20 @@ void changeBrWork(int8_t diff)
 
 void showSndParam(sndMode mode)
 {
-#ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showSndParam");
-#else
 	sndParam *param = sndParAddr(mode);
+
+	showParLabel(param->label);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
 	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
+#ifdef KS0066
+	ks0066SetXY(14, 0);
+#else
 	drawBarSpectrum();
-	showParLabel(param->label);
 	showParIcon(param->icon);
 	gdSetXY(116, 56);
-	writeStringEeprom(txtLabels[LABEL_DB]);
 #endif
+	writeStringEeprom(txtLabels[LABEL_DB]);
+
 	return;
 }
 
