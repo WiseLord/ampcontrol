@@ -611,11 +611,9 @@ void showTemp(void)
 
 void showRadio(uint8_t tune)
 {
-#ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showRadio");
-#else
 	tunerReadStatus();
+
+	uint8_t i;
 
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
@@ -623,8 +621,84 @@ void showRadio(uint8_t tune)
 	uint8_t favNum = tunerFavStationNum();
 	static uint8_t rdsMode;
 
-	uint8_t i;
+#ifdef KS0066
+	if (userSybmols != LCD_BAR || userAddSym != SYM_STEREO)
+		lcdGenBar(SYM_STEREO);
 
+	/* Frequency value */
+	ks0066SetXY(0, 0);
+	writeString((uint8_t*)"FM ");
+	writeNum(freq / 100, 3, ' ', 10);
+	ks0066WriteData('.');
+	writeNum(freq % 100, 2, '0', 10);
+
+	/* Signal level */
+	ks0066SetXY(12, 0);
+	level = level * 2 / 5;
+	if (level < 3) {
+		ks0066WriteData(level);
+		ks0066WriteData(0x00);
+	} else {
+		ks0066WriteData(0x03);
+		ks0066WriteData(level - 3);
+	}
+
+	/* Stereo indicator */
+	ks0066SetXY(10, 0);
+	if (tunerStereo())
+		writeString((uint8_t*)"\x06");
+	else
+		writeString((uint8_t*)" ");
+
+	/* Favourite station number */
+	ks0066SetXY(15, 0);
+	if (favNum) {
+		writeNum(favNum % 10, 1, ' ', 10);
+	} else {
+		writeString((uint8_t*)"-");
+	}
+
+	/* Station number */
+	ks0066SetXY(14, 1);
+	if (num) {
+		writeNum(num, 2, ' ', 10);
+	} else {
+		writeString((uint8_t*)"--");
+	}
+
+	/* Select between RDS and spectrum mode */
+	if (rdsMode) {
+		/* RDS data */
+		ks0066SetXY(0, 1);
+		writeString((uint8_t*)"RDS:");
+		writeString(rdsGetText ());
+		rdsMode = 0;
+	} else {
+		/* Frequency scale */
+		uint8_t value = (int16_t)36 * ((freq - FM_FREQ_MIN)>>4) / ((FM_FREQ_MAX - FM_FREQ_MIN)>>4);
+		ks0066SetXY(0, 1);
+		for (i = 0; i < 12; i++) {
+			if (value / 3 > i) {
+				ks0066WriteData(0x03);
+			} else {
+				if (value / 3 < i) {
+					ks0066WriteData(0x00);
+				} else {
+					ks0066WriteData(value % 3);
+				}
+			}
+		}
+
+	}
+	/* Tune status */
+	ks0066SetXY (12, 1);
+	if (tune == MODE_RADIO_TUNE) {
+		writeString((uint8_t*)"<>");
+	} else {
+		writeString((uint8_t*)"  ");
+	}
+
+#else
 	/* Frequency value */
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
