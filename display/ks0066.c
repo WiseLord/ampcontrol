@@ -10,12 +10,6 @@ static uint8_t i2cData;
 #endif
 
 static uint8_t _br;
-void ks0066SetBrightness(uint8_t br)
-{
-	_br = br;
-
-	return;
-}
 
 static void ks0066WriteStrob()
 {
@@ -190,19 +184,6 @@ void ks0066WriteString(uint8_t *string)
 	return;
 }
 
-void ks0066SetBacklight(uint8_t value)
-{
-#if defined(KS0066_WIRE_PCF8574)
-	if (value)
-		i2cData |= PCF8574_BL_LINE;
-	else
-		i2cData &= ~PCF8574_BL_LINE;
-	ks0066WriteCommand(KS0066_NO_COMMAND);
-#endif
-
-	return;
-}
-
 ISR (TIMER0_OVF_vect)
 {
 	 /* 2MHz / (256 - 156) = 20000Hz */
@@ -222,6 +203,26 @@ ISR (TIMER0_OVF_vect)
 		PORT(KS0066_BCKL) &= ~KS0066_BCKL_LINE;		/* Turn backlight off */
 	} else if (br == 0)
 		PORT(KS0066_BCKL) |= KS0066_BCKL_LINE;		/* Turn backlight on */
+
+	return;
+}
+
+void pcf8574SetBacklight(uint8_t value)
+{
+#if defined(KS0066_WIRE_PCF8574)
+	if (value)
+		i2cData |= PCF8574_BL_LINE;
+	else
+		i2cData &= ~PCF8574_BL_LINE;
+	ks0066WriteCommand(KS0066_NO_COMMAND);
+#endif
+
+	return;
+}
+
+void ks0066SetBrightness(uint8_t br)
+{
+	_br = br;
 
 	return;
 }

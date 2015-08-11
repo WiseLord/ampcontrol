@@ -845,11 +845,8 @@ void changeBrWork(int8_t diff)
 		brWork = MAX_BRIGHTNESS;
 	if (brWork < MIN_BRIGHTNESS)
 		brWork = MIN_BRIGHTNESS;
-#ifdef KS0066
-	ks0066SetBrightness (brWork);
-#else
-	gdSetBrightness(brWork);
-#endif
+	setWorkBrightness();
+
 	return;
 }
 
@@ -1229,6 +1226,10 @@ void showSpectrum(void)
 void setWorkBrightness(void)
 {
 #ifdef KS0066
+	ks0066SetBrightness(brWork);
+#if defined(KS0066_WIRE_PCF8574)
+	pcf8574SetBacklight(brWork);
+#endif
 #else
 	gdSetBrightness(brWork);
 #endif
@@ -1238,6 +1239,10 @@ void setWorkBrightness(void)
 void setStbyBrightness(void)
 {
 #ifdef KS0066
+	ks0066SetBrightness(brStby);
+#if defined(KS0066_WIRE_PCF8574)
+	pcf8574SetBacklight(KS0066_BCKL_OFF);
+#endif
 #else
 	gdSetBrightness(brStby);
 #endif

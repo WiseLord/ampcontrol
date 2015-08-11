@@ -2,6 +2,7 @@
 #define KS0066_H
 
 #include <inttypes.h>
+#include "../pins.h"
 
 /* Display size */
 #ifdef KS0066_16X2_PCF8574
@@ -35,8 +36,6 @@
 #define PCF8574_E_LINE				(1<<2)
 #define PCF8574_RW_LINE				(1<<1)
 #define PCF8574_RS_LINE				(1<<0)
-#else
-#include "../pins.h"
 #endif
 
 /* KS0066 instruction registers */
@@ -78,8 +77,6 @@
 #define KS0066_MAX_BRIGHTNESS		32
 
 /* Functions */
-void ks0066SetBrightness(uint8_t br);
-
 void ks0066WriteCommand(uint8_t cmd);
 void ks0066WriteData(uint8_t data);
 
@@ -89,6 +86,7 @@ void ks0066Init(void);
 void ks0066SetXY(uint8_t x, uint8_t y);
 void ks0066WriteString(uint8_t *string);
 
-void ks0066SetBacklight(uint8_t value);
+void pcf8574SetBacklight(uint8_t value);
+void ks0066SetBrightness(uint8_t br);
 
 #endif /* KS0066_H */
