@@ -47,7 +47,7 @@ enum {
 void displayInit(void);
 void displayClear(void);
 
-void writeString(char *string);
+void writeString(uint8_t *string);
 void writeStringEeprom(const uint8_t *string);
 void writeNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 

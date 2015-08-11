@@ -25,7 +25,7 @@ static uint8_t defDisplay;					/* Default display mode */
 
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
-char strbuf[STR_BUFSIZE + 1];				/* String buffer */
+uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
 #ifdef KS0066
 #else
@@ -245,7 +245,7 @@ void displayClear(void)
 	return;
 }
 
-void writeString(char *string)
+void writeString(uint8_t *string)
 {
 #ifdef KS0066
 	ks0066WriteString (string);
@@ -349,7 +349,7 @@ void showRC5Info(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showRC5Info");
+	ks0066WriteString((uint8_t*)"showRC5Info");
 #else
 	uint16_t rc5Buf = getRC5Buf();
 	uint8_t btnBuf = getBtnBuf();
@@ -402,7 +402,7 @@ void showTemp(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showTemp");
+	ks0066WriteString((uint8_t*)"showTemp");
 #else
 	int8_t tempTH;
 
@@ -437,7 +437,7 @@ void showRadio(uint8_t tune)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showRadio");
+	ks0066WriteString((uint8_t*)"showRadio");
 #else
 	tunerReadStatus();
 
@@ -529,7 +529,7 @@ void showMute(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showMute");
+	ks0066WriteString((uint8_t*)"showMute");
 #else
 	showParLabel(txtLabels[LABEL_MUTE]);
 
@@ -550,7 +550,7 @@ void showLoudness(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showLoudness");
+	ks0066WriteString((uint8_t*)"showLoudness");
 #else
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
 
@@ -571,7 +571,7 @@ void showBrWork(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showBrWork");
+	ks0066WriteString((uint8_t*)"showBrWork");
 #else
 	showParValue(brWork);
 	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
@@ -600,7 +600,7 @@ void showSndParam(sndMode mode)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showSndParam");
+	ks0066WriteString((uint8_t*)"showSndParam");
 #else
 	sndParam *param = sndParAddr(mode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
@@ -630,7 +630,7 @@ void showTime(void)
 	drawTm(DS1307_MONTH);
 
 	ks0066SetXY(12, 1);
-	ks0066WriteString("20");
+	ks0066WriteString((uint8_t*)"20");
 	drawTm(DS1307_YEAR);
 
 	ks0066SetXY(0, 1);
@@ -667,7 +667,7 @@ void showAlarm(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showAlarm");
+	ks0066WriteString((uint8_t*)"showAlarm");
 #else
 	uint8_t i, j;
 	uint8_t *label;
@@ -731,7 +731,7 @@ void showTimer(int16_t timer)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showTimer");
+	ks0066WriteString((uint8_t*)"showTimer");
 #else
 	uint8_t x, xbase;
 	uint8_t y, ybase;
@@ -796,7 +796,7 @@ void showSpectrum(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showSpectrum");
+	ks0066WriteString((uint8_t*)"showSpectrum");
 #else
 	uint8_t x, xbase;
 	uint8_t y, ybase;
