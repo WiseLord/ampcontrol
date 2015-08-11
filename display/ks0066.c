@@ -3,11 +3,19 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 
+#define swap(x) (__builtin_avr_swap(x))				/* Swaps nibbles */
+
 #if defined(KS0066_WIRE_PCF8574)
 static uint8_t i2cData;
 #endif
 
-#define swap(x) (__builtin_avr_swap(x))				/* Swaps nibbles */
+static uint8_t _br;
+void ks0066SetBrightness(uint8_t br)
+{
+	_br = br;
+
+	return;
+}
 
 static void ks0066WriteStrob()
 {
@@ -197,13 +205,23 @@ void ks0066SetBacklight(uint8_t value)
 
 ISR (TIMER0_OVF_vect)
 {
-	 /* 2MHz / (256 - 156) = 20000Hz => 20000 / 32 / 34 = 18.4 FPS */
+	 /* 2MHz / (256 - 156) = 20000Hz */
 	TCNT0 = 156;
 
 	static uint8_t run = 1;
 	if (run)
-		ADCSRA |= 1<<ADSC;								/* Start ADC every second interrupt */
+		ADCSRA |= 1<<ADSC;							/* Start ADC every second interrupt */
 	run = !run;
+
+	static uint8_t br;
+
+	if (++br >= KS0066_MAX_BRIGHTNESS)				/* Loop brightness */
+		br = KS0066_MIN_BRIGHTNESS;
+
+	if (br == _br) {
+		PORT(KS0066_BCKL) &= ~KS0066_BCKL_LINE;		/* Turn backlight off */
+	} else if (br == 0)
+		PORT(KS0066_BCKL) |= KS0066_BCKL_LINE;		/* Turn backlight on */
 
 	return;
 }

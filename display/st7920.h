@@ -43,7 +43,7 @@
 #define ST7920_SIZE_Y				64
 
 #define ST7920_MIN_BRIGHTNESS		0
-#define ST7920_MAX_BRIGTHNESS		32
+#define ST7920_MAX_BRIGHTNESS		32
 
 void st7920SetBrightness(uint8_t br);
 

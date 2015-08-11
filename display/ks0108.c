@@ -125,7 +125,7 @@ ISR (TIMER0_OVF_vect)
 		PORT(KS0108_DI) |= KS0108_DI_LINE;			/* Go to data mode */
 	}
 
-	if (++br >= KS0108_MAX_BRIGTHNESS)				/* Loop brightness */
+	if (++br >= KS0108_MAX_BRIGHTNESS)				/* Loop brightness */
 		br = KS0108_MIN_BRIGHTNESS;
 
 	if (br == _br) {

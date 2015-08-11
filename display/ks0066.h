@@ -74,7 +74,12 @@
 #define KS0066_BCKL_OFF				0
 #define KS0066_BCKL_ON				1
 
+#define KS0066_MIN_BRIGHTNESS		0
+#define KS0066_MAX_BRIGHTNESS		32
+
 /* Functions */
+void ks0066SetBrightness(uint8_t br);
+
 void ks0066WriteCommand(uint8_t cmd);
 void ks0066WriteData(uint8_t data);
 

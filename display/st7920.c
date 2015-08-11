@@ -95,7 +95,7 @@ ISR (TIMER0_OVF_vect)
 		PORT(ST7920_RS) |= ST7920_RS_LINE;			/* Go to data mode */
 	}
 
-	if (++br >= ST7920_MAX_BRIGTHNESS)				/* Loop brightness */
+	if (++br >= ST7920_MAX_BRIGHTNESS)				/* Loop brightness */
 		br = ST7920_MIN_BRIGHTNESS;
 
 	if (br == _br) {

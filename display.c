@@ -686,14 +686,14 @@ void showLoudness(void)
 
 void showBrWork(void)
 {
+	showParLabel(txtLabels[LABEL_BR_WORK]);
+	showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
 #ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showBrWork");
+	ks0066SetXY(13, 0);
+	writeNum(brWork, 3, ' ', 10);
 #else
 	showParValue(brWork);
-	showBar(GD_MIN_BRIGHTNESS, GD_MAX_BRIGTHNESS, brWork);
 	drawBarSpectrum();
-	showParLabel(txtLabels[LABEL_BR_WORK]);
 	showParIcon(icons_24_brightness);
 #endif
 	return;
@@ -701,13 +701,14 @@ void showBrWork(void)
 
 void changeBrWork(int8_t diff)
 {
-#ifdef KS0066
-#else
 	brWork += diff;
-	if (brWork > GD_MAX_BRIGTHNESS)
-		brWork = GD_MAX_BRIGTHNESS;
-	if (brWork < GD_MIN_BRIGHTNESS)
-		brWork = GD_MIN_BRIGHTNESS;
+	if (brWork > MAX_BRIGHTNESS)
+		brWork = MAX_BRIGHTNESS;
+	if (brWork < MIN_BRIGHTNESS)
+		brWork = MIN_BRIGHTNESS;
+#ifdef KS0066
+	ks0066SetBrightness (brWork);
+#else
 	gdSetBrightness(brWork);
 #endif
 	return;

@@ -31,7 +31,7 @@
 #define KS0108_DATA					1
 
 #define KS0108_MIN_BRIGHTNESS		0
-#define KS0108_MAX_BRIGTHNESS		32
+#define KS0108_MAX_BRIGHTNESS		32
 
 void ks0108SetBrightness(uint8_t br);
 

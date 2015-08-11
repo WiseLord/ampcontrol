@@ -15,8 +15,12 @@
 
 #ifdef KS0066
 #include "display/ks0066.h"
+#define MIN_BRIGHTNESS			KS0066_MIN_BRIGHTNESS
+#define MAX_BRIGHTNESS			KS0066_MAX_BRIGHTNESS
 #else
 #include "display/gdfb.h"
+#define MIN_BRIGHTNESS			GD_MIN_BRIGHTNESS
+#define MAX_BRIGHTNESS			GD_MAX_BRIGHTNESS
 #endif
 
 /* Backlight state */
