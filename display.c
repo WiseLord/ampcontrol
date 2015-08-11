@@ -25,7 +25,7 @@ static uint8_t defDisplay;					/* Default display mode */
 
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
-uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
+char strbuf[STR_BUFSIZE + 1];				/* String buffer */
 
 #ifdef KS0066
 #else
@@ -155,19 +155,30 @@ static void drawBarSpectrum(void)
 #endif
 
 #ifdef KS0066
+static void drawTm(uint8_t tm)
 #else
 static void drawTm(uint8_t tm, const uint8_t *font)
+#endif
 {
-	if (getEtm() == tm)
+	if (getEtm() == tm) {
+#ifdef KS0066
+#else
 		gdLoadFont(font, 0, FONT_DIR_0);
-	else
+#endif
+	} else {
+#ifdef KS0066
+#else
 		gdLoadFont(font, 1, FONT_DIR_0);
+#endif
+	}
 	writeNum(getTime(tm), 2, '0', 10);
+#ifdef KS0066
+#else
 	gdLoadFont(font, 1, FONT_DIR_0);
+#endif
 
 	return;
 }
-#endif
 
 #ifdef KS0066
 #else
@@ -234,9 +245,10 @@ void displayClear(void)
 	return;
 }
 
-void writeString(uint8_t *string)
+void writeString(char *string)
 {
 #ifdef KS0066
+	ks0066WriteString (string);
 #else
 	gdWriteString(string);
 #endif
@@ -606,7 +618,22 @@ void showTime(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString("showTime");
+	drawTm (DS1307_HOUR);
+	ks0066WriteData (':');
+	drawTm (DS1307_MIN);
+	ks0066WriteData (':');
+	drawTm (DS1307_SEC);
+
+	ks0066SetXY(11, 0);
+	drawTm(DS1307_DATE);
+	ks0066WriteData('.');
+	drawTm(DS1307_MONTH);
+
+	ks0066SetXY(12, 1);
+	ks0066WriteString("20");
+	drawTm(DS1307_YEAR);
+
+	ks0066SetXY(0, 1);
 #else
 	gdSetXY(4, 0);
 
@@ -630,9 +657,9 @@ void showTime(void)
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(32, 56);
-
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
 #endif
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
+
 	return;
 }
 
