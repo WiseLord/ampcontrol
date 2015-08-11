@@ -58,6 +58,14 @@ enum {
 	LCD_END
 };
 
+enum {
+	SYM_STEREO = 0,
+	SYM_MUTE,
+	SYM_LOUD,
+
+	SYM_END
+};
+
 void displayInit(void);
 void displayClear(void);
 

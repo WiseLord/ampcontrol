@@ -29,6 +29,7 @@ uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
 #ifdef KS0066
 static uint8_t userSybmols = LCD_LEVELS;	/* Generated user symbols for ks0066 */
+static uint8_t userAddSym = SYM_STEREO;		/* Additional user symbol */
 #endif
 
 #ifdef KS0066
@@ -49,7 +50,7 @@ static void lcdGenLevels(void)
 	return;
 }
 
-static void lcdGenBar(void)
+static void lcdGenBar(uint8_t sym)
 {
 	ks0066WriteCommand(KS0066_SET_CGRAM);
 
@@ -67,15 +68,49 @@ static void lcdGenBar(void)
 			ks0066WriteData(pos[i>>3]);
 		}
 	}
-	/* Stereo indicator */
-	ks0066WriteData(0b00000000);
-	ks0066WriteData(0b00011011);
-	ks0066WriteData(0b00010101);
-	ks0066WriteData(0b00010101);
-	ks0066WriteData(0b00010101);
-	ks0066WriteData(0b00011011);
-	ks0066WriteData(0b00000000);
-	ks0066WriteData(0b00000000);
+	switch (sym) {
+	case SYM_MUTE:
+		/* Speaker */
+		ks0066WriteData(0b00001);
+		ks0066WriteData(0b00011);
+		ks0066WriteData(0b11101);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b11101);
+		ks0066WriteData(0b00011);
+		ks0066WriteData(0b00001);
+		ks0066WriteData(0b00000);
+		break;
+	case SYM_LOUD:
+		ks0066WriteData(0b00000);
+		ks0066WriteData(0b10000);
+		ks0066WriteData(0b10001);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b00000);
+		break;
+	default:
+		/* Stereo indicator */
+		ks0066WriteData(0b00000);
+		ks0066WriteData(0b11011);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b10101);
+		ks0066WriteData(0b11011);
+		ks0066WriteData(0b00000);
+		ks0066WriteData(0b00000);
+		break;
+	}
+	/* Cross */
+	ks0066WriteData(0b00000);
+	ks0066WriteData(0b10001);
+	ks0066WriteData(0b01010);
+	ks0066WriteData(0b00100);
+	ks0066WriteData(0b01010);
+	ks0066WriteData(0b10001);
+	ks0066WriteData(0b00000);
+	ks0066WriteData(0b00000);
 
 	return;
 }
@@ -87,7 +122,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	uint8_t i;
 
 	if (userSybmols != LCD_BAR)
-		lcdGenBar();
+		lcdGenBar(userAddSym);
 
 	ks0066SetXY(0, 1);
 
@@ -213,14 +248,38 @@ static void showParIcon(const uint8_t *icon)
 }
 #endif
 
-#ifdef KS0066
-#else
 static void drawMiniSpectrum(void)
 {
+	volatile uint8_t *buf = getSpData(fallSpeed);
+
+#ifdef KS0066
+	uint16_t data;
+	uint8_t i;
+
+	if (userSybmols != LCD_BAR)
+		lcdGenBar (userAddSym);
+	data = 0;
+	for (i = 0; i < FFT_SIZE / 2; i++) {
+		data += buf[i];
+		data += buf[FFT_SIZE / 2 + i];
+	}
+	data >>= 5;
+
+	ks0066SetXY(0, 1);
+	for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+		if (data / 3 > i) {
+			ks0066WriteData(0x03);
+		} else {
+			if (data / 3 < i) {
+				ks0066WriteData(0x00);
+			} else {
+				ks0066WriteData(data % 3);
+			}
+		}
+	}
+#else
 	uint8_t x, xbase;
 	uint8_t y, ybase;
-
-	volatile uint8_t *buf = getSpData(fallSpeed);
 
 	if (buf) {
 		for (y = 0; y < GD_SIZE_Y / 8 * 4; y++) {
@@ -239,8 +298,8 @@ static void drawMiniSpectrum(void)
 	}
 
 	return;
-}
 #endif
+}
 
 #ifdef KS0066
 #else
@@ -335,7 +394,7 @@ void displayInit(void)
 
 #ifdef KS0066
 	ks0066Init();
-	lcdGenLevels ();
+	lcdGenLevels();
 #else
 	gdInit();
 #endif
@@ -644,42 +703,48 @@ void showRadio(uint8_t tune)
 
 void showMute(void)
 {
-#ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showMute");
-#else
 	showParLabel(txtLabels[LABEL_MUTE]);
-
-	gdSetXY(96, 32);
-
-	if (sndGetMute()) {
-		gdWriteIcon32(icons_32_mute_on);
-	} else {
-		gdWriteIcon32(icons_32_mute_off);
-	}
-
 	drawMiniSpectrum();
+
+#ifdef KS0066
+	if (userAddSym != SYM_MUTE)
+		lcdGenBar(SYM_MUTE);
+	ks0066SetXY(14, 0);
+	ks0066WriteData(0x06);
+	if (sndGetMute ())
+		ks0066WriteData(0x07);
+	else
+		ks0066WriteData(' ');
+#else
+	gdSetXY(96, 32);
+	if (sndGetMute())
+		gdWriteIcon32(icons_32_mute_on);
+	else
+		gdWriteIcon32(icons_32_mute_off);
 #endif
+
 	return;
 }
 
 void showLoudness(void)
 {
-#ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showLoudness");
-#else
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
-
-	gdSetXY(96, 32);
-
-	if (sndGetLoudness()) {
-		gdWriteIcon32(icons_32_loud_on);
-	} else {
-		gdWriteIcon32(icons_32_loud_off);
-	}
-
 	drawMiniSpectrum();
+#ifdef KS0066
+	if (userAddSym != SYM_LOUD)
+		lcdGenBar(SYM_LOUD);
+	ks0066SetXY(14, 0);
+	ks0066WriteData(0x06);
+	if (sndGetLoudness ())
+		ks0066WriteData(0x07);
+	else
+		ks0066WriteData(' ');
+#else
+	gdSetXY(96, 32);
+	if (sndGetLoudness())
+		gdWriteIcon32(icons_32_loud_on);
+	else
+		gdWriteIcon32(icons_32_loud_off);
 #endif
 	return;
 }
@@ -940,7 +1005,7 @@ void showSpectrum(void)
 		break;
 	case SP_MODE_METER:
 		if (userSybmols != LCD_BAR)
-			lcdGenBar ();
+			lcdGenBar(userAddSym);
 
 		left = 0;
 		right = 0;
