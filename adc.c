@@ -1,10 +1,9 @@
+#include "adc.h"
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
-
-#include "adc.h"
-#include "fft.h"
 #include "eeprom.h"
 
 static int16_t fr[FFT_SIZE];							/* Real values */

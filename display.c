@@ -28,6 +28,60 @@ uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 uint8_t strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
 #ifdef KS0066
+static uint8_t userSybmols = LCD_LEVELS;	/* Generated user symbols for ks0066 */
+#endif
+
+#ifdef KS0066
+static void lcdGenLevels(void)
+{
+	uint8_t i, j;
+
+	userSybmols = LCD_LEVELS;
+	ks0066WriteCommand(KS0066_SET_CGRAM);
+
+	for (i = 0; i < 7; i++)
+		for (j = 0; j < 8; j++)
+			if (i + j >= 7)
+				ks0066WriteData(0xFF);
+			else
+				ks0066WriteData(0x00);
+
+	return;
+}
+
+static void lcdGenBar(void)
+{
+	ks0066WriteCommand(KS0066_SET_CGRAM);
+
+	uint8_t i;
+	uint8_t pos[] = {0x00, 0x10, 0x14, 0x15, 0x05, 0x01};
+
+	userSybmols = LCD_BAR;
+
+	for (i = 0; i < 48; i++) {
+		if ((i & 0x07) == 0x03) {
+			ks0066WriteData(0x15);
+		} else if ((i & 0x07) == 0x07) {
+			ks0066WriteData(0x00);
+		} else {
+			ks0066WriteData(pos[i>>3]);
+		}
+	}
+	/* Stereo indicator */
+	ks0066WriteData(0b00000000);
+	ks0066WriteData(0b00011011);
+	ks0066WriteData(0b00010101);
+	ks0066WriteData(0b00010101);
+	ks0066WriteData(0b00010101);
+	ks0066WriteData(0b00011011);
+	ks0066WriteData(0b00000000);
+	ks0066WriteData(0b00000000);
+
+	return;
+}
+#endif
+
+#ifdef KS0066
 #else
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
@@ -219,6 +273,7 @@ void displayInit(void)
 
 #ifdef KS0066
 	ks0066Init();
+	lcdGenLevels ();
 #else
 	gdInit();
 #endif
@@ -794,15 +849,96 @@ void switchFallSpeed(void)
 
 void showSpectrum(void)
 {
+	volatile uint8_t *buf = getSpData(fallSpeed);
+	uint16_t left, right;
+
 #ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showSpectrum");
+	uint8_t i, data;
+
+	switch (spMode) {
+	case SP_MODE_STEREO:
+		if (userSybmols != LCD_LEVELS)
+			lcdGenLevels();
+		ks0066SetXY(0, 0);
+		for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+			data = buf[i] >> 2;
+			if (data >= 7)
+				data = 0xFF;
+			ks0066WriteData(data);
+		}
+		ks0066SetXY(0, 1);
+		for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+			data = buf[FFT_SIZE / 2 + i] >> 2;
+			if (data >= 7)
+				data = 0xFF;
+			ks0066WriteData(data);
+		}
+		break;
+	case SP_MODE_METER:
+		if (userSybmols != LCD_BAR)
+			lcdGenBar ();
+
+		left = 0;
+		right = 0;
+		for (i = 0; i < FFT_SIZE / 2; i++) {
+			left += buf[i];
+			right += buf[FFT_SIZE / 2 + i];
+		}
+		left >>= 4;
+		right >>= 4;
+
+		ks0066SetXY(0, 0);
+		ks0066WriteData(eeprom_read_byte(txtLabels[LABEL_LEFT_CHANNEL]));
+		for (i = 0; i < KS0066_SCREEN_WIDTH - 1; i++) {
+			if (left / 3 > i) {
+				ks0066WriteData(0x03);
+			} else {
+				if (left / 3 < i) {
+					ks0066WriteData(0x00);
+				} else {
+					ks0066WriteData(left % 3);
+				}
+			}
+		}
+		ks0066SetXY(0, 1);
+		ks0066WriteData(eeprom_read_byte(txtLabels[LABEL_RIGHT_CHANNEL]));
+		for (i = 0; i < KS0066_SCREEN_WIDTH - 1; i++) {
+			if (right / 3 > i) {
+				ks0066WriteData(0x03);
+			} else {
+				if (right / 3 < i) {
+					ks0066WriteData(0x00);
+				} else {
+					ks0066WriteData(right % 3);
+				}
+			}
+		}
+		break;
+	default:
+		if (userSybmols != LCD_LEVELS)
+			lcdGenLevels();
+		for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+			data = buf[i];
+			data += buf[FFT_SIZE / 2 + i];
+			data >>= 2;
+			ks0066SetXY(i, 0);
+			if (data < 8)
+				ks0066WriteData(' ');
+			else if (data < 15)
+				ks0066WriteData(data - 8);
+			else
+				ks0066WriteData(0xFF);
+			ks0066SetXY(i, 1);
+			if (data < 7)
+				ks0066WriteData(data);
+			else
+				ks0066WriteData(0xFF);
+		}
+		break;
+	}
 #else
 	uint8_t x, xbase;
 	uint8_t y, ybase;
-	uint16_t left, right;
-
-	volatile uint8_t *buf = getSpData(fallSpeed);
 
 	switch (spMode) {
 	case SP_MODE_STEREO:

@@ -35,13 +35,23 @@ enum {
 	SP_MODE_STEREO = 0,
 	SP_MODE_METER,
 	SP_MODE_MIXED,
+
 	SP_MODE_END
 };
 
 enum {
 	FALL_SPEED_LOW = 0,
 	FALL_SPEED_MIDDLE,
-	FALL_SPEED_FAST
+	FALL_SPEED_FAST,
+
+	FALL_SPEED_END
+};
+
+enum {
+	LCD_LEVELS = 0,
+	LCD_BAR = 1,
+
+	LCD_END
 };
 
 void displayInit(void);

@@ -3,6 +3,8 @@
 
 #include <inttypes.h>
 
+#include "fft.h"
+
 #define swap(x) (__builtin_avr_swap(x))		/*  Swaps nibbles in byte */
 
 #define MUX_LEFT			0
