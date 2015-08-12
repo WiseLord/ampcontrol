@@ -631,14 +631,28 @@ void startTestMode(void)
 
 void showRC5Info(void)
 {
-#ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showRC5Info");
-#else
 	uint16_t rc5Buf = getRC5Buf();
 	uint8_t btnBuf = getBtnBuf();
 	uint8_t encBuf = getEncBuf();
 
+#ifdef KS0066
+	ks0066SetXY(0, 0);
+	writeString((uint8_t*)"B=");
+	writeNum(btnBuf + (encBuf << 6), 2, '0', 16);
+	writeString((uint8_t*)" ");
+	writeStringEeprom(txtLabels[LABEL_RC5_STBY + rc5CmdInd]);
+
+	ks0066SetXY(0, 1);
+	writeString((uint8_t*)"A=");
+	rc5Addr = (rc5Buf & 0x07C0)>>6;
+	writeNum(rc5Addr, 2, '0', 16);
+	writeString((uint8_t*)" C=");
+	rc5Cmd = rc5Buf & 0x003F;
+	writeNum(rc5Cmd, 2, '0', 16);
+	writeString((uint8_t*)" R=");
+	writeNum(rc5Buf, 4, '0', 16);
+
+#else
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(txtLabels[LABEL_IN_STATUS]);
