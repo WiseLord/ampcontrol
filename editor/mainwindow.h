@@ -9,13 +9,17 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 {
     Q_OBJECT
 
-  public:
+public:
     explicit MainWindow(QWidget *parent = 0);
 
-  private:
+private:
     LcdConverter *lc;
+    QString fileName;
+    QByteArray eeprom;
 
-  private slots:
+private slots:
+    void openEeprom();
+
     void on_pushButton_clicked();
 };
 

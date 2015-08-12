@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>603</width>
-    <height>427</height>
+    <width>773</width>
+    <height>443</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,21 +16,40 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="text">
-       <string>проверка</string>
-      </property>
-     </widget>
+     <widget class="QTableWidget" name="tableWidget"/>
     </item>
     <item>
-     <widget class="QPushButton" name="pushButton">
-      <property name="text">
-       <string>PushButton</string>
-      </property>
+     <widget class="QTabWidget" name="tabWidget">
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Tab 1</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <widget class="QListWidget" name="listWidget"/>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="lineEdit">
+          <property name="text">
+           <string>проверка</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton">
+          <property name="text">
+           <string>PushButton</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Tab 2</string>
+       </attribute>
+      </widget>
      </widget>
-    </item>
-    <item>
-     <widget class="QListWidget" name="listWidget"/>
     </item>
    </layout>
   </widget>
@@ -39,10 +58,18 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>603</width>
+     <width>773</width>
      <height>22</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpenEeprom"/>
+    <addaction name="actionSaveEeprom"/>
+   </widget>
+   <addaction name="menuFile"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -53,6 +80,16 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpenEeprom">
+   <property name="text">
+    <string>Open eeprom binary</string>
+   </property>
+  </action>
+  <action name="actionSaveEeprom">
+   <property name="text">
+    <string>Save eeprom binary</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
@@ -73,5 +110,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionOpenEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>openEeprom()</slot>
+ </slots>
 </ui>
