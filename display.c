@@ -476,7 +476,7 @@ static void drawAm(uint8_t am)
 		writeString((uint8_t*)"  ");
 	}
 #else
-static void drawTm(uint8_t tm, const uint8_t *font)
+static void drawAm(uint8_t am, const uint8_t *font)
 {
 	if (getEam() == am)
 		gdLoadFont(font, 0, FONT_DIR_0);
