@@ -102,6 +102,7 @@ int16_t getStbyTimer(void);
 void setStbyTimer(int16_t val);
 
 void setSecTimer(uint16_t val);
+int16_t getSecTimer(void);
 
 void setClockTimer(uint8_t value);
 uint8_t getClockTimer(void);

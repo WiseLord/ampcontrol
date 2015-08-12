@@ -200,9 +200,9 @@ void ks0066WriteString(uint8_t *string)
 	return;
 }
 
-void ks0066WriteTail(uint8_t ch)
+void ks0066WriteTail(uint8_t ch, uint8_t pos)
 {
-	while (_x < KS0066_SCREEN_WIDTH)
+	while (_x <= pos)
 		ks0066WriteData (ch);
 
 	return;

@@ -343,6 +343,11 @@ void setSecTimer(uint16_t val)
 	return;
 }
 
+int16_t getSecTimer(void)
+{
+	return secTimer;
+}
+
 void setClockTimer(uint8_t value)
 {
 	clockTimer = value;

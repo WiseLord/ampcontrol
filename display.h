@@ -53,7 +53,8 @@ enum {
 
 enum {
 	LCD_LEVELS = 0,
-	LCD_BAR = 1,
+	LCD_BAR,
+	LCD_ALARM,
 
 	LCD_END
 };
