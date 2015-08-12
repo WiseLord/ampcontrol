@@ -984,9 +984,27 @@ void showAlarm(void)
 
 void showTimer(int16_t timer)
 {
+
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showTimer");
+	writeStringEeprom(txtLabels[LABEL_RC5_TIMER]);
+
+	ks0066SetXY(8, 0);
+
+	if (timer >= 0) {
+		writeNum(timer / 3600, 2, '0', 10);
+		writeString((uint8_t*)":");
+		writeNum(timer / 60 % 60, 2, '0', 10);
+		writeString((uint8_t*)":");
+		writeNum(timer % 60, 2, '0', 10);
+	} else {
+		writeString((uint8_t*)"--");
+		writeString((uint8_t*)":");
+		writeString((uint8_t*)"--");
+		writeString((uint8_t*)":");
+		writeString((uint8_t*)"--");
+	}
+	drawMiniSpectrum();
 #else
 	uint8_t x, xbase;
 	uint8_t y, ybase;
