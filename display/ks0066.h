@@ -76,15 +76,19 @@
 #define KS0066_MIN_BRIGHTNESS		0
 #define KS0066_MAX_BRIGHTNESS		32
 
-/* Functions */
-void ks0066WriteCommand(uint8_t cmd);
-void ks0066WriteData(uint8_t data);
+#define KS0066_DATA_CGRAM			0
+#define KS0066_DATA_DDRAM			1
 
+/* Functions */
 void ks0066Clear(void);
 void ks0066Init(void);
 
+void ks0066StartSym(uint8_t addr);
 void ks0066SetXY(uint8_t x, uint8_t y);
+
+void ks0066WriteData(uint8_t data);
 void ks0066WriteString(uint8_t *string);
+void ks0066WriteTail(uint8_t ch);
 
 void pcf8574SetBacklight(uint8_t value);
 void ks0066SetBrightness(uint8_t br);

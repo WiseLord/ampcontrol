@@ -10,6 +10,8 @@ static uint8_t i2cData;
 #endif
 
 static uint8_t _br;
+static uint8_t _x;
+static uint8_t dataMode = KS0066_DATA_CGRAM;
 
 static void ks0066WriteStrob()
 {
@@ -71,7 +73,7 @@ static void ks0066WritePort(uint8_t data)
 	return;
 }
 
-void ks0066WriteCommand(uint8_t command)
+static void ks0066WriteCommand(uint8_t command)
 {
 #if defined(KS0066_WIRE_PCF8574)
 	i2cData &= ~PCF8574_RS_LINE;
@@ -90,7 +92,11 @@ void ks0066WriteData(uint8_t data)
 #else
 	PORT(KS0066_RS) |= KS0066_RS_LINE;
 #endif
-	ks0066WritePort(data);
+	if (dataMode == KS0066_DATA_CGRAM || _x < KS0066_SCREEN_WIDTH) {
+		ks0066WritePort(data);
+		if (dataMode == KS0066_DATA_DDRAM)
+			_x++;
+	}
 
 	return;
 }
@@ -169,8 +175,18 @@ void ks0066Init(void)
 	return;
 }
 
+void ks0066StartSym(uint8_t num)
+{
+	dataMode = KS0066_DATA_CGRAM;
+	ks0066WriteCommand(KS0066_SET_CGRAM + num * 8);
+
+	return;
+}
+
 void ks0066SetXY(uint8_t x, uint8_t y)
 {
+	dataMode = KS0066_DATA_DDRAM;
+	_x = x;
 	ks0066WriteCommand(KS0066_SET_DDRAM + (y ? KS0066_LINE_WIDTH : 0) + x);
 
 	return;
@@ -178,8 +194,16 @@ void ks0066SetXY(uint8_t x, uint8_t y)
 
 void ks0066WriteString(uint8_t *string)
 {
-	while(*string)
+	while (*string)
 		ks0066WriteData(*string++);
+
+	return;
+}
+
+void ks0066WriteTail(uint8_t ch)
+{
+	while (_x < KS0066_SCREEN_WIDTH)
+		ks0066WriteData (ch);
 
 	return;
 }
