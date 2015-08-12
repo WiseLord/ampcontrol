@@ -471,7 +471,7 @@ static void drawTm(uint8_t tm, const uint8_t *font)
 static void drawAm(uint8_t am)
 {
 	if (getEam() != am || (getSecTimer() % 512) < 200) {
-		writeNum(getTime(am), 2, '0', 10);
+		writeNum(getAlarm(am), 2, '0', 10);
 	} else {
 		writeString((uint8_t*)"  ");
 	}
@@ -482,7 +482,7 @@ static void drawAm(uint8_t am, const uint8_t *font)
 		gdLoadFont(font, 0, FONT_DIR_0);
 	else
 		gdLoadFont(font, 1, FONT_DIR_0);
-	writeNum(getTime(am), 2, '0', 10);
+	writeNum(getAlarm(am), 2, '0', 10);
 	gdLoadFont(font, 1, FONT_DIR_0);
 #endif
 	return;
