@@ -101,6 +101,16 @@ static void lcdGenBar(uint8_t sym)
 		0b00000,
 		0b00000,
 	};
+	static const uint8_t degreeIcon[] PROGMEM = {
+		0b00110,
+		0b01001,
+		0b01001,
+		0b00110,
+		0b00000,
+		0b00000,
+		0b00000,
+		0b00000,
+	};
 
 	uint8_t i;
 
@@ -120,13 +130,13 @@ static void lcdGenBar(uint8_t sym)
 		/* Generate two additional symbols */
 		userAddSym = sym;
 		switch (sym) {
-		case SYM_MUTE:
+		case SYM_MUTE_CROSS:
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&speakerIcon[i]));
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
 			break;
-		case SYM_LOUD:
+		case SYM_LOUD_CROSS:
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&loudIcon[i]));
 			for (i = 0; i < 8; i++)
@@ -136,7 +146,7 @@ static void lcdGenBar(uint8_t sym)
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&stereoIcon[i]));
 			for (i = 0; i < 8; i++)
-				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+				ks0066WriteData(pgm_read_byte(&degreeIcon[i]));
 			break;
 		}
 	}
@@ -698,14 +708,21 @@ void showRC5Info(void)
 
 void showTemp(void)
 {
+	int8_t tempTH = getTempTH();
 #ifdef KS0066
-	ks0066SetXY(0, 0);
-	ks0066WriteString((uint8_t*)"showTemp");
+	lcdGenBar (SYM_STEREO_DEGREE);
+	showParLabel (txtLabels[LABEL_THRESHOLD]);
+	showParValue (tempTH);
+	writeString((uint8_t*)"\x07""C");
+
+	ks0066SetXY (0, 1);
+	writeString((uint8_t*)"1:");
+	writeNum(ds18x20GetTemp(0), 3, ' ', 10);
+	writeString((uint8_t*)"\x07""C  2:");
+	writeNum(ds18x20GetTemp(1), 3, ' ', 10);
+	writeString((uint8_t*)"\x07""C");
+
 #else
-	int8_t tempTH;
-
-	tempTH = getTempTH();
-
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	gdSetXY(0, 48);
@@ -744,7 +761,7 @@ void showRadio(uint8_t tune)
 	static uint8_t rdsMode;
 
 #ifdef KS0066
-	lcdGenBar(SYM_STEREO);
+	lcdGenBar(SYM_STEREO_DEGREE);
 
 	/* Frequency value */
 	ks0066SetXY(0, 0);
@@ -902,7 +919,7 @@ void showMute(void)
 	drawMiniSpectrum();
 
 #ifdef KS0066
-	lcdGenBar(SYM_MUTE);
+	lcdGenBar(SYM_MUTE_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
 	if (sndGetMute ())
@@ -925,7 +942,7 @@ void showLoudness(void)
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
 	drawMiniSpectrum();
 #ifdef KS0066
-	lcdGenBar(SYM_LOUD);
+	lcdGenBar(SYM_LOUD_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
 	if (sndGetLoudness ())

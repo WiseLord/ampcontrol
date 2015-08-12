@@ -60,9 +60,9 @@ enum {
 };
 
 enum {
-	SYM_STEREO = 0,
-	SYM_MUTE,
-	SYM_LOUD,
+	SYM_STEREO_DEGREE = 0,
+	SYM_MUTE_CROSS,
+	SYM_LOUD_CROSS,
 
 	SYM_END
 };
