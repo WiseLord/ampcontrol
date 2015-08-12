@@ -422,6 +422,7 @@ void handleEncoder(int8_t encCnt)
 		case MODE_TIME:
 		case MODE_TIMER:
 		case MODE_SILENCE_TIMER:
+		case MODE_ALARM:
 		case MODE_FM_RADIO:
 			dispMode = MODE_SND_VOLUME;
 		default:
