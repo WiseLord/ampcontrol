@@ -12,13 +12,16 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
+    void updateTable();
+
 private:
     LcdConverter *lc;
     QString fileName;
-    QByteArray eeprom;
+    QByteArray eep;
 
 private slots:
     void openEeprom();
+    void setAudioProc(int proc);
 
     void on_pushButton_clicked();
 };

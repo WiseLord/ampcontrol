@@ -15,10 +15,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    lcdconverter.cpp
+		mainwindow.cpp \
+	lcdconverter.cpp
 
 HEADERS  += mainwindow.h \
-    lcdconverter.h
+	lcdconverter.h
 
 FORMS    += mainwindow.ui

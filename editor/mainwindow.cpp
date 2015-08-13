@@ -1,41 +1,86 @@
 #include "mainwindow.h"
 
-#include <QFileDialog>
+#include <QDebug>
+#include <QtWidgets>
+
+#include "../eeprom.h"
 
 MainWindow::MainWindow(QWidget *parent) :
-  QMainWindow(parent)
+    QMainWindow(parent)
 {
-  setupUi(this);
+    setupUi(this);
 
-  lc = new LcdConverter();
+    lc = new LcdConverter();
 
+    wgtHexTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
+    for (int y = 0; y < 64; y++) {
+        for (int x = 0; x < 16; x++) {
+            QTableWidgetItem *item = new QTableWidgetItem("00");
+            wgtHexTable->setItem(y, x, item);
+        }
+        QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(y * 16, 4, 16, QChar('0')).toUpper());
+        wgtHexTable->setVerticalHeaderItem(y, item);
+    }
+    for (int x = 0; x < 16; x++) {
+        QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(x, 0, 16).toUpper());
+        wgtHexTable->setHorizontalHeaderItem(x, item);
+    }
+    wgtHexTable->setFont(QFont("Liberation Mono"));
+
+    eep.fill(0xFF, 1024);
+
+    updateTable();
+}
+
+void MainWindow::updateTable()
+{
+    for (int y = 0; y < 64; y++) {
+        for (int x = 0; x < 16; x++) {
+            QTableWidgetItem *item = wgtHexTable->item(y, x);
+            item->setText(eep.mid(y * 16 + x, 1).toHex().toUpper());
+            if (item->text() == "FF")
+                item->setTextColor(Qt::gray);
+            else if (item->text() == "00" && reinterpret_cast<uint8_t*>(y * 16 + x) >= labelsAddr)
+                item->setTextColor(Qt::blue);
+            else
+                item->setTextColor(Qt::black);
+        }
+    }
 }
 
 void MainWindow::openEeprom()
 {
     fileName = QFileDialog::getOpenFileName(
-            this,
-            tr("Open eeprom binary"),
-            "../eeprom/",
-            tr("EEPROM files (eeprom_*.bin);;All files (*.*)")
-    );
+                this,
+                tr("Open eeprom binary"),
+                "../eeprom/",
+                tr("EEPROM files (eeprom_*.bin);;All files (*.*)")
+                );
 
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly))
         return;
 
-    eeprom = file.readAll();
+    eep = file.readAll();
+
+    updateTable();
+}
+
+void MainWindow::setAudioProc(int proc)
+{
+  eep[0x28] = proc;
+  updateTable();
 }
 
 void MainWindow::on_pushButton_clicked()
 {
-  QString text;
+    QString text;
 
-  text = this->lineEdit->text ();
+    text = this->lineEdit->text ();
 
-  this->listWidget->clear ();
+    this->listWidget->clear ();
 
-  QByteArray ba = lc->encode(text);
+    QByteArray ba = lc->encode(text);
 
-  this->listWidget->addItem(ba.toHex());
+    this->listWidget->addItem(ba.toHex());
 }
