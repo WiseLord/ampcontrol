@@ -10,6 +10,7 @@ public:
     LcdConverter();
 
     QByteArray encode(QString text);
+    QString decode(QByteArray ba);
 
 private:
     QMap<QChar, char> map_ks0066ru = {

@@ -24,7 +24,8 @@ private slots:
     void setAudioproc(int proc);
     void translated(int row, int column);
 
-    void on_pushButton_clicked();
+    void on_pbEncode_clicked();
+    void on_pbDecode_clicked();
 };
 
 #endif // MAINWINDOW_H

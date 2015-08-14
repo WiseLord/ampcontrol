@@ -23,3 +23,8 @@ QByteArray LcdConverter::encode(QString text)
     return ret;
 }
 
+QString LcdConverter::decode(QByteArray ba)
+{
+    return ba.toHex();
+}
+

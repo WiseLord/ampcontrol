@@ -50,6 +50,7 @@ void MainWindow::updateHexTable()
 
 void MainWindow::openEeprom()
 {
+    /* Open eeprom binary file */
     fileName = QFileDialog::getOpenFileName(
                 this,
                 tr("Open eeprom binary"),
@@ -63,7 +64,40 @@ void MainWindow::openEeprom()
 
     eep = file.readAll();
 
+    file.close();
+
     updateHexTable();
+
+    /* Load text labels */
+    wgtTranslations->blockSignals(true);
+
+    QBuffer buffer(&eep);
+    char ch;
+    int pos, len;
+
+    buffer.open(QIODevice::ReadOnly);
+    buffer.seek(eepromLabelsAddr);
+
+
+    pos = buffer.pos();
+    len = 0;
+    buffer.getChar(&ch);
+
+    for (int i = 0; i < LABEL_END && buffer.pos() < EEPROM_SIZE; i++) {
+        while (ch == 0x00 && buffer.pos() < EEPROM_SIZE) {
+            pos = buffer.pos();
+            len = 0;
+            buffer.getChar(&ch);
+        }
+        while (ch != 0x00 && buffer.pos() < EEPROM_SIZE) {
+            buffer.getChar(&ch);
+            len++;
+        }
+        wgtTranslations->item(i, 0)->setText(lc->decode(eep.mid(pos, len)));
+    }
+    wgtTranslations->blockSignals(false);
+
+    buffer.close();
 }
 
 void MainWindow::setAudioproc(int proc)
@@ -77,8 +111,8 @@ void MainWindow::translated(int row, int column)
     Q_UNUSED(row); Q_UNUSED(column);
 
     QBuffer buffer(&eep);
-    buffer.open(QIODevice::WriteOnly);
 
+    buffer.open(QIODevice::WriteOnly);
     buffer.seek(eepromLabelsAddr);
 
     for (int i = 0; i < LABEL_END; i++) {
@@ -95,15 +129,18 @@ void MainWindow::translated(int row, int column)
     updateHexTable();
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pbEncode_clicked()
 {
     QString text;
 
-    text = this->lineEdit->text ();
-
-    this->listWidget->clear ();
+    text = this->leEncode->text ();
 
     QByteArray ba = lc->encode(text);
 
-    this->listWidget->addItem(ba.toHex());
+    this->leEncoded->setText(ba.toHex());
+}
+
+void MainWindow::on_pbDecode_clicked()
+{
+
 }

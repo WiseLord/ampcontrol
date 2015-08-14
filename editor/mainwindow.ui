@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>960</width>
-    <height>636</height>
+    <width>956</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -135,23 +135,40 @@
        <attribute name="title">
         <string>Tab 1</string>
        </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QListWidget" name="listWidget"/>
-        </item>
-        <item>
-         <widget class="QLineEdit" name="lineEdit">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="leEncode">
           <property name="text">
            <string>проверка</string>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QPushButton" name="pushButton">
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pbEncode">
           <property name="text">
-           <string>PushButton</string>
+           <string>Encode</string>
           </property>
          </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLineEdit" name="leEncoded"/>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pbDecode">
+          <property name="text">
+           <string>Decode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLineEdit" name="leDecode">
+          <property name="text">
+           <string>be706fb36570ba61</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLineEdit" name="leDecoded"/>
         </item>
        </layout>
       </widget>
@@ -1150,7 +1167,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>960</width>
+     <width>956</width>
      <height>22</height>
     </rect>
    </property>
@@ -1178,18 +1195,18 @@
  <resources/>
  <connections>
   <connection>
-   <sender>lineEdit</sender>
+   <sender>leEncode</sender>
    <signal>returnPressed()</signal>
-   <receiver>pushButton</receiver>
+   <receiver>pbEncode</receiver>
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>945</x>
-     <y>592</y>
+     <x>659</x>
+     <y>249</y>
     </hint>
     <hint type="destinationlabel">
-     <x>945</x>
-     <y>621</y>
+     <x>745</x>
+     <y>250</y>
     </hint>
    </hints>
   </connection>
@@ -1216,12 +1233,28 @@
    <slot>setAudioproc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>733</x>
-     <y>77</y>
+     <x>808</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
      <x>437</x>
      <y>475</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leDecode</sender>
+   <signal>returnPressed()</signal>
+   <receiver>pbDecode</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>564</x>
+     <y>439</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>706</x>
+     <y>440</y>
     </hint>
    </hints>
   </connection>
