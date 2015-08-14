@@ -21,7 +21,7 @@ private:
 
 private slots:
     void openEeprom();
-    void setAudioProc(int proc);
+    void setAudioproc(int proc);
 
     void on_pushButton_clicked();
 };

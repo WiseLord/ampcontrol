@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>795</width>
-    <height>538</height>
+    <width>793</width>
+    <height>534</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -426,7 +426,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>795</width>
+     <width>793</width>
      <height>22</height>
     </rect>
    </property>
@@ -489,7 +489,7 @@
    <sender>comboBox</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>setAudioProc(int)</slot>
+   <slot>setAudioproc(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>733</x>
@@ -504,6 +504,6 @@
  </connections>
  <slots>
   <slot>openEeprom()</slot>
-  <slot>setAudioProc(int)</slot>
+  <slot>setAudioproc(int)</slot>
  </slots>
 </ui>

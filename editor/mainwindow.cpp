@@ -40,7 +40,7 @@ void MainWindow::updateTable()
             item->setText(eep.mid(y * 16 + x, 1).toHex().toUpper());
             if (item->text() == "FF")
                 item->setTextColor(Qt::gray);
-            else if (item->text() == "00" && reinterpret_cast<uint8_t*>(y * 16 + x) >= labelsAddr)
+            else if (item->text() == "00" && (y * 16 + x) >= eepromLabelsAddr)
                 item->setTextColor(Qt::blue);
             else
                 item->setTextColor(Qt::black);
@@ -66,10 +66,10 @@ void MainWindow::openEeprom()
     updateTable();
 }
 
-void MainWindow::setAudioProc(int proc)
+void MainWindow::setAudioproc(int proc)
 {
-  eep[0x28] = proc;
-  updateTable();
+    eep[eepromAudioproc] = proc;
+    updateTable();
 }
 
 void MainWindow::on_pushButton_clicked()
