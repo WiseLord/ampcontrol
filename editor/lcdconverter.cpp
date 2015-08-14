@@ -1,10 +1,10 @@
 #include "lcdconverter.h"
 
-#include <QChar>
+#include <QtCore>
 
 LcdConverter::LcdConverter()
 {
-    for (ushort i = 0; i < 128; i++)
+    for (ushort i = 0; i < 0x7b; i++)
         map_ks0066ru[i] = i;
 
     map_ks0066ru[0x0410] = 'A';
@@ -27,6 +27,12 @@ LcdConverter::LcdConverter()
     map_ks0066ru[0x0440] = 'p';
     map_ks0066ru[0x0445] = 'x';
     map_ks0066ru[0x0443] = 'y';
+
+    map_ks0066ru[0x2469] = 0x7b; // ⑩
+    map_ks0066ru[0x246b] = 0x7c; // ⑫
+    map_ks0066ru[0x246e] = 0x7d; // ⑮
+    map_ks0066ru[0x21b5] = 0x7e; // ↵
+    map_ks0066ru[0x2750] = 0x7f; //
 
     map_ks0066ru[0x0411] = 0xa0; // Б
     map_ks0066ru[0x0413] = 0xa1; // Г
@@ -106,12 +112,12 @@ LcdConverter::LcdConverter()
     map_ks0066ru[0x2018] = 0xe7; // ‘
     map_ks0066ru[0x00a8] = 0xe8; // ¨
     map_ks0066ru[0x007e] = 0xe9; // ~
-    map_ks0066ru[0x00e9] = 0xea; // Ў
-    map_ks0066ru[0x00e7] = 0xeb; // ў
-    map_ks0066ru[0x0133] = 0xec; // Є
-    map_ks0066ru[0x2669] = 0xed; // ♩
-    map_ks0066ru[0x25cc] = 0xee; // Ї
-    map_ks0066ru[0x25cb] = 0xef; // ї
+    map_ks0066ru[0x040e] = 0xea; // Ў
+    map_ks0066ru[0x045e] = 0xeb; // ў
+    map_ks0066ru[0x0404] = 0xec; // Є
+    map_ks0066ru[0x0454] = 0xed; // є
+    map_ks0066ru[0x0407] = 0xee; // Ї
+    map_ks0066ru[0x2457] = 0xef; // ї
 
     map_ks0066ru[0x00bc] = 0xf0; // ¼
     map_ks0066ru[0x2153] = 0xf1; // ⅓
@@ -129,17 +135,6 @@ LcdConverter::LcdConverter()
     map_ks0066ru[0x00a7] = 0xfd; // §
     map_ks0066ru[0x00b6] = 0xfe; // ¶
     map_ks0066ru[0x2588] = 0xff; // █
-
-    map_ks0066ru[0x2469] = 0x7b; // ⑩
-    map_ks0066ru[0x007b] = 0xc8; // «
-    map_ks0066ru[0x00a2] = 0x5c; // ¢
-    map_ks0066ru[0x005c] = 0xfd; // backslash
-    map_ks0066ru[0x246b] = 0x7c; // ⑫
-    map_ks0066ru[0x007c] = 0xed; // |
-    map_ks0066ru[0x246e] = 0x7d; // ⑮
-    map_ks0066ru[0x007d] = 0xc9; // »
-    map_ks0066ru[0x21b5] = 0x7e; // ↵
-    map_ks0066ru[0x2750] = 0x7f; //
 }
 
 QByteArray LcdConverter::encode(QString text)
@@ -160,6 +155,19 @@ QByteArray LcdConverter::encode(QString text)
 
 QString LcdConverter::decode(QByteArray ba)
 {
-    return ba.toHex();
-}
+    QString str = "";
+    QBuffer buffer(&ba);
+    char ch;
 
+    buffer.open(QIODevice::ReadOnly);
+    buffer.seek(0);
+
+    while (buffer.pos() < buffer.size()) {
+        buffer.getChar(&ch);
+        str.append(map_ks0066ru.keys(ch).at(0));
+    }
+
+    buffer.close();
+
+    return str;
+}
