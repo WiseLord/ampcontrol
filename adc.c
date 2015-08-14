@@ -36,8 +36,8 @@ void adcInit(void)
 	TIMSK |= (1<<TOIE0);								/* Enable Timer0 overflow interrupt */
 	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);			/* Set timer prescaller to 8 (2MHz) */
 
-	adcCorrLeft = eeprom_read_byte(eepromAdcCorrL);
-	adcCorrRight = eeprom_read_byte(eepromAdcCorrR);
+	adcCorrLeft = eeprom_read_byte((uint8_t*)eepromAdcCorrL);
+	adcCorrRight = eeprom_read_byte((uint8_t*)eepromAdcCorrR);
 
 	return;
 }

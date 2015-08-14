@@ -42,12 +42,12 @@ void sndInit(uint8_t extFunc)
 
 	/* Load audio parameters stored in eeprom */
 	for (i = 0; i < MODE_SND_END; i++) {
-		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
+		sndPar[i].value = eeprom_read_byte((uint8_t*)eepromVolume + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
-	_input = eeprom_read_byte(eepromInput);
-	_loudness = eeprom_read_byte(eepromLoudness);
-	_aproc = eeprom_read_byte(eepromAudioproc);
+	_input = eeprom_read_byte((uint8_t*)eepromInput);
+	_loudness = eeprom_read_byte((uint8_t*)eepromLoudness);
+	_aproc = eeprom_read_byte((uint8_t*)eepromAudioproc);
 	if (_aproc >= AUDIOPROC_END)
 		_aproc = AUDIOPROC_TDA7439;
 
@@ -354,11 +354,11 @@ void sndPowerOff(void)
 	uint8_t i;
 
 	for (i = 0; i < MODE_SND_END; i++)
-		eeprom_update_byte(eepromVolume + i, sndPar[i].value);
+		eeprom_update_byte((uint8_t*)eepromVolume + i, sndPar[i].value);
 
-	eeprom_update_byte(eepromInput, _input);
-	eeprom_update_byte(eepromLoudness, _loudness);
-	eeprom_update_byte(eepromAudioproc, _aproc);
+	eeprom_update_byte((uint8_t*)eepromInput, _input);
+	eeprom_update_byte((uint8_t*)eepromLoudness, _loudness);
+	eeprom_update_byte((uint8_t*)eepromAudioproc, _aproc);
 
 	return;
 }
