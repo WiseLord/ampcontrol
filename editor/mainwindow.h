@@ -12,7 +12,7 @@ class MainWindow : public QMainWindow, private Ui::MainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
 
-    void updateTable();
+    void updateHexTable();
 
 private:
     LcdConverter *lc;
@@ -22,6 +22,7 @@ private:
 private slots:
     void openEeprom();
     void setAudioproc(int proc);
+    void translated(int row, int column);
 
     void on_pushButton_clicked();
 };

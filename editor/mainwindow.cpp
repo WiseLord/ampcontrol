@@ -29,10 +29,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     eep.fill(0xFF, 1024);
 
-    updateTable();
+    updateHexTable();
 }
 
-void MainWindow::updateTable()
+void MainWindow::updateHexTable()
 {
     for (int y = 0; y < 64; y++) {
         for (int x = 0; x < 16; x++) {
@@ -63,13 +63,36 @@ void MainWindow::openEeprom()
 
     eep = file.readAll();
 
-    updateTable();
+    updateHexTable();
 }
 
 void MainWindow::setAudioproc(int proc)
 {
     eep[eepromAudioproc] = proc;
-    updateTable();
+    updateHexTable();
+}
+
+void MainWindow::translated(int row, int column)
+{
+    Q_UNUSED(row); Q_UNUSED(column);
+
+    QBuffer buffer(&eep);
+    buffer.open(QIODevice::WriteOnly);
+
+    buffer.seek(eepromLabelsAddr);
+
+    for (int i = 0; i < LABEL_END; i++) {
+        buffer.write(lc->encode(wgtTranslations->item(i, 0)->text()));
+        buffer.putChar('\0');
+    }
+
+    while (buffer.pos() < EEPROM_SIZE) {
+        buffer.putChar(0xFF);
+    }
+
+    buffer.close();
+
+    updateHexTable();
 }
 
 void MainWindow::on_pushButton_clicked()
