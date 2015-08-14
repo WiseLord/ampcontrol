@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>956</width>
-    <height>632</height>
+    <width>764</width>
+    <height>508</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,9 +19,17 @@
      <widget class="QTableWidget" name="wgtHexTable">
       <property name="minimumSize">
        <size>
-        <width>448</width>
+        <width>410</width>
         <height>0</height>
        </size>
+      </property>
+      <property name="font">
+       <font>
+        <family>Liberation Mono</family>
+        <pointsize>9</pointsize>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
       </property>
       <property name="gridStyle">
        <enum>Qt::NoPen</enum>
@@ -33,16 +41,16 @@
        <number>16</number>
       </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>24</number>
+       <number>22</number>
       </attribute>
       <attribute name="horizontalHeaderMinimumSectionSize">
-       <number>24</number>
+       <number>22</number>
       </attribute>
       <attribute name="verticalHeaderDefaultSectionSize">
-       <number>20</number>
+       <number>18</number>
       </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
-       <number>20</number>
+       <number>18</number>
       </attribute>
       <row/>
       <row/>
@@ -129,311 +137,8 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>1</number>
       </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Tab 1</string>
-       </attribute>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QLineEdit" name="leEncode">
-          <property name="text">
-           <string>проверка</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QPushButton" name="pbEncode">
-          <property name="text">
-           <string>Encode</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QLineEdit" name="leEncoded"/>
-        </item>
-        <item row="1" column="1">
-         <widget class="QPushButton" name="pbDecode">
-          <property name="text">
-           <string>Decode</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLineEdit" name="leDecode">
-          <property name="text">
-           <string>be706fb36570ba61</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLineEdit" name="leDecoded"/>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tabAudio">
-       <attribute name="title">
-        <string>Audio</string>
-       </attribute>
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <property name="spacing">
-         <number>2</number>
-        </property>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_28">
-          <item>
-           <widget class="QLabel" name="label">
-            <property name="text">
-             <string>Audioprocessor</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="comboBox">
-            <item>
-             <property name="text">
-              <string>TDA7439</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TDA7312</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TDA7313</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TDA7314</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TDA7318</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TDA7448</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>PGA2310</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>Volume</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox">
-            <property name="minimum">
-             <number>0</number>
-            </property>
-            <property name="maximum">
-             <number>99</number>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_16">
-          <item>
-           <widget class="QLabel" name="label_3">
-            <property name="text">
-             <string>Bass</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_2"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_27">
-          <item>
-           <widget class="QLabel" name="label_14">
-            <property name="text">
-             <string>Middle</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_13"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_17">
-          <item>
-           <widget class="QLabel" name="label_4">
-            <property name="text">
-             <string>Treble</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_3"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_18">
-          <item>
-           <widget class="QLabel" name="label_5">
-            <property name="text">
-             <string>Preamp</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_4"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_26">
-          <item>
-           <widget class="QLabel" name="label_13">
-            <property name="text">
-             <string>Front/Rear</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_12"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_25">
-          <item>
-           <widget class="QLabel" name="label_12">
-            <property name="text">
-             <string>Balance</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_11"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_19">
-          <item>
-           <widget class="QLabel" name="label_6">
-            <property name="text">
-             <string>Center</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_5"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_20">
-          <item>
-           <widget class="QLabel" name="label_7">
-            <property name="text">
-             <string>Subwoofer</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_6"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_21">
-          <item>
-           <widget class="QLabel" name="label_8">
-            <property name="text">
-             <string>Input 0 gain</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_7"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_22">
-          <item>
-           <widget class="QLabel" name="label_9">
-            <property name="text">
-             <string>Input 1 gain</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_8"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_23">
-          <item>
-           <widget class="QLabel" name="label_10">
-            <property name="text">
-             <string>Input 2 gain</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_9"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_24">
-          <item>
-           <widget class="QLabel" name="label_11">
-            <property name="text">
-             <string>Input 3 gain</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QSpinBox" name="spinBox_10"/>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>313</width>
-            <height>322</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
         <string>Translations</string>
@@ -1158,16 +863,493 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tabAudio">
+       <attribute name="title">
+        <string>Audio</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" name="hltAudioProc">
+          <item>
+           <widget class="QLabel" name="lblAudioproc">
+            <property name="text">
+             <string>Audioprocessor</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cbxAudioproc">
+            <item>
+             <property name="text">
+              <string>TDA7439</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TDA7312</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TDA7313</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TDA7314</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TDA7318</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TDA7448</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>PGA2310</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltVolume">
+          <item>
+           <widget class="QLabel" name="lblVolume">
+            <property name="text">
+             <string>Volume</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbVolume">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="decimals">
+             <number>2</number>
+            </property>
+            <property name="minimum">
+             <double>-79.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>-20.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltBass">
+          <item>
+           <widget class="QLabel" name="lblBass">
+            <property name="text">
+             <string>Bass</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbBass">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>-14.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>14.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltMiddle">
+          <item>
+           <widget class="QLabel" name="lblMiddle">
+            <property name="text">
+             <string>Middle</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbMiddle">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>-14.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>14.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltTreble">
+          <item>
+           <widget class="QLabel" name="lblTreble">
+            <property name="text">
+             <string>Treble</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbTreble">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>-14.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>14.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltPreamp">
+          <item>
+           <widget class="QLabel" name="lblPreamp">
+            <property name="text">
+             <string>Preamp</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbPreamp">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>-47.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltFrontrear">
+          <item>
+           <widget class="QLabel" name="lblFrontrear">
+            <property name="text">
+             <string>Front/Rear</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbFrontrear">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltBalance">
+          <item>
+           <widget class="QLabel" name="lblBalance">
+            <property name="text">
+             <string>Balance</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbBalance">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltCenter">
+          <item>
+           <widget class="QLabel" name="lblCenter">
+            <property name="text">
+             <string>Center</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbCenter">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltSubwoofer">
+          <item>
+           <widget class="QLabel" name="lblSubwoofer">
+            <property name="text">
+             <string>Subwoofer</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbSubwoofer">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="minimum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="maximum">
+             <double>0.000000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltGain0">
+          <item>
+           <widget class="QLabel" name="lblGain0">
+            <property name="text">
+             <string>Input 0 gain</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbGain0">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="maximum">
+             <double>30.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltGain1">
+          <item>
+           <widget class="QLabel" name="lblGain1">
+            <property name="text">
+             <string>Input 1 gain</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbGain1">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="maximum">
+             <double>30.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltGain2">
+          <item>
+           <widget class="QLabel" name="lblGain2">
+            <property name="text">
+             <string>Input 2 gain</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbGain2">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="maximum">
+             <double>30.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="hltGain3">
+          <item>
+           <widget class="QLabel" name="lblGain3">
+            <property name="text">
+             <string>Input 3 gain</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="dsbGain3">
+            <property name="suffix">
+             <string> dB</string>
+            </property>
+            <property name="maximum">
+             <double>30.000000000000000</double>
+            </property>
+            <property name="singleStep">
+             <double>2.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="spAudio">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>313</width>
+            <height>322</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabTuner">
+       <attribute name="title">
+        <string>Tuner</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
+         <layout class="QHBoxLayout" name="hltTuner">
+          <item>
+           <widget class="QLabel" name="lblTuner">
+            <property name="text">
+             <string>Tuner</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cbxTuner">
+            <property name="currentIndex">
+             <number>1</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>No tuner</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TEA5767</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>RDA5807</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>TUX032</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>LM7001</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <spacer name="sbTuner">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>404</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
+   <zorder>tabWidget</zorder>
+   <zorder>wgtHexTable</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>956</width>
+     <width>764</width>
      <height>22</height>
     </rect>
    </property>
@@ -1195,22 +1377,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>leEncode</sender>
-   <signal>returnPressed()</signal>
-   <receiver>pbEncode</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>659</x>
-     <y>249</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>745</x>
-     <y>250</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionOpenEeprom</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
@@ -1227,7 +1393,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>comboBox</sender>
+   <sender>cbxAudioproc</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>MainWindow</receiver>
    <slot>setAudioproc(int)</slot>
@@ -1243,26 +1409,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>leDecode</sender>
-   <signal>returnPressed()</signal>
-   <receiver>pbDecode</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>564</x>
-     <y>439</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>706</x>
-     <y>440</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>wgtTranslations</sender>
    <signal>cellChanged(int,int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>translated(int,int)</slot>
+   <slot>updateTranslation(int,int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>789</x>
@@ -1278,6 +1428,6 @@
  <slots>
   <slot>openEeprom()</slot>
   <slot>setAudioproc(int)</slot>
-  <slot>translated(int,int)</slot>
+  <slot>updateTranslation(int,int)</slot>
  </slots>
 </ui>

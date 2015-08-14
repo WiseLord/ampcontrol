@@ -21,11 +21,11 @@ private:
 
 private slots:
     void openEeprom();
-    void setAudioproc(int proc);
-    void translated(int row, int column);
+    void readEep();
 
-    void on_pbEncode_clicked();
-    void on_pbDecode_clicked();
+    void updateTranslation(int row, int column);
+
+    void setAudioproc(int proc);
 };
 
 #endif // MAINWINDOW_H

@@ -4,6 +4,7 @@
 #include <QtWidgets>
 
 #include "../eeprom.h"
+#include "../audio/audioproc.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -25,11 +26,11 @@ MainWindow::MainWindow(QWidget *parent) :
         QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(x, 0, 16).toUpper());
         wgtHexTable->setHorizontalHeaderItem(x, item);
     }
-    wgtHexTable->setFont(QFont("Liberation Mono"));
+    wgtHexTable->setFont(QFont("Liberation Mono", 9, QFont::Bold));
 
     eep.fill(0xFF, 1024);
 
-    updateHexTable();
+    updateTranslation(0, 0);
 }
 
 void MainWindow::updateHexTable()
@@ -68,16 +69,20 @@ void MainWindow::openEeprom()
 
     updateHexTable();
 
-    /* Load text labels */
-    wgtTranslations->blockSignals(true);
+    readEep();
+}
 
+void MainWindow::readEep()
+{
     QBuffer buffer(&eep);
     char ch;
     int pos, len;
 
+    /* Load text labels */
+    wgtTranslations->blockSignals(true);
+
     buffer.open(QIODevice::ReadOnly);
     buffer.seek(eepromLabelsAddr);
-
 
     pos = buffer.pos();
     len = 0;
@@ -100,13 +105,7 @@ void MainWindow::openEeprom()
     buffer.close();
 }
 
-void MainWindow::setAudioproc(int proc)
-{
-    eep[eepromAudioproc] = proc;
-    updateHexTable();
-}
-
-void MainWindow::translated(int row, int column)
+void MainWindow::updateTranslation(int row, int column)
 {
     Q_UNUSED(row); Q_UNUSED(column);
 
@@ -129,18 +128,17 @@ void MainWindow::translated(int row, int column)
     updateHexTable();
 }
 
-void MainWindow::on_pbEncode_clicked()
+void MainWindow::setAudioproc(int proc)
 {
-    QString text;
+    switch (proc) {
+    case value:
 
-    text = this->leEncode->text ();
+        break;
+    default:
+        break;
+    }
 
-    QByteArray ba = lc->encode(text);
+    eep[eepromAudioproc] = proc;
 
-    this->leEncoded->setText(ba.toHex());
-}
-
-void MainWindow::on_pbDecode_clicked()
-{
-
+    updateHexTable();
 }
