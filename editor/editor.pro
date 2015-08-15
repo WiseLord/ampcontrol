@@ -22,3 +22,6 @@ HEADERS  += mainwindow.h \
 	lcdconverter.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    res.qrc

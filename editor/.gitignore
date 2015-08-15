@@ -1,5 +1,6 @@
 *.pro.user
 ui_*.h
 moc_*.cpp
+*_res.cpp
 Makefile
 ampcontroleditor

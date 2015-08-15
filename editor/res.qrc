@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/eeprom.bin</file>
+    </qresource>
+</RCC>

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Ampcontrol EEPROM editor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
@@ -129,7 +129,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -506,351 +506,6 @@
             <string>Translation</string>
            </property>
           </column>
-          <item row="0" column="0">
-           <property name="text">
-            <string>Volume</string>
-           </property>
-          </item>
-          <item row="1" column="0">
-           <property name="text">
-            <string>Bass</string>
-           </property>
-          </item>
-          <item row="2" column="0">
-           <property name="text">
-            <string>Middle</string>
-           </property>
-          </item>
-          <item row="3" column="0">
-           <property name="text">
-            <string>Treble</string>
-           </property>
-          </item>
-          <item row="4" column="0">
-           <property name="text">
-            <string>Preamp</string>
-           </property>
-          </item>
-          <item row="5" column="0">
-           <property name="text">
-            <string>Front/rear</string>
-           </property>
-          </item>
-          <item row="6" column="0">
-           <property name="text">
-            <string>Balance</string>
-           </property>
-          </item>
-          <item row="7" column="0">
-           <property name="text">
-            <string>Center</string>
-           </property>
-          </item>
-          <item row="8" column="0">
-           <property name="text">
-            <string>Subwoofer</string>
-           </property>
-          </item>
-          <item row="9" column="0">
-           <property name="text">
-            <string>Tuner</string>
-           </property>
-          </item>
-          <item row="10" column="0">
-           <property name="text">
-            <string>Computer</string>
-           </property>
-          </item>
-          <item row="11" column="0">
-           <property name="text">
-            <string>TV-set</string>
-           </property>
-          </item>
-          <item row="12" column="0">
-           <property name="text">
-            <string>DVD</string>
-           </property>
-          </item>
-          <item row="13" column="0">
-           <property name="text">
-            <string>Mute</string>
-           </property>
-          </item>
-          <item row="14" column="0">
-           <property name="text">
-            <string>Tone</string>
-           </property>
-          </item>
-          <item row="15" column="0">
-           <property name="text">
-            <string>on</string>
-           </property>
-          </item>
-          <item row="16" column="0">
-           <property name="text">
-            <string>off</string>
-           </property>
-          </item>
-          <item row="17" column="0">
-           <property name="text">
-            <string>dB</string>
-           </property>
-          </item>
-          <item row="18" column="0">
-           <property name="text">
-            <string>   SUNDAY   </string>
-           </property>
-          </item>
-          <item row="19" column="0">
-           <property name="text">
-            <string>   MONDAY   </string>
-           </property>
-          </item>
-          <item row="20" column="0">
-           <property name="text">
-            <string>  TUESDAY   </string>
-           </property>
-          </item>
-          <item row="21" column="0">
-           <property name="text">
-            <string>  WEDNESDAY </string>
-           </property>
-          </item>
-          <item row="22" column="0">
-           <property name="text">
-            <string>  THURSDAY  </string>
-           </property>
-          </item>
-          <item row="23" column="0">
-           <property name="text">
-            <string>   FRIDAY   </string>
-           </property>
-          </item>
-          <item row="24" column="0">
-           <property name="text">
-            <string>  SATURDAY  </string>
-           </property>
-          </item>
-          <item row="25" column="0">
-           <property name="text">
-            <string>Brightness</string>
-           </property>
-          </item>
-          <item row="26" column="0">
-           <property name="text">
-            <string>Input status</string>
-           </property>
-          </item>
-          <item row="27" column="0">
-           <property name="text">
-            <string>RC5</string>
-           </property>
-          </item>
-          <item row="28" column="0">
-           <property name="text">
-            <string>Buttons</string>
-           </property>
-          </item>
-          <item row="29" column="0">
-           <property name="text">
-            <string>Learning mode</string>
-           </property>
-          </item>
-          <item row="30" column="0">
-           <property name="text">
-            <string>Button</string>
-           </property>
-          </item>
-          <item row="31" column="0">
-           <property name="text">
-            <string>Address</string>
-           </property>
-          </item>
-          <item row="32" column="0">
-           <property name="text">
-            <string>Command</string>
-           </property>
-          </item>
-          <item row="33" column="0">
-           <property name="text">
-            <string>Standby mode</string>
-           </property>
-          </item>
-          <item row="34" column="0">
-           <property name="text">
-            <string>Mute sound</string>
-           </property>
-          </item>
-          <item row="35" column="0">
-           <property name="text">
-            <string>Menu</string>
-           </property>
-          </item>
-          <item row="36" column="0">
-           <property name="text">
-            <string>Volume +</string>
-           </property>
-          </item>
-          <item row="37" column="0">
-           <property name="text">
-            <string>Volume -</string>
-           </property>
-          </item>
-          <item row="38" column="0">
-           <property name="text">
-            <string>Input 1</string>
-           </property>
-          </item>
-          <item row="39" column="0">
-           <property name="text">
-            <string>Input 2</string>
-           </property>
-          </item>
-          <item row="40" column="0">
-           <property name="text">
-            <string>Input 3</string>
-           </property>
-          </item>
-          <item row="41" column="0">
-           <property name="text">
-            <string>Input 4</string>
-           </property>
-          </item>
-          <item row="42" column="0">
-           <property name="text">
-            <string>Next input</string>
-           </property>
-          </item>
-          <item row="43" column="0">
-           <property name="text">
-            <string>Time</string>
-           </property>
-          </item>
-          <item row="44" column="0">
-           <property name="text">
-            <string>Backlight</string>
-           </property>
-          </item>
-          <item row="45" column="0">
-           <property name="text">
-            <string>Spectrum mode</string>
-           </property>
-          </item>
-          <item row="46" column="0">
-           <property name="text">
-            <string>Fall speed</string>
-           </property>
-          </item>
-          <item row="47" column="0">
-           <property name="text">
-            <string>Display mode</string>
-           </property>
-          </item>
-          <item row="48" column="0">
-           <property name="text">
-            <string>Timer</string>
-           </property>
-          </item>
-          <item row="49" column="0">
-           <property name="text">
-            <string>Alarm</string>
-           </property>
-          </item>
-          <item row="50" column="0">
-           <property name="text">
-            <string>Channel +</string>
-           </property>
-          </item>
-          <item row="51" column="0">
-           <property name="text">
-            <string>Channel -</string>
-           </property>
-          </item>
-          <item row="52" column="0">
-           <property name="text">
-            <string>FM tune</string>
-           </property>
-          </item>
-          <item row="53" column="0">
-           <property name="text">
-            <string>FM mono</string>
-           </property>
-          </item>
-          <item row="54" column="0">
-           <property name="text">
-            <string>Store freq</string>
-           </property>
-          </item>
-          <item row="55" column="0">
-           <property name="text">
-            <string>Button 1</string>
-           </property>
-          </item>
-          <item row="56" column="0">
-           <property name="text">
-            <string>Button 2</string>
-           </property>
-          </item>
-          <item row="57" column="0">
-           <property name="text">
-            <string>Button 3</string>
-           </property>
-          </item>
-          <item row="58" column="0">
-           <property name="text">
-            <string>Button 4</string>
-           </property>
-          </item>
-          <item row="59" column="0">
-           <property name="text">
-            <string>Button 5</string>
-           </property>
-          </item>
-          <item row="60" column="0">
-           <property name="text">
-            <string>Button 6</string>
-           </property>
-          </item>
-          <item row="61" column="0">
-           <property name="text">
-            <string>Button 7</string>
-           </property>
-          </item>
-          <item row="62" column="0">
-           <property name="text">
-            <string>Button 8</string>
-           </property>
-          </item>
-          <item row="63" column="0">
-           <property name="text">
-            <string>Button 9</string>
-           </property>
-          </item>
-          <item row="64" column="0">
-           <property name="text">
-            <string>Button 0</string>
-           </property>
-          </item>
-          <item row="65" column="0">
-           <property name="text">
-            <string>Left channel</string>
-           </property>
-          </item>
-          <item row="66" column="0">
-           <property name="text">
-            <string>Right channel</string>
-           </property>
-          </item>
-          <item row="67" column="0">
-           <property name="text">
-            <string>Threshold</string>
-           </property>
-          </item>
-          <item row="68" column="0">
-           <property name="text">
-            <string>Sensor</string>
-           </property>
-          </item>
          </widget>
         </item>
        </layout>
@@ -1837,17 +1492,30 @@
     </property>
     <addaction name="actionOpenEeprom"/>
     <addaction name="actionSaveEeprom"/>
+    <addaction name="actionSaveEepromAs"/>
+    <addaction name="actionLoadDefaultEeprom"/>
    </widget>
    <addaction name="menuFile"/>
   </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionOpenEeprom">
    <property name="text">
-    <string>Open eeprom binary</string>
+    <string>Open eeprom binary …</string>
    </property>
   </action>
   <action name="actionSaveEeprom">
    <property name="text">
     <string>Save eeprom binary</string>
+   </property>
+  </action>
+  <action name="actionSaveEepromAs">
+   <property name="text">
+    <string>Save eeprom binary as …</string>
+   </property>
+  </action>
+  <action name="actionLoadDefaultEeprom">
+   <property name="text">
+    <string>Load default eeprom</string>
    </property>
   </action>
  </widget>
@@ -1897,7 +1565,7 @@
      <y>75</y>
     </hint>
     <hint type="destinationlabel">
-     <x>765</x>
+     <x>761</x>
      <y>26</y>
     </hint>
    </hints>
@@ -1909,7 +1577,7 @@
    <slot>setVolume(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>150</y>
     </hint>
     <hint type="destinationlabel">
@@ -1925,7 +1593,7 @@
    <slot>setBass(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>174</y>
     </hint>
     <hint type="destinationlabel">
@@ -1941,7 +1609,7 @@
    <slot>setMiddle(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>198</y>
     </hint>
     <hint type="destinationlabel">
@@ -1957,7 +1625,7 @@
    <slot>setTreble(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>222</y>
     </hint>
     <hint type="destinationlabel">
@@ -1973,7 +1641,7 @@
    <slot>setBalance(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>294</y>
     </hint>
     <hint type="destinationlabel">
@@ -1989,7 +1657,7 @@
    <slot>setFrontrear(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>270</y>
     </hint>
     <hint type="destinationlabel">
@@ -2005,7 +1673,7 @@
    <slot>setGain0(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>366</y>
     </hint>
     <hint type="destinationlabel">
@@ -2021,7 +1689,7 @@
    <slot>setGain1(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>390</y>
     </hint>
     <hint type="destinationlabel">
@@ -2037,7 +1705,7 @@
    <slot>setGain2(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>414</y>
     </hint>
     <hint type="destinationlabel">
@@ -2053,7 +1721,7 @@
    <slot>setGain3(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>438</y>
     </hint>
     <hint type="destinationlabel">
@@ -2069,7 +1737,7 @@
    <slot>setPreamp(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>246</y>
     </hint>
     <hint type="destinationlabel">
@@ -2085,7 +1753,7 @@
    <slot>setSubwoofer(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>342</y>
     </hint>
     <hint type="destinationlabel">
@@ -2101,7 +1769,7 @@
    <slot>setCenter(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>759</x>
+     <x>753</x>
      <y>318</y>
     </hint>
     <hint type="destinationlabel">
@@ -2142,6 +1810,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSaveEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveEepromAs</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveEepromAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoadDefaultEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadDefaultEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -2162,5 +1878,8 @@
   <slot>setGain3(double)</slot>
   <slot>setLoudness(int)</slot>
   <slot>setInput(int)</slot>
+  <slot>saveEeprom()</slot>
+  <slot>saveEepromAs()</slot>
+  <slot>loadDefaultEeprom()</slot>
  </slots>
 </ui>

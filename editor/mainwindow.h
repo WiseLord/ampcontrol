@@ -5,6 +5,8 @@
 
 #include "lcdconverter.h"
 
+#define EEPROM_RESOURCE ":/res/eeprom.bin"
+
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {
     Q_OBJECT
@@ -21,10 +23,14 @@ private:
     QByteArray eep;
 
     void setAudioParam(QDoubleSpinBox *spb, double min, double max, double step, int param);
+    void readEepromFile(QString name);
+    void saveEepromFile(QString name);
 
 private slots:
     void openEeprom();
-    void readEep();
+    void saveEeprom();
+    void saveEepromAs();
+    void loadDefaultEeprom();
 
     void updateTranslation(int row, int column);
 
