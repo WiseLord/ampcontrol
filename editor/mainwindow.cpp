@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
         QTableWidgetItem *item = new QTableWidgetItem(QString("%1").arg(x, 0, 16).toUpper());
         wgtHexTable->setHorizontalHeaderItem(x, item);
     }
-    wgtHexTable->setFont(QFont("Liberation Mono", 9, QFont::Bold));
+    wgtHexTable->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
 
     /* Default eeprom */
     eep.fill(0xFF, 1024);

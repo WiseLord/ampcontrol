@@ -23,14 +23,6 @@
         <height>0</height>
        </size>
       </property>
-      <property name="font">
-       <font>
-        <family>Liberation Mono</family>
-        <pointsize>9</pointsize>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
       <property name="gridStyle">
        <enum>Qt::NoPen</enum>
       </property>
@@ -954,7 +946,6 @@
             </widget>
            </item>
           </layout>
-          <zorder>cbxAudioproc</zorder>
           <zorder>cbxAudioproc</zorder>
           <zorder>lblAudioproc</zorder>
          </widget>
