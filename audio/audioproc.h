@@ -6,7 +6,6 @@
 #include "tda7439.h"
 #include "tda7448.h"
 #include "pga2310.h"
-#include "../pins.h"
 
 typedef enum {
 	AUDIOPROC_TDA7439 = 0,

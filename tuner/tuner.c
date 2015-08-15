@@ -2,6 +2,7 @@
 
 #include <avr/eeprom.h>
 #include "../eeprom.h"
+#include "../pins.h"
 
 uint8_t *bufFM;
 static tunerIC _tuner;

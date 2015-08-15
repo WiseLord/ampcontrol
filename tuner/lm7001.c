@@ -1,5 +1,6 @@
 #include "lm7001.h"
 #include <util/delay.h>
+#include "../pins.h"
 
 void lm7001Init(void)
 {

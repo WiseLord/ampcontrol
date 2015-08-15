@@ -2,7 +2,6 @@
 #define LM7001_H
 
 #include <inttypes.h>
-#include "../pins.h"
 
 /* IF = 10.7MHz and step = 50kHz */
 #define LM7001_IF			1070

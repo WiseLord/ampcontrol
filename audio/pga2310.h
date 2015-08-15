@@ -3,7 +3,6 @@
 
 #include <inttypes.h>
 #include "audio.h"
-#include "../pins.h"
 
 /* Number of inputs */
 #define PGA2310_IN_CNT				1

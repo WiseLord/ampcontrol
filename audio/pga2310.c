@@ -1,6 +1,7 @@
 #include "pga2310.h"
 
 #include <avr/pgmspace.h>
+#include "../pins.h"
 
 static sndParam *sndPar;
 
