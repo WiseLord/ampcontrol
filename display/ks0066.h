@@ -2,7 +2,6 @@
 #define KS0066_H
 
 #include <inttypes.h>
-#include "../pins.h"
 
 /* Display size */
 #ifdef KS0066_16X2_PCF8574

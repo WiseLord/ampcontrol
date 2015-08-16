@@ -61,6 +61,15 @@ private slots:
     void setFmmono(int value);
     void setFmctrl();
 
+    void setOther();
+    void setSpmode(int value);
+    void setSpspeed(int value);
+    void setBrstby(int value);
+    void setEncres(int value);
+    void setAdcleft(int value);
+    void setAdcright(int value);
+    void setExtfunc(int value);
+    void setThreshold(int value);
 };
 
 #endif // MAINWINDOW_H

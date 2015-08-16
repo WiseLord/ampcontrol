@@ -7,6 +7,7 @@
 #include "../audio/audioproc.h"
 #include "../eeprom.h"
 #include "../tuner/tuner.h"
+#include "../display.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -123,6 +124,9 @@ void MainWindow::readEepromFile(QString name)
     if (tuner >= TUNER_END)
         tuner = TUNER_TEA5767;
     setTuner(tuner);
+
+    // Processing other functions
+    setOther();
 }
 
 void MainWindow::saveEepromFile(QString name)
@@ -533,4 +537,103 @@ void MainWindow::setFmctrl()
 
     eep[eepromFMCtrl] = ctrl;
     updateHexTable(eepromFMCtrl);
+}
+
+void MainWindow::setOther()
+{
+    setSpmode(eep[eepromSpMode]);
+    cbxSpmode->setCurrentIndex(eep[eepromSpMode]);
+
+    setSpspeed(eep[eepromFallSpeed]);
+    cbxSpspeed->setCurrentIndex(eep[eepromFallSpeed]);
+
+    setBrstby(eep[eepromBrStby]);
+    sbxBrstby->setValue(eep[eepromBrStby]);
+
+    setEncres(eep[eepromEncRes]);
+    sbxEncres->setValue(eep[eepromEncRes]);
+
+    setAdcleft((unsigned char)eep[eepromAdcCorrL] - 128);
+    sbxAdcleft->setValue((unsigned char)eep[eepromAdcCorrL] - 128);
+
+    setAdcright((unsigned char)eep[eepromAdcCorrL] - 128);
+    sbxAdcright->setValue((unsigned char)eep[eepromAdcCorrR] - 128);
+
+    setExtfunc(eep[eepromExtFunc]);
+    cbxExtfunc->setCurrentIndex(eep[eepromExtFunc]);
+
+    setThreshold(eep[eepromTempTH]);
+    sbxThreshold->setValue(eep[eepromTempTH]);
+}
+
+void MainWindow::setSpmode(int value)
+{
+    if (value >= SP_MODE_END)
+        value = SP_MODE_STEREO;
+    eep[eepromSpMode] = (char)value;
+    updateHexTable(eepromSpMode);
+}
+
+void MainWindow::setSpspeed(int value)
+{
+    if (value >= FALL_SPEED_END)
+        value = FALL_SPEED_LOW;
+    eep[eepromFallSpeed] = (char)value;
+    updateHexTable(eepromFallSpeed);
+}
+
+void MainWindow::setBrstby(int value)
+{
+    if (value > sbxBrstby->maximum())
+        value = 1;
+    eep[eepromBrStby] = (char)value;
+    updateHexTable(eepromBrStby);
+}
+
+void MainWindow::setEncres(int value)
+{
+    if (value > sbxEncres->maximum())
+        value = sbxEncres->maximum();
+    if (value < sbxEncres->minimum())
+        value = sbxEncres->minimum();
+    eep[eepromEncRes] = (char)value;
+    updateHexTable(eepromEncRes);
+}
+
+void MainWindow::setAdcleft(int value)
+{
+    if (value > sbxAdcleft->maximum())
+        value = sbxAdcleft->maximum();
+    if (value < sbxAdcleft->minimum())
+        value = sbxAdcleft->minimum();
+    eep[eepromAdcCorrL] = (char)value + 128;
+    updateHexTable(eepromAdcCorrL);
+}
+
+void MainWindow::setAdcright(int value)
+{
+    if (value > sbxAdcright->maximum())
+        value = sbxAdcright->maximum();
+    if (value < sbxAdcright->minimum())
+        value = sbxAdcright->minimum();
+    eep[eepromAdcCorrR] = (char)value + 128;
+    updateHexTable(eepromAdcCorrR);
+}
+
+void MainWindow::setExtfunc(int value)
+{
+    if (value >= 2)
+        value = 0;
+    eep[eepromExtFunc] = (char)value;
+    updateHexTable(eepromExtFunc);
+}
+
+void MainWindow::setThreshold(int value)
+{
+    if (value > sbxThreshold->maximum())
+        value = sbxThreshold->maximum();
+    if (value < sbxThreshold->minimum())
+        value = sbxThreshold->minimum();
+    eep[eepromTempTH] = (char)value;
+    updateHexTable(eepromTempTH);
 }

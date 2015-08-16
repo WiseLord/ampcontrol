@@ -3,6 +3,7 @@
 #include "util/delay.h"
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include "../pins.h"
 
 static uint8_t fb[ST7920_SIZE_X / 4][ST7920_SIZE_Y / 2];
 static uint8_t _br;

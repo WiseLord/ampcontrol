@@ -2,7 +2,6 @@
 #define ST7920_H
 
 #include <inttypes.h>
-#include "../pins.h"
 
 /* Basic instructions */
 #define ST7920_CLEAR				0x01

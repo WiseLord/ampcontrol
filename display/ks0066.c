@@ -2,6 +2,7 @@
 
 #include <util/delay.h>
 #include <avr/interrupt.h>
+#include "../pins.h"
 
 #define swap(x) (__builtin_avr_swap(x))				/* Swaps nibbles */
 

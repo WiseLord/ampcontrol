@@ -3,6 +3,7 @@
 #include "util/delay.h"
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include "../pins.h"
 
 #ifdef KS0108_CS_INV
 #define KS0108_SET_CS1(); \
