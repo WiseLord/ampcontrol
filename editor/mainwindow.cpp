@@ -56,15 +56,10 @@ void MainWindow::updateHexTable()
         updateHexTable(pos);
 }
 
-void MainWindow::setAudioParam(QDoubleSpinBox *spb, double min, double max, double step, int param)
-{
-    spb->setRange(min, max);
-    spb->setSingleStep(step);
-    spb->setValue(eep[eepromVolume + param] * step);
-}
-
 void MainWindow::readEepromFile(QString name)
 {
+    /* Reading file to QByteArray buffer */
+
     QFile file(name);
 
     if (!file.open(QIODevice::ReadOnly))
@@ -83,6 +78,8 @@ void MainWindow::readEepromFile(QString name)
     eep = file.readAll();
     file.close();
     updateHexTable();
+
+    // Processing translations
 
     QBuffer buffer(&eep);
     char ch;
@@ -114,10 +111,18 @@ void MainWindow::readEepromFile(QString name)
 
     buffer.close();
 
+    // Processing audioprocessor
+
     int proc = eep[eepromAudioproc];
     if (proc >= AUDIOPROC_END)
         proc = AUDIOPROC_TDA7439;
     setAudioproc(proc);
+
+    // Processing tuner
+    int tuner = eep[eepromFMTuner];
+    if (tuner >= TUNER_END)
+        tuner = TUNER_TEA5767;
+    setTuner(tuner);
 }
 
 void MainWindow::saveEepromFile(QString name)
@@ -133,6 +138,13 @@ void MainWindow::saveEepromFile(QString name)
     file.close();
     Ui_MainWindow::statusBar->showMessage(tr("Saved as") + " " + name);
 
+}
+
+void MainWindow::setAudioParam(QDoubleSpinBox *spb, double min, double max, double step, int param)
+{
+    spb->setRange(min, max);
+    spb->setSingleStep(step);
+    spb->setValue(eep[eepromVolume + param] * step);
 }
 
 void MainWindow::openEeprom()
@@ -422,4 +434,75 @@ void MainWindow::setLoudness(int value)
     else
         eep[eepromLoudness] = 0x00;
     updateHexTable(eepromLoudness);
+}
+
+double MainWindow::getFreq(int pos)
+{
+    double freq;
+
+    freq = (unsigned char)eep[pos];
+    freq += (unsigned char)eep[pos + 1] * 256;
+    freq /= 100;
+
+    return freq;
+}
+
+void MainWindow::setFreq(double value, int pos)
+{
+    int freq = value * 100;
+
+    eep[pos] = (char)(freq & 0x00FF);
+    eep[pos + 1] = (char)((freq & 0xFF00) >> 8);
+
+    updateHexTable(pos);
+    updateHexTable(pos + 1);
+}
+
+void MainWindow::setTuner(int tuner)
+{
+    double fmStep = (double)eep[eepromFMStep] / 100;
+
+    cbxTuner->setCurrentIndex(tuner);
+    wgtFmfreq->hide();
+    wgtFmstep->hide();
+    wgtFmmono->hide();
+
+    switch (tuner) {
+    case TUNER_TEA5767:
+    case TUNER_RDA5807:
+    case TUNER_TUX032:
+    case TUNER_LM7001:
+        wgtFmfreq->show();
+        dsbFmfreq->setSingleStep(fmStep);
+        dsbFmfreq->setValue(getFreq(eepromFMFreq));
+        wgtFmstep->show();
+        dsbFmstep->setValue(fmStep);
+        wgtFmmono->show();
+        setFmmono(eep[eepromFMMono]);
+        cbxFmmono->setCurrentIndex(eep[eepromFMMono]);
+        break;
+    }
+
+    eep[eepromFMTuner] = tuner;
+    updateHexTable(eepromFMTuner);
+}
+
+void MainWindow::setFmfreq(double value)
+{
+    setFreq(value, eepromFMFreq);
+}
+
+void MainWindow::setFmstep(double value)
+{
+    eep[eepromFMStep] = value * 100;
+    updateHexTable(eepromFMStep);
+}
+
+void MainWindow::setFmmono(int value)
+{
+    if (value)
+        eep[eepromFMMono] = 0x01;
+    else
+        eep[eepromFMMono] = 0x00;
+    updateHexTable(eepromFMMono);
 }

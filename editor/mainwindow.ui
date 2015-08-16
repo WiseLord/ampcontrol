@@ -136,10 +136,28 @@
         <string>Translations</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QTableWidget" name="wgtTranslations">
-          <property name="showGrid">
-           <bool>true</bool>
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
           </property>
           <property name="gridStyle">
            <enum>Qt::DotLine</enum>
@@ -537,7 +555,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -612,7 +630,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -673,7 +691,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -721,7 +739,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -777,7 +795,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -832,7 +850,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -885,7 +903,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -938,7 +956,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -988,7 +1006,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1041,7 +1059,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1094,7 +1112,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1147,7 +1165,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1200,7 +1218,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1250,7 +1268,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1300,7 +1318,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1350,7 +1368,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -1394,7 +1412,7 @@
          </widget>
         </item>
         <item>
-         <spacer name="verticalSpacer">
+         <spacer name="vspAudio">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
@@ -1413,58 +1431,247 @@
         <string>Tuner</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
-         <layout class="QHBoxLayout" name="hltTuner">
-          <item>
-           <widget class="QLabel" name="lblTuner">
-            <property name="text">
-             <string>Tuner</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QComboBox" name="cbxTuner">
-            <property name="currentIndex">
-             <number>1</number>
-            </property>
-            <item>
+         <widget class="QWidget" name="wgtTuner" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblTuner">
              <property name="text">
-              <string>No tuner</string>
+              <string>Tuner</string>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TEA5767</string>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxTuner">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>RDA5807</string>
+             <property name="currentIndex">
+              <number>0</number>
              </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>TUX032</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>LM7001</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-         </layout>
+             <item>
+              <property name="text">
+               <string>No tuner</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TEA5767</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>RDA5807</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TUX032</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>LM7001</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
         </item>
         <item>
-         <spacer name="sbTuner">
+         <widget class="QWidget" name="wgtFmfreq" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmfreq">
+             <property name="text">
+              <string>Frequency</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFmfreq">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>87.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>108.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmstep" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmstep">
+             <property name="text">
+              <string>Step</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFmstep">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>0.010000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.200000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>0.010000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmmono" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmmono">
+             <property name="text">
+              <string>Audio</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFmmono">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Stereo</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Mono</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="vspTuner">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeHint" stdset="0">
            <size>
             <width>20</width>
-            <height>404</height>
+            <height>327</height>
            </size>
           </property>
          </spacer>
@@ -1858,6 +2065,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbxTuner</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTuner(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>702</x>
+     <y>57</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>309</x>
+     <y>485</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmmono</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmmono(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>733</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>762</x>
+     <y>160</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbFmstep</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmstep(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>713</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>765</x>
+     <y>215</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbFmfreq</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmfreq(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>683</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>762</x>
+     <y>286</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -1881,5 +2152,9 @@
   <slot>saveEeprom()</slot>
   <slot>saveEepromAs()</slot>
   <slot>loadDefaultEeprom()</slot>
+  <slot>setTuner(int)</slot>
+  <slot>setFmfreq(double)</slot>
+  <slot>setFmstep(double)</slot>
+  <slot>setFmmono(int)</slot>
  </slots>
 </ui>

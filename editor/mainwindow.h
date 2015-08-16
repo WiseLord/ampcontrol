@@ -22,9 +22,13 @@ private:
     QString fileName;
     QByteArray eep;
 
-    void setAudioParam(QDoubleSpinBox *spb, double min, double max, double step, int param);
     void readEepromFile(QString name);
     void saveEepromFile(QString name);
+
+    void setAudioParam(QDoubleSpinBox *spb, double min, double max, double step, int param);
+
+    double getFreq(int pos);
+    void setFreq (double value, int pos);
 
 private slots:
     void openEeprom();
@@ -50,6 +54,12 @@ private slots:
     void setGain3(double value);
     void setInput(int value);
     void setLoudness(int value);
+
+    void setTuner(int tuner);
+    void setFmfreq(double value);
+    void setFmstep(double value);
+    void setFmmono(int value);
+
 };
 
 #endif // MAINWINDOW_H
