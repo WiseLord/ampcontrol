@@ -59,6 +59,7 @@ private slots:
     void setFmfreq(double value);
     void setFmstep(double value);
     void setFmmono(int value);
+    void setFmctrl();
 
 };
 

@@ -3,6 +3,15 @@
 
 #include <inttypes.h>
 
+/* Control byte bits*/
+#define TEA5767_CTRL_HCC		(1<<6)
+#define TEA5767_CTRL_SNC		(1<<5)
+#define TEA5767_CTRL_SMUTE		(1<<4)
+#define TEA5767_CTRL_DTC		(1<<3)
+#define TEA5767_CTRL_BL			(1<<2)
+#define TEA5767_CTRL_PLLREF		(1<<1)
+#define TEA5767_CTRL_XTAL		(1<<0)
+
 #define TEA5767_I2C_ADDR		0b11000000
 
 /* Write mode register values */

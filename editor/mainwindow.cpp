@@ -469,10 +469,22 @@ void MainWindow::setTuner(int tuner)
     wgtFmfreq->hide();
     wgtFmstep->hide();
     wgtFmmono->hide();
+    wgtFmctrl->hide();
 
     switch (tuner) {
     case TUNER_TEA5767:
+        wgtFmctrl->show();
+        cbxFmctrlHcc->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_HCC);
+        cbxFmctrlSnc->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_SNC);
+        cbxFmctrlSm->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_SMUTE);
+        cbxFmctrlDtc->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_DTC);
+        cbxFmctrlBl->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_BL);
+        cbxFmctrlPllref->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_PLLREF);
+        cbxFmctrlXtal->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_XTAL);
     case TUNER_RDA5807:
+        wgtFmmono->show();
+        setFmmono(eep[eepromFMMono]);
+        cbxFmmono->setCurrentIndex(eep[eepromFMMono]);
     case TUNER_TUX032:
     case TUNER_LM7001:
         wgtFmfreq->show();
@@ -480,9 +492,6 @@ void MainWindow::setTuner(int tuner)
         dsbFmfreq->setValue(getFreq(eepromFMFreq));
         wgtFmstep->show();
         dsbFmstep->setValue(fmStep);
-        wgtFmmono->show();
-        setFmmono(eep[eepromFMMono]);
-        cbxFmmono->setCurrentIndex(eep[eepromFMMono]);
         break;
     }
 
@@ -508,4 +517,20 @@ void MainWindow::setFmmono(int value)
     else
         eep[eepromFMMono] = 0x00;
     updateHexTable(eepromFMMono);
+}
+
+void MainWindow::setFmctrl()
+{
+    char ctrl = 0;
+
+    if (cbxFmctrlHcc->isChecked()) ctrl |= TEA5767_CTRL_HCC;
+    if (cbxFmctrlSnc->isChecked()) ctrl |= TEA5767_CTRL_SNC;
+    if (cbxFmctrlSm->isChecked()) ctrl |= TEA5767_CTRL_SMUTE;
+    if (cbxFmctrlDtc->isChecked()) ctrl |= TEA5767_CTRL_DTC;
+    if (cbxFmctrlBl->isChecked()) ctrl |= TEA5767_CTRL_BL;
+    if (cbxFmctrlPllref->isChecked()) ctrl |= TEA5767_CTRL_PLLREF;
+    if (cbxFmctrlXtal->isChecked()) ctrl |= TEA5767_CTRL_XTAL;
+
+    eep[eepromFMCtrl] = ctrl;
+    updateHexTable(eepromFMCtrl);
 }

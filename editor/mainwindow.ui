@@ -1664,6 +1664,74 @@
          </widget>
         </item>
         <item>
+         <widget class="QWidget" name="wgtFmctrl" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmctrl">
+             <property name="text">
+              <string>TEA5767 control byte</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlHcc">
+             <property name="text">
+              <string>High Cut Control</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlSnc">
+             <property name="text">
+              <string>Stereo Noise Cancelling</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlSm">
+             <property name="text">
+              <string>Soft MUTE</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlDtc">
+             <property name="text">
+              <string>De-emphasis 75us (1) or 50us (0)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlBl">
+             <property name="text">
+              <string>Band Limit Japanes (1) or US/Europe (0)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlPllref">
+             <property name="text">
+              <string>PLL Reference 6.5MHz</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlXtal">
+             <property name="text">
+              <string>Freq XTAL 32.768 kHz (1) or 13 MHz (0)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="vspTuner">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -2129,6 +2197,118 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbxFmctrlHcc</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>182</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlSnc</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>446</x>
+     <y>210</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlSm</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>481</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>421</x>
+     <y>238</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlDtc</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>481</x>
+     <y>257</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlBl</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>453</x>
+     <y>285</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>421</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlPllref</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>459</x>
+     <y>308</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>420</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlXtal</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>452</x>
+     <y>336</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>421</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -2156,5 +2336,6 @@
   <slot>setFmfreq(double)</slot>
   <slot>setFmstep(double)</slot>
   <slot>setFmmono(int)</slot>
+  <slot>setFmctrl()</slot>
  </slots>
 </ui>
