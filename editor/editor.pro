@@ -16,12 +16,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
 		mainwindow.cpp \
-	lcdconverter.cpp
+	lcdconverter.cpp \
+    aboutdialog.cpp
 
 HEADERS  += mainwindow.h \
-	lcdconverter.h
+	lcdconverter.h \
+    aboutdialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    aboutdialog.ui
 
 RESOURCES += \
     res.qrc

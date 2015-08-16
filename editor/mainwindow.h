@@ -31,6 +31,9 @@ private:
     void setFreq (double value, int pos);
 
 private slots:
+    void about();
+    void aboutQt();
+
     void openEeprom();
     void saveEeprom();
     void saveEepromAs();

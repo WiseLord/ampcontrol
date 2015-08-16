@@ -3,6 +3,8 @@
 #include <QDebug>
 #include <QtWidgets>
 
+#include "aboutdialog.h"
+
 #include "../audio/audio.h"
 #include "../audio/audioproc.h"
 #include "../eeprom.h"
@@ -463,6 +465,18 @@ void MainWindow::setFreq(double value, int pos)
 
     updateHexTable(pos);
     updateHexTable(pos + 1);
+}
+
+void MainWindow::about()
+{
+    AboutDialog dlg;
+
+    dlg.exec();
+}
+
+void MainWindow::aboutQt()
+{
+    qApp->aboutQt();
 }
 
 void MainWindow::setTuner(int tuner)
