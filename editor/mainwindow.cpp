@@ -190,7 +190,10 @@ void MainWindow::updateTranslation(int row, int column)
     buffer.seek(eepromLabelsAddr);
 
     for (int i = 0; i < LABEL_END; i++) {
-        buffer.write(lc->encode(wgtTranslations->item(i, 0)->text()));
+        QString str = wgtTranslations->item(i, 0)->text();
+        if (str.isEmpty())
+            str = " ";
+        buffer.write(lc->encode(str));
         buffer.putChar('\0');
     }
 
