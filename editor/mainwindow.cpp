@@ -45,7 +45,7 @@ void MainWindow::updateHexTable(int pos)
 {
     QTableWidgetItem *item = wgtHexTable->item(pos / 16, pos % 16);
     item->setText(eep.mid(pos, 1).toHex().toUpper());
-    if (item->text() == "FF")
+    if (item->text() == "FF" && pos >= MODE_SND_END)
         item->setTextColor(Qt::gray);
     else if (item->text() == "00" && (pos) >= eepromLabelsAddr)
         item->setTextColor(Qt::blue);
@@ -524,6 +524,7 @@ void MainWindow::setFmfreq(double value)
 
 void MainWindow::setFmstep(double value)
 {
+    dsbFmfreq->setSingleStep(value);
     eep[eepromFMStep] = value * 100;
     updateHexTable(eepromFMStep);
 }
