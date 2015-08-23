@@ -1,4 +1,4 @@
-DISPLAY = KS0108A
+DISPLAY = ST7920
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -17,12 +17,12 @@ ifeq ($(DISPLAY), KS0066_16X2)
 else ifeq ($(DISPLAY), KS0066_16X2_PCF8574)
   DISP_SRC = display/ks0066.c
 else ifeq ($(DISPLAY), ST7920)
-  DISP_SRC = display/gdfb.c display/st7920.c
+  DISP_SRC = display/gdfb.c display/st7920.c $(FONTS_SRC) $(ICONS_SRC)
 else
-  DISP_SRC = display/gdfb.c display/ks0108.c
+  DISP_SRC = display/gdfb.c display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
 endif
 
-SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC) $(FONTS_SRC) $(ICONS_SRC) $(DISP_SRC)
+SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC) $(DISP_SRC)
 
 MCU = atmega32
 F_CPU = 16000000L

@@ -4,6 +4,7 @@
 #include <avr/pgmspace.h>
 #include "../eeprom.h"
 #include "../display.h"
+#include "../pins.h"
 
 static const sndGrid grid[] PROGMEM = {
 	{  0,  0, 0.00 * 8},	/* 0: Not implemented */
