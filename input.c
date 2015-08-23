@@ -58,11 +58,11 @@ void inputInit()
 	TIMSK |= (1<<OCIE2);							/* Enable timer compare match interrupt */
 
 	/* Load RC5 device address and commands from eeprom */
-	rc5DeviceAddr = eeprom_read_byte((uint8_t*)eepromRC5Addr);
+	rc5DeviceAddr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
 	for (i = 0; i < RC5_CMD_COUNT; i++)
-		rcCode[i] = eeprom_read_byte((uint8_t*)eepromRC5Cmd + i);
+		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + i);
 
-	encRes = eeprom_read_byte((uint8_t*)eepromEncRes);
+	encRes = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;

@@ -5,46 +5,51 @@
 #include "audio/audio.h"
 
 /* Audio parameters values */
-#define eepromVolume			0x00
+#define EEPROM_VOLUME				0x00
+
+/* Alarm */
+#define EEPROM_ALARM_HOUR			0x10
+#define EEPROM_ALARM_MIN			0x11
+#define EEPROM_ALARM_MON			0x12
 
 /* FM tuner parameters valus */
-#define eepromFMTuner			0x20
-#define eepromFMStep			0x21
-#define eepromFMMono			0x22
-#define eepromFMCtrl			0x23
-#define eepromFMFreq			0x24
+#define EEPROM_FM_TUNER				0x20
+#define EEPROM_FM_STEP				0x21
+#define EEPROM_FM_MONO				0x22
+#define EEPROM_FM_CTRL				0x23
+#define EEPROM_FM_FREQ				0x24
 
 /* Audio processor values */
-#define eepromAudioproc			0x28
-#define eepromInput				0x29
-#define eepromLoudness			0x2A
+#define EEPROM_AUDIOPROC			0x28
+#define EEPROM_INPUT				0x29
+#define EEPROM_LOUDNESS				0x2A
 
 /* Display parameters */
-#define eepromSpMode			0x30
-#define eepromDisplay			0x31
-#define eepromBrStby			0x32
-#define eepromBrWork			0x33
-#define eepromFallSpeed			0x34
+#define EEPROM_SP_MODE				0x30
+#define EEPROM_DISPLAY				0x31
+#define EEPROM_BR_STBY				0x32
+#define EEPROM_BR_WORK				0x33
+#define EEPROM_FALL_SPEED			0x34
 
 /* Other parameters */
-#define eepromEncRes			0x38
-#define eepromRC5Addr			0x39
-#define eepromTempTH			0x3A
-#define eepromAdcCorrL			0x3B
-#define eepromAdcCorrR			0x3C
-#define eepromExtFunc			0x3D
+#define EEPROM_ENC_RES				0x38
+#define EEPROM_RC5_ADDR				0x39
+#define EEPROM_TEMP_TH				0x3A
+#define EEPROM_ADC_CORR_L			0x3B
+#define EEPROM_ADC_CORR_R			0x3C
+#define EEPROM_EXT_FUNC				0x3D
 
 /* RC5 commands array */
-#define eepromRC5Cmd			0x40
+#define EEPROM_RC5_CMD				0x40
 
 /* FM stations */
-#define eepromStations			0x70
-#define eepromFavStations		0xD8
+#define EEPROM_STATIONS				0x70
+#define EEPROM_FAV_STATIONS			0xD8
 
 /* Text labels (maximum 15 byte followed by \0) */
-#define eepromLabelsAddr		0xF0
+#define EEPROM_LABELS_ADDR			0xF0
 
-#define EEPROM_SIZE				0x400
+#define EEPROM_SIZE					0x400
 
 /* EEPROM saved labels */
 enum {

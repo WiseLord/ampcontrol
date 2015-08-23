@@ -47,7 +47,7 @@ void MainWindow::updateHexTable(int pos)
     item->setText(eep.mid(pos, 1).toHex().toUpper());
     if (item->text() == "FF" && pos >= MODE_SND_END)
         item->setTextColor(Qt::gray);
-    else if (item->text() == "00" && (pos) >= eepromLabelsAddr)
+    else if (item->text() == "00" && (pos) >= EEPROM_LABELS_ADDR)
         item->setTextColor(Qt::blue);
     else
         item->setTextColor(Qt::black);
@@ -92,7 +92,7 @@ void MainWindow::readEepromFile(QString name)
     wgtTranslations->blockSignals(true);
 
     buffer.open(QIODevice::ReadOnly);
-    buffer.seek(eepromLabelsAddr);
+    buffer.seek(EEPROM_LABELS_ADDR);
 
     pos = buffer.pos();
     len = 0;
@@ -116,13 +116,13 @@ void MainWindow::readEepromFile(QString name)
 
     // Processing audioprocessor
 
-    int proc = eep[eepromAudioproc];
+    int proc = eep[EEPROM_AUDIOPROC];
     if (proc >= AUDIOPROC_END)
         proc = AUDIOPROC_TDA7439;
     setAudioproc(proc);
 
     // Processing tuner
-    int tuner = eep[eepromFMTuner];
+    int tuner = eep[EEPROM_FM_TUNER];
     if (tuner >= TUNER_END)
         tuner = TUNER_TEA5767;
     setTuner(tuner);
@@ -150,7 +150,7 @@ void MainWindow::setAudioParam(QDoubleSpinBox *spb, double min, double max, doub
 {
     spb->setRange(min, max);
     spb->setSingleStep(step);
-    spb->setValue(eep[eepromVolume + param] * step);
+    spb->setValue(eep[EEPROM_VOLUME + param] * step);
 }
 
 void MainWindow::openEeprom()
@@ -193,7 +193,7 @@ void MainWindow::updateTranslation(int row, int column)
     QBuffer buffer(&eep);
 
     buffer.open(QIODevice::WriteOnly);
-    buffer.seek(eepromLabelsAddr);
+    buffer.seek(EEPROM_LABELS_ADDR);
 
     for (int i = 0; i < LABEL_END; i++) {
         QString str = wgtTranslations->item(i, 0)->text();
@@ -239,7 +239,7 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_TDA7314:
         wgtLoudness->show();
         setLoudness(0x01);
-        cbxLoudness->setCurrentIndex(eep[eepromLoudness]);
+        cbxLoudness->setCurrentIndex(eep[EEPROM_LOUDNESS]);
         break;
     }
 
@@ -253,8 +253,8 @@ void MainWindow::setAudioproc(int proc)
         cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN1, 0)->text());
         cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN0, 0)->text());
         wgtInput->show();
-        setInput(eep[eepromInput]);
-        cbxInput->setCurrentIndex(eep[eepromInput]);
+        setInput(eep[EEPROM_INPUT]);
+        cbxInput->setCurrentIndex(eep[EEPROM_INPUT]);
         break;
     }
 
@@ -346,103 +346,103 @@ void MainWindow::setAudioproc(int proc)
         break;
     }
 
-    eep[eepromAudioproc] = proc;
-    updateHexTable(eepromAudioproc);
+    eep[EEPROM_AUDIOPROC] = proc;
+    updateHexTable(EEPROM_AUDIOPROC);
 }
 
 void MainWindow::setVolume(double value)
 {
-    eep[eepromVolume + MODE_SND_VOLUME] = static_cast<char>(value / dsbVolume->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_VOLUME);
+    eep[EEPROM_VOLUME + MODE_SND_VOLUME] = static_cast<char>(value / dsbVolume->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_VOLUME);
 }
 
 void MainWindow::setBass(double value)
 {
-    eep[eepromVolume + MODE_SND_BASS] = static_cast<char>(value / dsbBass->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_BASS);
+    eep[EEPROM_VOLUME + MODE_SND_BASS] = static_cast<char>(value / dsbBass->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_BASS);
 }
 
 void MainWindow::setMiddle(double value)
 {
-    eep[eepromVolume + MODE_SND_MIDDLE] = static_cast<char>(value / dsbMiddle->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_MIDDLE);
+    eep[EEPROM_VOLUME + MODE_SND_MIDDLE] = static_cast<char>(value / dsbMiddle->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_MIDDLE);
 }
 
 void MainWindow::setTreble(double value)
 {
-    eep[eepromVolume + MODE_SND_TREBLE] = static_cast<char>(value / dsbTreble->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_TREBLE);
+    eep[EEPROM_VOLUME + MODE_SND_TREBLE] = static_cast<char>(value / dsbTreble->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_TREBLE);
 }
 
 void MainWindow::setPreamp(double value)
 {
-    eep[eepromVolume + MODE_SND_PREAMP] = static_cast<char>(value / dsbPreamp->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_PREAMP);
+    eep[EEPROM_VOLUME + MODE_SND_PREAMP] = static_cast<char>(value / dsbPreamp->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_PREAMP);
 }
 
 void MainWindow::setFrontrear(double value)
 {
-    eep[eepromVolume + MODE_SND_FRONTREAR] = static_cast<char>(value / dsbFrontrear->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_FRONTREAR);
+    eep[EEPROM_VOLUME + MODE_SND_FRONTREAR] = static_cast<char>(value / dsbFrontrear->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_FRONTREAR);
 }
 
 void MainWindow::setBalance(double value)
 {
-    eep[eepromVolume + MODE_SND_BALANCE] = static_cast<char>(value / dsbBalance->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_BALANCE);
+    eep[EEPROM_VOLUME + MODE_SND_BALANCE] = static_cast<char>(value / dsbBalance->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_BALANCE);
 }
 
 void MainWindow::setCenter(double value)
 {
-    eep[eepromVolume + MODE_SND_CENTER] = static_cast<char>(value / dsbCenter->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_CENTER);
+    eep[EEPROM_VOLUME + MODE_SND_CENTER] = static_cast<char>(value / dsbCenter->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_CENTER);
 }
 
 void MainWindow::setSubwoofer(double value)
 {
-    eep[eepromVolume + MODE_SND_SUBWOOFER] = static_cast<char>(value / dsbSubwoofer->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_SUBWOOFER);
+    eep[EEPROM_VOLUME + MODE_SND_SUBWOOFER] = static_cast<char>(value / dsbSubwoofer->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_SUBWOOFER);
 }
 
 void MainWindow::setGain0(double value)
 {
-    eep[eepromVolume + MODE_SND_GAIN0] = static_cast<char>(value / dsbGain0->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_GAIN0);
+    eep[EEPROM_VOLUME + MODE_SND_GAIN0] = static_cast<char>(value / dsbGain0->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN0);
 }
 
 void MainWindow::setGain1(double value)
 {
-    eep[eepromVolume + MODE_SND_GAIN1] = static_cast<char>(value / dsbGain1->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_GAIN1);
+    eep[EEPROM_VOLUME + MODE_SND_GAIN1] = static_cast<char>(value / dsbGain1->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN1);
 }
 
 void MainWindow::setGain2(double value)
 {
-    eep[eepromVolume + MODE_SND_GAIN2] = static_cast<char>(value / dsbGain2->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_GAIN2);
+    eep[EEPROM_VOLUME + MODE_SND_GAIN2] = static_cast<char>(value / dsbGain2->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN2);
 }
 
 void MainWindow::setGain3(double value)
 {
-    eep[eepromVolume + MODE_SND_GAIN3] = static_cast<char>(value / dsbGain3->singleStep());
-    updateHexTable(eepromVolume + MODE_SND_GAIN3);
+    eep[EEPROM_VOLUME + MODE_SND_GAIN3] = static_cast<char>(value / dsbGain3->singleStep());
+    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN3);
 }
 
 void MainWindow::setInput(int value)
 {
     if (value >= cbxInput->count())
         value = cbxInput->count() - 1;
-    eep[eepromInput] = (char)value;
-    updateHexTable(eepromInput);
+    eep[EEPROM_INPUT] = (char)value;
+    updateHexTable(EEPROM_INPUT);
 }
 
 void MainWindow::setLoudness(int value)
 {
     if (value)
-        eep[eepromLoudness] = 0x01;
+        eep[EEPROM_LOUDNESS] = 0x01;
     else
-        eep[eepromLoudness] = 0x00;
-    updateHexTable(eepromLoudness);
+        eep[EEPROM_LOUDNESS] = 0x00;
+    updateHexTable(EEPROM_LOUDNESS);
 }
 
 double MainWindow::getFreq(int pos)
@@ -481,7 +481,7 @@ void MainWindow::aboutQt()
 
 void MainWindow::setTuner(int tuner)
 {
-    double fmStep = (double)eep[eepromFMStep] / 100;
+    double fmStep = (double)eep[EEPROM_FM_STEP] / 100;
 
     cbxTuner->setCurrentIndex(tuner);
     wgtFmfreq->hide();
@@ -492,50 +492,50 @@ void MainWindow::setTuner(int tuner)
     switch (tuner) {
     case TUNER_TEA5767:
         wgtFmctrl->show();
-        cbxFmctrlHcc->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_HCC);
-        cbxFmctrlSnc->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_SNC);
-        cbxFmctrlSm->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_SMUTE);
-        cbxFmctrlDtc->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_DTC);
-        cbxFmctrlBl->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_BL);
-        cbxFmctrlPllref->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_PLLREF);
-        cbxFmctrlXtal->setChecked(eep[eepromFMCtrl] & TEA5767_CTRL_XTAL);
+        cbxFmctrlHcc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_HCC);
+        cbxFmctrlSnc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_SNC);
+        cbxFmctrlSm->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_SMUTE);
+        cbxFmctrlDtc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_DTC);
+        cbxFmctrlBl->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_BL);
+        cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_PLLREF);
+        cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_XTAL);
     case TUNER_RDA5807:
         wgtFmmono->show();
-        setFmmono(eep[eepromFMMono]);
-        cbxFmmono->setCurrentIndex(eep[eepromFMMono]);
+        setFmmono(eep[EEPROM_FM_MONO]);
+        cbxFmmono->setCurrentIndex(eep[EEPROM_FM_MONO]);
     case TUNER_TUX032:
     case TUNER_LM7001:
         wgtFmfreq->show();
         dsbFmfreq->setSingleStep(fmStep);
-        dsbFmfreq->setValue(getFreq(eepromFMFreq));
+        dsbFmfreq->setValue(getFreq(EEPROM_FM_FREQ));
         wgtFmstep->show();
         dsbFmstep->setValue(fmStep);
         break;
     }
 
-    eep[eepromFMTuner] = tuner;
-    updateHexTable(eepromFMTuner);
+    eep[EEPROM_FM_TUNER] = tuner;
+    updateHexTable(EEPROM_FM_TUNER);
 }
 
 void MainWindow::setFmfreq(double value)
 {
-    setFreq(value, eepromFMFreq);
+    setFreq(value, EEPROM_FM_FREQ);
 }
 
 void MainWindow::setFmstep(double value)
 {
     dsbFmfreq->setSingleStep(value);
-    eep[eepromFMStep] = value * 100;
-    updateHexTable(eepromFMStep);
+    eep[EEPROM_FM_STEP] = value * 100;
+    updateHexTable(EEPROM_FM_STEP);
 }
 
 void MainWindow::setFmmono(int value)
 {
     if (value)
-        eep[eepromFMMono] = 0x01;
+        eep[EEPROM_FM_MONO] = 0x01;
     else
-        eep[eepromFMMono] = 0x00;
-    updateHexTable(eepromFMMono);
+        eep[EEPROM_FM_MONO] = 0x00;
+    updateHexTable(EEPROM_FM_MONO);
 }
 
 void MainWindow::setFmctrl()
@@ -550,59 +550,59 @@ void MainWindow::setFmctrl()
     if (cbxFmctrlPllref->isChecked()) ctrl |= TEA5767_CTRL_PLLREF;
     if (cbxFmctrlXtal->isChecked()) ctrl |= TEA5767_CTRL_XTAL;
 
-    eep[eepromFMCtrl] = ctrl;
-    updateHexTable(eepromFMCtrl);
+    eep[EEPROM_FM_CTRL] = ctrl;
+    updateHexTable(EEPROM_FM_CTRL);
 }
 
 void MainWindow::setOther()
 {
-    setSpmode(eep[eepromSpMode]);
-    cbxSpmode->setCurrentIndex(eep[eepromSpMode]);
+    setSpmode(eep[EEPROM_SP_MODE]);
+    cbxSpmode->setCurrentIndex(eep[EEPROM_SP_MODE]);
 
-    setSpspeed(eep[eepromFallSpeed]);
-    cbxSpspeed->setCurrentIndex(eep[eepromFallSpeed]);
+    setSpspeed(eep[EEPROM_FALL_SPEED]);
+    cbxSpspeed->setCurrentIndex(eep[EEPROM_FALL_SPEED]);
 
-    setBrstby(eep[eepromBrStby]);
-    sbxBrstby->setValue(eep[eepromBrStby]);
+    setBrstby(eep[EEPROM_BR_STBY]);
+    sbxBrstby->setValue(eep[EEPROM_BR_STBY]);
 
-    setEncres(eep[eepromEncRes]);
-    sbxEncres->setValue(eep[eepromEncRes]);
+    setEncres(eep[EEPROM_ENC_RES]);
+    sbxEncres->setValue(eep[EEPROM_ENC_RES]);
 
-    setAdcleft((unsigned char)eep[eepromAdcCorrL] - 128);
-    sbxAdcleft->setValue((unsigned char)eep[eepromAdcCorrL] - 128);
+    setAdcleft((unsigned char)eep[EEPROM_ADC_CORR_L] - 128);
+    sbxAdcleft->setValue((unsigned char)eep[EEPROM_ADC_CORR_L] - 128);
 
-    setAdcright((unsigned char)eep[eepromAdcCorrL] - 128);
-    sbxAdcright->setValue((unsigned char)eep[eepromAdcCorrR] - 128);
+    setAdcright((unsigned char)eep[EEPROM_ADC_CORR_L] - 128);
+    sbxAdcright->setValue((unsigned char)eep[EEPROM_ADC_CORR_R] - 128);
 
-    setExtfunc(eep[eepromExtFunc]);
-    cbxExtfunc->setCurrentIndex(eep[eepromExtFunc]);
+    setExtfunc(eep[EEPROM_EXT_FUNC]);
+    cbxExtfunc->setCurrentIndex(eep[EEPROM_EXT_FUNC]);
 
-    setThreshold(eep[eepromTempTH]);
-    sbxThreshold->setValue(eep[eepromTempTH]);
+    setThreshold(eep[EEPROM_TEMP_TH]);
+    sbxThreshold->setValue(eep[EEPROM_TEMP_TH]);
 }
 
 void MainWindow::setSpmode(int value)
 {
     if (value >= SP_MODE_END)
         value = SP_MODE_STEREO;
-    eep[eepromSpMode] = (char)value;
-    updateHexTable(eepromSpMode);
+    eep[EEPROM_SP_MODE] = (char)value;
+    updateHexTable(EEPROM_SP_MODE);
 }
 
 void MainWindow::setSpspeed(int value)
 {
     if (value >= FALL_SPEED_END)
         value = FALL_SPEED_LOW;
-    eep[eepromFallSpeed] = (char)value;
-    updateHexTable(eepromFallSpeed);
+    eep[EEPROM_FALL_SPEED] = (char)value;
+    updateHexTable(EEPROM_FALL_SPEED);
 }
 
 void MainWindow::setBrstby(int value)
 {
     if (value > sbxBrstby->maximum())
         value = 1;
-    eep[eepromBrStby] = (char)value;
-    updateHexTable(eepromBrStby);
+    eep[EEPROM_BR_STBY] = (char)value;
+    updateHexTable(EEPROM_BR_STBY);
 }
 
 void MainWindow::setEncres(int value)
@@ -611,8 +611,8 @@ void MainWindow::setEncres(int value)
         value = sbxEncres->maximum();
     if (value < sbxEncres->minimum())
         value = sbxEncres->minimum();
-    eep[eepromEncRes] = (char)value;
-    updateHexTable(eepromEncRes);
+    eep[EEPROM_ENC_RES] = (char)value;
+    updateHexTable(EEPROM_ENC_RES);
 }
 
 void MainWindow::setAdcleft(int value)
@@ -621,8 +621,8 @@ void MainWindow::setAdcleft(int value)
         value = sbxAdcleft->maximum();
     if (value < sbxAdcleft->minimum())
         value = sbxAdcleft->minimum();
-    eep[eepromAdcCorrL] = (char)value + 128;
-    updateHexTable(eepromAdcCorrL);
+    eep[EEPROM_ADC_CORR_L] = (char)value + 128;
+    updateHexTable(EEPROM_ADC_CORR_L);
 }
 
 void MainWindow::setAdcright(int value)
@@ -631,16 +631,16 @@ void MainWindow::setAdcright(int value)
         value = sbxAdcright->maximum();
     if (value < sbxAdcright->minimum())
         value = sbxAdcright->minimum();
-    eep[eepromAdcCorrR] = (char)value + 128;
-    updateHexTable(eepromAdcCorrR);
+    eep[EEPROM_ADC_CORR_R] = (char)value + 128;
+    updateHexTable(EEPROM_ADC_CORR_R);
 }
 
 void MainWindow::setExtfunc(int value)
 {
     if (value >= 2)
         value = 0;
-    eep[eepromExtFunc] = (char)value;
-    updateHexTable(eepromExtFunc);
+    eep[EEPROM_EXT_FUNC] = (char)value;
+    updateHexTable(EEPROM_EXT_FUNC);
 }
 
 void MainWindow::setThreshold(int value)
@@ -649,6 +649,6 @@ void MainWindow::setThreshold(int value)
         value = sbxThreshold->maximum();
     if (value < sbxThreshold->minimum())
         value = sbxThreshold->minimum();
-    eep[eepromTempTH] = (char)value;
-    updateHexTable(eepromTempTH);
+    eep[EEPROM_TEMP_TH] = (char)value;
+    updateHexTable(EEPROM_TEMP_TH);
 }

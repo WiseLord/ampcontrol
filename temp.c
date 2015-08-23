@@ -7,14 +7,14 @@ static int8_t tempTH;
 
 void loadTempParams(void)
 {
-	tempTH = eeprom_read_byte((uint8_t*)eepromTempTH);
+	tempTH = eeprom_read_byte((uint8_t*)EEPROM_TEMP_TH);
 
 	return;
 }
 
 void saveTempParams(void)
 {
-	eeprom_update_byte((uint8_t*)eepromTempTH, tempTH);
+	eeprom_update_byte((uint8_t*)EEPROM_TEMP_TH, tempTH);
 
 	return;
 }

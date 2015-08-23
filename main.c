@@ -20,7 +20,7 @@ static void hwInit(void)
 	displayInit();							/* Load params and text labels before fb scan started */
 	sei();									/* Gloabl interrupt enable */
 
-	extFunc = eeprom_read_byte((uint8_t*)eepromExtFunc);
+	extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
 
 	if (extFunc & USE_DS18B20) {
 		ds18x20SearchDevices();

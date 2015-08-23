@@ -493,7 +493,7 @@ void displayInit(void)
 	uint8_t i;
 	uint8_t *addr;
 
-	addr = (uint8_t*)eepromLabelsAddr;
+	addr = (uint8_t*)EEPROM_LABELS_ADDR;
 	i = 0;
 
 	while (i < LABEL_END && addr < (uint8_t*)EEPROM_SIZE) {
@@ -517,11 +517,11 @@ void displayInit(void)
 	gdInit();
 #endif
 
-	brStby = eeprom_read_byte((uint8_t*)eepromBrStby);
-	brWork = eeprom_read_byte((uint8_t*)eepromBrWork);
-	spMode  = eeprom_read_byte((uint8_t*)eepromSpMode);
-	defDisplay = eeprom_read_byte((uint8_t*)eepromDisplay);
-	fallSpeed = eeprom_read_byte((uint8_t*)eepromFallSpeed);
+	brStby = eeprom_read_byte((uint8_t*)EEPROM_BR_STBY);
+	brWork = eeprom_read_byte((uint8_t*)EEPROM_BR_WORK);
+	spMode  = eeprom_read_byte((uint8_t*)EEPROM_SP_MODE);
+	defDisplay = eeprom_read_byte((uint8_t*)EEPROM_DISPLAY);
+	fallSpeed = eeprom_read_byte((uint8_t*)EEPROM_FALL_SPEED);
 	if (fallSpeed > FALL_SPEED_FAST)
 		fallSpeed = FALL_SPEED_FAST;
 
@@ -613,15 +613,15 @@ uint8_t getDefDisplay()
 
 void nextRC5Cmd(void)
 {
-	eeprom_update_byte((uint8_t*)eepromRC5Cmd + rc5CmdInd, rc5Cmd);
-	eeprom_update_byte((uint8_t*)eepromRC5Addr, rc5Addr);
+	eeprom_update_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd, rc5Cmd);
+	eeprom_update_byte((uint8_t*)EEPROM_RC5_ADDR, rc5Addr);
 
 	rc5CmdInd++;
 	if (rc5CmdInd >= CMD_BTN_1)
 		rc5CmdInd = CMD_RC5_STBY;
 
-	rc5Addr = eeprom_read_byte((uint8_t*)eepromRC5Addr);
-	rc5Cmd = eeprom_read_byte((uint8_t*)eepromRC5Cmd + rc5CmdInd);
+	rc5Addr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
+	rc5Cmd = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd);
 
 	setRC5Buf(rc5Addr, rc5Cmd);
 
@@ -631,8 +631,8 @@ void nextRC5Cmd(void)
 void startTestMode(void)
 {
 	rc5CmdInd = CMD_RC5_STBY;
-	rc5Addr = eeprom_read_byte((uint8_t*)eepromRC5Addr);
-	rc5Cmd = eeprom_read_byte((uint8_t*)eepromRC5Cmd + rc5CmdInd);
+	rc5Addr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
+	rc5Cmd = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd);
 
 	setRC5Buf(rc5Addr, rc5Cmd);
 
@@ -693,7 +693,7 @@ void showRC5Info(void)
 	rc5Addr = (rc5Buf & 0x07C0)>>6;
 	writeNum(rc5Addr, 2, '0', 16);
 	writeString((uint8_t*)" => ");
-	writeNum(eeprom_read_byte((uint8_t*)eepromRC5Addr), 2, '0', 16);
+	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR), 2, '0', 16);
 
 	gdSetXY(8, 56);
 	writeStringEeprom(txtLabels[LABEL_COMMAND]);
@@ -701,7 +701,7 @@ void showRC5Info(void)
 	rc5Cmd = rc5Buf & 0x003F;
 	writeNum(rc5Cmd, 2, '0', 16);
 	writeString((uint8_t*)" => ");
-	writeNum(eeprom_read_byte((uint8_t*)eepromRC5Cmd + rc5CmdInd), 2, '0', 16);
+	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd), 2, '0', 16);
 #endif
 	return;
 }
@@ -1442,11 +1442,11 @@ void setStbyBrightness(void)
 
 void displayPowerOff(void)
 {
-	eeprom_update_byte((uint8_t*)eepromBrStby, brStby);
-	eeprom_update_byte((uint8_t*)eepromBrWork, brWork);
-	eeprom_update_byte((uint8_t*)eepromSpMode, spMode);
-	eeprom_update_byte((uint8_t*)eepromDisplay, defDisplay);
-	eeprom_update_byte((uint8_t*)eepromFallSpeed, fallSpeed);
+	eeprom_update_byte((uint8_t*)EEPROM_BR_STBY, brStby);
+	eeprom_update_byte((uint8_t*)EEPROM_BR_WORK, brWork);
+	eeprom_update_byte((uint8_t*)EEPROM_SP_MODE, spMode);
+	eeprom_update_byte((uint8_t*)EEPROM_DISPLAY, defDisplay);
+	eeprom_update_byte((uint8_t*)EEPROM_FALL_SPEED, fallSpeed);
 
 	return;
 }
