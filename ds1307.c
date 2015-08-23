@@ -68,10 +68,10 @@ int8_t *readTime(void)
 	I2CWriteByte(DS1307_SEC);
 	I2CStart(DS1307_ADDR | I2C_READ);
 	for (i = DS1307_SEC; i < DS1307_YEAR; i++) {
-		I2CReadByte(&temp, I2C_ACK);
+		temp = I2CReadByte(I2C_ACK);
 		time[i] = BD2D(temp);
 	}
-	I2CReadByte(&temp, I2C_NOACK);
+	temp = I2CReadByte(I2C_NOACK);
 	time[DS1307_YEAR] = BD2D(temp);
 	I2CStop();
 
@@ -87,10 +87,10 @@ int8_t *readAlarm(void)
 	I2CWriteByte(DS1307_A0_HOUR);
 	I2CStart(DS1307_ADDR | I2C_READ);
 	for (i = DS1307_A0_HOUR; i < DS1307_A0_WDAY; i++) {
-		I2CReadByte(&temp, I2C_ACK);
+		temp = I2CReadByte(I2C_ACK);
 		alarm[i - DS1307_A0_HOUR] = temp;
 	}
-	I2CReadByte(&temp, I2C_NOACK);
+	temp = I2CReadByte(I2C_NOACK);
 	alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] = temp;
 	I2CStop();
 

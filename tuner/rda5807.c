@@ -62,8 +62,8 @@ uint8_t *rda5807ReadStatus(void)
 
 	I2CStart(RDA5807M_I2C_ADDR | I2C_READ);
 	for (i = 0; i < sizeof(rdBuf) - 1; i++)
-		I2CReadByte(&rdBuf[i], I2C_ACK);
-	I2CReadByte(&rdBuf[sizeof(rdBuf) - 1], I2C_NOACK);
+		rdBuf[i] = I2CReadByte(I2C_ACK);
+	rdBuf[sizeof(rdBuf) - 1] = I2CReadByte(I2C_NOACK);
 	I2CStop();
 
 	/* If seek/tune is complete and current channel is a station */
