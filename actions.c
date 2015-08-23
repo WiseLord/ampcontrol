@@ -5,6 +5,7 @@
 #include "tuner/tuner.h"
 #include "temp.h"
 #include "adc.h"
+#include "alarm.h"
 
 static uint8_t dispMode = MODE_STANDBY;
 static uint8_t dispModePrev = MODE_STANDBY;

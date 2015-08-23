@@ -10,6 +10,7 @@
 #include "temp.h"
 #include "adc.h"
 #include "tuner/rds.h"
+#include "alarm.h"
 
 int8_t brStby;								/* Brightness in standby mode */
 int8_t brWork;								/* Brightness in working mode */
