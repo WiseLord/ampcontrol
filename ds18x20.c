@@ -1,32 +1,10 @@
 #include "ds18x20.h"
 
-#include "input.h"
-
 #include <util/delay.h>
+#include <util/crc16.h>
 
 static ds18x20Dev devs[DS18X20_MAX_DEV];
 static uint8_t devCount = 0;
-
-static uint8_t isResult = 0;							/* It conversion has been done */
-
-static uint8_t calcCRC8 (uint8_t *arr, uint8_t arr_size)
-{
-	uint8_t bit, byte;
-	uint8_t data, crc = 0, cb;
-
-	for (byte = 0; byte < arr_size; byte++) {
-		data = arr[byte];
-		for (bit = 0; bit < 8; bit++) {
-			cb = (crc ^ data) & 0x01;
-			crc >>= 1;
-			data >>= 1;
-			if (cb)
-				crc ^= 0b10001100; /* Polinom CRC8 = X⁸ + X⁵ + X⁴ + X⁰ */
-		}
-	}
-
-	return crc;
-}
 
 static uint8_t ds18x20IsOnBus(void)
 {
@@ -34,14 +12,14 @@ static uint8_t ds18x20IsOnBus(void)
 
 	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(485);										/* Reset */
+	_delay_us(480);										/* Reset */
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
 	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(65);										/* Wait for response */
+	_delay_us(70);										/* Wait for response */
 
 	ret = !(PIN(ONE_WIRE) & ONE_WIRE_LINE);
 
-	_delay_us(420);
+	_delay_us(410);
 
 	return ret;
 }
@@ -50,14 +28,14 @@ static void ds18x20SendBit(uint8_t bit)
 {
 	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(5);
+	_delay_us(6);
 	if (!bit)
-		_delay_us(50);
+		_delay_us(54);
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
 	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(5);
+	_delay_us(10);
 	if (bit)
-		_delay_us(50);
+		_delay_us(54);
 
 	return;
 }
@@ -68,14 +46,14 @@ static uint8_t ds18x20GetBit(void)
 
 	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
 	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(2);										/* Strob */
+	_delay_us(6);										/* Strob */
 	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
 	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(7);
+	_delay_us(9);
 
 	ret = PIN(ONE_WIRE) & ONE_WIRE_LINE;
 
-	_delay_us(50);
+	_delay_us(55);
 
 	return ret;
 }
@@ -84,21 +62,24 @@ static void ds18x20SendByte(uint8_t byte)
 {
 	uint8_t i;
 
-	for (i = 0; i < 8; i++)
-		ds18x20SendBit(byte & (1<<i));
+	for (i = 0; i < 8; i++) {
+		ds18x20SendBit(byte & 0x01);
+		byte >>= 1;
+	}
 
 	return;
 }
 
 static uint8_t ds18x20GetByte(void)
 {
-	uint8_t i, ret = 0;
+	uint8_t i, ret;
 
-	for (i = 0; i < 8; i++)
+	ret = 0;
+	for (i = 0; i < 8; i++) {
+		ret >>= 1;
 		if (ds18x20GetBit())
-			ret |= (1<<i);
-		else
-			ret &= ~(1<<i);
+			ret |= 0x80;
+	}
 
 	return ret;
 }
@@ -115,22 +96,25 @@ static void ds18x20Select(ds18x20Dev *dev)
 	return;
 }
 
-static void getAllTemps()
+static void ds18x20GetAllTemps()
 {
 	uint8_t i, j;
-
-	uint8_t arr[9];
+	uint8_t crc;
+	static uint8_t arr[DS18X20_SCRATCH_LEN];
 
 	for (i = 0; i < devCount; i++) {
 		if (ds18x20IsOnBus()) {
 			ds18x20Select(&devs[i]);
 			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
 
-			for (j = 0; j < 9; j++)
+			crc = 0;
+			for (j = 0; j < DS18X20_SCRATCH_LEN; j++) {
 				arr[j] = ds18x20GetByte();
+				crc = _crc_ibutton_update(crc, arr[j]);
+			}
 
-			if (!calcCRC8(arr, sizeof(arr))) {
-				for (j = 0; j < 9; j++)
+			if (crc == 0) {
+				for (j = 0; j < DS18X20_SCRATCH_LEN; j++)
 					devs[i].sp[j] = arr[j];
 			}
 		}
@@ -139,20 +123,16 @@ static void getAllTemps()
 	return;
 }
 
-static void convertTemp(void)
+static void ds18x20ConvertTemp(void)
 {
 	ds18x20SendByte(DS18X20_CMD_SKIP_ROM);
 	ds18x20SendByte(DS18X20_CMD_CONVERT);
 
 #ifdef DS18X20_PARASITE_POWER
-	/* Set active 1 on port for 750ms as parasitic power */
-	DS18X20_PORT |= DS18X20_WIRE;
-	DS18X20_DDR |= DS18X20_WIRE;
+	/* Set active 1 on port for at least 750ms as parasitic power */
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;
+	DDR(ONE_WIRE) |= ONE_WIRE_LINE;
 #endif
-
-	setTempTimer(750);
-
-	isResult = 1;
 
 	return;
 }
@@ -169,7 +149,7 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 	ds18x20SendByte(DS18X20_CMD_SEARCH_ROM);
 
 	/* Walk through all 64 bits */
-	for (currBit = 0; currBit < 64; currBit++)
+	for (currBit = 0; currBit < DS18X20_ID_LEN * 8; currBit++)
 	{
 		/* Read bit from bus twice. */
 		bitA = ds18x20GetBit();
@@ -218,7 +198,7 @@ void ds18x20SearchDevices(void)
 
 	/* Reset addresses */
 	for (i = 0; i < DS18X20_MAX_DEV; i++)
-		for (j = 0; j < 8; j++)
+		for (j = 0; j < DS18X20_ID_LEN; j++)
 			devs[i].id[j] = 0x00;
 
 	/* Search all sensors */
@@ -227,7 +207,7 @@ void ds18x20SearchDevices(void)
 	currentID = newID;
 
 	do {
-		for (j = 0; j < 8; j++)
+		for (j = 0; j < DS18X20_ID_LEN; j++)
 			newID[j] = currentID[j];
 
 		if (!ds18x20IsOnBus()) {
@@ -251,32 +231,29 @@ void ds18x20SearchDevices(void)
 
 uint8_t ds18x20Process(void)
 {
-	if (getTempTimer() == 0) {
+	ds18x20GetAllTemps();
 
-		if (isResult)
-			getAllTemps();
-
-		/* Convert temperature */
-		if (ds18x20IsOnBus())
-			convertTemp();
-	}
+	/* Convert temperature */
+	if (ds18x20IsOnBus())
+		ds18x20ConvertTemp();
 
 	return devCount;
 }
 
 int16_t ds18x20GetTemp(uint8_t num)
 {
-	int16_t ret = 0;
+	int16_t ret = devs[num].temp;
 
 	if (devs[num].id[0] == 0x28) /* DS18B20 */
-		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 5 / 8;
+		ret = ret * 5 / 8;
 	else if (devs[num].id[0] == 0x10) /* DS18S20 */
-		ret = (devs[num].sp[0] | (devs[num].sp[1] << 8)) * 5;
+		ret = ret * 5;
 
-	return ret / 10;
+	/* Return value is in 0.1°C units */
+	return ret;
 }
 
-ds18x20Dev ds18x20GetDev(uint8_t num)
+uint8_t ds18x20GetDevCount(void)
 {
-	return devs[num];
+	return devCount;
 }

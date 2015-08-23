@@ -4,7 +4,7 @@
 #include <inttypes.h>
 #include "pins.h"
 
-/*#define DS18X20_PARASITE_POWER */
+#define DS18X20_PARASITE_POWER
 
 /* DS18X20 commands */
 #define DS18X20_CMD_SEARCH_ROM		0xF0
@@ -22,16 +22,21 @@
 #define DS18S20_FAMILY_CODE			0x10
 #define DS18B20_FAMILY_CODE			0x28
 
-#define DS18X20_MAX_DEV				2
+#define DS18X20_MAX_DEV				4
+#define DS18X20_SCRATCH_LEN			9
+#define DS18X20_ID_LEN				8
 
-typedef struct {
-	uint8_t id[8];		/* 64 bit ds18x20 device ID. */
-	uint8_t sp[9];		/* Scratchpad memory */
+typedef union {
+	int16_t temp;
+	struct {
+		uint8_t sp[DS18X20_SCRATCH_LEN];
+		uint8_t id[DS18X20_ID_LEN];
+	};
 } ds18x20Dev;
 
 void ds18x20SearchDevices(void);
 uint8_t ds18x20Process(void);
 int16_t ds18x20GetTemp(uint8_t num);
-ds18x20Dev ds18x20GetDev(uint8_t num);
+uint8_t ds18x20GetDevCount(void);
 
 #endif /* DS18X20_H */
