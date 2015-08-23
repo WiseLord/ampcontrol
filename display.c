@@ -718,9 +718,9 @@ void showTemp(void)
 
 	ks0066SetXY (0, 1);
 	writeString((uint8_t*)"1:");
-	writeNum(ds18x20GetTemp(0), 3, ' ', 10);
+	writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
 	writeString((uint8_t*)"\x07""C  2:");
-	writeNum(ds18x20GetTemp(1), 3, ' ', 10);
+	writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
 	writeString((uint8_t*)"\x07""C");
 
 #else
@@ -729,13 +729,13 @@ void showTemp(void)
 	gdSetXY(0, 48);
 	writeStringEeprom(txtLabels[LABEL_SENSOR]);
 	writeString((uint8_t*)" 1: ");
-	writeNum(ds18x20GetTemp(0), 3, ' ', 10);
+	writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
 	writeString((uint8_t*)" \xDF""C");
 
 	gdSetXY(0, 56);
 	writeStringEeprom(txtLabels[LABEL_SENSOR]);
 	writeString((uint8_t*)" 2: ");
-	writeNum(ds18x20GetTemp(1), 3, ' ', 10);
+	writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
 	writeString((uint8_t*)" \xDF""C");
 
 	showParValue(tempTH);

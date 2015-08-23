@@ -2,6 +2,7 @@
 
 #include <avr/eeprom.h>
 #include "eeprom.h"
+#include "input.h"
 
 static int8_t tempTH;
 
@@ -36,10 +37,8 @@ void tempControlProcess(void)
 {
 	int8_t temp1, temp2;
 
-	ds18x20Process();
-
-	temp1 = ds18x20GetTemp(0);
-	temp2 = ds18x20GetTemp(1);
+	temp1 = ds18x20GetTemp(0) / 10;
+	temp2 = ds18x20GetTemp(1) / 10;
 
 	if (temp1 >= tempTH)
 		PORT(FAN1) |= FAN1_WIRE;

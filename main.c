@@ -16,16 +16,16 @@ static uint8_t extFunc;
 /* Hardware initialization */
 static void hwInit(void)
 {
-	I2CInit();								/* I2C bus */
-	displayInit();							/* Load params and text labels before fb scan started */
-	sei();									/* Gloabl interrupt enable */
-
 	extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
 
 	if (extFunc & USE_DS18B20) {
 		ds18x20SearchDevices();
 		tempInit();							/* Init temperature control */
 	}
+
+	I2CInit();								/* I2C bus */
+	displayInit();							/* Load params and text labels before fb scan started */
+	sei();									/* Gloabl interrupt enable */
 
 	inputInit();							/* Buttons/encoder polling */
 
@@ -51,10 +51,20 @@ int main(void)
 	/* Init hardware */
 	hwInit();
 
+	if (extFunc & USE_DS18B20) {
+		ds18x20Process();
+		setSensTimer(TEMP_MEASURE_TIME);
+	}
+
 	while (1) {
 		/* Control temperature */
-		if (extFunc & USE_DS18B20)
+		if (extFunc & USE_DS18B20) {
+			if (getSensTimer() == 0) {
+				setSensTimer(SENSOR_POLL_INTERVAL);
+				ds18x20Process();
+			}
 			tempControlProcess();
+		}
 
 		/* Emulate poweroff if any of timers expired */
 		if (getStbyTimer() == 0 || getSilenceTimer() == 0)

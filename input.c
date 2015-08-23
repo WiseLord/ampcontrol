@@ -19,7 +19,7 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 
 static volatile uint16_t displayTime;
 
-static volatile uint16_t tempTimer;					/* Timer of temperature measuring process */
+static volatile uint16_t sensTimer;					/* Timer of temperature measuring process */
 static volatile int16_t stbyTimer = STBY_TIMER_OFF;	/* Standby timer */
 static volatile uint16_t secTimer;					/* 1 second timer */
 static volatile uint8_t clockTimer;
@@ -66,7 +66,7 @@ void inputInit()
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;
-	tempTimer = 0;
+	sensTimer = 0;
 
 	return;
 }
@@ -218,9 +218,6 @@ ISR (TIMER2_COMP_vect)
 	if (rc5Timer < 1000)
 		rc5Timer++;
 
-	/* Timer of temperature measurement */
-	if (tempTimer)
-		tempTimer--;
 
 	if (secTimer) {
 		secTimer--;
@@ -232,6 +229,9 @@ ISR (TIMER2_COMP_vect)
 		/* Silence timer */
 		if (silenceTimer >= 0)
 			silenceTimer--;
+		/* Timer of temperature measurement */
+		if (sensTimer)
+			sensTimer--;
 	}
 
 	/* Timer clock update */
@@ -312,14 +312,14 @@ uint16_t getDisplayTime(void)
 	return displayTime;
 }
 
-uint16_t getTempTimer(void)
+uint8_t getSensTimer(void)
 {
-	return tempTimer;
+	return sensTimer;
 }
 
-void setTempTimer(uint16_t val)
+void setSensTimer(uint8_t val)
 {
-	tempTimer = val;
+	sensTimer = val;
 
 	return;
 }
