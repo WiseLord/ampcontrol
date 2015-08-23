@@ -62,7 +62,7 @@ void inputInit()
 	for (i = 0; i < RC5_CMD_COUNT; i++)
 		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + i);
 
-	encRes = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
+	encRes = eeprom_read_byte((uint8_t*)EEPROM_ENC_RES);
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;
