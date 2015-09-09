@@ -22,7 +22,9 @@
 #define TDA7312_IN_CNT				4
 #define TDA7313_IN_CNT				3
 #define TDA7314_IN_CNT				1
+#define TDA7315_IN_CNT				1
 #define TDA7318_IN_CNT				4
+#define PT2314_IN_CNT				4
 
 void tda731xInit(sndParam *sp);
 void tda731xSetVolume(int8_t val);

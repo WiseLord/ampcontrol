@@ -237,6 +237,8 @@ void MainWindow::setAudioproc(int proc)
     switch (proc) {
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TDA7314:
+    case AUDIOPROC_TDA7315:
+    case AUDIOPROC_PT2314:
         wgtLoudness->show();
         setLoudness(0x01);
         cbxLoudness->setCurrentIndex(eep[EEPROM_LOUDNESS]);
@@ -246,11 +248,14 @@ void MainWindow::setAudioproc(int proc)
     /* Handle maximum inputs */
     switch (proc) {
     case AUDIOPROC_TDA7439:
+    case AUDIOPROC_TDA7312:
+    case AUDIOPROC_TDA7318:
+    case AUDIOPROC_PT2314:
         cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN3, 0)->text());
     case AUDIOPROC_TDA7313:
-    case AUDIOPROC_TDA7318:
         cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN2, 0)->text());
         cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN1, 0)->text());
+    default:
         cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN0, 0)->text());
         wgtInput->show();
         setInput(eep[EEPROM_INPUT]);
@@ -263,7 +268,9 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_TDA7312:
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TDA7314:
+    case AUDIOPROC_TDA7315:
     case AUDIOPROC_TDA7318:
+    case AUDIOPROC_PT2314:
         wgtVolume->show();
         setAudioParam(dsbVolume, -78.5, 0, 1.25, MODE_SND_VOLUME);
         wgtBass->show();
@@ -325,6 +332,18 @@ void MainWindow::setAudioproc(int proc)
         setAudioParam(dsbGain2, 0, 18.75, 6.25, MODE_SND_GAIN2);
         wgtGain3->show();
         setAudioParam(dsbGain3, 0, 18.75, 6.25, MODE_SND_GAIN3);
+        break;
+    case AUDIOPROC_PT2314:
+        wgtFrontrear->show();
+        setAudioParam(dsbFrontrear, -18.75, 18.75, 1.25, MODE_SND_FRONTREAR);
+        wgtGain0->show();
+        setAudioParam(dsbGain0, 0, 11.25, 3.75, MODE_SND_GAIN0);
+        wgtGain1->show();
+        setAudioParam(dsbGain1, 0, 11.25, 3.75, MODE_SND_GAIN1);
+        wgtGain2->show();
+        setAudioParam(dsbGain2, 0, 11.25, 3.75, MODE_SND_GAIN2);
+        wgtGain3->show();
+        setAudioParam(dsbGain3, 0, 11.25, 3.75, MODE_SND_GAIN3);
         break;
     case AUDIOPROC_TDA7448:
         wgtVolume->show();

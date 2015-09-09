@@ -603,7 +603,17 @@
              </item>
              <item>
               <property name="text">
+               <string>TDA7315</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>TDA7318</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PT2314</string>
               </property>
              </item>
              <item>

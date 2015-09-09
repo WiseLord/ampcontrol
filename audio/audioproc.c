@@ -59,7 +59,9 @@ void sndInit(uint8_t extFunc)
 	case AUDIOPROC_TDA7312:
 	case AUDIOPROC_TDA7313:
 	case AUDIOPROC_TDA7314:
+	case AUDIOPROC_TDA7315:
 	case AUDIOPROC_TDA7318:
+	case AUDIOPROC_PT2314:
 		tda731xInit(sndPar);
 		break;
 	case AUDIOPROC_TDA7448:
@@ -149,6 +151,17 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
+	case AUDIOPROC_TDA7315:
+		sndPar[MODE_SND_VOLUME].grid = &grid[6];
+		sndPar[MODE_SND_BASS].grid = &grid[2];
+		sndPar[MODE_SND_TREBLE].grid = &grid[2];
+		sndPar[MODE_SND_BALANCE].grid = &grid[7];
+		_inCnt = TDA7315_IN_CNT;
+		break;
+		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
+		sndPar[MODE_SND_BASS].set = tda731xSetBass;
+		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 	case AUDIOPROC_TDA7318:
 		sndPar[MODE_SND_VOLUME].grid = &grid[6];
 		sndPar[MODE_SND_BASS].grid = &grid[2];
@@ -169,6 +182,27 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN3].set =tda731xSetGain ;
+		break;
+	case AUDIOPROC_PT2314:
+		sndPar[MODE_SND_VOLUME].grid = &grid[6];
+		sndPar[MODE_SND_BASS].grid = &grid[2];
+		sndPar[MODE_SND_TREBLE].grid = &grid[2];
+		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
+		sndPar[MODE_SND_BALANCE].grid = &grid[7];
+		sndPar[MODE_SND_GAIN0].grid = &grid[8];
+		sndPar[MODE_SND_GAIN1].grid = &grid[8];
+		sndPar[MODE_SND_GAIN2].grid = &grid[8];
+		sndPar[MODE_SND_GAIN3].grid = &grid[8];
+		_inCnt = PT2314_IN_CNT;
+		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
+		sndPar[MODE_SND_BASS].set = tda731xSetBass;
+		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
+		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
+		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
+		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
+		sndPar[MODE_SND_GAIN3].set = tda731xSetGain;
 		break;
 	case AUDIOPROC_TDA7448:
 		sndPar[MODE_SND_VOLUME].grid = &grid[1];
@@ -236,7 +270,9 @@ void sndSetInput(uint8_t input)
 	case AUDIOPROC_TDA7312:
 	case AUDIOPROC_TDA7313:
 	case AUDIOPROC_TDA7314:
+	case AUDIOPROC_TDA7315:
 	case AUDIOPROC_TDA7318:
+	case AUDIOPROC_PT2314:
 		tda731xSetInput(_input);
 		break;
 	default:
@@ -274,7 +310,9 @@ void sndSetMute(uint8_t value)
 	case AUDIOPROC_TDA7312:
 	case AUDIOPROC_TDA7313:
 	case AUDIOPROC_TDA7314:
+	case AUDIOPROC_TDA7315:
 	case AUDIOPROC_TDA7318:
+	case AUDIOPROC_PT2314:
 		tda731xSetMute(_mute);
 		break;
 	case AUDIOPROC_TDA7448:
@@ -300,7 +338,8 @@ void sndSetLoudness(uint8_t value)
 	else
 		_loudness = LOUDNESS_OFF;
 
-	if (_aproc == AUDIOPROC_TDA7313 || _aproc == AUDIOPROC_TDA7314)
+	if (_aproc == AUDIOPROC_TDA7313 || _aproc == AUDIOPROC_TDA7314 ||
+		_aproc == AUDIOPROC_TDA7315 || _aproc == AUDIOPROC_PT2314)
 		tda731xSetLoudness(_loudness);
 
 	return;
