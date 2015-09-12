@@ -32,7 +32,7 @@
 #define MODE_RADIO_CHAN			0
 
 /* String buffer */
-#define STR_BUFSIZE				16
+#define STR_BUFSIZE				14
 
 /* Spectrum output mode */
 enum {
