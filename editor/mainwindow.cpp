@@ -598,6 +598,9 @@ void MainWindow::setOther()
 
     setThreshold(eep[EEPROM_TEMP_TH]);
     sbxThreshold->setValue(eep[EEPROM_TEMP_TH]);
+
+    setSilence((unsigned char)eep[EEPROM_SILENCE_TIMER]);
+    sbxSilence->setValue((unsigned char)eep[EEPROM_SILENCE_TIMER]);
 }
 
 void MainWindow::setSpmode(int value)
@@ -670,4 +673,15 @@ void MainWindow::setThreshold(int value)
         value = sbxThreshold->minimum();
     eep[EEPROM_TEMP_TH] = (char)value;
     updateHexTable(EEPROM_TEMP_TH);
+}
+
+void MainWindow::setSilence(int value)
+{
+    if (value > sbxSilence->maximum())
+        value = sbxSilence->maximum();
+    if (value < sbxSilence->minimum())
+        value = sbxSilence->minimum();
+    eep[EEPROM_SILENCE_TIMER] = (unsigned char)value;
+    updateHexTable(EEPROM_SILENCE_TIMER);
+
 }

@@ -10,6 +10,7 @@
 static volatile int8_t encCnt;
 static volatile cmdID cmdBuf;
 static volatile int8_t encRes;
+static volatile uint8_t silenceTime;
 
 /* Previous state */
 static volatile uint16_t rc5SaveBuf;
@@ -63,6 +64,7 @@ void inputInit()
 		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + i);
 
 	encRes = eeprom_read_byte((uint8_t*)EEPROM_ENC_RES);
+	silenceTime = eeprom_read_byte((uint8_t*)EEPROM_SILENCE_TIMER);
 
 	encCnt = 0;
 	cmdBuf = CMD_EMPTY;
@@ -360,9 +362,12 @@ uint8_t getClockTimer(void)
 	return clockTimer;
 }
 
-void setSilenceTimer(int16_t value)
+void enableSilenceTimer(void)
 {
-	silenceTimer = value;
+	if (silenceTime)
+		silenceTimer = 60 * silenceTime;
+	else
+		silenceTimer = STBY_TIMER_OFF;
 
 	return;
 }
@@ -370,4 +375,9 @@ void setSilenceTimer(int16_t value)
 int16_t getSilenceTimer(void)
 {
 	return silenceTimer;
+}
+
+void disableSilenceTimer(void)
+{
+	silenceTimer = STBY_TIMER_OFF;
 }

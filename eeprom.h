@@ -38,6 +38,7 @@
 #define EEPROM_ADC_CORR_L			0x3B
 #define EEPROM_ADC_CORR_R			0x3C
 #define EEPROM_EXT_FUNC				0x3D
+#define EEPROM_SILENCE_TIMER		0x3E
 
 /* RC5 commands array */
 #define EEPROM_RC5_CMD				0x40

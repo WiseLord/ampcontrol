@@ -170,7 +170,7 @@ void handleAction(actionID action)
 		}
 
 		dispMode = defDispMode();
-		setSilenceTimer(SILENCE_TIMER);
+		enableSilenceTimer();
 
 		break;
 	case ACTION_GO_STANDBY:
@@ -183,7 +183,7 @@ void handleAction(actionID action)
 		setStbyBrightness();
 		stopEditTime();
 		setStbyTimer(STBY_TIMER_OFF);
-		setSilenceTimer(STBY_TIMER_OFF);
+		disableSilenceTimer();
 
 		sndPowerOff();
 		tunerPowerOff();
@@ -505,8 +505,8 @@ void handleTimers(void)
 
 	if (dispMode != MODE_STANDBY && dispMode != MODE_TEST && dispMode != MODE_TEMP) {
 		if (getSignalLevel() > 5) {
-			setSilenceTimer(SILENCE_TIMER);
-			silenceTimer = SILENCE_TIMER;
+			enableSilenceTimer();
+			silenceTimer = getSilenceTimer();
 			if (dispMode == MODE_SILENCE_TIMER)
 				dispMode = defDispMode();
 		}

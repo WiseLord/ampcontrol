@@ -91,7 +91,7 @@ int main(void)
 
 		/* Reset silence timer on any action */
 		if (encCnt || (action != ACTION_NOACTION && action != ACTION_EXIT_STANDBY))
-			setSilenceTimer(SILENCE_TIMER);
+			enableSilenceTimer();
 
 		/* Reset handled action */
 		action = ACTION_NOACTION;

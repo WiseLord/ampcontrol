@@ -73,6 +73,7 @@ private slots:
     void setAdcright(int value);
     void setExtfunc(int value);
     void setThreshold(int value);
+    void setSilence(int value);
 };
 
 #endif // MAINWINDOW_H

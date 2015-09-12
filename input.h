@@ -110,7 +110,8 @@ int16_t getSecTimer(void);
 void setClockTimer(uint8_t value);
 uint8_t getClockTimer(void);
 
-void setSilenceTimer(int16_t value);
+void enableSilenceTimer(void);
+void disableSilenceTimer(void);
 int16_t getSilenceTimer(void);
 
 #endif /* INPUT_H */

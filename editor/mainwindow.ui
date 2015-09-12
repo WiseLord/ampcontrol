@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>768</width>
-    <height>512</height>
+    <width>766</width>
+    <height>510</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -1761,21 +1761,6 @@
         <string>Other</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
-        <property name="spacing">
-         <number>3</number>
-        </property>
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
         <item>
          <widget class="QWidget" name="wgtSpmode" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="1,0">
@@ -2163,6 +2148,53 @@
          </widget>
         </item>
         <item>
+         <widget class="QWidget" name="wgtSilence" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_30" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblSilence">
+             <property name="text">
+              <string>Silence timer (min, 0 = OFF)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sbxSilence">
+             <property name="minimumSize">
+              <size>
+               <width>100</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="vspOther">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -2188,7 +2220,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>768</width>
+     <width>766</width>
      <height>22</height>
     </rect>
    </property>
@@ -2765,11 +2797,11 @@
    <slot>setSpmode(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>737</x>
-     <y>56</y>
+     <x>751</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>766</x>
+     <x>765</x>
      <y>61</y>
     </hint>
    </hints>
@@ -2797,8 +2829,8 @@
    <slot>setExtfunc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>708</x>
-     <y>210</y>
+     <x>751</x>
+     <y>246</y>
     </hint>
     <hint type="destinationlabel">
      <x>763</x>
@@ -2813,8 +2845,8 @@
    <slot>setBrstby(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>725</x>
-     <y>115</y>
+     <x>751</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2829,8 +2861,8 @@
    <slot>setEncres(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>713</x>
-     <y>139</y>
+     <x>751</x>
+     <y>163</y>
     </hint>
     <hint type="destinationlabel">
      <x>764</x>
@@ -2845,11 +2877,11 @@
    <slot>setAdcleft(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>735</x>
-     <y>163</y>
+     <x>751</x>
+     <y>190</y>
     </hint>
     <hint type="destinationlabel">
-     <x>766</x>
+     <x>765</x>
      <y>187</y>
     </hint>
    </hints>
@@ -2861,8 +2893,8 @@
    <slot>setAdcright(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>719</x>
-     <y>186</y>
+     <x>751</x>
+     <y>217</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2877,8 +2909,8 @@
    <slot>setThreshold(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>704</x>
-     <y>235</y>
+     <x>751</x>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2915,6 +2947,22 @@
     <hint type="destinationlabel">
      <x>383</x>
      <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbxSilence</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSilence(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>719</x>
+     <y>290</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>762</x>
+     <y>315</y>
     </hint>
    </hints>
   </connection>
@@ -2956,5 +3004,6 @@
   <slot>setThreshold(int)</slot>
   <slot>about()</slot>
   <slot>aboutQt()</slot>
+  <slot>setSilence(int)</slot>
  </slots>
 </ui>
