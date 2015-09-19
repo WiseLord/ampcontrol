@@ -358,10 +358,10 @@ static void showParLabel(const uint8_t *parLabel)
 }
 #ifdef KS0066
 #else
-static void showParIcon(const uint8_t *icon)
+static void showParIcon(const uint8_t iconNum)
 {
 	gdSetXY(104, 2);
-	gdWriteIcon24(icon);
+	gdWriteIcon24(iconNum);
 
 	return;
 }
@@ -741,7 +741,7 @@ void showTemp(void)
 	showParValue(tempTH);
 	showBar(MIN_TEMP, MAX_TEMP, tempTH);
 	showParLabel(txtLabels[LABEL_THRESHOLD]);
-	showParIcon(icons_24_threshold);
+	showParIcon(ICON24_THRESHOLD);
 
 	gdSetXY(118, 56);
 	writeString((uint8_t*)"\xDF""C");
@@ -930,9 +930,9 @@ void showMute(void)
 #else
 	gdSetXY(96, 32);
 	if (sndGetMute())
-		gdWriteIcon32(icons_32_mute_on);
+		gdWriteIcon32(ICON32_MUTE_ON);
 	else
-		gdWriteIcon32(icons_32_mute_off);
+		gdWriteIcon32(ICON32_MUTE_OFF);
 #endif
 
 	return;
@@ -953,9 +953,9 @@ void showLoudness(void)
 #else
 	gdSetXY(96, 32);
 	if (sndGetLoudness())
-		gdWriteIcon32(icons_32_loud_on);
+		gdWriteIcon32(ICON32_LOUDNESS_ON);
 	else
-		gdWriteIcon32(icons_32_loud_off);
+		gdWriteIcon32(ICON32_LOUDNESS_OFF);
 #endif
 	return;
 }
@@ -970,7 +970,7 @@ void showBrWork(void)
 #else
 	showParValue(brWork);
 	drawBarSpectrum();
-	showParIcon(icons_24_brightness);
+	showParIcon(ICON24_BRIGHTNESS);
 #endif
 	return;
 }

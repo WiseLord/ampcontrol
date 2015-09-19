@@ -283,10 +283,14 @@ void gdWriteString(uint8_t *string)
 	return;
 }
 
-void gdWriteIcon24(const uint8_t *icon)
+void gdWriteIcon24(uint8_t iconNum)
 {
 	uint8_t i, j, k;
 	uint8_t pgmData;
+
+	const uint8_t *icon;
+
+	icon = &icons_24[24 * 24 / 8 * iconNum];
 
 	if (icon) {
 		for (j = 0; j < 3; j++) {
@@ -302,10 +306,14 @@ void gdWriteIcon24(const uint8_t *icon)
 	return;
 }
 
-void gdWriteIcon32(const uint8_t *icon)
+void gdWriteIcon32(uint8_t iconNum)
 {
 	uint8_t i, j, k;
 	uint8_t pgmData;
+
+	const uint8_t *icon;
+
+	icon = &icons_32[32 * 32 / 8 * iconNum];
 
 	if (icon) {
 		for (j = 0; j < 4; j++) {

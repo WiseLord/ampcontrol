@@ -72,7 +72,7 @@ void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
 void gdWriteChar(uint8_t code);
 void gdWriteString(uint8_t *string);
 
-void gdWriteIcon24(const uint8_t *icon);
-void gdWriteIcon32(const uint8_t *icon);
+void gdWriteIcon24(uint8_t iconNum);
+void gdWriteIcon32(uint8_t iconNum);
 
 #endif /* FBGD_H */

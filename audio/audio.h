@@ -19,7 +19,7 @@ typedef struct {
 	int8_t value;
 	const sndGrid *grid;
 	uint8_t *label;
-	const uint8_t *icon;
+	uint8_t icon;
 	void (*set)(int8_t value);
 } sndParam;
 

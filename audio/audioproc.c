@@ -81,6 +81,11 @@ void sndInit(uint8_t extFunc)
 		sndPar[i].set = setNothing;
 	}
 
+	/* Setup icons */
+	for (i = 0; i < MODE_SND_END; i++) {
+		sndPar[i].icon = i;
+	}
+
 	/* Setup audio parameters grid and functions */
 	switch (_aproc) {
 	case AUDIOPROC_TDA7439:
@@ -228,22 +233,6 @@ void sndInit(uint8_t extFunc)
 		break;
 	}
 
-#ifndef KS0066
-	/* Setup icons for audio parameters */
-	sndPar[MODE_SND_VOLUME].icon = icons_24_volume;
-	sndPar[MODE_SND_BASS].icon = icons_24_bass;
-	sndPar[MODE_SND_MIDDLE].icon = icons_24_middle;
-	sndPar[MODE_SND_TREBLE].icon = icons_24_treble;
-	sndPar[MODE_SND_PREAMP].icon = icons_24_preamp;
-	sndPar[MODE_SND_FRONTREAR].icon = icons_24_frontrear;
-	sndPar[MODE_SND_BALANCE].icon = icons_24_balance;
-	sndPar[MODE_SND_CENTER].icon = icons_24_center;
-	sndPar[MODE_SND_SUBWOOFER].icon = icons_24_subwoofer;
-	sndPar[MODE_SND_GAIN0].icon = icons_24_tuner;
-	sndPar[MODE_SND_GAIN1].icon = icons_24_pc;
-	sndPar[MODE_SND_GAIN2].icon = icons_24_tv;
-	sndPar[MODE_SND_GAIN3].icon = icons_24_dvd;
-#endif
 	return;
 }
 

@@ -1,27 +1,37 @@
 #ifndef ICONS_H
 #define ICONS_H
 
-extern const uint8_t icons_24_volume[];
-extern const uint8_t icons_24_bass[];
-extern const uint8_t icons_24_middle[];
-extern const uint8_t icons_24_treble[];
-extern const uint8_t icons_24_preamp[];
-extern const uint8_t icons_24_frontrear[];
-extern const uint8_t icons_24_balance[];
-extern const uint8_t icons_24_center[];
-extern const uint8_t icons_24_subwoofer[];
+enum {
+	ICON24_VOLUME = 0,
+	ICON24_BASS,
+	ICON24_MIDDLE,
+	ICON24_TREBLE,
+	ICON24_PREAMP,
+	ICON24_FRONTREAR,
+	ICON24_BALANCE,
+	ICON24_CENTER,
+	ICON24_SUBWOOFER,
+	ICON24_GAIN0,
+	ICON24_GAIN1,
+	ICON24_GAIN2,
+	ICON24_GAIN3,
 
-extern const uint8_t icons_24_tuner[];
-extern const uint8_t icons_24_pc[];
-extern const uint8_t icons_24_tv[];
-extern const uint8_t icons_24_dvd[];
+	ICON24_BRIGHTNESS,
+	ICON24_THRESHOLD,
 
-extern const uint8_t icons_24_brightness[];
-extern const uint8_t icons_24_threshold[];
+	ICON24_END
+};
 
-extern const uint8_t icons_32_mute_on[];
-extern const uint8_t icons_32_mute_off[];
-extern const uint8_t icons_32_loud_on[];
-extern const uint8_t icons_32_loud_off[];
+enum {
+	ICON32_MUTE_ON = 0,
+	ICON32_MUTE_OFF,
+	ICON32_LOUDNESS_ON,
+	ICON32_LOUDNESS_OFF,
+
+	ICON32_END
+};
+
+extern const uint8_t icons_24[];
+extern const uint8_t icons_32[];
 
 #endif /*ICONS_H */
