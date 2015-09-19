@@ -107,6 +107,7 @@ static void ds18x20GetAllTemps()
 			ds18x20Select(&devs[i]);
 			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
 
+			/* Control scratchpad checksum */
 			crc = 0;
 			for (j = 0; j < DS18X20_SCRATCH_LEN; j++) {
 				arr[j] = ds18x20GetByte();
@@ -114,7 +115,8 @@ static void ds18x20GetAllTemps()
 			}
 
 			if (crc == 0) {
-				for (j = 0; j < DS18X20_SCRATCH_LEN; j++)
+				/* Save first 2 bytes (temperature) of scratchpad */
+				for (j = 0; j < DS18X20_SCRATCH_TEMP_LEN; j++)
 					devs[i].sp[j] = arr[j];
 			}
 		}
