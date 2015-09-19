@@ -27,7 +27,7 @@ SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC) $(DISP_SRC)
 MCU = atmega32
 F_CPU = 16000000L
 
-OPTIMIZE = -O2 -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
+OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
