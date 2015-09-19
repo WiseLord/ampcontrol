@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>510</height>
+    <width>768</width>
+    <height>512</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>768</width>
+    <height>512</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Ampcontrol EEPROM editor</string>
@@ -137,7 +143,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="spacing">
-         <number>3</number>
+         <number>2</number>
         </property>
         <property name="leftMargin">
          <number>0</number>
@@ -534,7 +540,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <property name="spacing">
-         <number>3</number>
+         <number>2</number>
         </property>
         <property name="leftMargin">
          <number>0</number>
@@ -577,7 +583,7 @@
             <widget class="QComboBox" name="cbxAudioproc">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -662,13 +668,116 @@
             <widget class="QComboBox" name="cbxInput">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
              <property name="editable">
               <bool>false</bool>
              </property>
+             <item>
+              <property name="text">
+               <string>Input 1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Input 2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Input 3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Input 4</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="widget" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblInputIcon">
+             <property name="text">
+              <string>Input icon</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxInputIcon">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Volume</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Bass</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Middle</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Treble</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Preamp</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>FrontRear</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Balance</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Center</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Subwoofer</string>
+              </property>
+             </item>
              <item>
               <property name="text">
                <string>Tuner</string>
@@ -686,7 +795,22 @@
              </item>
              <item>
               <property name="text">
-               <string>DVD</string>
+               <string>DVD player</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Bluetooth</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Brightness</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Temperature</string>
               </property>
              </item>
             </widget>
@@ -723,7 +847,7 @@
             <widget class="QComboBox" name="cbxLoudness">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -771,7 +895,7 @@
             <widget class="QDoubleSpinBox" name="dsbVolume">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -827,7 +951,7 @@
             <widget class="QDoubleSpinBox" name="dsbBass">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -882,7 +1006,7 @@
             <widget class="QDoubleSpinBox" name="dsbMiddle">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -935,7 +1059,7 @@
             <widget class="QDoubleSpinBox" name="dsbTreble">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -988,7 +1112,7 @@
             <widget class="QDoubleSpinBox" name="dsbPreamp">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1038,7 +1162,7 @@
             <widget class="QDoubleSpinBox" name="dsbFrontrear">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1091,7 +1215,7 @@
             <widget class="QDoubleSpinBox" name="dsbBalance">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1144,7 +1268,7 @@
             <widget class="QDoubleSpinBox" name="dsbCenter">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1197,7 +1321,7 @@
             <widget class="QDoubleSpinBox" name="dsbSubwoofer">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1250,7 +1374,7 @@
             <widget class="QDoubleSpinBox" name="dsbGain0">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1300,7 +1424,7 @@
             <widget class="QDoubleSpinBox" name="dsbGain1">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1350,7 +1474,7 @@
             <widget class="QDoubleSpinBox" name="dsbGain2">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1400,7 +1524,7 @@
             <widget class="QDoubleSpinBox" name="dsbGain3">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1442,7 +1566,7 @@
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout">
         <property name="spacing">
-         <number>3</number>
+         <number>2</number>
         </property>
         <property name="leftMargin">
          <number>0</number>
@@ -1485,7 +1609,7 @@
             <widget class="QComboBox" name="cbxTuner">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1551,7 +1675,7 @@
             <widget class="QDoubleSpinBox" name="dsbFmfreq">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1601,7 +1725,7 @@
             <widget class="QDoubleSpinBox" name="dsbFmstep">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1654,7 +1778,7 @@
             <widget class="QComboBox" name="cbxFmmono">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1761,6 +1885,21 @@
         <string>Other</string>
        </attribute>
        <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
         <item>
          <widget class="QWidget" name="wgtSpmode" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="1,0">
@@ -1790,7 +1929,7 @@
             <widget class="QComboBox" name="cbxSpmode">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1843,7 +1982,7 @@
             <widget class="QComboBox" name="cbxSpspeed">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1896,7 +2035,7 @@
             <widget class="QSpinBox" name="sbxBrstby">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1940,7 +2079,7 @@
             <widget class="QSpinBox" name="sbxEncres">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -1987,7 +2126,7 @@
             <widget class="QSpinBox" name="sbxAdcleft">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -2034,7 +2173,7 @@
             <widget class="QSpinBox" name="sbxAdcright">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -2081,7 +2220,7 @@
             <widget class="QComboBox" name="cbxExtfunc">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -2129,7 +2268,7 @@
             <widget class="QSpinBox" name="sbxThreshold">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -2176,7 +2315,7 @@
             <widget class="QSpinBox" name="sbxSilence">
              <property name="minimumSize">
               <size>
-               <width>100</width>
+               <width>120</width>
                <height>0</height>
               </size>
              </property>
@@ -2220,7 +2359,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>766</width>
+     <width>768</width>
      <height>22</height>
     </rect>
    </property>
@@ -2413,8 +2552,8 @@
    <slot>setLoudness(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>731</x>
-     <y>114</y>
+     <x>759</x>
+     <y>149</y>
     </hint>
     <hint type="destinationlabel">
      <x>355</x>
@@ -2637,8 +2776,8 @@
    <slot>setVolume(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>753</x>
-     <y>150</y>
+     <x>759</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
      <x>696</x>
@@ -2781,8 +2920,8 @@
    <slot>setBass(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>753</x>
-     <y>174</y>
+     <x>759</x>
+     <y>195</y>
     </hint>
     <hint type="destinationlabel">
      <x>382</x>
@@ -2797,8 +2936,8 @@
    <slot>setSpmode(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>80</y>
+     <x>759</x>
+     <y>74</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2829,8 +2968,8 @@
    <slot>setExtfunc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>246</y>
+     <x>759</x>
+     <y>216</y>
     </hint>
     <hint type="destinationlabel">
      <x>763</x>
@@ -2845,8 +2984,8 @@
    <slot>setBrstby(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>136</y>
+     <x>759</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2861,8 +3000,8 @@
    <slot>setEncres(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>163</y>
+     <x>759</x>
+     <y>145</y>
     </hint>
     <hint type="destinationlabel">
      <x>764</x>
@@ -2877,8 +3016,8 @@
    <slot>setAdcleft(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>190</y>
+     <x>759</x>
+     <y>168</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2893,8 +3032,8 @@
    <slot>setAdcright(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>217</y>
+     <x>759</x>
+     <y>191</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2909,8 +3048,8 @@
    <slot>setThreshold(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>751</x>
-     <y>273</y>
+     <x>759</x>
+     <y>239</y>
     </hint>
     <hint type="destinationlabel">
      <x>765</x>
@@ -2957,12 +3096,28 @@
    <slot>setSilence(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>719</x>
-     <y>290</y>
+     <x>759</x>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
      <x>762</x>
      <y>315</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxInputIcon</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setInputIcon(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>682</x>
+     <y>115</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>772</x>
+     <y>13</y>
     </hint>
    </hints>
   </connection>
@@ -3005,5 +3160,6 @@
   <slot>about()</slot>
   <slot>aboutQt()</slot>
   <slot>setSilence(int)</slot>
+  <slot>setInputIcon(int)</slot>
  </slots>
 </ui>

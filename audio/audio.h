@@ -37,6 +37,7 @@ typedef enum {
 	MODE_SND_GAIN1,
 	MODE_SND_GAIN2,
 	MODE_SND_GAIN3,
+
 	MODE_SND_END
 } sndMode;
 

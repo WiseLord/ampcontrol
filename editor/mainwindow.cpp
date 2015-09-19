@@ -251,12 +251,12 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_TDA7312:
     case AUDIOPROC_TDA7318:
     case AUDIOPROC_PT2314:
-        cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN3, 0)->text());
+        cbxInput->insertItem(0, "Input 4");
     case AUDIOPROC_TDA7313:
-        cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN2, 0)->text());
-        cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN1, 0)->text());
+        cbxInput->insertItem(0, "Input 3");
+        cbxInput->insertItem(0, "Input 2");
     default:
-        cbxInput->insertItem(0, wgtTranslations->item(MODE_SND_GAIN0, 0)->text());
+        cbxInput->insertItem(0, "Input 1");
         wgtInput->show();
         setInput(eep[EEPROM_INPUT]);
         cbxInput->setCurrentIndex(eep[EEPROM_INPUT]);
@@ -453,6 +453,15 @@ void MainWindow::setInput(int value)
         value = cbxInput->count() - 1;
     eep[EEPROM_INPUT] = (char)value;
     updateHexTable(EEPROM_INPUT);
+    cbxInputIcon->setCurrentIndex(eep[EEPROM_INPUT_ICONS + eep[EEPROM_INPUT]]);
+}
+
+void MainWindow::setInputIcon(int value)
+{
+    if (value >= cbxInputIcon->count())
+        value = cbxInputIcon->count() - 1;
+    eep[EEPROM_INPUT_ICONS + eep[EEPROM_INPUT]] = (char)value;
+    updateHexTable(EEPROM_INPUT_ICONS + eep[EEPROM_INPUT]);
 }
 
 void MainWindow::setLoudness(int value)

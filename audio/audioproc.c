@@ -81,10 +81,19 @@ void sndInit(uint8_t extFunc)
 		sndPar[i].set = setNothing;
 	}
 
+#ifndef KS0066
+	uint8_t ic;
+
 	/* Setup icons */
-	for (i = 0; i < MODE_SND_END; i++) {
+	for (i = 0; i < MODE_SND_END; i++)
 		sndPar[i].icon = i;
+	/* Update input icons */
+	for (i = 0; i < MODE_SND_END - MODE_SND_GAIN0; i++) {
+		ic = eeprom_read_byte((uint8_t*)(EEPROM_INPUT_ICONS + i));
+		if (ic < ICON24_END)
+			sndPar[MODE_SND_GAIN0 + i].icon = ic;
 	}
+#endif
 
 	/* Setup audio parameters grid and functions */
 	switch (_aproc) {

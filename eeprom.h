@@ -23,6 +23,7 @@
 #define EEPROM_AUDIOPROC			0x28
 #define EEPROM_INPUT				0x29
 #define EEPROM_LOUDNESS				0x2A
+#define EEPROM_INPUT_ICONS			0x2C
 
 /* Display parameters */
 #define EEPROM_SP_MODE				0x30

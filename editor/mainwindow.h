@@ -56,6 +56,7 @@ private slots:
     void setGain2(double value);
     void setGain3(double value);
     void setInput(int value);
+    void setInputIcon(int value);
     void setLoudness(int value);
 
     void setTuner(int tuner);
