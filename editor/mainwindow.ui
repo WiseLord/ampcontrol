@@ -135,7 +135,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -701,7 +701,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="widget" native="true">
+         <widget class="QWidget" name="wgtInputIcon" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_32" stretch="1,0">
            <property name="spacing">
             <number>0</number>
@@ -729,88 +729,170 @@
             <widget class="QComboBox" name="cbxInputIcon">
              <property name="minimumSize">
               <size>
-               <width>120</width>
-               <height>0</height>
+               <width>0</width>
+               <height>36</height>
               </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>64</width>
+               <height>16777215</height>
+              </size>
+             </property>
+             <property name="maxVisibleItems">
+              <number>20</number>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+             <property name="frame">
+              <bool>true</bool>
              </property>
              <item>
               <property name="text">
-               <string>Volume</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/volume.bmp</normaloff>:/icons/volume.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Bass</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/bass.bmp</normaloff>:/icons/bass.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Middle</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/middle.bmp</normaloff>:/icons/middle.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Treble</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/treble.bmp</normaloff>:/icons/treble.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Preamp</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/preamp.bmp</normaloff>:/icons/preamp.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>FrontRear</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/frontrear.bmp</normaloff>:/icons/frontrear.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Balance</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/balance.bmp</normaloff>:/icons/balance.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Center</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/center.bmp</normaloff>:/icons/center.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Subwoofer</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/subwoofer.bmp</normaloff>:/icons/subwoofer.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Tuner</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/tuner.bmp</normaloff>:/icons/tuner.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Computer</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/pc.bmp</normaloff>:/icons/pc.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>TV-set</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/tv.bmp</normaloff>:/icons/tv.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>DVD player</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/dvd.bmp</normaloff>:/icons/dvd.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Bluetooth</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/bluetooth.bmp</normaloff>:/icons/bluetooth.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Brightness</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/brightness.bmp</normaloff>:/icons/brightness.bmp</iconset>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Temperature</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/threshold.bmp</normaloff>:/icons/threshold.bmp</iconset>
               </property>
              </item>
             </widget>
@@ -2415,7 +2497,9 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionOpenEeprom</sender>
