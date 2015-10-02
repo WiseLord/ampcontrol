@@ -1,10 +1,9 @@
 DISPLAY = ST7920
 
-# Lowercase argument
-lc = $(shell echo $1 | tr A-Z a-z)
+TARG = ampcontrol_m32_$(shell echo $(DISPLAY) | tr A-Z a-z)
 
-# Fimware file base name
-TARG = ampcontrol_m32_$(call lc,$(DISPLAY))
+MCU = atmega32
+F_CPU = 16000000L
 
 AUDIO_SRC = $(wildcard audio/*.c)
 TUNER_SRC = $(wildcard tuner/*.c)
@@ -24,12 +23,13 @@ endif
 
 SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC) $(DISP_SRC)
 
-MCU = atmega32
-F_CPU = 16000000L
+# Build directory
+BUILDDIR = build
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 CC = avr-gcc
@@ -42,26 +42,27 @@ AD_MCU = -p $(MCU)
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
 
-OBJDIR = obj
 SUBDIRS = audio display tuner
-OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
-ELF = $(OBJDIR)/$(TARG).elf
 
-all: $(TARG)
+OBJS = $(addprefix $(BUILDDIR)/, $(SRCS:.c=.o))
+ELF = $(BUILDDIR)/$(TARG).elf
 
-$(TARG): dirs $(OBJS)
+all: $(ELF) size
+
+$(ELF): $(OBJS)
+	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$@.hex
-	./size.sh $(ELF)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
 
-dirs:
-	mkdir -p flash $(addprefix $(OBJDIR)/, $(SUBDIRS))
+size:
+	@sh ./size.sh $(ELF)
 
-obj/%.o: %.c
+$(BUILDDIR)/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -D$(DISPLAY) -c -o $@ $<
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(BUILDDIR)
 
 flash: $(TARG)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
@@ -80,3 +81,6 @@ eeprom_by:
 
 eeprom_ua:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ua.bin:r
+
+# Other dependencies
+-include $(OBJS:.o=.d)
