@@ -422,27 +422,27 @@ void showTime(uint8_t **txtLabels)
 	}
 
 	if (flag || !isETM()) {
-		if (lastTime[WEEK] != time[WEEK])
+		if (lastTime[DS1307_WDAY] != time[DS1307_WDAY])
 			ks0066Clear();
 
 		ks0066SetXY(0, 0);
-		ks0066WriteString(mkNumString(time[HOUR], 2, '0'));
+		ks0066WriteString(mkNumString(time[DS1307_HOUR], 2, '0'));
 		ks0066WriteData(':');
-		ks0066WriteString(mkNumString(time[MIN], 2, '0'));
+		ks0066WriteString(mkNumString(time[DS1307_MIN], 2, '0'));
 		ks0066WriteData(':');
-		ks0066WriteString(mkNumString(time[SEC], 2, '0'));
+		ks0066WriteString(mkNumString(time[DS1307_SEC], 2, '0'));
 
 		ks0066SetXY(11, 0);
-		ks0066WriteString(mkNumString(time[DAY], 2, '0'));
+		ks0066WriteString(mkNumString(time[DS1307_DATE], 2, '0'));
 		ks0066WriteData('.');
-		ks0066WriteString(mkNumString(time[MONTH], 2, '0'));
+		ks0066WriteString(mkNumString(time[DS1307_MONTH], 2, '0'));
 
 		ks0066SetXY(12, 1);
 		ks0066WriteString("20");
-		ks0066WriteString(mkNumString(time[YEAR], 2, '0'));
+		ks0066WriteString(mkNumString(time[DS1307_YEAR], 2, '0'));
 
 		ks0066WriteCommand(KS0066_SET_CGRAM);
-		if (time[WEEK] < 5) {
+		if (time[DS1307_WDAY] < (LABEL_FRIDAY - LABEL_SUNDAY + 1)) {
 			lcdGenLetter(cyr_P);
 			lcdGenLetter(cyr_D);
 			lcdGenLetter(cyr_L);
@@ -459,7 +459,7 @@ void showTime(uint8_t **txtLabels)
 		}
 
 		ks0066SetXY(0, 1);
-		writeStringEeprom(txtLabels[LABEL_SUNDAY + time[WEEK] % 7]);
+		writeStringEeprom(txtLabels[LABEL_SUNDAY + (time[DS1307_WDAY] - 1) % 7]);
 
 		if (getEtm() == NOEDIT) {
 			ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
