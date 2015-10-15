@@ -22,5 +22,6 @@
         <file>icons/tuner.bmp</file>
         <file>icons/tv.bmp</file>
         <file>icons/volume.bmp</file>
+        <file>icons/usb.bmp</file>
     </qresource>
 </RCC>

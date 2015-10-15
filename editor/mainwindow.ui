@@ -135,7 +135,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -875,6 +875,15 @@
               <property name="icon">
                <iconset resource="res.qrc">
                 <normaloff>:/icons/bluetooth.bmp</normaloff>:/icons/bluetooth.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/usb.bmp</normaloff>:/icons/usb.bmp</iconset>
               </property>
              </item>
              <item>
