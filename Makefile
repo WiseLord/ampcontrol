@@ -28,8 +28,6 @@ else ifeq ($(DISPLAY), LS020)
   DISP_SRC = display.c $(addprefix display/, ls020.c $(FONTS))
 else ifeq ($(DISPLAY), PCF8574)
   DISP_SRC = display.c display/pcf8574.c
-else ifeq ($(DISPLAY), ST7920)
-  DISP_SRC = display.c $(addprefix display/, st7920.c $(FONTS))
 endif
 
 ifeq ($(TUNER), TEA5767)
