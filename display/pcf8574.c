@@ -9,7 +9,7 @@ static uint8_t portData;
 
 static void ks0066WriteStrob()
 {
-	I2CWriteByte(portData | KS0066_E);
+	I2CWriteByte(portData | PCF8574_E);
 	I2CWriteByte(portData);
 
 	return;
@@ -18,7 +18,7 @@ static void ks0066WriteStrob()
 static void ks0066WritePort(uint8_t data)
 {
 	I2CStart(PCF8574_ADDR);
-	portData &= ~KS0066_RW;
+	portData &= ~PCF8574_RW;
 	portData &= 0x0F;
 	portData |= (data & 0xF0);
 	ks0066WriteStrob();
@@ -32,7 +32,7 @@ static void ks0066WritePort(uint8_t data)
 
 void ks0066WriteCommand(uint8_t command)
 {
-	portData &= ~KS0066_RS;
+	portData &= ~PCF8574_RS;
 	ks0066WritePort(command);
 
 	return;
@@ -40,7 +40,7 @@ void ks0066WriteCommand(uint8_t command)
 
 void ks0066WriteData(uint8_t data)
 {
-	portData |= KS0066_RS;
+	portData |= PCF8574_RS;
 	ks0066WritePort(data);
 
 	return;
@@ -58,7 +58,7 @@ void ks0066Init(void)
 {
 	I2CStart(PCF8574_ADDR);
 	portData = KS0066_INIT_DATA;
-	portData &= ~(KS0066_RS | KS0066_RW | KS0066_E);
+	portData &= ~(PCF8574_RS | PCF8574_RW | PCF8574_E);
 	ks0066WriteStrob();
 	_delay_ms(20);
 	ks0066WriteStrob();
@@ -97,9 +97,9 @@ void ks0066WriteString(uint8_t *string)
 void pcf8574IntBacklight(uint8_t value)
 {
 	if (value)
-		portData |= KS0066_BCKL;
+		portData |= PCF8574_BCKL;
 	else
-		portData &= ~KS0066_BCKL;
+		portData &= ~PCF8574_BCKL;
 
 	return;
 }

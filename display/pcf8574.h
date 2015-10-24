@@ -6,10 +6,10 @@
 
 #define PCF8574_ADDR				0x40
 
-#define KS0066_BCKL					(1<<3)
-#define KS0066_E					(1<<2)
-#define KS0066_RW					(1<<1)
-#define KS0066_RS					(1<<0)
+#define PCF8574_BCKL				(1<<3)
+#define PCF8574_E					(1<<2)
+#define PCF8574_RW					(1<<1)
+#define PCF8574_RS					(1<<0)
 
 #define KS0066_SCREEN_WIDTH			16
 #define KS0066_SCREEN_HEIGHT		2

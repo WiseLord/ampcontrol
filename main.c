@@ -33,8 +33,6 @@ static void powerOn(void)
 	STMU_PORT |= STDBY;
 	setWorkBrightness();
 
-	_delay_ms(500);
-
 #if !defined(NOTUNER)
 	loadTunerParams();
 #endif
