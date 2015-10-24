@@ -147,7 +147,7 @@ int main(void)
 		/* Don't handle any command in standby mode except power on */
 		if (dispMode == MODE_STANDBY) {
 			if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
-			    cmd != CMD_BTN_TESTMODE)
+				cmd != CMD_BTN_TESTMODE)
 				cmd = CMD_EMPTY;
 		}
 
@@ -446,7 +446,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
-			drawSpectrum(getSpData());
+			drawSpectrum(getSpData(1));
 			break;
 #if !defined(NOTUNER)
 		case MODE_FM_RADIO:
@@ -467,7 +467,7 @@ int main(void)
 			showTime(txtLabels);
 			break;
 		case MODE_BR:
-			showBrWork(txtLabels, getSpData());
+			showBrWork(txtLabels, getSpData(1));
 			break;
 		default:
 			showSndParam(curSndParam, txtLabels);

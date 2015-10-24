@@ -45,6 +45,9 @@
 #define LCD_LEVELS				0
 #define LCD_BAR					1
 
+#define DISP_MIN_BR                    0
+#define DISP_MAX_BR                    32
+
 /* Display modes */
 enum {
 	MODE_STANDBY,

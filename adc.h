@@ -3,21 +3,17 @@
 
 #include <inttypes.h>
 
+#include "fft.h"
+
 #define swap(x) (__builtin_avr_swap(x))		/*  Swaps nibbles in byte */
 
-#define DC_CORR 128 /* Raw value from ADC when no signal */
+#define MUX_LEFT			0
+#define MUX_RIGHT			1
 
-#define DISP_MIN_BR			0
-#define DISP_MAX_BR			32
+#define DC_CORR				128
 
-/* Backlight port */
-#define BCKL_DDR			DDRC
-#define BCKL_PORT			PORTC
-#define BCKL				(1<<PC7)
-
-void adcInit();
-uint8_t *getSpData();
-
-void setDispBr(uint8_t br);
+void adcInit(void);
+uint8_t *getSpData(uint8_t fallSpeed);
+uint16_t getSignalLevel(void);
 
 #endif /* ADC_H */

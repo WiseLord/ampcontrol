@@ -32,6 +32,9 @@
 #define eepromRC5Addr	((void*)0x1C)
 #define eepromTempTH	((void*)0x1D)
 
+#define EEPROM_ADC_CORR_L		0x1E
+#define EEPROM_ADC_CORR_R		0x1F
+
 /* RC5 commands array */
 #define eepromRC5Cmd	((uint8_t*)0x40)
 

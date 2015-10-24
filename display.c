@@ -1,5 +1,7 @@
 #include "display.h"
 
+#include <avr/io.h>
+#include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
@@ -7,7 +9,9 @@
 #include "input.h"
 #include "tuner.h"
 #include "adc.h"
+#include "pins.h"
 
+static uint8_t _br;
 static int8_t brStby;									/* Brightness in standby mode */
 static int8_t brWork;									/* Brightness in working mode */
 
@@ -116,7 +120,24 @@ void displayInit()
 	st7920LoadFont(font_ks0066_ru_08, 1);
 	st7920Clear();
 #endif
-	BCKL_DDR |= BCKL;
+	DDR(BACKLIGHT) |= BACKLIGHT_LINE;
+
+	return;
+}
+
+ISR (TIMER0_OVF_vect)
+{
+	ADCSRA |= 1<<ADSC;								/* Start ADC every second interrupt */
+
+	static uint8_t br;
+
+	if (++br >= DISP_MAX_BR)						/* Loop brightness */
+		br = DISP_MIN_BR;
+
+	if (br == _br) {
+		PORT(BACKLIGHT) &= ~BACKLIGHT_LINE;		/* Turn backlight off */
+	} else if (br == 0)
+		PORT(BACKLIGHT) |= BACKLIGHT_LINE;		/* Turn backlight on */
 
 	return;
 }
@@ -996,7 +1017,7 @@ void drawSpectrum(uint8_t *buf)
 
 void setWorkBrightness(void)
 {
-	setDispBr(brWork);
+	_br = brWork;
 
 #if defined(PCF8574)
 	if (brWork == DISP_MAX_BR)
@@ -1010,7 +1031,7 @@ void setWorkBrightness(void)
 
 void setStbyBrightness(void)
 {
-	setDispBr(brStby);
+	_br = brStby;
 
 #if defined(PCF8574)
 	pcf8574IntBacklight(BACKLIGHT_OFF);

@@ -38,4 +38,7 @@
 #define KS0066_RS					A
 #define KS0066_RS_LINE				(1<<2)
 
+#define BACKLIGHT					C
+#define BACKLIGHT_LINE				(1<<7)
+
 #endif /* PINS_H */
