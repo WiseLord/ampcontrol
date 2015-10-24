@@ -1,4 +1,4 @@
-AUDIOPROC = TDA7439
+AUDIOPROC = TDA7313
 DISPLAY = KS0108
 TUNER = TEA5767
 
@@ -47,10 +47,10 @@ SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $
 MCU = atmega16
 F_CPU = 16000000L
 
-OPTIMIZE = -Os -mcall-prologues -fshort-enums
+OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
-LDFLAGS = $(DEBUG) -mmcu=$(MCU)
+LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy

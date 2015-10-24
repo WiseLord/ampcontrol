@@ -23,7 +23,7 @@ static void rc5Reset()
 void rc5Init(void)
 {
 	MCUCR |= (1<<ISC10);				/* Set INT1 to trigger on any edge */
-	RC5_DDR &= ~RC5_DATA;				/* Set PD3 (INT1) to input */
+	DDR(RC5) &= ~RC5_LINE;				/* Set PD3 (INT1) to input */
 	TCCR1A = 0;							/* Reset Timer1 counter */
 	TCCR1B = (1<<CS11);					/* Set Timer1 prescaler to 8 (2MHz) */
 	GICR |= (1<<INT1);					/* Enable INT1 interrupt */
@@ -38,7 +38,7 @@ ISR(INT1_vect)
 	uint16_t delay = TCNT1;
 
 	/* event: 0 / 2 - short space/pulse, 4 / 6 - long space/pulse */
-	uint8_t event = (RC5_PIN & RC5_DATA) ? 2 : 0;
+	uint8_t event = (PIN(RC5) & RC5_LINE) ? 2 : 0;
 
 	if (delay > RC5_LONG_MIN && delay < RC5_LONG_MAX)
 		event += 4;
