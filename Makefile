@@ -64,7 +64,8 @@ $(BUILDDIR)/%.o: %.c
 clean:
 	rm -rf $(BUILDDIR)
 
-flash: $(TARG)
+.PHONY: flash
+flash: $(ELF)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 fuse:
