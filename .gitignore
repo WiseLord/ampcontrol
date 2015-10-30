@@ -2,3 +2,4 @@
 *.d
 *.elf
 *.hex
+build-*

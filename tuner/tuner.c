@@ -45,8 +45,6 @@ void tunerInit(uint8_t extFunc)
 		break;
 	}
 
-	tunerSetFreq(_freq);
-
 	return;
 }
 

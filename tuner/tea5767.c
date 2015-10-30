@@ -103,9 +103,8 @@ void tea5767SetMute(uint8_t mute)
 
 void tea5767PowerOn(void)
 {
+	wrBuf[0] &= ~TEA5767_MUTE;
 	wrBuf[3] &= ~TEA5767_STBY;
-
-	tea5767SetMute(0);
 
 	return;
 }

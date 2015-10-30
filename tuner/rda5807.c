@@ -30,8 +30,6 @@ void rda5807Init(void)
 	wrBuf[6] = 0b1000 & RDA5807_SEEKTH;
 	wrBuf[7] = RDA5807_LNA_PORT_SEL | RDA5807_VOLUME;
 
-	rda5807WriteI2C();
-
 	return;
 }
 
@@ -109,9 +107,8 @@ void rda5807SetVolume(int8_t value)
 
 void rda5807PowerOn(void)
 {
+	wrBuf[0] |= RDA5807_DMUTE;
 	wrBuf[1] |= RDA5807_ENABLE;
-
-	rda5807SetMute(0);
 
 	return;
 }

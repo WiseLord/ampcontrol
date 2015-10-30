@@ -1,4 +1,4 @@
-DISPLAY = ST7920
+DISPLAY = KS0108A
 
 TARG = ampcontrol_m32_$(shell echo $(DISPLAY) | tr A-Z a-z)
 
@@ -40,7 +40,7 @@ AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
 SUBDIRS = audio display tuner
 

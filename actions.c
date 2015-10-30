@@ -157,7 +157,7 @@ void handleAction(actionID action)
 		PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
 		setWorkBrightness();
 
-		_delay_ms(100);						/* Wait while power is being set up */
+		_delay_ms(250);						/* Wait while power is being set up */
 
 		tunerPowerOn();
 		sndPowerOn();
@@ -175,8 +175,9 @@ void handleAction(actionID action)
 		break;
 	case ACTION_GO_STANDBY:
 		sndSetMute(MUTE_ON);
-
-		_delay_ms(100);
+		sndPowerOff();
+		tunerPowerOff();
+		displayPowerOff();
 
 		PORT(STMU_STBY) &= ~STMU_STBY_LINE;
 
@@ -185,9 +186,6 @@ void handleAction(actionID action)
 		setStbyTimer(STBY_TIMER_OFF);
 		disableSilenceTimer();
 
-		sndPowerOff();
-		tunerPowerOff();
-		displayPowerOff();
 		dispMode = MODE_STANDBY;
 		break;
 	case ACTION_CHANGE_TIMER:
