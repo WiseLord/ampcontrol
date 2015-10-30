@@ -11,7 +11,7 @@
 #include "audio/audio.h"
 #include "display.h"
 
-#include "tuner.h"
+#include "tuner/tuner.h"
 
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 
@@ -21,7 +21,7 @@ static void saveParams(void)
 	saveAudioParams();
 	saveDisplayParams();
 #if !defined(NOTUNER)
-	saveTunerParams();
+	tunerPowerOff();
 #endif
 
 	return;
@@ -33,8 +33,10 @@ static void powerOn(void)
 	STMU_PORT |= STDBY;
 	setWorkBrightness();
 
+	_delay_ms(200);						/* Wait while power is being set up */
+
 #if !defined(NOTUNER)
-	loadTunerParams();
+	tunerPowerOn();
 #endif
 	setAudioParams();
 
@@ -45,17 +47,14 @@ static void powerOn(void)
 static void powerOff(void)
 {
 	muteVolume();
+	tunerPowerOff();
 
-	_delay_ms(100);
+	_delay_ms(500);
 
 	STMU_PORT &= ~STDBY;
 
 	setStbyBrightness();
 	stopEditTime();
-
-#if defined(LS020) || defined(KS0066) || defined(PCF8574)
-	TUNER_PORT &= ~TUNER_POWER; // Switch tuner off when there is free TUNER_PORT for it
-#endif
 
 	return;
 }
@@ -89,29 +88,26 @@ static void loadLabels(uint8_t **txtLabels)
 /* Hardware initialization */
 static void hwInit(void)
 {
-	loadLabels(txtLabels);			/* Load text labels from EEPROM */
-
 	I2CInit();						/* I2C bus */
+
+	loadLabels(txtLabels);			/* Load text labels from EEPROM */
+	loadDispParams();				/* Load display params */
 	displayInit();
+
+	inputInit();					/* Buttons/encoder polling */
+
 	rc5Init();						/* IR Remote control */
 	adcInit();						/* Analog-to-digital converter */
-	inputInit();					/* Buttons/encoder polling */
-#if !defined(NOTUNER)
-	tunerInit();					/* Tuner */
-#endif
 
 	STMU_DDR |= (STDBY | MUTE)	;	/* Standby/Mute port */
 	STMU_PORT &= ~STDBY;
 
 	sei();							/* Gloabl interrupt enable */
 
-	loadAudioParams(txtLabels);			/* Load labels/icons/etc */
-	loadDispParams();					/* Load display params */
 #if !defined(NOTUNER)
-	loadTunerParams();
+	tunerInit();					/* Tuner */
 #endif
-
-	powerOff();
+	loadAudioParams(txtLabels);		/* Load labels/icons/etc */
 
 	return;
 }
@@ -192,7 +188,7 @@ int main(void)
 #if !defined(NOTUNER)
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
-					tunerDecFreq();
+					tunerChangeFreq(-1);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -210,7 +206,7 @@ int main(void)
 #if !defined(NOTUNER)
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
-					tunerIncFreq();
+					tunerChangeFreq(+1);
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -265,11 +261,11 @@ int main(void)
 #if !defined(NOTUNER)
 			if (dispMode == MODE_FM_RADIO) {
 				if (cmd == CMD_BTN_3_LONG)
-					scanStoredFreq(SEARCH_DOWN);
+					tunerNextStation(SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
-					scanStoredFreq(SEARCH_UP);
+					tunerNextStation(SEARCH_UP);
 				else
-					storeStation();
+					tunerStoreStation();
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			} else {
 #endif
@@ -331,16 +327,16 @@ int main(void)
 			if (dispMode == MODE_FM_RADIO) {
 				switch (cmd) {
 				case CMD_RC5_FM_INC:
-					tunerIncFreq();
+					tunerChangeFreq(+1);
 					break;
 				case CMD_RC5_FM_DEC:
-					tunerDecFreq();
+					tunerChangeFreq(-1);
 					break;
 				case CMD_RC5_CHAN_UP:
-					scanStoredFreq(SEARCH_UP);
+					tunerNextStation(SEARCH_UP);
 					break;
 				case CMD_RC5_CHAN_DOWN:
-					scanStoredFreq(SEARCH_DOWN);
+					tunerNextStation(SEARCH_DOWN);
 					break;
 				}
 			}
@@ -365,7 +361,7 @@ int main(void)
 		case CMD_RC5_9:
 		case CMD_RC5_0:
 			setChan(0);
-			loadStation(cmd - CMD_RC5_1);
+			tunerLoadStation(cmd - CMD_RC5_1);
 			dispMode = MODE_FM_RADIO;
 			setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			break;

@@ -45,4 +45,12 @@
 #define RC5					D
 #define RC5_LINE			(1<<3)
 
+/* LM7001 definitions */
+#define LM7001_DATA			C
+#define LM7001_DATA_LINE	(1<<2)
+#define LM7001_CL			C
+#define LM7001_CL_LINE		(1<<3)
+#define LM7001_CE			C
+#define LM7001_CE_LINE		(1<<4)
+
 #endif /* PINS_H */

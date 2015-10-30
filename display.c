@@ -7,7 +7,7 @@
 
 #include "eeprom.h"
 #include "input.h"
-#include "tuner.h"
+#include "tuner/tuner.h"
 #include "adc.h"
 #include "pins.h"
 
@@ -393,7 +393,7 @@ void showRC5Info(uint16_t rc5Buf)
 void showRadio(void)
 {
 	uint16_t freq = tunerGetFreq();
-	uint8_t num = stationNum(freq);
+	uint8_t num = tunerStationNum();
 
 #if defined(KS0108)
 	uint8_t i;
