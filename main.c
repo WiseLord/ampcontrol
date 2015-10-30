@@ -47,7 +47,9 @@ static void powerOn(void)
 static void powerOff(void)
 {
 	muteVolume();
+#if !defined(NOTUNER)
 	tunerPowerOff();
+#endif
 
 	_delay_ms(500);
 
