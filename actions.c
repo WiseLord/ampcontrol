@@ -157,7 +157,7 @@ void handleAction(actionID action)
 		PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
 		setWorkBrightness();
 
-		_delay_ms(250);						/* Wait while power is being set up */
+		_delay_ms(500);						/* Wait while power is being set up */
 
 		tunerPowerOn();
 		sndPowerOn();
