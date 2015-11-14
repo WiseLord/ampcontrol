@@ -617,6 +617,9 @@ void nextRC5Cmd(void)
 	eeprom_update_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd, rc5Cmd);
 	eeprom_update_byte((uint8_t*)EEPROM_RC5_ADDR, rc5Addr);
 
+	// Re-read new codes array from EEPROM
+	rc5CodesInit();
+
 	rc5CmdInd++;
 	if (rc5CmdInd >= CMD_BTN_1)
 		rc5CmdInd = CMD_RC5_STBY;

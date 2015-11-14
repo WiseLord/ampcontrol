@@ -84,7 +84,8 @@ typedef enum {
 #define TEMP_MEASURE_TIME		2
 #define SENSOR_POLL_INTERVAL	10
 
-void inputInit();
+void rc5CodesInit(void);
+void inputInit(void);
 
 int8_t getEncoder(void);
 cmdID getBtnCmd(void);

@@ -29,10 +29,20 @@ static volatile int16_t silenceTimer;				/* Timer to check silence */
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];				/* Array with rc5 commands */
 
-void inputInit()
+void rc5CodesInit(void)
 {
 	uint8_t i;
 
+	rc5DeviceAddr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
+
+	for (i = 0; i < RC5_CMD_COUNT; i++)
+		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + i);
+
+	return;
+}
+
+void inputInit(void)
+{
 	/* Setup buttons and encoder as inputs with pull-up resistors */
 	DDR(BUTTON_1) &= ~BUTTON_1_LINE;
 	DDR(BUTTON_2) &= ~BUTTON_2_LINE;
@@ -58,10 +68,7 @@ void inputInit()
 	TCNT2 = 0;										/* Reset timer value */
 	TIMSK |= (1<<OCIE2);							/* Enable timer compare match interrupt */
 
-	/* Load RC5 device address and commands from eeprom */
-	rc5DeviceAddr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
-	for (i = 0; i < RC5_CMD_COUNT; i++)
-		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + i);
+	rc5CodesInit();
 
 	encRes = eeprom_read_byte((uint8_t*)EEPROM_ENC_RES);
 	silenceTime = eeprom_read_byte((uint8_t*)EEPROM_SILENCE_TIMER);
@@ -111,14 +118,14 @@ ISR (TIMER2_COMP_vect)
 
 	/* If encoder event has happened, inc/dec encoder counter */
 	if ((encPrev == ENC_0 && encNow == ENC_A) ||
-	    (encPrev == ENC_A && encNow == ENC_AB) ||
-	    (encPrev == ENC_AB && encNow == ENC_B) ||
-	    (encPrev == ENC_B && encNow == ENC_0))
+		(encPrev == ENC_A && encNow == ENC_AB) ||
+		(encPrev == ENC_AB && encNow == ENC_B) ||
+		(encPrev == ENC_B && encNow == ENC_0))
 		encCnt++;
 	if ((encPrev == ENC_0 && encNow == ENC_B) ||
-	    (encPrev == ENC_B && encNow == ENC_AB) ||
-	    (encPrev == ENC_AB && encNow == ENC_A) ||
-	    (encPrev == ENC_A && encNow == ENC_0))
+		(encPrev == ENC_B && encNow == ENC_AB) ||
+		(encPrev == ENC_AB && encNow == ENC_A) ||
+		(encPrev == ENC_A && encNow == ENC_0))
 		encCnt--;
 	encPrev = encNow;								/* Save current encoder state */
 
