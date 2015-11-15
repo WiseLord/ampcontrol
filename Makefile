@@ -63,7 +63,7 @@ flash: $(ELF)
 
 .PHONY: eeprom
 eeprom:
-	$(AVRDUDE) $(AD_CMD) -U -U eeprom:w:eeprom/eeprom.bin:r
+	$(AVRDUDE) $(AD_CMD) -U eeprom:w:eeprom/eeprom.bin:r
 
 .PHONY: fuse
 fuse:
