@@ -621,7 +621,7 @@ void nextRC5Cmd(void)
 	rc5CodesInit();
 
 	rc5CmdInd++;
-	if (rc5CmdInd >= CMD_BTN_1)
+	if (rc5CmdInd >= CMD_RC5_END)
 		rc5CmdInd = CMD_RC5_STBY;
 
 	rc5Addr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
