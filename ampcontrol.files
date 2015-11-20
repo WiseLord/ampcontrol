@@ -3,6 +3,8 @@ audio/audioproc.c
 audio/audioproc.h
 audio/pga2310.c
 audio/pga2310.h
+audio/pt232x.c
+audio/pt232x.h
 audio/tda731x.c
 audio/tda731x.h
 audio/tda7439.c
