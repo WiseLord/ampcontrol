@@ -135,7 +135,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -2323,6 +2323,11 @@
              <item>
               <property name="text">
                <string>DS18x20</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PGA2310</string>
               </property>
              </item>
             </widget>

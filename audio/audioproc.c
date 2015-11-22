@@ -28,7 +28,6 @@ static uint8_t _inCnt;
 static uint8_t _input;
 static uint8_t _mute;
 static uint8_t _loudness;
-static uint8_t usePGA2310;
 
 static void setNothing(int8_t val)
 {
@@ -68,7 +67,7 @@ void sndInit(uint8_t extFunc)
 		tda7448Init(sndPar);
 		break;
 	case AUDIOPROC_PGA2310:
-		if (usePGA2310)
+		if (extFunc & USE_PGA2310)
 			pga2310Init(sndPar);
 		break;
 	default:
@@ -337,7 +336,7 @@ void sndSetLoudness(uint8_t value)
 		_loudness = LOUDNESS_OFF;
 
 	if (_aproc == AUDIOPROC_TDA7313 || _aproc == AUDIOPROC_TDA7314 ||
-		_aproc == AUDIOPROC_TDA7315 || _aproc == AUDIOPROC_PT2314)
+			_aproc == AUDIOPROC_TDA7315 || _aproc == AUDIOPROC_PT2314)
 		tda731xSetLoudness(_loudness);
 
 	return;
@@ -355,7 +354,7 @@ void sndNextParam(uint8_t *mode)
 		if (*mode >= MODE_SND_GAIN0)
 			*mode = MODE_SND_VOLUME;
 	} while((pgm_read_byte(&sndPar[*mode].grid->step) == 0) &&
-	        (*mode < MODE_SND_GAIN0) && (*mode != MODE_SND_VOLUME));
+			(*mode < MODE_SND_GAIN0) && (*mode != MODE_SND_VOLUME));
 
 	return;
 }
