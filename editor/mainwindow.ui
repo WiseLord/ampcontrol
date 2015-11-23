@@ -2317,12 +2317,12 @@
              </property>
              <item>
               <property name="text">
-               <string>LM7001</string>
+               <string>DS18x20</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>DS18x20</string>
+               <string>LM7001</string>
               </property>
              </item>
              <item>
