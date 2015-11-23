@@ -67,7 +67,7 @@ void sndInit(uint8_t extFunc)
 		tda7448Init(sndPar);
 		break;
 	case AUDIOPROC_PGA2310:
-		if (extFunc & USE_PGA2310)
+		if (extFunc == USE_PGA2310)
 			pga2310Init(sndPar);
 		break;
 	default:

@@ -18,7 +18,7 @@ static void hwInit(void)
 {
 	extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
 
-	if (extFunc & USE_DS18B20) {
+	if (extFunc == USE_DS18B20) {
 		ds18x20SearchDevices();
 		tempInit();							/* Init temperature control */
 	}
@@ -51,14 +51,14 @@ int main(void)
 	/* Init hardware */
 	hwInit();
 
-	if (extFunc & USE_DS18B20) {
+	if (extFunc == USE_DS18B20) {
 		ds18x20Process();
 		setSensTimer(TEMP_MEASURE_TIME);
 	}
 
 	while (1) {
 		/* Control temperature */
-		if (extFunc & USE_DS18B20) {
+		if (extFunc == USE_DS18B20) {
 			if (getSensTimer() == 0) {
 				setSensTimer(SENSOR_POLL_INTERVAL);
 				ds18x20Process();

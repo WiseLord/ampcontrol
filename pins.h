@@ -133,9 +133,13 @@
 #define BUTTON_5_LINE		(1<<7)
 
 /* Ext function options */
-#define USE_DS18B20			(1<<0)
-#define USE_LM7001			(1<<1)
-#define USE_PGA2310			(1<<2)
+enum {
+	USE_DS18B20 = 0,
+	USE_LM7001,
+	USE_PGA2310,
+
+	USE_EXT_END
+};
 
 /* 1-wire definitions */
 #define ONE_WIRE			C
