@@ -232,7 +232,6 @@ void MainWindow::setAudioproc(int proc)
 	wgtLoudness->hide();
 	wgtInput->hide();
 	cbxInput->clear();
-	wgtExtfunc->show();
 
 	/* Handle loudness */
 	switch (proc) {
@@ -243,11 +242,6 @@ void MainWindow::setAudioproc(int proc)
 		wgtLoudness->show();
 		setLoudness(0x01);
 		cbxLoudness->setCurrentIndex(eep[EEPROM_LOUDNESS]);
-		break;
-	case AUDIOPROC_PGA2310:
-		cbxExtfunc->setCurrentIndex(2);
-		setExtfunc(2);
-		wgtExtfunc->hide();
 		break;
 	}
 
