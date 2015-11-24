@@ -18,7 +18,7 @@ static void pga2310SendByte(uint8_t data)
 {
 	int8_t i;
 
-	for (i = 7; i >= 0; i++) {
+	for (i = 7; i >= 0; i--) {
 		if (data & (1<<i))
 			PORT(PGA2310_SDI) |= PGA2310_SDI_LINE;
 		else
