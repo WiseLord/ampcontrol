@@ -108,7 +108,7 @@ void MainWindow::readEepromFile(QString name)
 			buffer.getChar(&ch);
 			len++;
 		}
-		wgtTranslations->item(i, 0)->setText(lc->decode(eep.mid(pos, len)));
+		wgtTranslations->item(i, 0)->setText(lc->decode(eep.mid(pos, len), LcdConverter::MAP_KS0066_RU));
 	}
 	wgtTranslations->blockSignals(false);
 
@@ -199,7 +199,7 @@ void MainWindow::updateTranslation(int row, int column)
 		QString str = wgtTranslations->item(i, 0)->text();
 		if (str.isEmpty())
 			str = " ";
-		buffer.write(lc->encode(str));
+		buffer.write(lc->encode(str, LcdConverter::MAP_KS0066_RU));
 		buffer.putChar('\0');
 	}
 
