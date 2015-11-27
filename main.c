@@ -46,7 +46,7 @@ static void hwInit(void)
 int main(void)
 {
 	int8_t encCnt = 0;
-	actionID action = ACTION_NOACTION;
+	uint8_t action = ACTION_NOACTION;
 
 	/* Init hardware */
 	hwInit();
@@ -68,7 +68,7 @@ int main(void)
 
 		/* Emulate poweroff if any of timers expired */
 		if (getStbyTimer() == 0 || getSilenceTimer() == 0)
-			action = ACTION_GO_STANDBY;
+			action = CMD_RC5_STBY;
 
 		/* Check alarm and update time */
 		if (action == ACTION_NOACTION)
@@ -83,9 +83,9 @@ int main(void)
 
 		/* Handle encoder */
 		encCnt = getEncoder();				/* Get value from encoder */
-		if (action == ACTION_VOLUME_UP)		/* Emulate VOLUME_UP action as encoder action */
+		if (action == CMD_RC5_VOL_UP)		/* Emulate VOLUME_UP action as encoder action */
 			encCnt++;
-		if (action == ACTION_VOLUME_DOWN)	/* Emulate VOLUME_DOWN action as encoder action */
+		if (action == CMD_RC5_VOL_DOWN)	/* Emulate VOLUME_DOWN action as encoder action */
 			encCnt--;
 		handleEncoder(encCnt);
 

@@ -26,9 +26,9 @@ static uint8_t defDispMode(void)
 	return ret;
 }
 
-actionID getAction(void)
+uint8_t getAction(void)
 {
-	actionID action = ACTION_NOACTION;
+	uint8_t action = ACTION_NOACTION;
 	cmdID cmd;
 
 	/* Get command */
@@ -41,34 +41,34 @@ actionID getAction(void)
 	/* Handle commands from buttons*/
 	switch (cmd) {
 	case CMD_BTN_1:
-		action = ACTION_GO_STANDBY;
+		action = CMD_RC5_STBY;
 		break;
 	case CMD_BTN_2:
-		action = ACTION_NEXT_INPUT;
+		action = CMD_RC5_NEXT_IN;
 		break;
 	case CMD_BTN_3:
-		if (dispMode == MODE_TIMER)
-			action = ACTION_CHANGE_TIMER;
+		if (dispMode == CMD_RC5_TIMER)
+			action = CMD_RC5_TIMER;
 		else if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
-			action = ACTION_DEC_FM;
+			action = CMD_RC5_FM_DEC;
 		else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
-			action = ACTION_EDIT_TIME;
+			action = CMD_RC5_TIME;
 		else if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT)
-			action = ACTION_EDIT_ALARM;
+			action = CMD_RC5_ALARM;
 		else
-			action = ACTION_NEXT_SPMODE;
+			action = CMD_RC5_NEXT_SPMODE;
 		break;
 	case CMD_BTN_4:
 		if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
-			action = ACTION_INC_FM;
+			action = CMD_RC5_FM_INC;
 		else
-			action = ACTION_SWITCH_MUTE;
+			action = CMD_RC5_MUTE;
 		break;
 	case CMD_BTN_5:
 		if (dispMode == MODE_TEST)
 			action = ACTION_NEXT_RC5_CMD;
 		else {
-			action = ACTION_NEXT_SNDPARAM;
+			action = CMD_RC5_NEXT_SNDPAR;
 		}
 		break;
 
@@ -76,24 +76,24 @@ actionID getAction(void)
 		if (dispMode == MODE_TEST || dispMode == MODE_TEMP)
 			action = ACTION_ZERO_DISPLAYTIME;
 		else
-			action = ACTION_BRIGHTNESS;
+			action = CMD_RC5_BRIGHTNESS;
 		break;
 	case CMD_BTN_2_LONG:
-		action = ACTION_DEF_DISPLAY;
+		action = CMD_RC5_DEF_DISPLAY;
 		break;
 	case CMD_BTN_3_LONG:
 		if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
-			action = ACTION_CHANGE_TIMER;
+			action = CMD_RC5_TIMER;
 		else if (dispMode == MODE_TIMER)
-			action = ACTION_EDIT_ALARM;
+			action = CMD_RC5_ALARM;
 		else
-			action = ACTION_EDIT_TIME;
+			action = CMD_RC5_TIME;
 		break;
 	case CMD_BTN_4_LONG:
-		action = ACTION_CHANGE_FM_MODE;
+		action = CMD_RC5_FM_MODE;
 		break;
 	case CMD_BTN_5_LONG:
-		action = ACTION_STORE_FM_STATION;
+		action = CMD_RC5_FM_STORE;
 		break;
 
 	case CMD_BTN_12_LONG:
@@ -107,20 +107,20 @@ actionID getAction(void)
 	}
 
 	/* Remap GO_STANDBY command to EXIT_STANDBY if in standby mode */
-	if (action == ACTION_GO_STANDBY && dispMode == MODE_STANDBY)
+	if (action == CMD_RC5_STBY && dispMode == MODE_STANDBY)
 		action = ACTION_EXIT_STANDBY;
 
 	/* Remap INPUT_3 command to SWITCH_LOUDNESS if there is no INPUT_3 */
-	if (action == ACTION_INPUT_3 && sndInputCnt() < 4)
+	if (action == CMD_RC5_IN_3 && sndInputCnt() < 4)
 		action = ACTION_SWITCH_LOUDNESS;
 
 	/* Remap NEXT_INPUT action to INPUT_X */
-	if (action == ACTION_NEXT_INPUT) {
-		action = ACTION_INPUT_0 + sndGetInput();
+	if (action == CMD_RC5_NEXT_IN) {
+		action = CMD_RC5_IN_0 + sndGetInput();
 		if (dispMode >= MODE_SND_GAIN0 && dispMode <= MODE_SND_GAIN3) {
 			action += 1;
-			if (action > ACTION_INPUT_3)
-				action = ACTION_INPUT_0;
+			if (action > CMD_RC5_IN_3)
+				action = CMD_RC5_IN_0;
 		}
 	}
 
@@ -148,7 +148,7 @@ actionID getAction(void)
 }
 
 
-void handleAction(actionID action)
+void handleAction(uint8_t action)
 {
 	int16_t stbyTimer = STBY_TIMER_OFF;
 
@@ -173,7 +173,7 @@ void handleAction(actionID action)
 		enableSilenceTimer();
 
 		break;
-	case ACTION_GO_STANDBY:
+	case CMD_RC5_STBY:
 		sndSetMute(MUTE_ON);
 		sndPowerOff();
 		tunerPowerOff();
@@ -188,7 +188,7 @@ void handleAction(actionID action)
 
 		dispMode = MODE_STANDBY;
 		break;
-	case ACTION_CHANGE_TIMER:
+	case CMD_RC5_TIMER:
 		stopEditTime();
 		if (dispMode == MODE_TIMER) {
 			setSecTimer(2000);
@@ -219,7 +219,7 @@ void handleAction(actionID action)
 		dispMode = MODE_TIMER;
 		setDisplayTime(DISPLAY_TIME_TIMER);
 		break;
-	case ACTION_EDIT_TIME:
+	case CMD_RC5_TIME:
 		if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) {
 			editTime();
 			dispMode = MODE_TIME_EDIT;
@@ -232,7 +232,7 @@ void handleAction(actionID action)
 			setDisplayTime(DISPLAY_TIME_TIME);
 		}
 		break;
-	case ACTION_EDIT_ALARM:
+	case CMD_RC5_ALARM:
 		if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) {
 			editAlarm();
 			dispMode = MODE_ALARM_EDIT;
@@ -245,13 +245,13 @@ void handleAction(actionID action)
 			setDisplayTime(DISPLAY_TIME_ALARM);
 		}
 		break;
-	case ACTION_NEXT_SPMODE:
+	case CMD_RC5_NEXT_SPMODE:
 		switchSpMode();
 		displayClear();
 		dispMode = MODE_SPECTRUM;
 		setDisplayTime(DISPLAY_TIME_SP);
 		break;
-	case ACTION_SWITCH_MUTE:
+	case CMD_RC5_MUTE:
 		displayClear();
 		sndSetMute(!sndGetMute());
 		dispMode = MODE_MUTE;
@@ -261,18 +261,18 @@ void handleAction(actionID action)
 		displayClear();
 		nextRC5Cmd();
 		break;
-	case ACTION_NEXT_SNDPARAM:
+	case CMD_RC5_NEXT_SNDPAR:
 		sndNextParam(&dispMode);
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case ACTION_ZERO_DISPLAYTIME:
 		setDisplayTime(0);
 		break;
-	case ACTION_BRIGHTNESS:
+	case CMD_RC5_BRIGHTNESS:
 		dispMode = MODE_BR;
 		setDisplayTime(DISPLAY_TIME_BR);
 		break;
-	case ACTION_DEF_DISPLAY:
+	case CMD_RC5_DEF_DISPLAY:
 		switch (getDefDisplay()) {
 		case MODE_SPECTRUM:
 			setDefDisplay(MODE_TIME);
@@ -288,11 +288,11 @@ void handleAction(actionID action)
 		}
 		dispMode = getDefDisplay();
 		break;
-	case ACTION_INPUT_0:
-	case ACTION_INPUT_1:
-	case ACTION_INPUT_2:
-	case ACTION_INPUT_3:
-		sndSetInput(action - ACTION_INPUT_0);
+	case CMD_RC5_IN_0:
+	case CMD_RC5_IN_1:
+	case CMD_RC5_IN_2:
+	case CMD_RC5_IN_3:
+		sndSetInput(action - CMD_RC5_IN_0);
 		dispMode = MODE_SND_GAIN0 + sndGetInput();
 		setDisplayTime(DISPLAY_TIME_GAIN);
 		if (sndGetInput() == 0)
@@ -305,7 +305,7 @@ void handleAction(actionID action)
 		dispMode = MODE_LOUDNESS;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
-	case ACTION_NEXT_FALLSPEED:
+	case CMD_RC5_FALLSPEED:
 		switchFallSpeed();
 		dispMode = MODE_SPECTRUM;
 		setDisplayTime(DISPLAY_TIME_SP);
@@ -330,32 +330,32 @@ void handleAction(actionID action)
 	default:
 		if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
 			switch (action) {
-			case ACTION_FM_STATION_1:
-			case ACTION_FM_STATION_2:
-			case ACTION_FM_STATION_3:
-			case ACTION_FM_STATION_4:
-			case ACTION_FM_STATION_5:
-			case ACTION_FM_STATION_6:
-			case ACTION_FM_STATION_7:
-			case ACTION_FM_STATION_8:
-			case ACTION_FM_STATION_9:
-			case ACTION_FM_STATION_0:
+			case CMD_RC5_FM_1:
+			case CMD_RC5_FM_2:
+			case CMD_RC5_FM_3:
+			case CMD_RC5_FM_4:
+			case CMD_RC5_FM_5:
+			case CMD_RC5_FM_6:
+			case CMD_RC5_FM_7:
+			case CMD_RC5_FM_8:
+			case CMD_RC5_FM_9:
+			case CMD_RC5_FM_0:
 				if (dispMode == MODE_FM_TUNE) {
-					tunerStoreFavStation(action - ACTION_FM_STATION_1);
+					tunerStoreFavStation(action - CMD_RC5_FM_1);
 					setDisplayTime(DISPLAY_TIME_FM_TUNE);
 				} else {
-					tunerLoadFavStation(action - ACTION_FM_STATION_1);
+					tunerLoadFavStation(action - CMD_RC5_FM_1);
 					dispMode = MODE_FM_RADIO;
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				}
 				break;
-			case ACTION_INC_FM:
+			case CMD_RC5_FM_INC:
 				handleChangeFM(SEARCH_UP);
 				break;
-			case ACTION_DEC_FM:
+			case CMD_RC5_FM_DEC:
 				handleChangeFM(SEARCH_DOWN);
 				break;
-			case ACTION_CHANGE_FM_MODE:
+			case CMD_RC5_FM_MODE:
 				switch (dispMode) {
 				case MODE_FM_RADIO:
 					dispMode = MODE_FM_TUNE;
@@ -366,13 +366,13 @@ void handleAction(actionID action)
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				}
 				break;
-			case ACTION_STORE_FM_STATION:
+			case CMD_RC5_FM_STORE:
 				if (dispMode == MODE_FM_TUNE) {
 					setDisplayTime(DISPLAY_TIME_FM_TUNE);
 					tunerStoreStation();
 				}
 				break;
-			case ACTION_SWITCH_FM_MONO:
+			case CMD_RC5_FM_MONO:
 				tunerSwitchMono();
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -449,9 +449,9 @@ void handleChangeFM(uint8_t step)
 	return;
 }
 
-actionID checkAlarmAndTime(void)
+uint8_t checkAlarmAndTime(void)
 {
-	actionID ret = ACTION_NOACTION;
+	uint8_t ret = ACTION_NOACTION;
 
 	if (getClockTimer() == 0) {
 		readTime();
