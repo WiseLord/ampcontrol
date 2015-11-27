@@ -86,7 +86,7 @@ void ks0066StartSym(uint8_t addr);
 void ks0066SetXY(uint8_t x, uint8_t y);
 
 void ks0066WriteData(uint8_t data);
-void ks0066WriteString(uint8_t *string);
+void ks0066WriteString(char *string);
 void ks0066WriteTail(uint8_t ch, uint8_t pos);
 
 void pcf8574SetBacklight(uint8_t value);

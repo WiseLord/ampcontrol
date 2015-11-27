@@ -2,7 +2,6 @@
 #define INPUT_H
 
 #include <inttypes.h>
-#include "pins.h"
 
 #define ENC_0					0b00
 #define ENC_A					0b01
@@ -45,6 +44,7 @@ typedef enum {
 	CMD_RC5_FM_MODE,			// UNIT
 	CMD_RC5_FM_MONO,			// ASPECT
 	CMD_RC5_FM_STORE,			// STORE
+	CMD_RC5_FM_0,				// 0
 	CMD_RC5_FM_1,				// 1
 	CMD_RC5_FM_2,				// 2
 	CMD_RC5_FM_3,				// 3
@@ -54,7 +54,6 @@ typedef enum {
 	CMD_RC5_FM_7,				// 7
 	CMD_RC5_FM_8,				// 8
 	CMD_RC5_FM_9,				// 9
-	CMD_RC5_FM_0,				// 0
 
 	CMD_RC5_END,
 
@@ -71,7 +70,8 @@ typedef enum {
 	CMD_BTN_12_LONG,
 	CMD_BTN_13_LONG,
 
-	CMD_EMPTY = 0xEF
+	CMD_END
+
 } cmdID;
 
 /* Handling long press actions */

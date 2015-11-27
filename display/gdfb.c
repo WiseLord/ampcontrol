@@ -271,7 +271,7 @@ void gdWriteChar(uint8_t code)
 	return;
 }
 
-void gdWriteString(uint8_t *string)
+void gdWriteString(char *string)
 {
 	if (*string)
 		gdWriteChar(*string++);

@@ -22,8 +22,6 @@ void saveTempParams(void)
 
 void tempInit(void)
 {
-	loadTempParams();
-
 	DDR(FAN1) |= FAN1_WIRE;
 	DDR(FAN2) |= FAN2_WIRE;
 

@@ -74,7 +74,7 @@ void inputInit(void)
 	silenceTime = eeprom_read_byte((uint8_t*)EEPROM_SILENCE_TIMER);
 
 	encCnt = 0;
-	cmdBuf = CMD_EMPTY;
+	cmdBuf = CMD_RC5_END;
 	sensTimer = 0;
 
 	return;
@@ -88,7 +88,7 @@ static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
 		if (rc5Cmd == rcCode[i])
 			return i;
 
-	return CMD_EMPTY;
+	return CMD_RC5_END;
 }
 
 ISR (TIMER2_COMP_vect)
@@ -193,7 +193,7 @@ ISR (TIMER2_COMP_vect)
 	static uint8_t togBitNow = 0;
 	static uint8_t togBitPrev = 0;
 
-	uint8_t rc5CmdBuf = CMD_EMPTY;
+	uint8_t rc5CmdBuf = CMD_RC5_END;
 	uint8_t rc5Cmd;
 
 	if ((rc5Buf != RC5_BUF_EMPTY) && ((rc5Buf & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr)) {
@@ -216,7 +216,7 @@ ISR (TIMER2_COMP_vect)
 		togBitPrev = togBitNow;
 	}
 
-	if (cmdBuf == CMD_EMPTY)
+	if (cmdBuf == CMD_RC5_END)
 		cmdBuf = rc5CmdBuf;
 
 	/* Timer of current display mode */
@@ -282,7 +282,7 @@ int8_t getEncoder(void)
 cmdID getBtnCmd(void)
 {
 	cmdID ret = cmdBuf;
-	cmdBuf = CMD_EMPTY;
+	cmdBuf = CMD_RC5_END;
 	return ret;
 }
 

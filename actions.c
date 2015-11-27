@@ -330,6 +330,7 @@ void handleAction(uint8_t action)
 	default:
 		if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
 			switch (action) {
+			case CMD_RC5_FM_0:
 			case CMD_RC5_FM_1:
 			case CMD_RC5_FM_2:
 			case CMD_RC5_FM_3:
@@ -339,12 +340,11 @@ void handleAction(uint8_t action)
 			case CMD_RC5_FM_7:
 			case CMD_RC5_FM_8:
 			case CMD_RC5_FM_9:
-			case CMD_RC5_FM_0:
 				if (dispMode == MODE_FM_TUNE) {
-					tunerStoreFavStation(action - CMD_RC5_FM_1);
+					tunerStoreFavStation(action - CMD_RC5_FM_0);
 					setDisplayTime(DISPLAY_TIME_FM_TUNE);
 				} else {
-					tunerLoadFavStation(action - CMD_RC5_FM_1);
+					tunerLoadFavStation(action - CMD_RC5_FM_0);
 					dispMode = MODE_FM_RADIO;
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				}

@@ -193,7 +193,7 @@ void ks0066SetXY(uint8_t x, uint8_t y)
 	return;
 }
 
-void ks0066WriteString(uint8_t *string)
+void ks0066WriteString(char *string)
 {
 	while (*string)
 		ks0066WriteData(*string++);

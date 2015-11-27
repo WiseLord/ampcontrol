@@ -70,7 +70,7 @@ uint8_t gdGetX(void);
 void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
 
 void gdWriteChar(uint8_t code);
-void gdWriteString(uint8_t *string);
+void gdWriteString(char *string);
 
 void gdWriteIcon24(uint8_t iconNum);
 void gdWriteIcon32(uint8_t iconNum);

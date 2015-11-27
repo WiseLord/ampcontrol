@@ -1,10 +1,10 @@
 #include "rds.h"
 #include "../display.h"
 
-static uint8_t rdsText[] = "        ";
+static char rdsText[] = "        ";
 static uint8_t rdsFlag = 0;
 
-uint8_t *rdsGetText(void)
+char *rdsGetText(void)
 {
 	return rdsText;
 }

@@ -18,6 +18,7 @@ static void hwInit(void)
 {
 	extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
 
+	loadTempParams();
 	if (extFunc == USE_DS18B20) {
 		ds18x20SearchDevices();
 		tempInit();							/* Init temperature control */
