@@ -3,4 +3,5 @@
 *.elf
 *.hex
 build-*
+build/*
 *.creator.user
