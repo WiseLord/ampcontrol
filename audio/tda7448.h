@@ -15,9 +15,9 @@ enum {
 	TDA7448_CENTER,					/* IN4, pins 18 and 15 */
 	TDA7448_FRONT_LEFT,				/* IN5, pins 4  and 5  */
 	TDA7448_SUBWOOFER,				/* IN6, pins 17 and 16 */
-};
 
-#define TDA7448_LINES_COUNT			6
+	TDA7448_END
+};
 
 /* I2C autoincrement flag */
 #define TDA7448_AUTO_INC			0x10

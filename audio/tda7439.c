@@ -117,6 +117,5 @@ void tda7439SetMute(uint8_t val)
 
 	tda7439SetPreamp(pr);
 
-
 	return;
 }

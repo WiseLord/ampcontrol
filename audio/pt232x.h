@@ -18,12 +18,10 @@
 #define PT2322_TRIM_RL			0b01010000
 #define PT2322_TRIM_SB			0b01100000
 
-#define PT2322_MUTE_OFF			0b01110000
-#define PT2322_MUTE_ON			0b01111000
-#define PT2322_3D_ON			0b01110000
-#define PT2322_3D_OFF			0b01110100
-#define PT2322_TONE_ON			0b01110000
-#define PT2322_TONE_OFF			0b01110010
+#define PT2322_FUNCTION			0b01110000
+#define PT2322_MUTE_ON			0b00001000
+#define PT2322_3D_OFF			0b00000100
+#define PT2322_TONE_OFF			0b00000010
 
 #define PT2322_BASS				0b10010000
 #define PT2322_MIDDLE			0b10100000
@@ -35,11 +33,11 @@
 #define PT2322_CREAR_REGS		0b11111111
 
 #define PT2323_INPUT_SWITCH		0b11000000
-#define PT2323_INPUT_ST4		0b1000
-#define PT2323_INPUT_ST3		0b1001
-#define PT2323_INPUT_ST2		0b1010
-#define PT2323_INPUT_ST1		0b1011
-#define PT2323_INPUT_6CH		0b0111
+#define PT2323_INPUT_ST1		0b00001011
+#define PT2323_INPUT_ST2		0b00001010
+#define PT2323_INPUT_ST3		0b00001001
+#define PT2323_INPUT_ST4		0b00001000
+#define PT2323_INPUT_6CH		0b00000111
 
 #define PT2323_MUTE_FL			0b11110000
 #define PT2323_MUTE_FR			0b11110010
@@ -47,16 +45,30 @@
 #define PT2323_MUTE_SB			0b11110110
 #define PT2323_MUTE_RL			0b11111000
 #define PT2323_MUTE_RR			0b11111010
-#define PT2323_MUTE_ALL			0b11111110
+#define PT2323_UNMUTE_ALL		0b11111110
+#define PT2323_MUTE_ALL			0b11111111
 
-#define PT2323_SURR_ACTIVE		0b11010000
-#define PT2323_SURR_DISABLED	0b11010001
-#define PT2323_MUX_0DB			0b10010000
-#define PT2323_MUX_6DB			0b10010001
+#define PT2323_ENH_SURR			0b11010000
+#define PT2323_ENH_SURR_OFF		0b00000001
+#define PT2323_MUX				0b10010000
+#define PT2323_MUX_6DB			0b00000001
 
 /* Number of inputs */
 #define PT2323_IN_CNT			5
 
 void pt232xInit(sndParam *sp);
+void pt232xReset(void);
+void pt2322SetVolume(int8_t val);
+void pt2322SetBass(int8_t val);
+void pt2322SetMiddle(int8_t val);
+void pt2322SetTreble(int8_t val);
+void pt2322SetSpeakers(int8_t val);
+void pt2322SetMux(int8_t val);
+void pt2323SetInput(uint8_t in);
+void pt232xSetMute(uint8_t val);
+void pt2323SetSurround(uint8_t val);
+void pt2322SetEffect3d(uint8_t val);
+void pt2322SetToneDefeat(uint8_t val);
+
 
 #endif /* PT232X_H */

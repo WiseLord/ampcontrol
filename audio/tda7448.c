@@ -16,7 +16,7 @@ void tda7448SetSpeakers(int8_t val)
 {
 	uint8_t i;
 	uint8_t i2cData;
-	int8_t sp[TDA7448_LINES_COUNT];
+	int8_t sp[TDA7448_END];
 	int8_t volMin = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
 
 	sp[TDA7448_FRONT_LEFT] = sndPar[MODE_SND_VOLUME].value;
@@ -47,7 +47,7 @@ void tda7448SetSpeakers(int8_t val)
 
 	I2CStart(TDA7448_I2C_ADDR);
 	I2CWriteByte(TDA7448_AUTO_INC);
-	for (i = 0; i < TDA7448_LINES_COUNT; i++) {
+	for (i = 0; i < TDA7448_END; i++) {
 		/* Limit values sent to bus */
 		if (sp[i] < volMin)
 			sp[i] = volMin;
@@ -69,7 +69,7 @@ void tda7448SetMute(uint8_t val)
 	if (val) {
 		I2CStart(TDA7448_I2C_ADDR);
 		I2CWriteByte(TDA7448_AUTO_INC);
-		for (i = 0; i < TDA7448_LINES_COUNT; i++)
+		for (i = 0; i < TDA7448_END; i++)
 			I2CWriteByte(TDA7448_MUTE);
 		I2CStop();
 	} else {

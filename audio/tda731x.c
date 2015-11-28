@@ -89,14 +89,6 @@ void tda731xSetInput(uint8_t in)
 	return;
 }
 
-void tda731xSetLoudness(uint8_t val)
-{
-	_loudness = val;
-	tda731xSetGain(sndPar[MODE_SND_GAIN0 + _input].value);
-
-	return;
-}
-
 void tda731xSetMute(uint8_t val)
 {
 	I2CStart(TDA731X_I2C_ADDR);
@@ -109,6 +101,14 @@ void tda731xSetMute(uint8_t val)
 		tda731xSetBalance(sndPar[MODE_SND_VOLUME].value);
 	}
 	I2CStop();
+
+	return;
+}
+
+void tda731xSetLoudness(uint8_t val)
+{
+	_loudness = val;
+	tda731xSetGain(sndPar[MODE_SND_GAIN0 + _input].value);
 
 	return;
 }

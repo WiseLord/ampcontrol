@@ -33,7 +33,7 @@ void tda731xSetTreble(int8_t val);
 void tda731xSetBalance(int8_t val);
 void tda731xSetGain(int8_t val);
 void tda731xSetInput(uint8_t in);
-void tda731xSetLoudness(uint8_t val);
 void tda731xSetMute(uint8_t val);
+void tda731xSetLoudness(uint8_t val);
 
 #endif /* TDA731X_H */

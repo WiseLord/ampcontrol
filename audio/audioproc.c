@@ -252,6 +252,15 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_SUBWOOFER].grid = &grid[10];
 		sndPar[MODE_SND_GAIN4].grid = &grid[13];
 		_inCnt = PT2323_IN_CNT;
+		sndPar[MODE_SND_VOLUME].set = pt2322SetVolume;
+		sndPar[MODE_SND_BASS].set = pt2322SetBass;
+		sndPar[MODE_SND_MIDDLE].set = pt2322SetMiddle;
+		sndPar[MODE_SND_TREBLE].set = pt2322SetTreble;
+		sndPar[MODE_SND_FRONTREAR].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_BALANCE].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_CENTER].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_SUBWOOFER].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_GAIN4].set = pt2322SetMux;
 		break;
 	case AUDIOPROC_PGA2310:
 		sndPar[MODE_SND_VOLUME].grid = &grid[11];
@@ -295,9 +304,13 @@ void sndSetInput(uint8_t input)
 	case AUDIOPROC_PT2314:
 		tda731xSetInput(_input);
 		break;
+	case AUDIOPROC_PT232X:
+		pt2323SetInput(_input);
+		break;
 	default:
 		break;
 	}
+
 	return;
 }
 
@@ -337,8 +350,13 @@ void sndSetMute(uint8_t value)
 		break;
 	case AUDIOPROC_TDA7448:
 		tda7448SetMute(_mute);
+		break;
+	case AUDIOPROC_PT232X:
+		pt232xSetMute(_mute);
+		break;
 	case AUDIOPROC_PGA2310:
 		pga2310SetMute(_mute);
+		break;
 	default:
 		break;
 	}
@@ -370,6 +388,11 @@ uint8_t sndGetLoudness(void)
 void sndSetSurround(uint8_t value)
 {
 	_surround = value;
+
+	if (_aproc == AUDIOPROC_PT232X)
+		pt2323SetSurround(_surround);
+
+	return;
 }
 
 uint8_t sndGetSurround(void)
@@ -380,6 +403,11 @@ uint8_t sndGetSurround(void)
 void sndSetEffect3d(uint8_t value)
 {
 	_effect3d = value;
+
+	if (_aproc == AUDIOPROC_PT232X)
+		pt2322SetEffect3d(_effect3d);
+
+	return;
 }
 
 uint8_t sndGetEffect3d(void)
@@ -390,6 +418,11 @@ uint8_t sndGetEffect3d(void)
 void sndSetToneDefeat(uint8_t value)
 {
 	_toneDefeat = value;
+
+	if (_aproc == AUDIOPROC_PT232X)
+		pt2322SetToneDefeat(_toneDefeat);
+
+	return;
 }
 
 uint8_t sndGetToneDefeat(void)
@@ -426,12 +459,18 @@ void sndPowerOn(void)
 {
 	uint8_t i;
 
+	if (_aproc == AUDIOPROC_PT232X)
+		pt232xReset();
+
 	sndSetMute(1);
 	sndSetInput(_input);
 	for (i = MODE_SND_VOLUME + 1; i < MODE_SND_GAIN0; i++)
 		sndPar[i].set(sndPar[i].value);
 	sndSetMute(0);
 	sndSetLoudness(_loudness);
+	sndSetSurround(_surround);
+	sndSetEffect3d(_effect3d);
+	sndSetToneDefeat(_toneDefeat);
 
 	return;
 }
