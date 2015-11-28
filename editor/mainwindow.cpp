@@ -308,7 +308,7 @@ void MainWindow::setAudioproc(int proc)
         wgtPreamp->show();
         setAudioParam(dsbPreamp, -47, 0, 1, MODE_SND_PREAMP);
         wgtBalance->show();
-        setAudioParam(dsbBalance, -21, 21, 1, MODE_SND_BALANCE);
+        setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
         wgtGain0->show();
         setAudioParam(dsbGain0, 0, 30, 2, MODE_SND_GAIN0);
         wgtGain1->show();
@@ -362,13 +362,13 @@ void MainWindow::setAudioproc(int proc)
         wgtVolume->show();
         setAudioParam(dsbVolume, -79, 0, 1, MODE_SND_VOLUME);
         wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -21, 21, 1, MODE_SND_FRONTREAR);
+        setAudioParam(dsbFrontrear, -7, 7, 1, MODE_SND_FRONTREAR);
         wgtBalance->show();
-        setAudioParam(dsbBalance, -21, 21, 1, MODE_SND_BALANCE);
+        setAudioParam(dsbBalance, -7, 7, 1, MODE_SND_BALANCE);
         wgtCenter->show();
-        setAudioParam(dsbCenter, -21, 0, 1, MODE_SND_CENTER);
+        setAudioParam(dsbCenter, -15, 0, 1, MODE_SND_CENTER);
         wgtSubwoofer->show();
-        setAudioParam(dsbSubwoofer, -21, 0, 1, MODE_SND_SUBWOOFER);
+        setAudioParam(dsbSubwoofer, -15, 0, 1, MODE_SND_SUBWOOFER);
         break;
     case AUDIOPROC_PT232X:
         wgtVolume->show();
@@ -380,13 +380,13 @@ void MainWindow::setAudioproc(int proc)
         wgtTreble->show();
         setAudioParam(dsbTreble, -14, 14, 2, MODE_SND_TREBLE);
         wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -21, 21, 1, MODE_SND_FRONTREAR);
+        setAudioParam(dsbFrontrear, -7, 7, 1, MODE_SND_FRONTREAR);
         wgtBalance->show();
-        setAudioParam(dsbBalance, -21, 21, 1, MODE_SND_BALANCE);
+        setAudioParam(dsbBalance, -7, 7, 1, MODE_SND_BALANCE);
         wgtCenter->show();
-        setAudioParam(dsbCenter, -21, 0, 1, MODE_SND_CENTER);
+        setAudioParam(dsbCenter, -15, 0, 1, MODE_SND_CENTER);
         wgtSubwoofer->show();
-        setAudioParam(dsbSubwoofer, -21, 0, 1, MODE_SND_SUBWOOFER);
+        setAudioParam(dsbSubwoofer, -15, 0, 1, MODE_SND_SUBWOOFER);
         wgtGain4->show();
         setAudioParam(dsbGain4, 0, 6, 6, MODE_SND_GAIN4);
         break;
@@ -394,7 +394,7 @@ void MainWindow::setAudioproc(int proc)
         wgtVolume->show();
         setAudioParam(dsbVolume, -96, 31, 1, MODE_SND_VOLUME);
         wgtBalance->show();
-        setAudioParam(dsbBalance, -21, 21, 1, MODE_SND_BALANCE);
+        setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
         break;
     }
 

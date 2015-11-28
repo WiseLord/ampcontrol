@@ -226,10 +226,8 @@ QByteArray LcdConverter::encode(QString text, int map)
     case MAP_KS0066_RU:
         pmap = &map_ks0066ru;
         break;
-    case MAP_CP1251:
-        pmap = &map_cp1251;
-        break;
     default:
+        pmap = &map_cp1251;
         break;
     }
 
