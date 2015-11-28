@@ -18,7 +18,7 @@ LcdConverter::LcdConverter()
         map_ks0066ru[0x041e] = 'O';
         map_ks0066ru[0x0420] = 'P';
         map_ks0066ru[0x0422] = 'T';
-        map_ks0066ru[0x0422] = 'X';
+        map_ks0066ru[0x0425] = 'X';
 
         map_ks0066ru[0x0430] = 'a';
         map_ks0066ru[0x042c] = 'b';

@@ -17,9 +17,6 @@
 #define BTN_12					0b11000
 #define BTN_13					0b10100
 
-/* RC5 support definitions */
-#define RC5_CMD_COUNT			32
-
 typedef enum {
 	CMD_RC5_STBY,				// STBY
 	CMD_RC5_MUTE,				// MUTE

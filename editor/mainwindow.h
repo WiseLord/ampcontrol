@@ -55,9 +55,13 @@ private slots:
     void setGain1(double value);
     void setGain2(double value);
     void setGain3(double value);
+    void setGain4(double value);
     void setInput(int value);
     void setInputIcon(int value);
     void setLoudness(int value);
+    void setSurround(int value);
+    void setEffect3d(int value);
+    void setToneDefeat(int value);
 
     void setTuner(int tuner);
     void setFmfreq(double value);

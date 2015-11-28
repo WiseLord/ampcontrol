@@ -55,7 +55,7 @@
 #define PT2323_MUX_6DB			0b10010001
 
 /* Number of inputs */
-#define PT2322_IN_CNT				5
+#define PT2323_IN_CNT			5
 
 void pt232xInit(sndParam *sp);
 

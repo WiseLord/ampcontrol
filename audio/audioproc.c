@@ -11,14 +11,16 @@ static const sndGrid grid[] PROGMEM = {
 	{-79,  0, 1.00 * 8},	/* 1: -79..0dB with 1dB step */
 	{ -7,  7, 2.00 * 8},	/* 2: -14..14dB with 2dB step */
 	{-47,  0, 1.00 * 8},	/* 3: -47..0dB with 1dB step */
-	{-21, 21, 1.00 * 8},	/* 4: -21..21dB with 1dB step */
+	{-15, 15, 1.00 * 8},	/* 4: -21..21dB with 1dB step */
 	{  0, 15, 2.00 * 8},	/* 5: 0..30dB with 2dB step */
 	{-63,  0, 1.25 * 8},	/* 6: -78.75..0dB with 1.25dB step*/
 	{-15, 15, 1.25 * 8},	/* 7: -18.75..18.75dB with 1.25dB step */
 	{  0,  3, 3.75 * 8},	/* 8: 0..11.25dB with 3.75dB step */
 	{  0,  3, 6.25 * 8},	/* 9: 0..18.75dB with 6.25dB step */
-	{-21,  0, 1.00 * 8},	/*10: -21..0dB with 1dB step */
+	{-15,  0, 1.00 * 8},	/*10: -15..0dB with 1dB step */
 	{-96, 31, 1.00 * 8},	/*11: -96..31dB with 1dB step */
+	{ -7,  7, 1.00 * 8},	/*12: -7..7dB with 1dB step */
+	{  0,  1, 6.00 * 8},	/*13: 0..6dB with 6dB step */
 };
 
 static sndParam sndPar[MODE_SND_END];
@@ -71,6 +73,9 @@ void sndInit(uint8_t extFunc)
 		break;
 	case AUDIOPROC_TDA7448:
 		tda7448Init(sndPar);
+		break;
+	case AUDIOPROC_PT232X:
+		pt232xInit(sndPar);
 		break;
 	case AUDIOPROC_PGA2310:
 		if (extFunc == USE_PGA2310)
@@ -225,8 +230,8 @@ void sndInit(uint8_t extFunc)
 		break;
 	case AUDIOPROC_TDA7448:
 		sndPar[MODE_SND_VOLUME].grid = &grid[1];
-		sndPar[MODE_SND_FRONTREAR].grid = &grid[4];
-		sndPar[MODE_SND_BALANCE].grid = &grid[4];
+		sndPar[MODE_SND_FRONTREAR].grid = &grid[12];
+		sndPar[MODE_SND_BALANCE].grid = &grid[12];
 		sndPar[MODE_SND_CENTER].grid = &grid[10];
 		sndPar[MODE_SND_SUBWOOFER].grid = &grid[10];
 		_inCnt = TDA7448_IN_CNT;
@@ -235,6 +240,18 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_BALANCE].set= tda7448SetSpeakers;
 		sndPar[MODE_SND_CENTER].set = tda7448SetSpeakers;
 		sndPar[MODE_SND_SUBWOOFER].set = tda7448SetSpeakers;
+		break;
+	case AUDIOPROC_PT232X:
+		sndPar[MODE_SND_VOLUME].grid = &grid[1];
+		sndPar[MODE_SND_BASS].grid = &grid[2];
+		sndPar[MODE_SND_MIDDLE].grid = &grid[2];
+		sndPar[MODE_SND_TREBLE].grid = &grid[2];
+		sndPar[MODE_SND_FRONTREAR].grid = &grid[12];
+		sndPar[MODE_SND_BALANCE].grid = &grid[12];
+		sndPar[MODE_SND_CENTER].grid = &grid[10];
+		sndPar[MODE_SND_SUBWOOFER].grid = &grid[10];
+		sndPar[MODE_SND_GAIN4].grid = &grid[13];
+		_inCnt = PT2323_IN_CNT;
 		break;
 	case AUDIOPROC_PGA2310:
 		sndPar[MODE_SND_VOLUME].grid = &grid[11];

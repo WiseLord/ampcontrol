@@ -27,7 +27,7 @@ static volatile uint8_t clockTimer;
 static volatile int16_t silenceTimer;				/* Timer to check silence */
 
 static uint8_t rc5DeviceAddr;
-static uint8_t rcCode[RC5_CMD_COUNT];				/* Array with rc5 commands */
+static uint8_t rcCode[CMD_RC5_END];				/* Array with rc5 commands */
 
 void rc5CodesInit(void)
 {
@@ -35,7 +35,7 @@ void rc5CodesInit(void)
 
 	rc5DeviceAddr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
 
-	for (i = 0; i < RC5_CMD_COUNT; i++)
+	for (i = 0; i < CMD_RC5_END; i++)
 		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + i);
 
 	return;
@@ -84,7 +84,7 @@ static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
 {
 	uint8_t i;
 
-	for (i = 0; i < RC5_CMD_COUNT; i++)
+	for (i = 0; i < CMD_RC5_END; i++)
 		if (rc5Cmd == rcCode[i])
 			return i;
 

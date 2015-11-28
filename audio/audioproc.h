@@ -5,6 +5,7 @@
 #include "tda731x.h"
 #include "tda7439.h"
 #include "tda7448.h"
+#include "pt232x.h"
 #include "pga2310.h"
 
 typedef enum {
