@@ -100,7 +100,7 @@ void tda731xSetLoudness(uint8_t val)
 void tda731xSetMute(uint8_t val)
 {
 	I2CStart(TDA731X_I2C_ADDR);
-	if (val == MUTE_ON) {
+	if (val) {
 		I2CWriteByte(TDA731X_SP_FRONT_LEFT | TDA731X_MUTE);
 		I2CWriteByte(TDA731X_SP_FRONT_RIGHT | TDA731X_MUTE);
 		I2CWriteByte(TDA731X_SP_REAR_LEFT | TDA731X_MUTE);

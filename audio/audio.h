@@ -3,12 +3,6 @@
 
 #include <inttypes.h>
 
-#define MUTE_ON					1
-#define MUTE_OFF				0
-
-#define LOUDNESS_ON				1
-#define LOUDNESS_OFF			0
-
 typedef struct {
 	const int8_t min;
 	const int8_t max;
@@ -37,6 +31,7 @@ typedef enum {
 	MODE_SND_GAIN1,
 	MODE_SND_GAIN2,
 	MODE_SND_GAIN3,
+	MODE_SND_GAIN4,
 
 	MODE_SND_END
 } sndMode;

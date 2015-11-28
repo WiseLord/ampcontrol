@@ -28,6 +28,9 @@ static uint8_t _inCnt;
 static uint8_t _input;
 static uint8_t _mute;
 static uint8_t _loudness;
+static uint8_t _surround;
+static uint8_t _effect3d;
+static uint8_t _toneDefeat;
 
 static void setNothing(int8_t val)
 {
@@ -45,9 +48,12 @@ void sndInit(uint8_t extFunc)
 		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
-	_input = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
 	_loudness = eeprom_read_byte((uint8_t*)EEPROM_LOUDNESS);
+	_surround = eeprom_read_byte((uint8_t*)EEPROM_SURROUND);
+	_effect3d = eeprom_read_byte((uint8_t*)EEPROM_EFFECT3D);
+	_toneDefeat = eeprom_read_byte((uint8_t*)EEPROM_TONE_DEFEAT);
 	_aproc = eeprom_read_byte((uint8_t*)EEPROM_AUDIOPROC);
+	_input = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
 	if (_aproc >= AUDIOPROC_END)
 		_aproc = AUDIOPROC_TDA7439;
 
@@ -288,13 +294,13 @@ void sndSetMute(uint8_t value)
 {
 	int8_t vol;
 
-	if (value == MUTE_ON) {
+	if (value) {
 		vol = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
-		_mute = MUTE_ON;
+		_mute = 1;
 		PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	} else {
 		vol = sndPar[MODE_SND_VOLUME].value;
-		_mute = MUTE_OFF;
+		_mute = 0;
 		PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	}
 
@@ -330,10 +336,7 @@ uint8_t sndGetMute(void)
 
 void sndSetLoudness(uint8_t value)
 {
-	if (value == LOUDNESS_ON)
-		_loudness = LOUDNESS_ON;
-	else
-		_loudness = LOUDNESS_OFF;
+	_loudness = value;
 
 	if (_aproc == AUDIOPROC_TDA7313 || _aproc == AUDIOPROC_TDA7314 ||
 			_aproc == AUDIOPROC_TDA7315 || _aproc == AUDIOPROC_PT2314)
@@ -345,6 +348,36 @@ void sndSetLoudness(uint8_t value)
 uint8_t sndGetLoudness(void)
 {
 	return _loudness;
+}
+
+void sndSetSurround(uint8_t value)
+{
+	_surround = value;
+}
+
+uint8_t sndGetSurround(void)
+{
+	return _surround;
+}
+
+void sndSetEffect3d(uint8_t value)
+{
+	_effect3d = value;
+}
+
+uint8_t sndGetEffect3d(void)
+{
+	return _effect3d;
+}
+
+void sndSetToneDefeat(uint8_t value)
+{
+	_toneDefeat = value;
+}
+
+uint8_t sndGetToneDefeat(void)
+{
+	return _toneDefeat;
 }
 
 void sndNextParam(uint8_t *mode)
@@ -376,11 +409,11 @@ void sndPowerOn(void)
 {
 	uint8_t i;
 
-	sndSetMute(MUTE_ON);
+	sndSetMute(1);
 	sndSetInput(_input);
 	for (i = MODE_SND_VOLUME + 1; i < MODE_SND_GAIN0; i++)
 		sndPar[i].set(sndPar[i].value);
-	sndSetMute(MUTE_OFF);
+	sndSetMute(0);
 	sndSetLoudness(_loudness);
 
 	return;
@@ -393,9 +426,12 @@ void sndPowerOff(void)
 	for (i = 0; i < MODE_SND_END; i++)
 		eeprom_update_byte((uint8_t*)EEPROM_VOLUME + i, sndPar[i].value);
 
-	eeprom_update_byte((uint8_t*)EEPROM_INPUT, _input);
 	eeprom_update_byte((uint8_t*)EEPROM_LOUDNESS, _loudness);
+	eeprom_update_byte((uint8_t*)EEPROM_SURROUND, _surround);
+	eeprom_update_byte((uint8_t*)EEPROM_EFFECT3D, _effect3d);
+	eeprom_update_byte((uint8_t*)EEPROM_TONE_DEFEAT, _toneDefeat);
 	eeprom_update_byte((uint8_t*)EEPROM_AUDIOPROC, _aproc);
+	eeprom_update_byte((uint8_t*)EEPROM_INPUT, _input);
 
 	return;
 }

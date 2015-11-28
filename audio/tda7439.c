@@ -110,7 +110,7 @@ void tda7439SetMute(uint8_t val)
 {
 	int8_t pr;
 
-	if (val == MUTE_ON)
+	if (val)
 		pr = pgm_read_byte(&sndPar[MODE_SND_PREAMP].grid->min);
 	else
 		pr = sndPar[MODE_SND_PREAMP].value;

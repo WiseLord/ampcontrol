@@ -34,6 +34,12 @@ uint8_t sndGetMute(void);
 
 void sndSetLoudness(uint8_t value);
 uint8_t sndGetLoudness(void);
+void sndSetSurround(uint8_t value);
+uint8_t sndGetSurround(void);
+void sndSetEffect3d(uint8_t value);
+uint8_t sndGetEffect3d(void);
+void sndSetToneDefeat(uint8_t value);
+uint8_t sndGetToneDefeat(void);
 
 void sndNextParam(uint8_t *mode);
 void sndChangeParam(uint8_t mode, int8_t diff);

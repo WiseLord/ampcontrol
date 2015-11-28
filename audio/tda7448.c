@@ -66,7 +66,7 @@ void tda7448SetMute(uint8_t val)
 {
 	uint8_t i;
 
-	if (val == MUTE_ON) {
+	if (val) {
 		I2CStart(TDA7448_I2C_ADDR);
 		I2CWriteByte(TDA7448_AUTO_INC);
 		for (i = 0; i < TDA7448_LINES_COUNT; i++)

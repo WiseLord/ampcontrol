@@ -36,15 +36,15 @@ const char STR_RC5_IN_0[] PROGMEM = "Input 1";
 const char STR_RC5_IN_1[] PROGMEM = "Input 2";
 const char STR_RC5_IN_2[] PROGMEM = "Input 3";
 const char STR_RC5_IN_3[] PROGMEM = "Input 4";
-const char STR_RC5_NEXT_IN[] PROGMEM = "Next input";
-const char STR_RC5_TIME[] PROGMEM = "Time";
-const char STR_RC5_BRIGHTNESS[] PROGMEM = "Backlight";
-const char STR_RC5_NEXT_SPMODE[] PROGMEM = "Spectrum mode";
-const char STR_RC5_FALLSPEED[] PROGMEM = "Fall speed";
-const char STR_RC5_DEF_DISPLAY[] PROGMEM = "Display mode";
-const char STR_RC5_TIMER[] PROGMEM = "Timer";
+const char STR_RC5_IN_4[] PROGMEM = "Input 5";
+const char STR_RC5_IN_PREV[] PROGMEM = "Prev input";
+const char STR_RC5_IN_NEXT[] PROGMEM = "Next input";
+const char STR_RC5_LOUDNESS[] PROGMEM = "Loudness";
+const char STR_RC5_SURROUND[] PROGMEM = "Surround";
+const char STR_RC5_EFFECT_3D[] PROGMEM = "3D effect";
+const char STR_RC5_TONE_DEFEAT[] PROGMEM = "Tone defeat";
 
-const char STR_RC5_ALARM[] PROGMEM = "Alarm";
+const char STR_RC5_DEF_DISPLAY[] PROGMEM = "Display mode";
 const char STR_RC5_FM_INC[] PROGMEM = "Channel +";
 const char STR_RC5_FM_DEC[] PROGMEM = "Channel -";
 const char STR_RC5_FM_MODE[] PROGMEM = "FM tune";
@@ -60,6 +60,13 @@ const char STR_RC5_FM_6[] PROGMEM = "Button 6";
 const char STR_RC5_FM_7[] PROGMEM = "Button 7";
 const char STR_RC5_FM_8[] PROGMEM = "Button 8";
 const char STR_RC5_FM_9[] PROGMEM = "Button 9";
+
+const char STR_RC5_TIME[] PROGMEM = "Time";
+const char STR_RC5_ALARM[] PROGMEM = "Alarm";
+const char STR_RC5_TIMER[] PROGMEM = "Timer";
+const char STR_RC5_BRIGHTNESS[] PROGMEM = "Brightness";
+const char STR_RC5_NEXT_SPMODE[] PROGMEM = "Spectrum mode";
+const char STR_RC5_FALLSPEED[] PROGMEM = "Fall speed";
 
 const char STR_IN_STATUS[] PROGMEM = "== Input status ==";
 const char STR_REMOTE[] PROGMEM = "Remote:";
@@ -95,15 +102,15 @@ PGM_P const rc5Labels[] PROGMEM = {
 	STR_RC5_IN_1,
 	STR_RC5_IN_2,
 	STR_RC5_IN_3,
-	STR_RC5_NEXT_IN,
-	STR_RC5_TIME,
-	STR_RC5_BRIGHTNESS,
-	STR_RC5_NEXT_SPMODE,
-	STR_RC5_FALLSPEED,
-	STR_RC5_DEF_DISPLAY,
-	STR_RC5_TIMER,
+	STR_RC5_IN_4,
+	STR_RC5_IN_PREV,
+	STR_RC5_IN_NEXT,
+	STR_RC5_LOUDNESS,
+	STR_RC5_SURROUND,
+	STR_RC5_EFFECT_3D,
+	STR_RC5_TONE_DEFEAT,
 
-	STR_RC5_ALARM,
+	STR_RC5_DEF_DISPLAY,
 	STR_RC5_FM_INC,
 	STR_RC5_FM_DEC,
 	STR_RC5_FM_MODE,
@@ -119,6 +126,13 @@ PGM_P const rc5Labels[] PROGMEM = {
 	STR_RC5_FM_7,
 	STR_RC5_FM_8,
 	STR_RC5_FM_9,
+
+	STR_RC5_TIME,
+	STR_RC5_ALARM,
+	STR_RC5_TIMER,
+	STR_RC5_BRIGHTNESS,
+	STR_RC5_NEXT_SPMODE,
+	STR_RC5_FALLSPEED,
 
 	STR_IN_STATUS,
 	STR_REMOTE,
@@ -1081,6 +1095,22 @@ void showLoudness(void)
 	return;
 }
 
+void showSurround()
+{
+	return;
+}
+
+void showEffect3d()
+{
+	return;
+}
+
+void showToneDefeat()
+{
+	return;
+}
+
+
 void showBrWork(void)
 {
 	showParLabel(txtLabels[LABEL_BR_WORK]);
@@ -1572,4 +1602,3 @@ void displayPowerOff(void)
 
 	return;
 }
-

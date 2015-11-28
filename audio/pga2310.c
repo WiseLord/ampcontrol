@@ -77,7 +77,7 @@ void pga2310SetSpeakers(int8_t val)
 
 void pga2310SetMute(uint8_t val)
 {
-	if (val == MUTE_ON) {
+	if (val) {
 		pga2310SendGainLevels(PGA2310_MUTE, PGA2310_MUTE);
 	} else {
 		pga2310SetSpeakers(0);

@@ -85,6 +85,9 @@ void showRadio(uint8_t tune);
 
 void showMute(void);
 void showLoudness(void);
+void showSurround(void);
+void showEffect3d(void);
+void showToneDefeat(void);
 
 void showBrWork(void);
 void changeBrWork(int8_t diff);

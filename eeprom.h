@@ -13,6 +13,12 @@
 #define EEPROM_ALARM_MIN			0x11
 #define EEPROM_ALARM_MON			0x12
 
+/* Audio bool parameters values */
+#define EEPROM_LOUDNESS				0x1A
+#define EEPROM_SURROUND				0x1B
+#define EEPROM_EFFECT3D				0x1C
+#define EEPROM_TONE_DEFEAT			0x1D
+
 /* FM tuner parameters valus */
 #define EEPROM_FM_TUNER				0x20
 #define EEPROM_FM_STEP				0x21
@@ -21,10 +27,9 @@
 #define EEPROM_FM_FREQ				0x24
 
 /* Audio processor values */
-#define EEPROM_AUDIOPROC			0x28
-#define EEPROM_INPUT				0x29
-#define EEPROM_LOUDNESS				0x2A
-#define EEPROM_INPUT_ICONS			0x2C
+#define EEPROM_AUDIOPROC			0x27
+#define EEPROM_INPUT				0x28
+#define EEPROM_INPUT_ICONS			0x29
 
 /* Display parameters */
 #define EEPROM_SP_MODE				0x30

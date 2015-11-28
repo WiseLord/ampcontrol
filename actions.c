@@ -44,7 +44,7 @@ uint8_t getAction(void)
 		action = CMD_RC5_STBY;
 		break;
 	case CMD_BTN_2:
-		action = CMD_RC5_NEXT_IN;
+		action = CMD_RC5_IN_NEXT;
 		break;
 	case CMD_BTN_3:
 		if (dispMode == CMD_RC5_TIMER)
@@ -110,17 +110,22 @@ uint8_t getAction(void)
 	if (action == CMD_RC5_STBY && dispMode == MODE_STANDBY)
 		action = ACTION_EXIT_STANDBY;
 
-	/* Remap INPUT_3 command to SWITCH_LOUDNESS if there is no INPUT_3 */
-	if (action == CMD_RC5_IN_3 && sndInputCnt() < 4)
-		action = ACTION_SWITCH_LOUDNESS;
-
-	/* Remap NEXT_INPUT action to INPUT_X */
-	if (action == CMD_RC5_NEXT_IN) {
+	/* Remap NEXT/PREV_INPUT actions to INPUT_X */
+	if (action == CMD_RC5_IN_NEXT) {
 		action = CMD_RC5_IN_0 + sndGetInput();
-		if (dispMode >= MODE_SND_GAIN0 && dispMode <= MODE_SND_GAIN3) {
+		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
 			action += 1;
-			if (action > CMD_RC5_IN_3)
+			if (action > CMD_RC5_IN_4)
 				action = CMD_RC5_IN_0;
+		}
+	}
+	if (action == CMD_RC5_IN_PREV) {
+		action = CMD_RC5_IN_0 + sndGetInput();
+		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
+			if (action)
+				action -= 1;
+			else
+				action = CMD_RC5_IN_4;
 		}
 	}
 
@@ -163,10 +168,10 @@ void handleAction(uint8_t action)
 		sndPowerOn();
 
 		if (sndGetInput() == 0) {
-			tunerSetMute(MUTE_OFF);
+			tunerSetMute(0);
 			tunerSetFreq(tunerGetFreq());
 		} else {
-			tunerSetMute(MUTE_ON);
+			tunerSetMute(1);
 		}
 
 		dispMode = defDispMode();
@@ -174,7 +179,7 @@ void handleAction(uint8_t action)
 
 		break;
 	case CMD_RC5_STBY:
-		sndSetMute(MUTE_ON);
+		sndSetMute(1);
 		sndPowerOff();
 		tunerPowerOff();
 		displayPowerOff();
@@ -292,17 +297,33 @@ void handleAction(uint8_t action)
 	case CMD_RC5_IN_1:
 	case CMD_RC5_IN_2:
 	case CMD_RC5_IN_3:
+	case CMD_RC5_IN_4:
 		sndSetInput(action - CMD_RC5_IN_0);
 		dispMode = MODE_SND_GAIN0 + sndGetInput();
 		setDisplayTime(DISPLAY_TIME_GAIN);
 		if (sndGetInput() == 0)
-			tunerSetMute(MUTE_OFF);
+			tunerSetMute(0);
 		else
-			tunerSetMute(MUTE_ON);
+			tunerSetMute(1);
 		break;
-	case ACTION_SWITCH_LOUDNESS:
+	case CMD_RC5_LOUDNESS:
 		sndSetLoudness(!sndGetLoudness());
 		dispMode = MODE_LOUDNESS;
+		setDisplayTime(DISPLAY_TIME_AUDIO);
+		break;
+	case CMD_RC5_SURROUND:
+		sndSetSurround(!sndGetSurround());
+		dispMode = MODE_SURROUND;
+		setDisplayTime(DISPLAY_TIME_AUDIO);
+		break;
+	case CMD_RC5_EFFECT_3D:
+		sndSetEffect3d(!sndGetEffect3d());
+		dispMode = MODE_EFFECT_3D;
+		setDisplayTime(DISPLAY_TIME_AUDIO);
+		break;
+	case CMD_RC5_TONE_DEFEAT:
+		sndSetToneDefeat(!sndGetToneDefeat());
+		dispMode = MODE_TONE_DEFEAT;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC5_FALLSPEED:
@@ -417,6 +438,9 @@ void handleEncoder(int8_t encCnt)
 			break;
 		case MODE_MUTE:
 		case MODE_LOUDNESS:
+		case MODE_SURROUND:
+		case MODE_EFFECT_3D:
+		case MODE_TONE_DEFEAT:
 		case MODE_SPECTRUM:
 		case MODE_TIME:
 		case MODE_TIMER:
@@ -425,7 +449,7 @@ void handleEncoder(int8_t encCnt)
 		case MODE_FM_RADIO:
 			dispMode = MODE_SND_VOLUME;
 		default:
-			sndSetMute(MUTE_OFF);
+			sndSetMute(0);
 			sndChangeParam(dispMode, encCnt);
 			setDisplayTime(DISPLAY_TIME_GAIN);
 			break;
@@ -459,9 +483,9 @@ uint8_t checkAlarmAndTime(void)
 
 		if (dispMode == MODE_STANDBY) {
 			if ((getTime(DS1307_SEC) == 0) &&
-			    (getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
-			    (getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
-			    (getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
+				(getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
+				(getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
+				(getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
 			   ) {
 				sndSetInput(getAlarm(DS1307_A0_INPUT));
 				ret = ACTION_EXIT_STANDBY;
@@ -560,6 +584,15 @@ void showScreen(void)
 		break;
 	case MODE_LOUDNESS:
 		showLoudness();
+		break;
+	case MODE_SURROUND:
+		showSurround();
+		break;
+	case MODE_EFFECT_3D:
+		showEffect3d();
+		break;
+	case MODE_TONE_DEFEAT:
+		showToneDefeat();
 		break;
 	case MODE_TIME:
 	case MODE_TIME_EDIT:
