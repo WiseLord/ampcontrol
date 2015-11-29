@@ -189,7 +189,7 @@ static void lcdGenBar(uint8_t sym)
 		0b00001,
 		0b00000,
 	};
-	static const uint8_t loudIcon[] PROGMEM = {
+	static const uint8_t loudnessIcon[] PROGMEM = {
 		0b00000,
 		0b10000,
 		0b10001,
@@ -197,6 +197,36 @@ static void lcdGenBar(uint8_t sym)
 		0b10101,
 		0b10101,
 		0b10101,
+		0b00000,
+	};
+	static const uint8_t surroundIcon[] PROGMEM = {
+		0b01010,
+		0b10001,
+		0b10101,
+		0b10101,
+		0b10101,
+		0b10001,
+		0b01010,
+		0b00000,
+	};
+	static const uint8_t effect3dIcon[] PROGMEM = {
+		0b01110,
+		0b10001,
+		0b00000,
+		0b01110,
+		0b00000,
+		0b10001,
+		0b01110,
+		0b00000,
+	};
+	static const uint8_t toneDefeatIcon[] PROGMEM = {
+		0b01000,
+		0b10101,
+		0b00010,
+		0b00000,
+		0b11111,
+		0b00000,
+		0b11111,
 		0b00000,
 	};
 	static const uint8_t stereoIcon[] PROGMEM = {
@@ -254,9 +284,27 @@ static void lcdGenBar(uint8_t sym)
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
 			break;
-		case SYM_LOUD_CROSS:
+		case SYM_LOUDNESS_CROSS:
 			for (i = 0; i < 8; i++)
-				ks0066WriteData(pgm_read_byte(&loudIcon[i]));
+				ks0066WriteData(pgm_read_byte(&loudnessIcon[i]));
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+			break;
+		case SYM_SURROUND_CROSS:
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&surroundIcon[i]));
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+			break;
+		case SYM_EFFECT_3D_CROSS:
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&effect3dIcon[i]));
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+			break;
+		case SYM_TONE_DEFEAT_CROSS:
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&toneDefeatIcon[i]));
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
 			break;
@@ -1078,7 +1126,7 @@ void showLoudness(void)
 	showParLabel(txtLabels[LABEL_LOUDNESS]);
 	drawMiniSpectrum();
 #ifdef KS0066
-	lcdGenBar(SYM_LOUD_CROSS);
+	lcdGenBar(SYM_LOUDNESS_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
 	if (sndGetLoudness ())
@@ -1092,21 +1140,73 @@ void showLoudness(void)
 	else
 		gdWriteIcon32(ICON32_LOUDNESS_OFF);
 #endif
+
 	return;
 }
 
 void showSurround()
 {
+	showParLabel(txtLabels[LABEL_SURROUND]);
+	drawMiniSpectrum();
+#ifdef KS0066
+	lcdGenBar(SYM_SURROUND_CROSS);
+	ks0066SetXY(14, 0);
+	ks0066WriteData(0x06);
+	if (sndGetSurround())
+		ks0066WriteData(0x07);
+	else
+		ks0066WriteData(' ');
+#else
+	gdSetXY(96, 32);
+	if (sndGetSurround())
+		gdWriteIcon32(ICON32_SURROUND_ON);
+	else
+		gdWriteIcon32(ICON32_SURROUND_OFF);
+#endif
 	return;
 }
 
 void showEffect3d()
 {
+	showParLabel(txtLabels[LABEL_EFFECT_3D]);
+	drawMiniSpectrum();
+#ifdef KS0066
+	lcdGenBar(SYM_EFFECT_3D_CROSS);
+	ks0066SetXY(14, 0);
+	ks0066WriteData(0x06);
+	if (sndGetEffect3d())
+		ks0066WriteData(0x07);
+	else
+		ks0066WriteData(' ');
+#else
+	gdSetXY(96, 32);
+	if (sndGetEffect3d())
+		gdWriteIcon32(ICON32_EFFECT_3D_ON);
+	else
+		gdWriteIcon32(ICON32_EFFECT_3D_OFF);
+#endif
 	return;
 }
 
 void showToneDefeat()
 {
+	showParLabel(txtLabels[LABEL_TONE_DEFEAT]);
+	drawMiniSpectrum();
+#ifdef KS0066
+	lcdGenBar(SYM_TONE_DEFEAT_CROSS);
+	ks0066SetXY(14, 0);
+	ks0066WriteData(0x06);
+	if (sndGetToneDefeat())
+		ks0066WriteData(0x07);
+	else
+		ks0066WriteData(' ');
+#else
+	gdSetXY(96, 32);
+	if (sndGetToneDefeat())
+		gdWriteIcon32(ICON32_TONE_DEFEAT_ON);
+	else
+		gdWriteIcon32(ICON32_TONE_DEFEAT_OFF);
+#endif
 	return;
 }
 
