@@ -80,7 +80,36 @@ void pt2322SetTreble(int8_t val)
 
 void pt2322SetSpeakers(int8_t val)
 {
+	uint8_t i;
+	int8_t sp[PT2322_CH_END];
 
+	if (sndPar[MODE_SND_BALANCE].value > 0) {
+		sp[PT2322_CH_FL] = sndPar[MODE_SND_BALANCE].value;
+		sp[PT2322_CH_RL] = sndPar[MODE_SND_BALANCE].value;
+	} else {
+		sp[PT2322_CH_FR] = -sndPar[MODE_SND_BALANCE].value;
+		sp[PT2322_CH_RR] = -sndPar[MODE_SND_BALANCE].value;
+	}
+
+	if (sndPar[MODE_SND_FRONTREAR].value > 0) {
+		sp[PT2322_CH_RL] += sndPar[MODE_SND_FRONTREAR].value;
+		sp[PT2322_CH_RR] += sndPar[MODE_SND_FRONTREAR].value;
+	} else {
+		sp[PT2322_CH_FL] -= sndPar[MODE_SND_FRONTREAR].value;
+		sp[PT2322_CH_FR] -= sndPar[MODE_SND_FRONTREAR].value;
+	}
+
+	sp[PT2322_CH_CT] = -sndPar[MODE_SND_CENTER].value;
+	sp[PT2322_CH_SB] = -sndPar[MODE_SND_SUBWOOFER].value;
+
+	I2CStart(PT2323_I2C_ADDR);
+	for (i = 0; i < PT2322_CH_END; i++) {
+		// PT2322_TRIM_XX
+		I2CWriteByte(((i + 1) << 4) | sp[i]);
+	}
+	I2CStop();
+
+	return;
 }
 
 void pt2322SetMux(int8_t val)
