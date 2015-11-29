@@ -180,15 +180,15 @@ uint8_t tunerStationNum(void)
 }
 
 /* Find favourite station number (1..10) in EEPROM */
-uint8_t tunerFavStationNum(void)
+int8_t tunerFavStationNum(void)
 {
-	uint8_t i;
+	int8_t i;
 
 	for (i = 0; i < FM_COUNT; i++)
 		if (eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + i) == _freq)
-			return i + 1;
+			return i;
 
-	return 0;
+	return -1;
 }
 
 /* Find nearest next/prev stored station */

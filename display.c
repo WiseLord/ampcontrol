@@ -941,7 +941,7 @@ void showRadio(uint8_t tune)
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();
-	uint8_t favNum = tunerFavStationNum();
+	int8_t favNum = tunerFavStationNum();
 	static uint8_t rdsMode;
 
 #ifdef KS0066
@@ -974,8 +974,8 @@ void showRadio(uint8_t tune)
 
 	/* Favourite station number */
 	ks0066SetXY(15, 0);
-	if (favNum) {
-		writeNum(favNum % 10, 1, ' ', 10);
+	if (favNum >= 0) {
+		writeNum(favNum, 1, ' ', 10);
 	} else {
 		writeString("-");
 	}
@@ -1052,8 +1052,8 @@ void showRadio(uint8_t tune)
 	gdSetXY(114, 23);
 	gdWriteChar(0xF5);						/* Heart symbol */
 	gdSetXY(122, 23);
-	if (favNum)
-		writeNum(favNum % 10, 1, ' ', 10);
+	if (favNum >= 0)
+		writeNum(favNum, 1, ' ', 10);
 	else
 		writeString("-");
 

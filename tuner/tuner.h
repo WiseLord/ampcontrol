@@ -45,7 +45,7 @@ void tunerNextStation(int8_t direction);
 void tunerLoadStation(uint8_t num);
 void tunerStoreStation(void);
 
-uint8_t tunerFavStationNum(void);
+int8_t tunerFavStationNum(void);
 void tunerLoadFavStation(uint8_t num);
 void tunerStoreFavStation(uint8_t num);
 
