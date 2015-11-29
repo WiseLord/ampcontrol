@@ -115,17 +115,16 @@ uint8_t getAction(void)
 		action = CMD_RC5_IN_0 + sndGetInput();
 		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
 			action += 1;
-			if (action > CMD_RC5_IN_4)
+			if (action >= CMD_RC5_IN_0 + sndInputCnt())
 				action = CMD_RC5_IN_0;
 		}
 	}
 	if (action == CMD_RC5_IN_PREV) {
 		action = CMD_RC5_IN_0 + sndGetInput();
 		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
-			if (action)
-				action -= 1;
-			else
-				action = CMD_RC5_IN_4;
+			action -= 1;
+			if (action < CMD_RC5_IN_0)
+				action += sndInputCnt();
 		}
 	}
 
