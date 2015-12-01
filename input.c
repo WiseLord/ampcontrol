@@ -4,7 +4,6 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "rc5.h"
 #include "eeprom.h"
 
 static volatile int8_t encCnt;
@@ -13,7 +12,6 @@ static volatile int8_t encRes;
 static volatile uint8_t silenceTime;
 
 /* Previous state */
-static volatile uint16_t rc5SaveBuf;
 static volatile uint8_t btnSaveBuf;
 static volatile uint8_t encPrev = ENC_0;
 static volatile uint8_t btnPrev = BTN_STATE_0;
@@ -26,17 +24,17 @@ static volatile uint16_t secTimer;					/* 1 second timer */
 static volatile uint8_t clockTimer;
 static volatile int16_t silenceTimer;				/* Timer to check silence */
 
-static uint8_t rc5DeviceAddr;
-static uint8_t rcCode[CMD_RC5_END];				/* Array with rc5 commands */
+static uint8_t rcAddr;
+static uint8_t rcCode[CMD_RC_END];					/* Array with rc commands */
 
-void rc5CodesInit(void)
+void rcCodesInit(void)
 {
 	uint8_t i;
 
-	rc5DeviceAddr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
+	rcAddr = eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR);
 
-	for (i = 0; i < CMD_RC5_END; i++)
-		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + i);
+	for (i = 0; i < CMD_RC_END; i++)
+		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + i);
 
 	return;
 }
@@ -68,33 +66,33 @@ void inputInit(void)
 	TCNT2 = 0;										/* Reset timer value */
 	TIMSK |= (1<<OCIE2);							/* Enable timer compare match interrupt */
 
-	rc5CodesInit();
+	rcCodesInit();
 
 	encRes = eeprom_read_byte((uint8_t*)EEPROM_ENC_RES);
 	silenceTime = eeprom_read_byte((uint8_t*)EEPROM_SILENCE_TIMER);
 
 	encCnt = 0;
-	cmdBuf = CMD_RC5_END;
+	cmdBuf = CMD_RC_END;
 	sensTimer = 0;
 
 	return;
 }
 
-static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
+static uint8_t rcCmdIndex(uint8_t cmd)
 {
 	uint8_t i;
 
-	for (i = 0; i < CMD_RC5_END; i++)
-		if (rc5Cmd == rcCode[i])
+	for (i = 0; i < CMD_RC_END; i++)
+		if (cmd == rcCode[i])
 			return i;
 
-	return CMD_RC5_END;
+	return CMD_RC_END;
 }
 
 ISR (TIMER2_COMP_vect)
 {
 	static int16_t btnCnt = 0;						/* Buttons press duration value */
-	static uint16_t rc5Timer;
+	static uint16_t rcTimer;
 
 	/* Current state */
 	uint8_t encNow = ENC_0;
@@ -185,47 +183,34 @@ ISR (TIMER2_COMP_vect)
 	}
 	btnSaveBuf = btnNow;
 
-	/* Place RC5 event to command buffer if enough RC5 timer ticks */
-	uint16_t rc5Buf = getRC5RawBuf();
-	if (rc5Buf != RC5_BUF_EMPTY)
-		rc5SaveBuf = rc5Buf;
+	/* Place RC event to command buffer if enough RC timer ticks */
+	IRData ir = takeIRData();
 
-	static uint8_t togBitNow = 0;
-	static uint8_t togBitPrev = 0;
+	uint8_t rcCmdBuf = CMD_RC_END;
 
-	uint8_t rc5CmdBuf = CMD_RC5_END;
-	uint8_t rc5Cmd;
-
-	if ((rc5Buf != RC5_BUF_EMPTY) && ((rc5Buf & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr)) {
-		if (rc5Buf & RC5_TOGB_MASK)
-			togBitNow = 1;
-		else
-			togBitNow = 0;
-
-		rc5Cmd = rc5Buf & RC5_COMM_MASK;
-		if ((togBitNow != togBitPrev) || (rc5Timer > 800)) {
-			rc5Timer = 0;
-			rc5CmdBuf = rc5CmdIndex(rc5Cmd);
+	if ((ir.type != IR_TYPE_NONE) && (ir.address == rcAddr)) {
+		if (!ir.repeat || (rcTimer > 800)) {
+			rcTimer = 0;
+			rcCmdBuf = rcCmdIndex(ir.command);
 		}
-		if (rc5Cmd == rcCode[CMD_RC5_VOL_UP] || rc5Cmd == rcCode[CMD_RC5_VOL_DOWN]) {
-			if (rc5Timer > 400) {
-				rc5Timer = 360;
-				rc5CmdBuf = rc5CmdIndex(rc5Cmd);
+		if (ir.command == rcCode[CMD_RC_VOL_UP] || ir.command == rcCode[CMD_RC_VOL_DOWN]) {
+			if (rcTimer > 400) {
+				rcTimer = 360;
+				rcCmdBuf = rcCmdIndex(ir.command);
 			}
 		}
-		togBitPrev = togBitNow;
 	}
 
-	if (cmdBuf == CMD_RC5_END)
-		cmdBuf = rc5CmdBuf;
+	if (cmdBuf == CMD_RC_END)
+		cmdBuf = rcCmdBuf;
 
 	/* Timer of current display mode */
 	if (displayTime)
 		displayTime--;
 
 	/* Time from last IR command */
-	if (rc5Timer < 1000)
-		rc5Timer++;
+	if (rcTimer < 1000)
+		rcTimer++;
 
 
 	if (secTimer) {
@@ -282,13 +267,8 @@ int8_t getEncoder(void)
 cmdID getBtnCmd(void)
 {
 	cmdID ret = cmdBuf;
-	cmdBuf = CMD_RC5_END;
+	cmdBuf = CMD_RC_END;
 	return ret;
-}
-
-uint16_t getRC5Buf(void)
-{
-	return rc5SaveBuf;
 }
 
 uint16_t getBtnBuf(void)
@@ -299,14 +279,6 @@ uint16_t getBtnBuf(void)
 uint16_t getEncBuf(void)
 {
 	return encPrev;
-}
-
-void setRC5Buf(uint8_t addr, cmdID cmd)
-{
-	rc5SaveBuf &= (RC5_STBT_MASK | RC5_TOGB_MASK);
-	rc5SaveBuf |= ((addr<<6) | cmd);
-
-	return;
 }
 
 void setDisplayTime(uint16_t value)

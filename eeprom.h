@@ -40,15 +40,15 @@
 
 /* Other parameters */
 #define EEPROM_ENC_RES				0x38
-#define EEPROM_RC5_ADDR				0x39
+#define EEPROM_RC_ADDR				0x39
 #define EEPROM_TEMP_TH				0x3A
 #define EEPROM_ADC_CORR_L			0x3B
 #define EEPROM_ADC_CORR_R			0x3C
 #define EEPROM_EXT_FUNC				0x3D
 #define EEPROM_SILENCE_TIMER		0x3E
 
-/* RC5 commands array */
-#define EEPROM_RC5_CMD				0x40
+/* RC commands array */
+#define EEPROM_RC_CMD				0x40
 
 /* FM stations */
 #define EEPROM_STATIONS				0x70

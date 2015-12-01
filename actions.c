@@ -35,40 +35,40 @@ uint8_t getAction(void)
 	cmd = getBtnCmd();
 
 	/* Handle commands from remote control */
-	if (cmd < CMD_RC5_END)
+	if (cmd < CMD_RC_END)
 		action = cmd;
 
 	/* Handle commands from buttons*/
 	switch (cmd) {
 	case CMD_BTN_1:
-		action = CMD_RC5_STBY;
+		action = CMD_RC_STBY;
 		break;
 	case CMD_BTN_2:
-		action = CMD_RC5_IN_NEXT;
+		action = CMD_RC_IN_NEXT;
 		break;
 	case CMD_BTN_3:
-		if (dispMode == CMD_RC5_TIMER)
-			action = CMD_RC5_TIMER;
+		if (dispMode == CMD_RC_TIMER)
+			action = CMD_RC_TIMER;
 		else if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
-			action = CMD_RC5_FM_DEC;
+			action = CMD_RC_FM_DEC;
 		else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
-			action = CMD_RC5_TIME;
+			action = CMD_RC_TIME;
 		else if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT)
-			action = CMD_RC5_ALARM;
+			action = CMD_RC_ALARM;
 		else
-			action = CMD_RC5_NEXT_SPMODE;
+			action = CMD_RC_NEXT_SPMODE;
 		break;
 	case CMD_BTN_4:
 		if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
-			action = CMD_RC5_FM_INC;
+			action = CMD_RC_FM_INC;
 		else
-			action = CMD_RC5_MUTE;
+			action = CMD_RC_MUTE;
 		break;
 	case CMD_BTN_5:
 		if (dispMode == MODE_TEST)
-			action = ACTION_NEXT_RC5_CMD;
+			action = ACTION_NEXT_RC_CMD;
 		else {
-			action = CMD_RC5_NEXT_SNDPAR;
+			action = CMD_RC_NEXT_SNDPAR;
 		}
 		break;
 
@@ -76,24 +76,24 @@ uint8_t getAction(void)
 		if (dispMode == MODE_TEST || dispMode == MODE_TEMP)
 			action = ACTION_ZERO_DISPLAYTIME;
 		else
-			action = CMD_RC5_BRIGHTNESS;
+			action = CMD_RC_BRIGHTNESS;
 		break;
 	case CMD_BTN_2_LONG:
-		action = CMD_RC5_DEF_DISPLAY;
+		action = CMD_RC_DEF_DISPLAY;
 		break;
 	case CMD_BTN_3_LONG:
 		if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
-			action = CMD_RC5_TIMER;
+			action = CMD_RC_TIMER;
 		else if (dispMode == MODE_TIMER)
-			action = CMD_RC5_ALARM;
+			action = CMD_RC_ALARM;
 		else
-			action = CMD_RC5_TIME;
+			action = CMD_RC_TIME;
 		break;
 	case CMD_BTN_4_LONG:
-		action = CMD_RC5_FM_MODE;
+		action = CMD_RC_FM_MODE;
 		break;
 	case CMD_BTN_5_LONG:
-		action = CMD_RC5_FM_STORE;
+		action = CMD_RC_FM_STORE;
 		break;
 
 	case CMD_BTN_12_LONG:
@@ -107,32 +107,32 @@ uint8_t getAction(void)
 	}
 
 	/* Remap GO_STANDBY command to EXIT_STANDBY if in standby mode */
-	if (action == CMD_RC5_STBY && dispMode == MODE_STANDBY)
+	if (action == CMD_RC_STBY && dispMode == MODE_STANDBY)
 		action = ACTION_EXIT_STANDBY;
 
 	/* Remap NEXT/PREV_INPUT actions to INPUT_X */
-	if (action == CMD_RC5_IN_NEXT) {
-		action = CMD_RC5_IN_0 + sndGetInput();
+	if (action == CMD_RC_IN_NEXT) {
+		action = CMD_RC_IN_0 + sndGetInput();
 		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
 			action += 1;
-			if (action >= CMD_RC5_IN_0 + sndInputCnt())
-				action = CMD_RC5_IN_0;
+			if (action >= CMD_RC_IN_0 + sndInputCnt())
+				action = CMD_RC_IN_0;
 		}
 	}
-	if (action == CMD_RC5_IN_PREV) {
-		action = CMD_RC5_IN_0 + sndGetInput();
+	if (action == CMD_RC_IN_PREV) {
+		action = CMD_RC_IN_0 + sndGetInput();
 		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
 			action -= 1;
-			if (action < CMD_RC5_IN_0)
+			if (action < CMD_RC_IN_0)
 				action += sndInputCnt();
 		}
 	}
 
-	/* Disable actions except NEXT_RC5_CMD and ZERO_DISPLAY_TIME in test mode */
+	/* Disable actions except NEXT_RC_CMD and ZERO_DISPLAY_TIME in test mode */
 	if (dispMode == MODE_TEST) {
 		if (action != ACTION_NOACTION)
 			setDisplayTime(DISPLAY_TIME_TEST);
-		if (action != ACTION_NEXT_RC5_CMD && action != ACTION_ZERO_DISPLAYTIME)
+		if (action != ACTION_NEXT_RC_CMD && action != ACTION_ZERO_DISPLAYTIME)
 			action = ACTION_NOACTION;
 	}
 	/* Disable actions except ZERO_DISPLAY_TIME in temp mode */
@@ -177,7 +177,7 @@ void handleAction(uint8_t action)
 		enableSilenceTimer();
 
 		break;
-	case CMD_RC5_STBY:
+	case CMD_RC_STBY:
 		sndSetMute(1);
 		sndPowerOff();
 		tunerPowerOff();
@@ -192,7 +192,7 @@ void handleAction(uint8_t action)
 
 		dispMode = MODE_STANDBY;
 		break;
-	case CMD_RC5_TIMER:
+	case CMD_RC_TIMER:
 		stopEditTime();
 		if (dispMode == MODE_TIMER) {
 			setSecTimer(2000);
@@ -223,7 +223,7 @@ void handleAction(uint8_t action)
 		dispMode = MODE_TIMER;
 		setDisplayTime(DISPLAY_TIME_TIMER);
 		break;
-	case CMD_RC5_TIME:
+	case CMD_RC_TIME:
 		if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) {
 			editTime();
 			dispMode = MODE_TIME_EDIT;
@@ -236,7 +236,7 @@ void handleAction(uint8_t action)
 			setDisplayTime(DISPLAY_TIME_TIME);
 		}
 		break;
-	case CMD_RC5_ALARM:
+	case CMD_RC_ALARM:
 		if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) {
 			editAlarm();
 			dispMode = MODE_ALARM_EDIT;
@@ -249,34 +249,34 @@ void handleAction(uint8_t action)
 			setDisplayTime(DISPLAY_TIME_ALARM);
 		}
 		break;
-	case CMD_RC5_NEXT_SPMODE:
+	case CMD_RC_NEXT_SPMODE:
 		switchSpMode();
 		displayClear();
 		dispMode = MODE_SPECTRUM;
 		setDisplayTime(DISPLAY_TIME_SP);
 		break;
-	case CMD_RC5_MUTE:
+	case CMD_RC_MUTE:
 		displayClear();
 		sndSetMute(!sndGetMute());
 		dispMode = MODE_MUTE;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
-	case ACTION_NEXT_RC5_CMD:
+	case ACTION_NEXT_RC_CMD:
 		displayClear();
-		nextRC5Cmd();
+		nextRcCmd();
 		break;
-	case CMD_RC5_NEXT_SNDPAR:
+	case CMD_RC_NEXT_SNDPAR:
 		sndNextParam(&dispMode);
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case ACTION_ZERO_DISPLAYTIME:
 		setDisplayTime(0);
 		break;
-	case CMD_RC5_BRIGHTNESS:
+	case CMD_RC_BRIGHTNESS:
 		dispMode = MODE_BR;
 		setDisplayTime(DISPLAY_TIME_BR);
 		break;
-	case CMD_RC5_DEF_DISPLAY:
+	case CMD_RC_DEF_DISPLAY:
 		switch (getDefDisplay()) {
 		case MODE_SPECTRUM:
 			setDefDisplay(MODE_TIME);
@@ -292,12 +292,12 @@ void handleAction(uint8_t action)
 		}
 		dispMode = getDefDisplay();
 		break;
-	case CMD_RC5_IN_0:
-	case CMD_RC5_IN_1:
-	case CMD_RC5_IN_2:
-	case CMD_RC5_IN_3:
-	case CMD_RC5_IN_4:
-		sndSetInput(action - CMD_RC5_IN_0);
+	case CMD_RC_IN_0:
+	case CMD_RC_IN_1:
+	case CMD_RC_IN_2:
+	case CMD_RC_IN_3:
+	case CMD_RC_IN_4:
+		sndSetInput(action - CMD_RC_IN_0);
 		dispMode = MODE_SND_GAIN0 + sndGetInput();
 		setDisplayTime(DISPLAY_TIME_GAIN);
 		if (sndGetInput() == 0)
@@ -305,27 +305,27 @@ void handleAction(uint8_t action)
 		else
 			tunerSetMute(1);
 		break;
-	case CMD_RC5_LOUDNESS:
+	case CMD_RC_LOUDNESS:
 		sndSetLoudness(!sndGetLoudness());
 		dispMode = MODE_LOUDNESS;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
-	case CMD_RC5_SURROUND:
+	case CMD_RC_SURROUND:
 		sndSetSurround(!sndGetSurround());
 		dispMode = MODE_SURROUND;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
-	case CMD_RC5_EFFECT_3D:
+	case CMD_RC_EFFECT_3D:
 		sndSetEffect3d(!sndGetEffect3d());
 		dispMode = MODE_EFFECT_3D;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
-	case CMD_RC5_TONE_DEFEAT:
+	case CMD_RC_TONE_DEFEAT:
 		sndSetToneDefeat(!sndGetToneDefeat());
 		dispMode = MODE_TONE_DEFEAT;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
-	case CMD_RC5_FALLSPEED:
+	case CMD_RC_FALLSPEED:
 		switchFallSpeed();
 		dispMode = MODE_SPECTRUM;
 		setDisplayTime(DISPLAY_TIME_SP);
@@ -334,7 +334,7 @@ void handleAction(uint8_t action)
 		switch (dispMode) {
 		case MODE_STANDBY:
 			dispMode = MODE_TEST;
-			startTestMode();
+			switchTestMode(CMD_RC_STBY);
 			setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		}
@@ -350,32 +350,32 @@ void handleAction(uint8_t action)
 	default:
 		if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
 			switch (action) {
-			case CMD_RC5_FM_0:
-			case CMD_RC5_FM_1:
-			case CMD_RC5_FM_2:
-			case CMD_RC5_FM_3:
-			case CMD_RC5_FM_4:
-			case CMD_RC5_FM_5:
-			case CMD_RC5_FM_6:
-			case CMD_RC5_FM_7:
-			case CMD_RC5_FM_8:
-			case CMD_RC5_FM_9:
+			case CMD_RC_FM_0:
+			case CMD_RC_FM_1:
+			case CMD_RC_FM_2:
+			case CMD_RC_FM_3:
+			case CMD_RC_FM_4:
+			case CMD_RC_FM_5:
+			case CMD_RC_FM_6:
+			case CMD_RC_FM_7:
+			case CMD_RC_FM_8:
+			case CMD_RC_FM_9:
 				if (dispMode == MODE_FM_TUNE) {
-					tunerStoreFavStation(action - CMD_RC5_FM_0);
+					tunerStoreFavStation(action - CMD_RC_FM_0);
 					setDisplayTime(DISPLAY_TIME_FM_TUNE);
 				} else {
-					tunerLoadFavStation(action - CMD_RC5_FM_0);
+					tunerLoadFavStation(action - CMD_RC_FM_0);
 					dispMode = MODE_FM_RADIO;
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				}
 				break;
-			case CMD_RC5_FM_INC:
+			case CMD_RC_FM_INC:
 				handleChangeFM(SEARCH_UP);
 				break;
-			case CMD_RC5_FM_DEC:
+			case CMD_RC_FM_DEC:
 				handleChangeFM(SEARCH_DOWN);
 				break;
-			case CMD_RC5_FM_MODE:
+			case CMD_RC_FM_MODE:
 				switch (dispMode) {
 				case MODE_FM_RADIO:
 					dispMode = MODE_FM_TUNE;
@@ -386,13 +386,13 @@ void handleAction(uint8_t action)
 					setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				}
 				break;
-			case CMD_RC5_FM_STORE:
+			case CMD_RC_FM_STORE:
 				if (dispMode == MODE_FM_TUNE) {
 					setDisplayTime(DISPLAY_TIME_FM_TUNE);
 					tunerStoreStation();
 				}
 				break;
-			case CMD_RC5_FM_MONO:
+			case CMD_RC_FM_MONO:
 				tunerSwitchMono();
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -560,7 +560,7 @@ void showScreen(void)
 		setStbyBrightness();
 		break;
 	case MODE_TEST:
-		showRC5Info();
+		showRcInfo();
 		setWorkBrightness();
 		break;
 	case MODE_TEMP:

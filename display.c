@@ -18,68 +18,66 @@ int8_t brWork;								/* Brightness in working mode */
 uint8_t spMode;								/* Spectrum mode */
 static uint8_t fallSpeed;					/* Spectrum fall speed */
 
-static uint8_t rc5CmdInd = CMD_RC5_STBY;
-static uint8_t rc5Cmd;
-static uint8_t rc5Addr;
+static uint8_t rcIndex = CMD_RC_STBY;
 
 static uint8_t defDisplay;					/* Default display mode */
 
 char strbuf[STR_BUFSIZE + 1];			/* String buffer */
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
-const char STR_RC5_STBY[] PROGMEM = "Standby mode";
-const char STR_RC5_MUTE[] PROGMEM = "Mute sound";
-const char STR_RC5_NEXT_SNDPAR[] PROGMEM = "Sound menu";
-const char STR_RC5_VOL_UP[] PROGMEM = "Volume +";
-const char STR_RC5_VOL_DOWN[] PROGMEM = "Volume -";
-const char STR_RC5_IN_0[] PROGMEM = "Input 1";
-const char STR_RC5_IN_1[] PROGMEM = "Input 2";
-const char STR_RC5_IN_2[] PROGMEM = "Input 3";
-const char STR_RC5_IN_3[] PROGMEM = "Input 4";
-const char STR_RC5_IN_4[] PROGMEM = "Input 5";
-const char STR_RC5_IN_PREV[] PROGMEM = "Prev input";
-const char STR_RC5_IN_NEXT[] PROGMEM = "Next input";
-const char STR_RC5_LOUDNESS[] PROGMEM = "Loudness";
-const char STR_RC5_SURROUND[] PROGMEM = "Surround";
-const char STR_RC5_EFFECT_3D[] PROGMEM = "3D effect";
-const char STR_RC5_TONE_DEFEAT[] PROGMEM = "Tone defeat";
+const char STR_RC_STBY[] PROGMEM = "Standby mode";
+const char STR_RC_MUTE[] PROGMEM = "Mute sound";
+const char STR_RC_NEXT_SNDPAR[] PROGMEM = "Sound menu";
+const char STR_RC_VOL_UP[] PROGMEM = "Volume +";
+const char STR_RC_VOL_DOWN[] PROGMEM = "Volume -";
+const char STR_RC_IN_0[] PROGMEM = "Input 1";
+const char STR_RC_IN_1[] PROGMEM = "Input 2";
+const char STR_RC_IN_2[] PROGMEM = "Input 3";
+const char STR_RC_IN_3[] PROGMEM = "Input 4";
+const char STR_RC_IN_4[] PROGMEM = "Input 5";
+const char STR_RC_IN_PREV[] PROGMEM = "Prev input";
+const char STR_RC_IN_NEXT[] PROGMEM = "Next input";
+const char STR_RC_LOUDNESS[] PROGMEM = "Loudness";
+const char STR_RC_SURROUND[] PROGMEM = "Surround";
+const char STR_RC_EFFECT_3D[] PROGMEM = "3D effect";
+const char STR_RC_TONE_DEFEAT[] PROGMEM = "Tone defeat";
 
-const char STR_RC5_DEF_DISPLAY[] PROGMEM = "Display mode";
-const char STR_RC5_FM_INC[] PROGMEM = "Channel +";
-const char STR_RC5_FM_DEC[] PROGMEM = "Channel -";
-const char STR_RC5_FM_MODE[] PROGMEM = "FM tune";
-const char STR_RC5_FM_MONO[] PROGMEM = "FM mono";
-const char STR_RC5_FM_STORE[] PROGMEM = "Store freq";
-const char STR_RC5_FM_0[] PROGMEM = "Button 0";
-const char STR_RC5_FM_1[] PROGMEM = "Button 1";
-const char STR_RC5_FM_2[] PROGMEM = "Button 2";
-const char STR_RC5_FM_3[] PROGMEM = "Button 3";
-const char STR_RC5_FM_4[] PROGMEM = "Button 4";
-const char STR_RC5_FM_5[] PROGMEM = "Button 5";
-const char STR_RC5_FM_6[] PROGMEM = "Button 6";
-const char STR_RC5_FM_7[] PROGMEM = "Button 7";
-const char STR_RC5_FM_8[] PROGMEM = "Button 8";
-const char STR_RC5_FM_9[] PROGMEM = "Button 9";
+const char STR_RC_DEF_DISPLAY[] PROGMEM = "Display mode";
+const char STR_RC_FM_INC[] PROGMEM = "Channel +";
+const char STR_RC_FM_DEC[] PROGMEM = "Channel -";
+const char STR_RC_FM_MODE[] PROGMEM = "FM tune";
+const char STR_RC_FM_MONO[] PROGMEM = "FM mono";
+const char STR_RC_FM_STORE[] PROGMEM = "Store freq";
+const char STR_RC_FM_0[] PROGMEM = "Button 0";
+const char STR_RC_FM_1[] PROGMEM = "Button 1";
+const char STR_RC_FM_2[] PROGMEM = "Button 2";
+const char STR_RC_FM_3[] PROGMEM = "Button 3";
+const char STR_RC_FM_4[] PROGMEM = "Button 4";
+const char STR_RC_FM_5[] PROGMEM = "Button 5";
+const char STR_RC_FM_6[] PROGMEM = "Button 6";
+const char STR_RC_FM_7[] PROGMEM = "Button 7";
+const char STR_RC_FM_8[] PROGMEM = "Button 8";
+const char STR_RC_FM_9[] PROGMEM = "Button 9";
 
-const char STR_RC5_TIME[] PROGMEM = "Time";
-const char STR_RC5_ALARM[] PROGMEM = "Alarm";
-const char STR_RC5_TIMER[] PROGMEM = "Timer";
-const char STR_RC5_BRIGHTNESS[] PROGMEM = "Brightness";
-const char STR_RC5_NEXT_SPMODE[] PROGMEM = "Spectrum mode";
-const char STR_RC5_FALLSPEED[] PROGMEM = "Fall speed";
+const char STR_RC_TIME[] PROGMEM = "Time";
+const char STR_RC_ALARM[] PROGMEM = "Alarm";
+const char STR_RC_TIMER[] PROGMEM = "Timer";
+const char STR_RC_BRIGHTNESS[] PROGMEM = "Brightness";
+const char STR_RC_NEXT_SPMODE[] PROGMEM = "Spectrum mode";
+const char STR_RC_FALLSPEED[] PROGMEM = "Fall speed";
 
-const char STR_IN_STATUS[] PROGMEM = "== Input status ==";
-const char STR_REMOTE[] PROGMEM = "Remote:";
-const char STR_BUTTONS[] PROGMEM = "Buttons:";
-const char STR_LEARN[] PROGMEM = "== RC5 learn mode ==";
-const char STR_FUNCTION[] PROGMEM = "Function:";
-const char STR_ADDRESS[] PROGMEM = "Address:";
-const char STR_COMMAND[] PROGMEM = "Command:";
+const char STR_IN_STATUS[] PROGMEM = "BUTTONS & ENCODER";
+const char STR_REMOTE[] PROGMEM = "Remote";
+const char STR_BUTTONS[] PROGMEM = "Status";
+const char STR_LEARN[] PROGMEM = "REMOTE CONTROL";
+const char STR_FUNCTION[] PROGMEM = "Function";
+const char STR_ADDRESS[] PROGMEM = "Address";
+const char STR_COMMAND[] PROGMEM = "Command";
 const char STR_THRESHOLD[] PROGMEM = "Threshold";
 const char STR_DEGREE[] PROGMEM = "\xDF""C";
 
 enum {
-	LBL_IN_STATUS = CMD_RC5_END,
+	LBL_IN_STATUS = CMD_RC_END,
 	LBL_REMOTE,
 	LBL_BUTTONS,
 	LBL_LEARN,
@@ -92,47 +90,47 @@ enum {
 	LBL_END
 };
 
-PGM_P const rc5Labels[] PROGMEM = {
-	STR_RC5_STBY,
-	STR_RC5_MUTE,
-	STR_RC5_NEXT_SNDPAR,
-	STR_RC5_VOL_UP,
-	STR_RC5_VOL_DOWN,
-	STR_RC5_IN_0,
-	STR_RC5_IN_1,
-	STR_RC5_IN_2,
-	STR_RC5_IN_3,
-	STR_RC5_IN_4,
-	STR_RC5_IN_PREV,
-	STR_RC5_IN_NEXT,
-	STR_RC5_LOUDNESS,
-	STR_RC5_SURROUND,
-	STR_RC5_EFFECT_3D,
-	STR_RC5_TONE_DEFEAT,
+PGM_P const rcLabels[] PROGMEM = {
+	STR_RC_STBY,
+	STR_RC_MUTE,
+	STR_RC_NEXT_SNDPAR,
+	STR_RC_VOL_UP,
+	STR_RC_VOL_DOWN,
+	STR_RC_IN_0,
+	STR_RC_IN_1,
+	STR_RC_IN_2,
+	STR_RC_IN_3,
+	STR_RC_IN_4,
+	STR_RC_IN_PREV,
+	STR_RC_IN_NEXT,
+	STR_RC_LOUDNESS,
+	STR_RC_SURROUND,
+	STR_RC_EFFECT_3D,
+	STR_RC_TONE_DEFEAT,
 
-	STR_RC5_DEF_DISPLAY,
-	STR_RC5_FM_INC,
-	STR_RC5_FM_DEC,
-	STR_RC5_FM_MODE,
-	STR_RC5_FM_MONO,
-	STR_RC5_FM_STORE,
-	STR_RC5_FM_0,
-	STR_RC5_FM_1,
-	STR_RC5_FM_2,
-	STR_RC5_FM_3,
-	STR_RC5_FM_4,
-	STR_RC5_FM_5,
-	STR_RC5_FM_6,
-	STR_RC5_FM_7,
-	STR_RC5_FM_8,
-	STR_RC5_FM_9,
+	STR_RC_DEF_DISPLAY,
+	STR_RC_FM_INC,
+	STR_RC_FM_DEC,
+	STR_RC_FM_MODE,
+	STR_RC_FM_MONO,
+	STR_RC_FM_STORE,
+	STR_RC_FM_0,
+	STR_RC_FM_1,
+	STR_RC_FM_2,
+	STR_RC_FM_3,
+	STR_RC_FM_4,
+	STR_RC_FM_5,
+	STR_RC_FM_6,
+	STR_RC_FM_7,
+	STR_RC_FM_8,
+	STR_RC_FM_9,
 
-	STR_RC5_TIME,
-	STR_RC5_ALARM,
-	STR_RC5_TIMER,
-	STR_RC5_BRIGHTNESS,
-	STR_RC5_NEXT_SPMODE,
-	STR_RC5_FALLSPEED,
+	STR_RC_TIME,
+	STR_RC_ALARM,
+	STR_RC_TIMER,
+	STR_RC_BRIGHTNESS,
+	STR_RC_NEXT_SPMODE,
+	STR_RC_FALLSPEED,
 
 	STR_IN_STATUS,
 	STR_REMOTE,
@@ -473,8 +471,8 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 
 	for (i = 0; i < 91; i++) {
 		if (((min + max) && (value <= i)) || (!(min + max) &&
-			(((value > 0) && ((i < 45) || (value + 45 < i))) ||
-			((value <= 0) && ((i > 45) || (value + 45 > i)))))) {
+											  (((value > 0) && ((i < 45) || (value + 45 < i))) ||
+											   ((value <= 0) && ((i > 45) || (value + 45 > i)))))) {
 			color = 0x00;
 		} else {
 			color = 0x01;
@@ -519,7 +517,7 @@ static void writeStringPgm(uint8_t index) {
 
 	PGM_P p;
 
-	memcpy_P(&p, &rc5Labels[index], sizeof(PGM_P));
+	memcpy_P(&p, &rcLabels[index], sizeof(PGM_P));
 	strcpy_P(strbuf, p);
 
 	writeString(strbuf);
@@ -789,40 +787,36 @@ uint8_t getDefDisplay()
 	return defDisplay;
 }
 
-void nextRC5Cmd(void)
+void nextRcCmd(void)
 {
-	eeprom_update_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd, rc5Cmd);
-	eeprom_update_byte((uint8_t*)EEPROM_RC5_ADDR, rc5Addr);
+	IRData irBuf = getIrData();
+
+	eeprom_update_byte((uint8_t*)EEPROM_RC_CMD + rcIndex, irBuf.command);
+	eeprom_update_byte((uint8_t*)EEPROM_RC_ADDR, irBuf.address);
 
 	// Re-read new codes array from EEPROM
-	rc5CodesInit();
+	rcCodesInit();
 
-	rc5CmdInd++;
-	if (rc5CmdInd >= CMD_RC5_END)
-		rc5CmdInd = CMD_RC5_STBY;
+	if (++rcIndex >= CMD_RC_END)
+		rcIndex = CMD_RC_STBY;
 
-	rc5Addr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
-	rc5Cmd = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd);
-
-	setRC5Buf(rc5Addr, rc5Cmd);
+	switchTestMode(rcIndex);
 
 	return;
 }
 
-void startTestMode(void)
+void switchTestMode(uint8_t index)
 {
-	rc5CmdInd = CMD_RC5_STBY;
-	rc5Addr = eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR);
-	rc5Cmd = eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd);
-
-	setRC5Buf(rc5Addr, rc5Cmd);
+	rcIndex = index;
+	setIrData(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR),
+			  eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex));
 
 	return;
 }
 
-void showRC5Info(void)
+void showRcInfo(void)
 {
-	uint16_t rc5Buf = getRC5Buf();
+	IRData irBuf = getIrData();
 	uint8_t btnBuf = getBtnBuf();
 	uint8_t encBuf = getEncBuf();
 
@@ -831,57 +825,52 @@ void showRC5Info(void)
 	writeString("B=");
 	writeNum(btnBuf + (encBuf << 6), 2, '0', 16);
 	writeString(" ");
-	writeStringPgm(rc5CmdInd);
+	writeStringPgm(rcIndex);
 
 	ks0066SetXY(0, 1);
 	writeString("A=");
-	rc5Addr = (rc5Buf & 0x07C0)>>6;
-	writeNum(rc5Addr, 2, '0', 16);
+	writeNum(irBuf.address, 2, '0', 16);
 	writeString(" C=");
-	rc5Cmd = rc5Buf & 0x003F;
-	writeNum(rc5Cmd, 2, '0', 16);
-	writeString(" R=");
-	writeNum(rc5Buf, 4, '0', 16);
+	writeNum(irBuf.command, 2, '0', 16);
+	writeString(" RC5");
 #else
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
-	gdSetXY(0, 0);
+	gdSetXY(10, 0);
 	writeStringPgm(LBL_IN_STATUS);
-	gdSetXY(0, 9);
-	writeStringPgm(LBL_REMOTE);
-	gdSetXY(45, 9);
-	writeNum(rc5Buf, 14, '0', 2);
 
-	gdSetXY(0, 18);
+	gdSetXY(0, 10);
 	writeStringPgm(LBL_BUTTONS);
-	gdSetXY(75, 18);
+	gdSetXY(48, 10);
 	writeNum(btnBuf, 5, '0', 2);
-	gdSetXY(108, 18);
-	writeString("/");
-	gdSetXY(117, 18);
+	writeString("\x7F/\x7F");
 	writeNum(encBuf, 2, '0', 2);
 
-	gdSetXY(0, 30);
+	gdSetXY(10, 20);
 	writeStringPgm(LBL_LEARN);
+
+	gdSetXY(0, 30);
+	writeStringPgm(LBL_REMOTE);
+	gdSetXY(48, 30);
+	writeString("RC5");
+
 	gdSetXY(0, 39);
 	writeStringPgm(LBL_FUNCTION);
-	gdSetXY(52, 39);
-	writeStringPgm(rc5CmdInd);
+	gdSetXY(48, 39);
+	writeStringPgm(rcIndex);
 
 	gdSetXY(0, 48);
 	writeStringPgm(LBL_ADDRESS);
-	gdSetXY(52, 48);
-	rc5Addr = (rc5Buf & 0x07C0)>>6;
-	writeNum(rc5Addr, 2, '0', 16);
+	gdSetXY(48, 48);
+	writeNum(irBuf.address, 2, '0', 16);
 	writeString(" => ");
-	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC5_ADDR), 2, '0', 16);
+	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR), 2, '0', 16);
 
-	gdSetXY(0, 56);
+	gdSetXY(0, 57);
 	writeStringPgm(LBL_COMMAND);
-	gdSetXY(52, 56);
-	rc5Cmd = rc5Buf & 0x003F;
-	writeNum(rc5Cmd, 2, '0', 16);
+	gdSetXY(48, 57);
+	writeNum(irBuf.command, 2, '0', 16);
 	writeString(" => ");
-	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC5_CMD + rc5CmdInd), 2, '0', 16);
+	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
 #endif
 	return;
 }

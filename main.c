@@ -4,7 +4,7 @@
 #include "eeprom.h"
 #include "adc.h"
 #include "input.h"
-#include "rc5.h"
+#include "remote.h"
 #include "i2c.h"
 #include "display.h"
 #include "tuner/tuner.h"
@@ -30,7 +30,7 @@ static void hwInit(void)
 
 	inputInit();							/* Buttons/encoder polling */
 
-	rc5Init();								/* IR Remote control */
+	rcInit();								/* IR Remote control */
 	adcInit();								/* Analog-to-digital converter */
 
 	tunerInit(extFunc);						/* Tuner */
@@ -69,7 +69,7 @@ int main(void)
 
 		/* Emulate poweroff if any of timers expired */
 		if (getStbyTimer() == 0 || getSilenceTimer() == 0)
-			action = CMD_RC5_STBY;
+			action = CMD_RC_STBY;
 
 		/* Check alarm and update time */
 		if (action == ACTION_NOACTION)
@@ -84,9 +84,9 @@ int main(void)
 
 		/* Handle encoder */
 		encCnt = getEncoder();				/* Get value from encoder */
-		if (action == CMD_RC5_VOL_UP)		/* Emulate VOLUME_UP action as encoder action */
+		if (action == CMD_RC_VOL_UP)		/* Emulate VOLUME_UP action as encoder action */
 			encCnt++;
-		if (action == CMD_RC5_VOL_DOWN)	/* Emulate VOLUME_DOWN action as encoder action */
+		if (action == CMD_RC_VOL_DOWN)	/* Emulate VOLUME_DOWN action as encoder action */
 			encCnt--;
 		handleEncoder(encCnt);
 

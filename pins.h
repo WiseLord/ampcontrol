@@ -104,9 +104,9 @@
 #define ST7920_BCKL			C
 #define ST7920_BCKL_LINE	(1<<7)
 
-/* RC5 definitions*/
-#define RC5					D
-#define RC5_LINE			(1<<3)
+/* Remote control definitions*/
+#define RC					D
+#define RC_LINE			(1<<3)
 
 /* Standby/Mute port definitions */
 #define STMU_MUTE			C

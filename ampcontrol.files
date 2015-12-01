@@ -60,7 +60,7 @@ input.h
 main.c
 Makefile
 pins.h
-rc5.c
-rc5.h
+remote.c
+remote.h
 temp.c
 temp.h

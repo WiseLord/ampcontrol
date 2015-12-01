@@ -78,9 +78,9 @@ uint8_t **getTxtLabels(void);
 void setDefDisplay(uint8_t value);
 uint8_t getDefDisplay();
 
-void nextRC5Cmd(void);
-void startTestMode(void);
-void showRC5Info(void);
+void nextRcCmd(void);
+void switchTestMode(uint8_t index);
+void showRcInfo(void);
 
 void showTemp(void);
 
