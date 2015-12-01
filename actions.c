@@ -173,7 +173,8 @@ void handleAction(uint8_t action)
 			tunerSetMute(1);
 		}
 
-		dispMode = defDispMode();
+		dispMode = MODE_SND_GAIN0 + sndGetInput();
+		setDisplayTime(DISPLAY_TIME_GAIN_START);
 		enableSilenceTimer();
 
 		break;
