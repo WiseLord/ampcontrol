@@ -934,7 +934,7 @@ void showTemp(void)
 	gdSetXY(0, 48);
 	writeString("Sensor 1: ");
 	writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
-	writeString(" \xDF""C");
+	writeStringPgm(LBL_DEGREE);
 
 	gdSetXY(0, 56);
 	writeString("Sensor 2: ");
@@ -949,8 +949,6 @@ void showTemp(void)
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	showParIcon(ICON24_THRESHOLD);
 
-	gdSetXY(118, 56);
-	writeStringPgm(LBL_DEGREE);
 #endif
 
 	return;
