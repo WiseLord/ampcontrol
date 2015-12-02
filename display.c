@@ -76,6 +76,10 @@ const char STR_COMMAND[] PROGMEM = "Command";
 const char STR_THRESHOLD[] PROGMEM = "Threshold";
 const char STR_DEGREE[] PROGMEM = "\xDF""C";
 
+const char STR_RC_RC5[] PROGMEM = "RC5";
+const char STR_RC_NEC[] PROGMEM = "NEC";
+const char STR_RC_NONE[] PROGMEM = "---";
+
 enum {
 	LBL_IN_STATUS = CMD_RC_END,
 	LBL_REMOTE,
@@ -86,6 +90,10 @@ enum {
 	LBL_COMMAND,
 	LBL_THRESHOLD,
 	LBL_DEGREE,
+
+	LBL_RC_RC5,
+	LBL_RC_NEC,
+	LBL_RC_NONE,
 
 	LBL_END
 };
@@ -141,6 +149,10 @@ PGM_P const rcLabels[] PROGMEM = {
 	STR_COMMAND,
 	STR_THRESHOLD,
 	STR_DEGREE,
+
+	STR_RC_RC5,
+	STR_RC_NEC,
+	STR_RC_NONE,
 };
 
 #ifdef KS0066
@@ -791,8 +803,9 @@ void nextRcCmd(void)
 {
 	IRData irBuf = getIrData();
 
-	eeprom_update_byte((uint8_t*)EEPROM_RC_CMD + rcIndex, irBuf.command);
+	eeprom_update_byte((uint8_t*)EEPROM_RC_TYPE, irBuf.type);
 	eeprom_update_byte((uint8_t*)EEPROM_RC_ADDR, irBuf.address);
+	eeprom_update_byte((uint8_t*)EEPROM_RC_CMD + rcIndex, irBuf.command);
 
 	// Re-read new codes array from EEPROM
 	rcCodesInit();
@@ -808,8 +821,9 @@ void nextRcCmd(void)
 void switchTestMode(uint8_t index)
 {
 	rcIndex = index;
-	setIrData(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR),
-			  eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex));
+	setIrData(eeprom_read_byte((uint8_t*)EEPROM_RC_TYPE),
+			  eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR),
+							eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex));
 
 	return;
 }
@@ -832,7 +846,18 @@ void showRcInfo(void)
 	writeNum(irBuf.address, 2, '0', 16);
 	writeString(" C=");
 	writeNum(irBuf.command, 2, '0', 16);
-	writeString(" RC5");
+	writeString(" T=");
+	switch (irBuf.type) {
+	case IR_TYPE_RC5:
+		writeStringPgm(LBL_RC_RC5);
+		break;
+	case IR_TYPE_NEC:
+		writeStringPgm(LBL_RC_NEC);
+		break;
+	default:
+		writeStringPgm(LBL_RC_NONE);
+		break;
+	}
 #else
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(10, 0);
@@ -851,19 +876,29 @@ void showRcInfo(void)
 	gdSetXY(0, 30);
 	writeStringPgm(LBL_REMOTE);
 	gdSetXY(48, 30);
-	writeString("RC5");
+	switch (irBuf.type) {
+	case IR_TYPE_RC5:
+		writeStringPgm(LBL_RC_RC5);
+		break;
+	case IR_TYPE_NEC:
+		writeStringPgm(LBL_RC_NEC);
+		break;
+	default:
+		writeStringPgm(LBL_RC_NONE);
+		break;
+	}
 
 	gdSetXY(0, 39);
-	writeStringPgm(LBL_FUNCTION);
-	gdSetXY(48, 39);
-	writeStringPgm(rcIndex);
-
-	gdSetXY(0, 48);
 	writeStringPgm(LBL_ADDRESS);
-	gdSetXY(48, 48);
+	gdSetXY(48, 39);
 	writeNum(irBuf.address, 2, '0', 16);
 	writeString(" => ");
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR), 2, '0', 16);
+
+	gdSetXY(0, 48);
+	writeStringPgm(LBL_FUNCTION);
+	gdSetXY(48, 48);
+	writeStringPgm(rcIndex);
 
 	gdSetXY(0, 57);
 	writeStringPgm(LBL_COMMAND);

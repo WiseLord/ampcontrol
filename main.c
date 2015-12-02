@@ -26,18 +26,17 @@ static void hwInit(void)
 
 	I2CInit();								/* I2C bus */
 	displayInit();							/* Load params and text labels before fb scan started */
-	sei();									/* Gloabl interrupt enable */
-
-	inputInit();							/* Buttons/encoder polling */
-
 	rcInit();								/* IR Remote control */
+	inputInit();							/* Buttons/encoder polling */
 	adcInit();								/* Analog-to-digital converter */
+
+	sei();									/* Gloabl interrupt enable */
 
 	tunerInit(extFunc);						/* Tuner */
 
 	DDR(STMU_STBY) |= STMU_STBY_LINE;		/* Standby port */
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;		/* Mute port */
-	sndInit(extFunc);								/* Load labels/icons/etc */
+	sndInit(extFunc);						/* Load labels/icons/etc */
 
 	setStbyTimer(0);
 

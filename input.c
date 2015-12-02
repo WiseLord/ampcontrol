@@ -24,6 +24,7 @@ static volatile uint16_t secTimer;					/* 1 second timer */
 static volatile uint8_t clockTimer;
 static volatile int16_t silenceTimer;				/* Timer to check silence */
 
+static uint8_t rcType;
 static uint8_t rcAddr;
 static uint8_t rcCode[CMD_RC_END];					/* Array with rc commands */
 
@@ -31,6 +32,7 @@ void rcCodesInit(void)
 {
 	uint8_t i;
 
+	rcType = eeprom_read_byte((uint8_t*)EEPROM_RC_TYPE);
 	rcAddr = eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR);
 
 	for (i = 0; i < CMD_RC_END; i++)
@@ -184,11 +186,11 @@ ISR (TIMER2_COMP_vect)
 	btnSaveBuf = btnNow;
 
 	/* Place RC event to command buffer if enough RC timer ticks */
-	IRData ir = takeIRData();
+	IRData ir = takeIrData();
 
 	uint8_t rcCmdBuf = CMD_RC_END;
 
-	if ((ir.type != IR_TYPE_NONE) && (ir.address == rcAddr)) {
+	if (ir.ready && (ir.type == rcType) && (ir.address == rcAddr)) {
 		if (!ir.repeat || (rcTimer > 800)) {
 			rcTimer = 0;
 			rcCmdBuf = rcCmdIndex(ir.command);
