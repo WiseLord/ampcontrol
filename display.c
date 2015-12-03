@@ -822,7 +822,7 @@ void showRcInfo(void)
 	writeString("B=");
 	writeNum(btnBuf + (encBuf << 6), 2, '0', 16);
 	writeString(" ");
-	writeStringProgmem((const char *)pgm_read_word(&rcLabels[rcIndex]));
+	writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
 
 	ks0066SetXY(0, 1);
 	writeString("A=");
@@ -832,13 +832,13 @@ void showRcInfo(void)
 	writeString(" T=");
 	switch (irBuf.type) {
 	case IR_TYPE_RC5:
-		writeStringProgmem(STR_RC_RC5);
+		writeStringPgm(STR_RC_RC5);
 		break;
 	case IR_TYPE_NEC:
-		writeStringProgmem(STR_RC_NEC);
+		writeStringPgm(STR_RC_NEC);
 		break;
 	default:
-		writeStringProgmem(STR_RC_NONE);
+		writeStringPgm(STR_RC_NONE);
 		break;
 	}
 #else
@@ -900,7 +900,7 @@ void showTemp(void)
 #ifdef KS0066
 	lcdGenBar (SYM_STEREO_DEGREE);
 	ks0066SetXY (0, 0);
-	writeStringProgmem(STR_THRESHOLD);
+	writeStringPgm(STR_THRESHOLD);
 	showParValue (tempTH);
 	writeString("\x07""C");
 
