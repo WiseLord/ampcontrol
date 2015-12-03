@@ -47,7 +47,7 @@ uint8_t getAction(void)
 		action = CMD_RC_IN_NEXT;
 		break;
 	case CMD_BTN_3:
-		if (dispMode == CMD_RC_TIMER)
+		if (dispMode == MODE_TIMER)
 			action = CMD_RC_TIMER;
 		else if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
 			action = CMD_RC_FM_DEC;
