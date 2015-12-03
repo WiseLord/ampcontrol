@@ -66,38 +66,6 @@ const char STR_RC_BRIGHTNESS[] PROGMEM = "Brightness";
 const char STR_RC_NEXT_SPMODE[] PROGMEM = "Spectrum mode";
 const char STR_RC_FALLSPEED[] PROGMEM = "Fall speed";
 
-const char STR_IN_STATUS[] PROGMEM = "BUTTONS & ENCODER";
-const char STR_REMOTE[] PROGMEM = "Remote";
-const char STR_BUTTONS[] PROGMEM = "Status";
-const char STR_LEARN[] PROGMEM = "REMOTE CONTROL";
-const char STR_FUNCTION[] PROGMEM = "Function";
-const char STR_ADDRESS[] PROGMEM = "Address";
-const char STR_COMMAND[] PROGMEM = "Command";
-const char STR_THRESHOLD[] PROGMEM = "Threshold";
-const char STR_DEGREE[] PROGMEM = "\xDF""C";
-
-const char STR_RC_RC5[] PROGMEM = "RC5";
-const char STR_RC_NEC[] PROGMEM = "NEC";
-const char STR_RC_NONE[] PROGMEM = "---";
-
-enum {
-	LBL_IN_STATUS = CMD_RC_END,
-	LBL_REMOTE,
-	LBL_BUTTONS,
-	LBL_LEARN,
-	LBL_FUNCTION,
-	LBL_ADDRESS,
-	LBL_COMMAND,
-	LBL_THRESHOLD,
-	LBL_DEGREE,
-
-	LBL_RC_RC5,
-	LBL_RC_NEC,
-	LBL_RC_NONE,
-
-	LBL_END
-};
-
 PGM_P const rcLabels[] PROGMEM = {
 	STR_RC_STBY,
 	STR_RC_MUTE,
@@ -139,21 +107,21 @@ PGM_P const rcLabels[] PROGMEM = {
 	STR_RC_BRIGHTNESS,
 	STR_RC_NEXT_SPMODE,
 	STR_RC_FALLSPEED,
-
-	STR_IN_STATUS,
-	STR_REMOTE,
-	STR_BUTTONS,
-	STR_LEARN,
-	STR_FUNCTION,
-	STR_ADDRESS,
-	STR_COMMAND,
-	STR_THRESHOLD,
-	STR_DEGREE,
-
-	STR_RC_RC5,
-	STR_RC_NEC,
-	STR_RC_NONE,
 };
+
+const char STR_IN_STATUS[] PROGMEM = "BUTTONS & ENCODER";
+const char STR_REMOTE[] PROGMEM = "Remote";
+const char STR_BUTTONS[] PROGMEM = "Status";
+const char STR_LEARN[] PROGMEM = "REMOTE CONTROL";
+const char STR_FUNCTION[] PROGMEM = "Function";
+const char STR_ADDRESS[] PROGMEM = "Address";
+const char STR_COMMAND[] PROGMEM = "Command";
+const char STR_THRESHOLD[] PROGMEM = "Threshold";
+const char STR_DEGREE[] PROGMEM = "\xDF""C";
+
+const char STR_RC_RC5[] PROGMEM = "RC5";
+const char STR_RC_NEC[] PROGMEM = "NEC";
+const char STR_RC_NONE[] PROGMEM = "---";
 
 #ifdef KS0066
 static uint8_t userSybmols = LCD_END;		/* Generated user symbols for ks0066 */
@@ -525,13 +493,8 @@ static void writeStringEeprom(const uint8_t *string)
 	return;
 }
 
-static void writeStringPgm(uint8_t index) {
-
-	PGM_P p;
-
-	memcpy_P(&p, &rcLabels[index], sizeof(PGM_P));
-	strcpy_P(strbuf, p);
-
+static void writeStringPgm(const char *string) {
+	strcpy_P(strbuf, string);
 	writeString(strbuf);
 
 	return;
@@ -839,7 +802,7 @@ void showRcInfo(void)
 	writeString("B=");
 	writeNum(btnBuf + (encBuf << 6), 2, '0', 16);
 	writeString(" ");
-	writeStringPgm(rcIndex);
+	writeStringProgmem((const char *)pgm_read_word(&rcLabels[rcIndex]));
 
 	ks0066SetXY(0, 1);
 	writeString("A=");
@@ -849,59 +812,59 @@ void showRcInfo(void)
 	writeString(" T=");
 	switch (irBuf.type) {
 	case IR_TYPE_RC5:
-		writeStringPgm(LBL_RC_RC5);
+		writeStringProgmem(STR_RC_RC5);
 		break;
 	case IR_TYPE_NEC:
-		writeStringPgm(LBL_RC_NEC);
+		writeStringProgmem(STR_RC_NEC);
 		break;
 	default:
-		writeStringPgm(LBL_RC_NONE);
+		writeStringProgmem(STR_RC_NONE);
 		break;
 	}
 #else
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(10, 0);
-	writeStringPgm(LBL_IN_STATUS);
+	writeStringPgm(STR_IN_STATUS);
 
 	gdSetXY(0, 10);
-	writeStringPgm(LBL_BUTTONS);
+	writeStringPgm(STR_BUTTONS);
 	gdSetXY(48, 10);
 	writeNum(btnBuf, 5, '0', 2);
 	writeString("\x7F/\x7F");
 	writeNum(encBuf, 2, '0', 2);
 
 	gdSetXY(10, 20);
-	writeStringPgm(LBL_LEARN);
+	writeStringPgm(STR_LEARN);
 
 	gdSetXY(0, 30);
-	writeStringPgm(LBL_REMOTE);
+	writeStringPgm(STR_REMOTE);
 	gdSetXY(48, 30);
 	switch (irBuf.type) {
 	case IR_TYPE_RC5:
-		writeStringPgm(LBL_RC_RC5);
+		writeStringPgm(STR_RC_RC5);
 		break;
 	case IR_TYPE_NEC:
-		writeStringPgm(LBL_RC_NEC);
+		writeStringPgm(STR_RC_NEC);
 		break;
 	default:
-		writeStringPgm(LBL_RC_NONE);
+		writeStringPgm(STR_RC_NONE);
 		break;
 	}
 
 	gdSetXY(0, 39);
-	writeStringPgm(LBL_ADDRESS);
+	writeStringPgm(STR_ADDRESS);
 	gdSetXY(48, 39);
 	writeNum(irBuf.address, 2, '0', 16);
 	writeString(" => ");
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR), 2, '0', 16);
 
 	gdSetXY(0, 48);
-	writeStringPgm(LBL_FUNCTION);
+	writeStringPgm(STR_FUNCTION);
 	gdSetXY(48, 48);
-	writeStringPgm(rcIndex);
+	writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
 
 	gdSetXY(0, 57);
-	writeStringPgm(LBL_COMMAND);
+	writeStringPgm(STR_COMMAND);
 	gdSetXY(48, 57);
 	writeNum(irBuf.command, 2, '0', 16);
 	writeString(" => ");
@@ -917,7 +880,7 @@ void showTemp(void)
 #ifdef KS0066
 	lcdGenBar (SYM_STEREO_DEGREE);
 	ks0066SetXY (0, 0);
-	writeStringPgm(LBL_THRESHOLD);
+	writeStringProgmem(STR_THRESHOLD);
 	showParValue (tempTH);
 	writeString("\x07""C");
 
@@ -934,18 +897,18 @@ void showTemp(void)
 	gdSetXY(0, 48);
 	writeString("Sensor 1: ");
 	writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
-	writeStringPgm(LBL_DEGREE);
+	writeStringPgm(STR_DEGREE);
 
 	gdSetXY(0, 56);
 	writeString("Sensor 2: ");
 	writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
-	writeStringPgm(LBL_DEGREE);
+	writeStringPgm(STR_DEGREE);
 
 	showParValue(tempTH);
 	showBar(MIN_TEMP, MAX_TEMP, tempTH);
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
-	writeStringPgm(LBL_THRESHOLD);
+	writeStringPgm(STR_THRESHOLD);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	showParIcon(ICON24_THRESHOLD);
 
