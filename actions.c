@@ -166,12 +166,7 @@ void handleAction(uint8_t action)
 		tunerPowerOn();
 		sndPowerOn();
 
-		if (sndGetInput() == 0) {
-			tunerSetMute(0);
-			tunerSetFreq(tunerGetFreq());
-		} else {
-			tunerSetMute(1);
-		}
+		tunerSetMute(sndGetInput());
 
 		dispMode = MODE_SND_GAIN0 + sndGetInput();
 		setDisplayTime(DISPLAY_TIME_GAIN_START);
@@ -301,10 +296,7 @@ void handleAction(uint8_t action)
 		sndSetInput(action - CMD_RC_IN_0);
 		dispMode = MODE_SND_GAIN0 + sndGetInput();
 		setDisplayTime(DISPLAY_TIME_GAIN);
-		if (sndGetInput() == 0)
-			tunerSetMute(0);
-		else
-			tunerSetMute(1);
+		tunerSetMute(sndGetInput());
 		break;
 	case CMD_RC_LOUDNESS:
 		sndSetLoudness(!sndGetLoudness());

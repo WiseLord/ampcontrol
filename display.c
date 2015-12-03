@@ -22,49 +22,49 @@ static uint8_t rcIndex = CMD_RC_STBY;
 
 static uint8_t defDisplay;					/* Default display mode */
 
-char strbuf[STR_BUFSIZE + 1];			/* String buffer */
+char strbuf[STR_BUFSIZE + 1];				/* String buffer */
 uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
-const char STR_RC_STBY[] PROGMEM = "Standby mode";
-const char STR_RC_MUTE[] PROGMEM = "Mute sound";
+const char STR_RC_STBY[]		PROGMEM = "Standby mode";
+const char STR_RC_MUTE[]		PROGMEM = "Mute sound";
 const char STR_RC_NEXT_SNDPAR[] PROGMEM = "Sound menu";
-const char STR_RC_VOL_UP[] PROGMEM = "Volume +";
-const char STR_RC_VOL_DOWN[] PROGMEM = "Volume -";
-const char STR_RC_IN_0[] PROGMEM = "Input 1";
-const char STR_RC_IN_1[] PROGMEM = "Input 2";
-const char STR_RC_IN_2[] PROGMEM = "Input 3";
-const char STR_RC_IN_3[] PROGMEM = "Input 4";
-const char STR_RC_IN_4[] PROGMEM = "Input 5";
-const char STR_RC_IN_PREV[] PROGMEM = "Prev input";
-const char STR_RC_IN_NEXT[] PROGMEM = "Next input";
-const char STR_RC_LOUDNESS[] PROGMEM = "Loudness";
-const char STR_RC_SURROUND[] PROGMEM = "Surround";
-const char STR_RC_EFFECT_3D[] PROGMEM = "3D effect";
-const char STR_RC_TONE_DEFEAT[] PROGMEM = "Tone defeat";
+const char STR_RC_VOL_UP[]		PROGMEM = "Volume +";
+const char STR_RC_VOL_DOWN[]	PROGMEM = "Volume -";
+const char STR_RC_IN_0[]		PROGMEM = "Input 1";
+const char STR_RC_IN_1[]		PROGMEM = "Input 2";
+const char STR_RC_IN_2[]		PROGMEM = "Input 3";
+const char STR_RC_IN_3[]		PROGMEM = "Input 4";
+const char STR_RC_IN_4[]		PROGMEM = "Input 5";
+const char STR_RC_IN_PREV[]		PROGMEM = "Prev input";
+const char STR_RC_IN_NEXT[]		PROGMEM = "Next input";
+const char STR_RC_LOUDNESS[]	PROGMEM = "Loudness";
+const char STR_RC_SURROUND[]	PROGMEM = "Surround";
+const char STR_RC_EFFECT_3D[]	PROGMEM = "3D effect";
+const char STR_RC_TONE_DEFEAT[]	PROGMEM = "Tone defeat";
 
-const char STR_RC_DEF_DISPLAY[] PROGMEM = "Display mode";
-const char STR_RC_FM_INC[] PROGMEM = "Channel +";
-const char STR_RC_FM_DEC[] PROGMEM = "Channel -";
-const char STR_RC_FM_MODE[] PROGMEM = "FM tune";
-const char STR_RC_FM_MONO[] PROGMEM = "FM mono";
-const char STR_RC_FM_STORE[] PROGMEM = "Store freq";
-const char STR_RC_FM_0[] PROGMEM = "Button 0";
-const char STR_RC_FM_1[] PROGMEM = "Button 1";
-const char STR_RC_FM_2[] PROGMEM = "Button 2";
-const char STR_RC_FM_3[] PROGMEM = "Button 3";
-const char STR_RC_FM_4[] PROGMEM = "Button 4";
-const char STR_RC_FM_5[] PROGMEM = "Button 5";
-const char STR_RC_FM_6[] PROGMEM = "Button 6";
-const char STR_RC_FM_7[] PROGMEM = "Button 7";
-const char STR_RC_FM_8[] PROGMEM = "Button 8";
-const char STR_RC_FM_9[] PROGMEM = "Button 9";
+const char STR_RC_DEF_DISPLAY[]	PROGMEM = "Display mode";
+const char STR_RC_FM_INC[]		PROGMEM = "Channel +";
+const char STR_RC_FM_DEC[]		PROGMEM = "Channel -";
+const char STR_RC_FM_MODE[]		PROGMEM = "FM tune";
+const char STR_RC_FM_MONO[]		PROGMEM = "FM mono";
+const char STR_RC_FM_STORE[]	PROGMEM = "Store freq";
+const char STR_RC_FM_0[]		PROGMEM = "Button 0";
+const char STR_RC_FM_1[]		PROGMEM = "Button 1";
+const char STR_RC_FM_2[]		PROGMEM = "Button 2";
+const char STR_RC_FM_3[]		PROGMEM = "Button 3";
+const char STR_RC_FM_4[]		PROGMEM = "Button 4";
+const char STR_RC_FM_5[]		PROGMEM = "Button 5";
+const char STR_RC_FM_6[]		PROGMEM = "Button 6";
+const char STR_RC_FM_7[]		PROGMEM = "Button 7";
+const char STR_RC_FM_8[]		PROGMEM = "Button 8";
+const char STR_RC_FM_9[]		PROGMEM = "Button 9";
 
-const char STR_RC_TIME[] PROGMEM = "Time";
-const char STR_RC_ALARM[] PROGMEM = "Alarm";
-const char STR_RC_TIMER[] PROGMEM = "Timer";
-const char STR_RC_BRIGHTNESS[] PROGMEM = "Brightness";
-const char STR_RC_NEXT_SPMODE[] PROGMEM = "Spectrum mode";
-const char STR_RC_FALLSPEED[] PROGMEM = "Fall speed";
+const char STR_RC_TIME[]		PROGMEM = "Time";
+const char STR_RC_ALARM[]		PROGMEM = "Alarm";
+const char STR_RC_TIMER[]		PROGMEM = "Timer";
+const char STR_RC_BRIGHTNESS[]	PROGMEM = "Brightness";
+const char STR_RC_NEXT_SPMODE[]	PROGMEM = "Spectrum mode";
+const char STR_RC_FALLSPEED[]	PROGMEM = "Fall speed";
 
 PGM_P const rcLabels[] PROGMEM = {
 	STR_RC_STBY,
@@ -109,19 +109,39 @@ PGM_P const rcLabels[] PROGMEM = {
 	STR_RC_FALLSPEED,
 };
 
-const char STR_IN_STATUS[] PROGMEM = "BUTTONS & ENCODER";
-const char STR_REMOTE[] PROGMEM = "Remote";
-const char STR_BUTTONS[] PROGMEM = "Status";
-const char STR_LEARN[] PROGMEM = "REMOTE CONTROL";
-const char STR_FUNCTION[] PROGMEM = "Function";
-const char STR_ADDRESS[] PROGMEM = "Address";
-const char STR_COMMAND[] PROGMEM = "Command";
-const char STR_THRESHOLD[] PROGMEM = "Threshold";
-const char STR_DEGREE[] PROGMEM = "\xDF""C";
+const char STR_IN_STATUS[]		PROGMEM = "BUTTONS & ENCODER";
+const char STR_REMOTE[]			PROGMEM = "Remote";
+const char STR_BUTTONS[]		PROGMEM = "Status";
+const char STR_LEARN[]			PROGMEM = "REMOTE CONTROL";
+const char STR_FUNCTION[]		PROGMEM = "Function";
+const char STR_ADDRESS[]		PROGMEM = "Address";
+const char STR_COMMAND[]		PROGMEM = "Command";
+const char STR_RC_RC5[]			PROGMEM = "RC5";
+const char STR_RC_NEC[]			PROGMEM = "NEC";
+const char STR_RC_NONE[]		PROGMEM = "---";
 
-const char STR_RC_RC5[] PROGMEM = "RC5";
-const char STR_RC_NEC[] PROGMEM = "NEC";
-const char STR_RC_NONE[] PROGMEM = "---";
+const char STR_THRESHOLD[]		PROGMEM = "Threshold";
+const char STR_DEGREE[]			PROGMEM = "\xDF""C";
+const char STR_SENSOR1[]		PROGMEM = "Sensor 1: ";
+const char STR_SENSOR2[]		PROGMEM = "Sensor 2: ";
+
+const char STR_SPDIVSP[]		PROGMEM = "\x7F/\x7F";
+const char STR_SPARRSP[]		PROGMEM = " => ";
+const char STR_SPDOTSP[]		PROGMEM = "\x7F.\x7F";
+const char STR_SPCOLSP[]		PROGMEM = "\x7F:\x7F";
+const char STR_SP[]				PROGMEM = "\x7F";
+const char STR_SPACE2[]			PROGMEM = "  ";
+const char STR_SPACE3[]			PROGMEM = "   ";
+const char STR_MINUS1[]			PROGMEM = "-";
+const char STR_MINUS2[]			PROGMEM = "--";
+const char STR_SPMINUS2[]		PROGMEM = " --";
+
+const char STR_FM[]				PROGMEM = "FM ";
+const char STR_STEREO[]			PROGMEM = "ST";
+const char STR_TUNE[]			PROGMEM = "\xDB\xDB\xD0\xDC\xDC";
+const char STR_RDS[]			PROGMEM = "RDS";
+
+const char STR_YEAR20[]			PROGMEM = "20";
 
 #ifdef KS0066
 static uint8_t userSybmols = LCD_END;		/* Generated user symbols for ks0066 */
@@ -830,7 +850,7 @@ void showRcInfo(void)
 	writeStringPgm(STR_BUTTONS);
 	gdSetXY(48, 10);
 	writeNum(btnBuf, 5, '0', 2);
-	writeString("\x7F/\x7F");
+	writeStringPgm(STR_SPDIVSP);
 	writeNum(encBuf, 2, '0', 2);
 
 	gdSetXY(10, 20);
@@ -855,7 +875,7 @@ void showRcInfo(void)
 	writeStringPgm(STR_ADDRESS);
 	gdSetXY(48, 39);
 	writeNum(irBuf.address, 2, '0', 16);
-	writeString(" => ");
+	writeStringPgm(STR_SPARRSP);
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR), 2, '0', 16);
 
 	gdSetXY(0, 48);
@@ -867,7 +887,7 @@ void showRcInfo(void)
 	writeStringPgm(STR_COMMAND);
 	gdSetXY(48, 57);
 	writeNum(irBuf.command, 2, '0', 16);
-	writeString(" => ");
+	writeStringPgm(STR_SPARRSP);
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
 #endif
 	return;
@@ -895,12 +915,12 @@ void showTemp(void)
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	gdSetXY(0, 48);
-	writeString("Sensor 1: ");
+	writeStringPgm(STR_SENSOR1);
 	writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
 	writeStringPgm(STR_DEGREE);
 
 	gdSetXY(0, 56);
-	writeString("Sensor 2: ");
+	writeStringPgm(STR_SENSOR2);
 	writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
 	writeStringPgm(STR_DEGREE);
 
@@ -1009,9 +1029,9 @@ void showRadio(uint8_t tune)
 	/* Frequency value */
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
-	writeString("FM ");
+	writeStringPgm(STR_FM);
 	writeNum(freq / 100, 3, ' ', 10);
-	writeString("\x7F.\x7F");
+	writeStringPgm(STR_SPDOTSP);
 	writeNum(freq % 100, 2, '0', 10);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
@@ -1029,9 +1049,9 @@ void showRadio(uint8_t tune)
 	/* Stereo indicator */
 	gdSetXY(116, 12);
 	if (tunerStereo())
-		writeString("ST");
+		writeStringPgm(STR_STEREO);
 	else
-		writeString("  ");
+		writeStringPgm(STR_SPACE2);
 
 	/* Favourite station number */
 	gdSetXY(114, 23);
@@ -1040,7 +1060,7 @@ void showRadio(uint8_t tune)
 	if (favNum >= 0)
 		writeNum(favNum, 1, ' ', 10);
 	else
-		writeString("-");
+		writeStringPgm(STR_MINUS1);
 
 	/* Station number */
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
@@ -1048,7 +1068,7 @@ void showRadio(uint8_t tune)
 	if (num)
 		writeNum(num, 3, ' ', 10);
 	else
-		writeString(" --");
+		writeStringPgm(STR_SPMINUS2);
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	/* Frequency scale */
@@ -1069,14 +1089,13 @@ void showRadio(uint8_t tune)
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	if (tune == MODE_RADIO_TUNE) {
 		gdSetXY(103, 56);
-		writeString("\xDB\xDB\xD0\xDC\xDC");
+		writeStringPgm(STR_TUNE);
 	} else {
 		gdSetXY(110, 56);
-		if (rdsMode) {
-			writeString("RDS");
-		} else {
-			writeString("   ");
-		}
+		if (rdsMode)
+			writeStringPgm(STR_RDS);
+		else
+			writeStringPgm(STR_SPACE3);
 	}
 #endif
 	return;
@@ -1266,21 +1285,21 @@ void showTime(void)
 	gdSetXY(4, 0);
 
 	drawTm(DS1307_HOUR, font_digits_32);
-	writeString("\x7F:\x7F");
+	writeStringPgm(STR_SPCOLSP);
 	drawTm(DS1307_MIN, font_digits_32);
-	writeString("\x7F:\x7F");
+	writeStringPgm(STR_SPCOLSP);
 	drawTm(DS1307_SEC, font_digits_32);
 
 	gdSetXY(9, 32);
 
 	drawTm(DS1307_DATE, font_ks0066_ru_24);
-	writeString("\x7F.\x7F");
+	writeStringPgm(STR_SPDOTSP);
 	drawTm(DS1307_MONTH, font_ks0066_ru_24);
-	writeString("\x7F.\x7F");
+	writeStringPgm(STR_SPDOTSP);
 	if (getEtm() == DS1307_YEAR)
 		gdLoadFont(font_ks0066_ru_24, 0, FONT_DIR_0);
-	writeString("20");
-	writeString("\x7F");
+	writeStringPgm(STR_YEAR20);
+	writeStringPgm(STR_SP);
 	drawTm(DS1307_YEAR, font_ks0066_ru_24);
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
@@ -1345,7 +1364,7 @@ void showAlarm(void)
 	gdSetXY(4, 0);
 
 	drawAm(DS1307_A0_HOUR, font_digits_32);
-	writeString("\x7F:\x7F");
+	writeStringPgm(STR_SPCOLSP);
 	drawAm(DS1307_A0_MIN, font_digits_32);
 
 	/* Draw input icon selection rectangle */
@@ -1430,16 +1449,16 @@ void showTimer(int16_t timer)
 	gdLoadFont(font_digits_32, 1, FONT_DIR_0);
 	if (timer >= 0) {
 		writeNum(timer / 3600, 2, '0', 10);
-		writeString("\x7F:\x7F");
+		writeStringPgm(STR_SPCOLSP);
 		writeNum(timer / 60 % 60, 2, '0', 10);
-		writeString("\x7F:\x7F");
+		writeStringPgm(STR_SPCOLSP);
 		writeNum(timer % 60, 2, '0', 10);
 	} else {
-		writeString("--");
-		writeString("\x7F:\x7F");
-		writeString("--");
-		writeString("\x7F:\x7F");
-		writeString("--");
+		writeStringPgm(STR_SPMINUS2);
+		writeStringPgm(STR_SPCOLSP);
+		writeStringPgm(STR_SPMINUS2);
+		writeStringPgm(STR_SPCOLSP);
+		writeStringPgm(STR_SPMINUS2);
 	}
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 

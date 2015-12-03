@@ -303,6 +303,9 @@ void tunerSetMute(uint8_t mute)
 		break;
 	}
 
+	if (!mute)
+		tunerSetFreq(_freq);
+
 	return;
 }
 
