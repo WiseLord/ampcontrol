@@ -1454,11 +1454,11 @@ void showTimer(int16_t timer)
 		writeStringPgm(STR_SPCOLSP);
 		writeNum(timer % 60, 2, '0', 10);
 	} else {
-		writeStringPgm(STR_SPMINUS2);
+		writeStringPgm(STR_MINUS2);
 		writeStringPgm(STR_SPCOLSP);
-		writeStringPgm(STR_SPMINUS2);
+		writeStringPgm(STR_MINUS2);
 		writeStringPgm(STR_SPCOLSP);
-		writeStringPgm(STR_SPMINUS2);
+		writeStringPgm(STR_MINUS2);
 	}
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
