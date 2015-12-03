@@ -65,9 +65,11 @@ uint8_t getAction(void)
 			action = CMD_RC_MUTE;
 		break;
 	case CMD_BTN_5:
-		if (dispMode == MODE_TEST)
+		if (dispMode == MODE_TEST) {
 			action = ACTION_NEXT_RC_CMD;
-		else {
+		} else if (dispMode == MODE_FM_TUNE) {
+			action = CMD_RC_FM_STORE;
+		} else {
 			action = CMD_RC_NEXT_SNDPAR;
 		}
 		break;
@@ -93,7 +95,7 @@ uint8_t getAction(void)
 		action = CMD_RC_FM_MODE;
 		break;
 	case CMD_BTN_5_LONG:
-		action = CMD_RC_FM_STORE;
+		// Reserved for future purposes
 		break;
 
 	case CMD_BTN_12_LONG:
@@ -145,6 +147,25 @@ uint8_t getAction(void)
 	/* Disable actions except POWERON, TESTMODE and TEMPMODE in standby mode */
 	if (dispMode == MODE_STANDBY) {
 		if (action != ACTION_EXIT_STANDBY && action != ACTION_TESTMODE && action != ACTION_TEMPMODE)
+			action = ACTION_NOACTION;
+	}
+	/* Disable most action in time edit mode */
+	if (dispMode == MODE_TIME_EDIT) {
+		if (action != CMD_RC_STBY && action != CMD_RC_TIME)
+			action = ACTION_NOACTION;
+	}
+	/* Disable most actions in alarm edit mode */
+	if (dispMode == MODE_ALARM_EDIT) {
+		if (action != CMD_RC_STBY && action != CMD_RC_ALARM)
+			action = ACTION_NOACTION;
+	}
+	/* Disable most actions in FM edit mode */
+	if (dispMode == MODE_FM_TUNE) {
+		if (action != CMD_RC_STBY &&
+			action != CMD_RC_FM_MODE && action != CMD_RC_FM_STORE &&
+			action != CMD_RC_FM_DEC && action != CMD_RC_FM_INC &&
+			(action < CMD_RC_FM_0 || action > CMD_RC_FM_9)
+			)
 			action = ACTION_NOACTION;
 	}
 
@@ -224,8 +245,10 @@ void handleAction(uint8_t action)
 			editTime();
 			dispMode = MODE_TIME_EDIT;
 			setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-			if (!isETM())
+			if (!isETM()) {
+				dispMode = MODE_TIME;
 				setDisplayTime(DISPLAY_TIME_TIME);
+			}
 		} else {
 			stopEditTime();
 			dispMode = MODE_TIME;
@@ -237,8 +260,10 @@ void handleAction(uint8_t action)
 			editAlarm();
 			dispMode = MODE_ALARM_EDIT;
 			setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
-			if (!isEAM())
+			if (!isEAM()) {
+				dispMode = MODE_ALARM;
 				setDisplayTime(DISPLAY_TIME_ALARM);
+			}
 		} else {
 			stopEditAlarm();
 			dispMode = MODE_ALARM;
@@ -478,7 +503,7 @@ uint8_t checkAlarmAndTime(void)
 				(getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
 				(getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
 				(getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
-			   ) {
+				) {
 				sndSetInput(getAlarm(DS1307_A0_INPUT));
 				ret = ACTION_EXIT_STANDBY;
 			}
