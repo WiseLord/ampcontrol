@@ -30,13 +30,9 @@ static uint8_t rcCode[CMD_RC_END];					/* Array with rc commands */
 
 void rcCodesInit(void)
 {
-	uint8_t i;
-
 	rcType = eeprom_read_byte((uint8_t*)EEPROM_RC_TYPE);
 	rcAddr = eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR);
-
-	for (i = 0; i < CMD_RC_END; i++)
-		rcCode[i] = eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + i);
+	eeprom_read_block(rcCode, (uint8_t*)EEPROM_RC_CMD, CMD_RC_END);
 
 	return;
 }
