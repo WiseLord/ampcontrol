@@ -4,6 +4,7 @@
 #include "../i2c.h"
 
 static uint8_t _sndFunc;
+static uint8_t _input;
 
 static void pt2322SetSndFunc(void)
 {
@@ -31,9 +32,9 @@ void pt232xReset()
 	return;
 }
 
-void pt2322SetVolume(int8_t val)
+void pt2322SetVolume(void)
 {
-	val = -val;
+	int8_t val = -sndPar[MODE_SND_VOLUME].value;
 
 	I2CStart(PT2322_I2C_ADDR);
 	I2CWriteByte(PT2322_VOL_HI | (val / 10));
@@ -43,8 +44,9 @@ void pt2322SetVolume(int8_t val)
 	return;
 }
 
-void pt2322SetBass(int8_t val)
+void pt2322SetBass(void)
 {
+	int8_t val = sndPar[MODE_SND_BASS].value;
 	I2CStart(PT2322_I2C_ADDR);
 	I2CWriteByte(PT2322_BASS | (val > 0 ? 15 - val : 7 + val));
 	I2CStop();
@@ -52,8 +54,9 @@ void pt2322SetBass(int8_t val)
 	return;
 }
 
-void pt2322SetMiddle(int8_t val)
+void pt2322SetMiddle(void)
 {
+	int8_t val = sndPar[MODE_SND_MIDDLE].value;
 	I2CStart(PT2322_I2C_ADDR);
 	I2CWriteByte(PT2322_MIDDLE | (val > 0 ? 15 - val : 7 + val));
 	I2CStop();
@@ -61,8 +64,9 @@ void pt2322SetMiddle(int8_t val)
 	return;
 }
 
-void pt2322SetTreble(int8_t val)
+void pt2322SetTreble(void)
 {
+	int8_t val = sndPar[MODE_SND_TREBLE].value;
 	I2CStart(PT2322_I2C_ADDR);
 	I2CWriteByte(PT2322_TREBLE | (val > 0 ? 15 - val : 7 + val));
 	I2CStop();
@@ -70,7 +74,7 @@ void pt2322SetTreble(int8_t val)
 	return;
 }
 
-void pt2322SetSpeakers(int8_t val)
+void pt2322SetSpeakers(void)
 {
 	uint8_t i;
 	int8_t sp[PT2322_CH_END];
@@ -104,10 +108,10 @@ void pt2322SetSpeakers(int8_t val)
 	return;
 }
 
-void pt2322SetMux(int8_t val)
+void pt2322SetMux(void)
 {
 	I2CStart(PT2323_I2C_ADDR);
-	I2CWriteByte(PT2323_MUX | val);
+	I2CWriteByte(PT2323_MUX | sndPar[MODE_SND_GAIN0 + _input].value);
 	I2CStop();
 
 	return;
@@ -115,11 +119,13 @@ void pt2322SetMux(int8_t val)
 
 void pt2323SetInput(uint8_t in)
 {
+	_input = in;
+
 	I2CStart(PT2323_I2C_ADDR);
 	I2CWriteByte(PT2323_INPUT_SWITCH | (PT2323_INPUT_ST1 - in));
 	I2CStop();
 
-	pt2322SetMux(sndPar[MODE_SND_GAIN0 + in].value);
+	pt2322SetMux();
 
 	return;
 }

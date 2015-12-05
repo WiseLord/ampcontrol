@@ -14,7 +14,7 @@ typedef struct {
 	const sndGrid *grid;
 	uint8_t *label;
 	uint8_t icon;
-	void (*set)(int8_t value);
+	void (*set)(void);
 } sndParam;
 
 typedef enum {

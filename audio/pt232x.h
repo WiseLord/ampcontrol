@@ -68,12 +68,12 @@ enum {
 #define PT2323_IN_CNT			5
 
 void pt232xReset(void);
-void pt2322SetVolume(int8_t val);
-void pt2322SetBass(int8_t val);
-void pt2322SetMiddle(int8_t val);
-void pt2322SetTreble(int8_t val);
-void pt2322SetSpeakers(int8_t val);
-void pt2322SetMux(int8_t val);
+void pt2322SetVolume(void);
+void pt2322SetBass(void);
+void pt2322SetMiddle(void);
+void pt2322SetTreble(void);
+void pt2322SetSpeakers(void);
+void pt2322SetMux(void);
 void pt2323SetInput(uint8_t in);
 void pt232xSetMute(uint8_t val);
 void pt2323SetSurround(uint8_t val);

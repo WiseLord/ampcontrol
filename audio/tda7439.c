@@ -3,10 +3,12 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-void tda7439SetVolume(int8_t val)
+static uint8_t _input;
+
+void tda7439SetSpeakers(void)
 {
-	int8_t spLeft = val;
-	int8_t spRight = val;
+	int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
+	int8_t spRight = sndPar[MODE_SND_VOLUME].value;
 	int8_t volMin = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
 
 	if (sndPar[MODE_SND_BALANCE].value > 0) {
@@ -28,58 +30,54 @@ void tda7439SetVolume(int8_t val)
 	return;
 }
 
-void tda7439SetBass(int8_t val)
+static void tda7439SetBMT(uint8_t param)
 {
+	int8_t val = sndPar[MODE_SND_BASS + param - TDA7439_BASS].value;
+
 	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_BASS);
+	I2CWriteByte(param);
 	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
 	I2CStop();
 
 	return;
 }
 
-void tda7439SetMiddle(int8_t val)
+void tda7439SetBass(void)
 {
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_MIDDLE);
-	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
-	I2CStop();
+	tda7439SetBMT(TDA7439_BASS);
 
 	return;
 }
 
-void tda7439SetTreble(int8_t val)
+void tda7439SetMiddle(void)
 {
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_TREBLE);
-	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
-	I2CStop();
+	tda7439SetBMT(TDA7439_MIDDLE);
 
 	return;
 }
 
-void tda7439SetPreamp(int8_t val)
+void tda7439SetTreble(void)
+{
+	tda7439SetBMT(TDA7439_TREBLE);
+
+	return;
+}
+
+void tda7439SetPreamp(void)
 {
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_PREAMP);
-	I2CWriteByte(-val);
+	I2CWriteByte(-sndPar[MODE_SND_PREAMP].value);
 	I2CStop();
 
 	return;
 }
 
-void tda7439SetBalance(int8_t val)
-{
-	tda7439SetVolume(sndPar[MODE_SND_VOLUME].value);
-
-	return;
-}
-
-void tda7439SetGain(int8_t val)
+void tda7439SetGain(void)
 {
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_INPUT_GAIN);
-	I2CWriteByte(val);
+	I2CWriteByte(sndPar[MODE_SND_GAIN0 + _input].value);
 	I2CStop();
 
 	return;
@@ -87,26 +85,28 @@ void tda7439SetGain(int8_t val)
 
 void tda7439SetInput(uint8_t in)
 {
+	_input = in;
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_INPUT_SELECT);
 	I2CWriteByte(TDA7439_IN_CNT - 1 - in);
 	I2CStop();
 
-	tda7439SetGain(sndPar[MODE_SND_GAIN0 + in].value);
+	tda7439SetGain();
 
 	return;
 }
 
 void tda7439SetMute(uint8_t val)
 {
-	int8_t pr;
-
-	if (val)
-		pr = pgm_read_byte(&sndPar[MODE_SND_PREAMP].grid->min);
-	else
-		pr = sndPar[MODE_SND_PREAMP].value;
-
-	tda7439SetPreamp(pr);
+	if (val) {
+		I2CStart(TDA7439_I2C_ADDR);
+		I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
+		I2CWriteByte(TDA7439_SPEAKER_MUTE);
+		I2CWriteByte(TDA7439_SPEAKER_MUTE);
+		I2CStop();
+	} else {
+		tda7439SetSpeakers();
+	}
 
 	return;
 }

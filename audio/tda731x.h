@@ -26,11 +26,11 @@
 #define TDA7318_IN_CNT				4
 #define PT2314_IN_CNT				4
 
-void tda731xSetVolume(int8_t val);
-void tda731xSetBass(int8_t val);
-void tda731xSetTreble(int8_t val);
-void tda731xSetBalance(int8_t val);
-void tda731xSetGain(int8_t val);
+void tda731xSetVolume(void);
+void tda731xSetBass(void);
+void tda731xSetTreble(void);
+void tda731xSetSpeakers(void);
+void tda731xSetGain(void);
 void tda731xSetInput(uint8_t in);
 void tda731xSetMute(uint8_t val);
 void tda731xSetLoudness(uint8_t val);

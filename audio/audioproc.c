@@ -32,7 +32,7 @@ static uint8_t _surround;
 static uint8_t _effect3d;
 static uint8_t _toneDefeat;
 
-static void setNothing(int8_t val)
+static void setNothing(void)
 {
 	return;
 }
@@ -94,12 +94,12 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN2].grid = &grid_0_30_2;
 		sndPar[MODE_SND_GAIN3].grid = &grid_0_30_2;
 		_inCnt = TDA7439_IN_CNT;
-		sndPar[MODE_SND_VOLUME].set = tda7439SetVolume;
+		sndPar[MODE_SND_VOLUME].set = tda7439SetSpeakers;
 		sndPar[MODE_SND_BASS].set = tda7439SetBass;
 		sndPar[MODE_SND_MIDDLE].set = tda7439SetMiddle;
 		sndPar[MODE_SND_TREBLE].set = tda7439SetTreble;
 		sndPar[MODE_SND_PREAMP].set = tda7439SetPreamp;
-		sndPar[MODE_SND_BALANCE].set= tda7439SetBalance;
+		sndPar[MODE_SND_BALANCE].set= tda7439SetSpeakers;
 		sndPar[MODE_SND_GAIN0].set = tda7439SetGain;
 		sndPar[MODE_SND_GAIN1].set = tda7439SetGain;
 		sndPar[MODE_SND_GAIN2].set = tda7439SetGain;
@@ -114,7 +114,7 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 		break;
 	case AUDIOPROC_TDA7313:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
@@ -129,8 +129,8 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
@@ -147,8 +147,8 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 	case AUDIOPROC_TDA7315:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
@@ -160,7 +160,7 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 	case AUDIOPROC_TDA7318:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
 		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
@@ -175,8 +175,8 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
@@ -196,8 +196,8 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetBalance;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
+		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
+		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
@@ -297,19 +297,12 @@ uint8_t sndGetInput(void)
 
 void sndSetMute(uint8_t value)
 {
-	int8_t vol;
+	_mute = value;
 
-	if (value) {
-		vol = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
-		_mute = 1;
+	if (_mute)
 		PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
-	} else {
-		vol = sndPar[MODE_SND_VOLUME].value;
-		_mute = 0;
+	else
 		PORT(STMU_MUTE) |= STMU_MUTE_LINE;
-	}
-
-	sndPar[MODE_SND_VOLUME].set(vol);
 
 	switch (_aproc) {
 	case AUDIOPROC_TDA7439:
@@ -425,7 +418,7 @@ void sndChangeParam(uint8_t mode, int8_t diff)
 		param->value = (int8_t)pgm_read_byte(&param->grid->max);
 	if (param->value < (int8_t)pgm_read_byte(&param->grid->min))
 		param->value = (int8_t)pgm_read_byte(&param->grid->min);
-	param->set(param->value);
+	param->set();
 
 	return;
 }
@@ -440,7 +433,7 @@ void sndPowerOn(void)
 	sndSetMute(1);
 	sndSetInput(_input);
 	for (i = MODE_SND_VOLUME + 1; i < MODE_SND_GAIN0; i++)
-		sndPar[i].set(sndPar[i].value);
+		sndPar[i].set();
 	sndSetMute(0);
 	sndSetLoudness(_loudness);
 	sndSetSurround(_surround);

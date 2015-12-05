@@ -50,7 +50,7 @@ void pga2310Init(sndParam *sp)
 	return;
 }
 
-void pga2310SetSpeakers(int8_t val)
+void pga2310SetSpeakers(void)
 {
 	int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
 	int8_t spRight = sndPar[MODE_SND_VOLUME].value;
@@ -76,7 +76,7 @@ void pga2310SetMute(uint8_t val)
 	if (val) {
 		pga2310SendGainLevels(PGA2310_MUTE, PGA2310_MUTE);
 	} else {
-		pga2310SetSpeakers(0);
+		pga2310SetSpeakers();
 	}
 
 	return;
