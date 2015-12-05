@@ -277,7 +277,6 @@ void handleAction(uint8_t action)
 		setDisplayTime(DISPLAY_TIME_SP);
 		break;
 	case CMD_RC_MUTE:
-		displayClear();
 		sndSetMute(!sndGetMute());
 		dispMode = MODE_MUTE;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
