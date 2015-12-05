@@ -6,22 +6,20 @@
 #include "../display.h"
 #include "../pins.h"
 
-static const sndGrid grid[] PROGMEM = {
-	{  0,  0, 0.00 * 8},	/* 0: Not implemented */
-	{-79,  0, 1.00 * 8},	/* 1: -79..0dB with 1dB step */
-	{ -7,  7, 2.00 * 8},	/* 2: -14..14dB with 2dB step */
-	{-47,  0, 1.00 * 8},	/* 3: -47..0dB with 1dB step */
-	{-15, 15, 1.00 * 8},	/* 4: -21..21dB with 1dB step */
-	{  0, 15, 2.00 * 8},	/* 5: 0..30dB with 2dB step */
-	{-63,  0, 1.25 * 8},	/* 6: -78.75..0dB with 1.25dB step*/
-	{-15, 15, 1.25 * 8},	/* 7: -18.75..18.75dB with 1.25dB step */
-	{  0,  3, 3.75 * 8},	/* 8: 0..11.25dB with 3.75dB step */
-	{  0,  3, 6.25 * 8},	/* 9: 0..18.75dB with 6.25dB step */
-	{-15,  0, 1.00 * 8},	/*10: -15..0dB with 1dB step */
-	{-96, 31, 1.00 * 8},	/*11: -96..31dB with 1dB step */
-	{ -7,  7, 1.00 * 8},	/*12: -7..7dB with 1dB step */
-	{  0,  1, 6.00 * 8},	/*13: 0..6dB with 6dB step */
-};
+static const sndGrid grid_0_0_0             PROGMEM = {  0,  0, 0.00 * 8};	/* Not implemented */
+static const sndGrid grid_n79_0_1           PROGMEM = {-79,  0, 1.00 * 8};	/* -79..0dB with 1dB step */
+static const sndGrid grid_n14_14_2          PROGMEM = { -7,  7, 2.00 * 8};	/* -14..14dB with 2dB step */
+static const sndGrid grid_n47_0_1           PROGMEM = {-47,  0, 1.00 * 8};	/* -47..0dB with 1dB step */
+static const sndGrid grid_n15_15_1          PROGMEM = {-15, 15, 1.00 * 8};	/* -15..15dB with 1dB step */
+static const sndGrid grid_0_30_2            PROGMEM = {  0, 15, 2.00 * 8};	/* 0..30dB with 2dB step */
+static const sndGrid grid_n78d75_0_1d25     PROGMEM = {-63,  0, 1.25 * 8};	/* -78.75..0dB with 1.25dB step*/
+static const sndGrid grid_n18d75_18d75_1d25 PROGMEM = {-15, 15, 1.25 * 8};	/* -18.75..18.75dB with 1.25dB step */
+static const sndGrid grid_0_11d25_3d75      PROGMEM = {  0,  3, 3.75 * 8};	/* 0..11.25dB with 3.75dB step */
+static const sndGrid grid_0_18d75_6d25      PROGMEM = {  0,  3, 6.25 * 8};	/* 0..18.75dB with 6.25dB step */
+static const sndGrid grid_n15_0_1           PROGMEM = {-15,  0, 1.00 * 8};	/* -15..0dB with 1dB step */
+static const sndGrid grid_n96_31_1          PROGMEM = {-96, 31, 1.00 * 8};	/* -96..31dB with 1dB step */
+static const sndGrid grid_n7_7_1            PROGMEM = { -7,  7, 1.00 * 8};	/* -7..7dB with 1dB step */
+static const sndGrid grid_0_6_6             PROGMEM = {  0,  1, 6.00 * 8};	/* 0..6dB with 6dB step */
 
 static sndParam sndPar[MODE_SND_END];
 static audioProc _aproc;
@@ -87,7 +85,7 @@ void sndInit(uint8_t extFunc)
 
 	/* Init grid and functions with empty values */
 	for (i = 0; i < MODE_SND_END; i++) {
-		sndPar[i].grid = &grid[0];
+		sndPar[i].grid = &grid_0_0_0;
 		sndPar[i].set = setNothing;
 	}
 
@@ -108,16 +106,16 @@ void sndInit(uint8_t extFunc)
 	/* Setup audio parameters grid and functions */
 	switch (_aproc) {
 	case AUDIOPROC_TDA7439:
-		sndPar[MODE_SND_VOLUME].grid = &grid[1];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_MIDDLE].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_PREAMP].grid = &grid[3];
-		sndPar[MODE_SND_BALANCE].grid = &grid[4];
-		sndPar[MODE_SND_GAIN0].grid = &grid[5];
-		sndPar[MODE_SND_GAIN1].grid = &grid[5];
-		sndPar[MODE_SND_GAIN2].grid = &grid[5];
-		sndPar[MODE_SND_GAIN3].grid = &grid[5];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_MIDDLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_PREAMP].grid = &grid_n47_0_1;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
+		sndPar[MODE_SND_GAIN0].grid = &grid_0_30_2;
+		sndPar[MODE_SND_GAIN1].grid = &grid_0_30_2;
+		sndPar[MODE_SND_GAIN2].grid = &grid_0_30_2;
+		sndPar[MODE_SND_GAIN3].grid = &grid_0_30_2;
 		_inCnt = TDA7439_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda7439SetVolume;
 		sndPar[MODE_SND_BASS].set = tda7439SetBass;
@@ -131,10 +129,10 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN3].set = tda7439SetGain;
 		break;
 	case AUDIOPROC_TDA7312:
-		sndPar[MODE_SND_VOLUME].grid = &grid[6];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_BALANCE].grid = &grid[7];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
 		_inCnt = TDA7312_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
@@ -142,14 +140,14 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 		break;
 	case AUDIOPROC_TDA7313:
-		sndPar[MODE_SND_VOLUME].grid = &grid[6];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
-		sndPar[MODE_SND_BALANCE].grid = &grid[7];
-		sndPar[MODE_SND_GAIN0].grid = &grid[8];
-		sndPar[MODE_SND_GAIN1].grid = &grid[8];
-		sndPar[MODE_SND_GAIN2].grid = &grid[8];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_GAIN0].grid = &grid_0_11d25_3d75;
+		sndPar[MODE_SND_GAIN1].grid = &grid_0_11d25_3d75;
+		sndPar[MODE_SND_GAIN2].grid = &grid_0_11d25_3d75;
 		_inCnt = TDA7313_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
@@ -161,12 +159,12 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
 		break;
 	case AUDIOPROC_TDA7314:
-		sndPar[MODE_SND_VOLUME].grid = &grid[6];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
-		sndPar[MODE_SND_BALANCE].grid = &grid[7];
-		sndPar[MODE_SND_GAIN0].grid = &grid[9];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_GAIN0].grid = &grid_0_18d75_6d25;
 		_inCnt = TDA7314_IN_CNT;
 		break;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
@@ -176,10 +174,10 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 	case AUDIOPROC_TDA7315:
-		sndPar[MODE_SND_VOLUME].grid = &grid[6];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_BALANCE].grid = &grid[7];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
 		_inCnt = TDA7315_IN_CNT;
 		break;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
@@ -187,15 +185,15 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetBalance;
 	case AUDIOPROC_TDA7318:
-		sndPar[MODE_SND_VOLUME].grid = &grid[6];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
-		sndPar[MODE_SND_BALANCE].grid = &grid[7];
-		sndPar[MODE_SND_GAIN0].grid = &grid[9];
-		sndPar[MODE_SND_GAIN1].grid = &grid[9];
-		sndPar[MODE_SND_GAIN2].grid = &grid[9];
-		sndPar[MODE_SND_GAIN3].grid = &grid[9];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_GAIN0].grid = &grid_0_18d75_6d25;
+		sndPar[MODE_SND_GAIN1].grid = &grid_0_18d75_6d25;
+		sndPar[MODE_SND_GAIN2].grid = &grid_0_18d75_6d25;
+		sndPar[MODE_SND_GAIN3].grid = &grid_0_18d75_6d25;
 		_inCnt = TDA7318_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
@@ -208,15 +206,15 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN3].set =tda731xSetGain ;
 		break;
 	case AUDIOPROC_PT2314:
-		sndPar[MODE_SND_VOLUME].grid = &grid[6];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_FRONTREAR].grid = &grid[7];
-		sndPar[MODE_SND_BALANCE].grid = &grid[7];
-		sndPar[MODE_SND_GAIN0].grid = &grid[8];
-		sndPar[MODE_SND_GAIN1].grid = &grid[8];
-		sndPar[MODE_SND_GAIN2].grid = &grid[8];
-		sndPar[MODE_SND_GAIN3].grid = &grid[8];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
+		sndPar[MODE_SND_GAIN0].grid = &grid_0_11d25_3d75;
+		sndPar[MODE_SND_GAIN1].grid = &grid_0_11d25_3d75;
+		sndPar[MODE_SND_GAIN2].grid = &grid_0_11d25_3d75;
+		sndPar[MODE_SND_GAIN3].grid = &grid_0_11d25_3d75;
 		_inCnt = PT2314_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
@@ -229,11 +227,11 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN3].set = tda731xSetGain;
 		break;
 	case AUDIOPROC_TDA7448:
-		sndPar[MODE_SND_VOLUME].grid = &grid[1];
-		sndPar[MODE_SND_FRONTREAR].grid = &grid[12];
-		sndPar[MODE_SND_BALANCE].grid = &grid[12];
-		sndPar[MODE_SND_CENTER].grid = &grid[10];
-		sndPar[MODE_SND_SUBWOOFER].grid = &grid[10];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n7_7_1;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
+		sndPar[MODE_SND_CENTER].grid = &grid_n15_0_1;
+		sndPar[MODE_SND_SUBWOOFER].grid = &grid_n15_0_1;
 		_inCnt = TDA7448_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda7448SetSpeakers;
 		sndPar[MODE_SND_FRONTREAR].set = tda7448SetSpeakers;
@@ -242,15 +240,15 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_SUBWOOFER].set = tda7448SetSpeakers;
 		break;
 	case AUDIOPROC_PT232X:
-		sndPar[MODE_SND_VOLUME].grid = &grid[1];
-		sndPar[MODE_SND_BASS].grid = &grid[2];
-		sndPar[MODE_SND_MIDDLE].grid = &grid[2];
-		sndPar[MODE_SND_TREBLE].grid = &grid[2];
-		sndPar[MODE_SND_FRONTREAR].grid = &grid[12];
-		sndPar[MODE_SND_BALANCE].grid = &grid[12];
-		sndPar[MODE_SND_CENTER].grid = &grid[10];
-		sndPar[MODE_SND_SUBWOOFER].grid = &grid[10];
-		sndPar[MODE_SND_GAIN4].grid = &grid[13];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_MIDDLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n7_7_1;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
+		sndPar[MODE_SND_CENTER].grid = &grid_n15_0_1;
+		sndPar[MODE_SND_SUBWOOFER].grid = &grid_n15_0_1;
+		sndPar[MODE_SND_GAIN4].grid = &grid_0_6_6;
 		_inCnt = PT2323_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = pt2322SetVolume;
 		sndPar[MODE_SND_BASS].set = pt2322SetBass;
@@ -263,8 +261,8 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN4].set = pt2322SetMux;
 		break;
 	case AUDIOPROC_PGA2310:
-		sndPar[MODE_SND_VOLUME].grid = &grid[11];
-		sndPar[MODE_SND_BALANCE].grid = &grid[4];
+		sndPar[MODE_SND_VOLUME].grid = &grid_n96_31_1;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
 		_inCnt = PGA2310_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = pga2310SetSpeakers;
 		sndPar[MODE_SND_BALANCE].set = pga2310SetSpeakers;
