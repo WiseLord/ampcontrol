@@ -5,6 +5,18 @@
 
 static uint8_t _input;
 
+static void tda7439SetBMT(uint8_t param)
+{
+	int8_t val = sndPar[MODE_SND_BASS + param - TDA7439_BASS].value;
+
+	I2CStart(TDA7439_I2C_ADDR);
+	I2CWriteByte(param);
+	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
+	I2CStop();
+
+	return;
+}
+
 void tda7439SetSpeakers(void)
 {
 	int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
@@ -25,18 +37,6 @@ void tda7439SetSpeakers(void)
 	I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
 	I2CWriteByte(-spRight);
 	I2CWriteByte(-spLeft);
-	I2CStop();
-
-	return;
-}
-
-static void tda7439SetBMT(uint8_t param)
-{
-	int8_t val = sndPar[MODE_SND_BASS + param - TDA7439_BASS].value;
-
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(param);
-	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
 	I2CStop();
 
 	return;

@@ -15,6 +15,15 @@ static void pt2322SetSndFunc(void)
 	return;
 }
 
+static void pt2322SetBMT(uint8_t param) {
+	int8_t val = sndPar[MODE_SND_BASS + ((param - PT2322_BASS) >> 4)].value;
+	I2CStart(PT2322_I2C_ADDR);
+	I2CWriteByte(param | (val > 0 ? 15 - val : 7 + val));
+	I2CStop();
+
+	return;
+}
+
 void pt232xReset()
 {
 	I2CStart(PT2322_I2C_ADDR);
@@ -46,30 +55,21 @@ void pt2322SetVolume(void)
 
 void pt2322SetBass(void)
 {
-	int8_t val = sndPar[MODE_SND_BASS].value;
-	I2CStart(PT2322_I2C_ADDR);
-	I2CWriteByte(PT2322_BASS | (val > 0 ? 15 - val : 7 + val));
-	I2CStop();
+	pt2322SetBMT(PT2322_I2C_ADDR);
 
 	return;
 }
 
 void pt2322SetMiddle(void)
 {
-	int8_t val = sndPar[MODE_SND_MIDDLE].value;
-	I2CStart(PT2322_I2C_ADDR);
-	I2CWriteByte(PT2322_MIDDLE | (val > 0 ? 15 - val : 7 + val));
-	I2CStop();
+	pt2322SetBMT(PT2322_MIDDLE);
 
 	return;
 }
 
 void pt2322SetTreble(void)
 {
-	int8_t val = sndPar[MODE_SND_TREBLE].value;
-	I2CStart(PT2322_I2C_ADDR);
-	I2CWriteByte(PT2322_TREBLE | (val > 0 ? 15 - val : 7 + val));
-	I2CStop();
+	pt2322SetBMT(PT2322_TREBLE);
 
 	return;
 }
