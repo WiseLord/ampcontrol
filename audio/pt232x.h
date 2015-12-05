@@ -67,7 +67,6 @@ enum {
 /* Number of inputs */
 #define PT2323_IN_CNT			5
 
-void pt232xInit(sndParam *sp);
 void pt232xReset(void);
 void pt2322SetVolume(int8_t val);
 void pt2322SetBass(int8_t val);

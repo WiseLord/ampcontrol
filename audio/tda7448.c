@@ -3,15 +3,6 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-static sndParam *sndPar;
-
-void tda7448Init(sndParam *sp)
-{
-	sndPar = sp;
-
-	return;
-}
-
 void tda7448SetSpeakers(int8_t val)
 {
 	uint8_t i;

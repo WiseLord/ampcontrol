@@ -1,16 +1,8 @@
- #include "tda731x.h"
+#include "tda731x.h"
 
 #include "../i2c.h"
 
-static sndParam *sndPar;
 static uint8_t _input, _loudness;
-
-void tda731xInit(sndParam *sp)
-{
-	sndPar = sp;
-
-	return;
-}
 
 void tda731xSetVolume(int8_t val)
 {

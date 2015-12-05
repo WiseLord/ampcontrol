@@ -26,7 +26,6 @@
 #define TDA7318_IN_CNT				4
 #define PT2314_IN_CNT				4
 
-void tda731xInit(sndParam *sp);
 void tda731xSetVolume(int8_t val);
 void tda731xSetBass(int8_t val);
 void tda731xSetTreble(int8_t val);

@@ -36,4 +36,6 @@ typedef enum {
 	MODE_SND_END
 } sndMode;
 
+extern sndParam sndPar[MODE_SND_END];
+
 #endif /* AUDIO_H */

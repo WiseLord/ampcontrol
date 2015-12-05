@@ -3,7 +3,6 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-static sndParam *sndPar;
 static uint8_t _sndFunc;
 
 static void pt2322SetSndFunc(void)
@@ -11,13 +10,6 @@ static void pt2322SetSndFunc(void)
 	I2CStart(PT2322_I2C_ADDR);
 	I2CWriteByte(PT2322_FUNCTION | _sndFunc);
 	I2CStop();
-
-	return;
-}
-
-void pt232xInit(sndParam *sp)
-{
-	sndPar = sp;
 
 	return;
 }

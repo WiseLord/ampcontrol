@@ -21,7 +21,7 @@ static const sndGrid grid_n96_31_1          PROGMEM = {-96, 31, 1.00 * 8};	/* -9
 static const sndGrid grid_n7_7_1            PROGMEM = { -7,  7, 1.00 * 8};	/* -7..7dB with 1dB step */
 static const sndGrid grid_0_6_6             PROGMEM = {  0,  1, 6.00 * 8};	/* 0..6dB with 6dB step */
 
-static sndParam sndPar[MODE_SND_END];
+sndParam sndPar[MODE_SND_END];
 static audioProc _aproc;
 
 static uint8_t _inCnt;
@@ -57,31 +57,8 @@ void sndInit(uint8_t extFunc)
 	if (_aproc >= AUDIOPROC_END)
 		_aproc = AUDIOPROC_TDA7439;
 
-	switch (_aproc) {
-	case AUDIOPROC_TDA7439:
-		tda7439Init(sndPar);
-		break;
-	case AUDIOPROC_TDA7312:
-	case AUDIOPROC_TDA7313:
-	case AUDIOPROC_TDA7314:
-	case AUDIOPROC_TDA7315:
-	case AUDIOPROC_TDA7318:
-	case AUDIOPROC_PT2314:
-		tda731xInit(sndPar);
-		break;
-	case AUDIOPROC_TDA7448:
-		tda7448Init(sndPar);
-		break;
-	case AUDIOPROC_PT232X:
-		pt232xInit(sndPar);
-		break;
-	case AUDIOPROC_PGA2310:
-		if (extFunc == USE_PGA2310)
-			pga2310Init(sndPar);
-		break;
-	default:
-		break;
-	}
+	if (_aproc == AUDIOPROC_PGA2310 && extFunc == USE_PGA2310)
+		pga2310Init(sndPar);
 
 	/* Init grid and functions with empty values */
 	for (i = 0; i < MODE_SND_END; i++) {

@@ -3,8 +3,6 @@
 #include <avr/pgmspace.h>
 #include "../pins.h"
 
-static sndParam *sndPar;
-
 static void pga2310Strob(void)
 {
 	PORT(PGA2310_SCLK) |= PGA2310_SCLK_LINE;
@@ -41,8 +39,6 @@ void pga2310SendGainLevels(uint8_t right, uint8_t left)
 
 void pga2310Init(sndParam *sp)
 {
-	sndPar = sp;
-
 	DDR(PGA2310_SDI) |= PGA2310_SDI_LINE;
 	DDR(PGA2310_SCLK) |= PGA2310_SCLK_LINE;
 	DDR(PGA2310_CS) |= PGA2310_CS_LINE;

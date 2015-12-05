@@ -3,15 +3,6 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-static sndParam *sndPar;
-
-void tda7439Init(sndParam *sp)
-{
-	sndPar = sp;
-
-	return;
-}
-
 void tda7439SetVolume(int8_t val)
 {
 	int8_t spLeft = val;

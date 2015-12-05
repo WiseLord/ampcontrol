@@ -23,7 +23,6 @@
 /* Number of inputs */
 #define TDA7439_IN_CNT				4
 
-void tda7439Init(sndParam *sp);
 void tda7439SetVolume(int8_t val);
 void tda7439SetBass(int8_t val);
 void tda7439SetMiddle(int8_t val);

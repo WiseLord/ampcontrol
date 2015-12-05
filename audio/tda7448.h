@@ -26,7 +26,6 @@ enum {
 /* Number of inputs */
 #define TDA7448_IN_CNT				1
 
-void tda7448Init(sndParam *sp);
 void tda7448SetSpeakers(int8_t val);
 
 void tda7448SetMute(uint8_t val);
