@@ -601,7 +601,7 @@ static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_
 
 	for (i = 0; i < w; i++) {
 		gdDrawVertLine(xbase + i, btm, val, 1);
-		gdDrawVertLine(xbase + i, val - 1, btm - max, 0);
+		gdDrawVertLine(xbase + i, val > (btm - max) ? val - 1 : val, btm - max, 0);
 	}
 
 	return;
@@ -618,7 +618,7 @@ static void drawBarSpectrum(void)
 		xbase = x * 3;
 
 		ybase = (buf[x] + buf[x + 32]) / 8 * 3;
-		drawSpCol(xbase, 2, 63, ybase, 24);
+		drawSpCol(xbase, 2, 63, ybase, 23);
 	}
 
 	return;
@@ -661,7 +661,7 @@ static void drawMiniSpectrum(void)
 	for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
 		xbase = x * 3;
 		ybase = (buf[x] * 5 / 2 + buf[x + 32] * 5 / 2) / 4;
-		drawSpCol(xbase, 2, 63, ybase, 40);
+		drawSpCol(xbase, 2, 63, ybase, 39);
 	}
 
 	return;
@@ -1462,7 +1462,7 @@ void showTimer(int16_t timer)
 		xbase = x << 2;
 
 		ybase = (buf[x] + buf[x + 32]) / 2;
-		drawSpCol(xbase, 3, 63, ybase, 32);
+		drawSpCol(xbase, 3, 63, ybase, 31);
 	}
 #endif
 
