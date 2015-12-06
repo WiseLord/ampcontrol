@@ -592,6 +592,51 @@ static void showParIcon(const uint8_t iconNum)
 }
 #endif
 
+#ifndef KS0066
+static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_t max)
+{
+	uint8_t i;
+
+	val = (val < max ? btm - val : btm - max);
+
+	for (i = 0; i < w; i++) {
+		gdDrawVertLine(xbase + i, btm, val, 1);
+		gdDrawVertLine(xbase + i, val - 1, btm - max, 0);
+	}
+
+	return;
+}
+
+static void drawBarSpectrum(void)
+{
+	uint8_t x, xbase;
+	uint8_t ybase;
+
+	volatile uint8_t *buf = getSpData(fallSpeed);
+
+	for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
+		xbase = x * 3;
+
+		ybase = (buf[x] + buf[x + 32]) / 8 * 3;
+		drawSpCol(xbase, 2, 63, ybase, 24);
+	}
+
+//		for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
+//			ybase = 63 - y;
+//			if (buf[x] + buf[x + 32] >= y * 3) {
+//				gdDrawPixel(xbase + 0, ybase, 1);
+//				gdDrawPixel(xbase + 1, ybase, 1);
+//			} else {
+//				gdDrawPixel(xbase + 0, ybase, 0);
+//				gdDrawPixel(xbase + 1, ybase, 0);
+//			}
+//		}
+
+	return;
+}
+#endif
+
+
 static void drawMiniSpectrum(void)
 {
 	volatile uint8_t *buf = getSpData(fallSpeed);
@@ -622,55 +667,17 @@ static void drawMiniSpectrum(void)
 	}
 #else
 	uint8_t x, xbase;
-	uint8_t y, ybase;
+	uint8_t ybase;
 
-	if (buf) {
-		for (y = 0; y < GD_SIZE_Y / 8 * 4; y++) {
-			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
-				xbase = x * 3;
-				ybase = 63 - y;
-				if (buf[x] + buf[x + 32] >= y * 2) {
-					gdDrawPixel(xbase + 0, ybase, 1);
-					gdDrawPixel(xbase + 1, ybase, 1);
-				} else {
-					gdDrawPixel(xbase + 0, ybase, 0);
-					gdDrawPixel(xbase + 1, ybase, 0);
-				}
-			}
-		}
+	for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
+		xbase = x * 3;
+		ybase = (buf[x] * 5 / 2 + buf[x + 32] * 5 / 2) / 4;
+		drawSpCol(xbase, 2, 63, ybase, 40);
 	}
 
 	return;
 #endif
 }
-
-#ifdef KS0066
-#else
-static void drawBarSpectrum(void)
-{
-	uint8_t x, xbase;
-	uint8_t y, ybase;
-
-	volatile uint8_t *buf = getSpData(fallSpeed);
-
-	if (buf) {
-		for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
-			for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
-				xbase = x * 3;
-				ybase = 63 - y;
-				if (buf[x] + buf[x + 32] >= y * 3) {
-					gdDrawPixel(xbase + 0, ybase, 1);
-					gdDrawPixel(xbase + 1, ybase, 1);
-				} else {
-					gdDrawPixel(xbase + 0, ybase, 0);
-					gdDrawPixel(xbase + 1, ybase, 0);
-				}
-			}
-		}
-	}
-	return;
-}
-#endif
 
 #ifdef KS0066
 static void drawTm(uint8_t tm)
@@ -1440,9 +1447,7 @@ void showTimer(int16_t timer)
 	drawMiniSpectrum();
 #else
 	uint8_t x, xbase;
-	uint8_t y, ybase;
-
-	volatile uint8_t *buf = getSpData(fallSpeed);
+	uint8_t ybase;
 
 	gdSetXY(4, 0);
 
@@ -1462,29 +1467,23 @@ void showTimer(int16_t timer)
 	}
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
-	for (y = 0; y < GD_SIZE_Y / 2; y++) {
-		for (x = 0; x < GD_SIZE_X / 4; x++) {
-			xbase = x << 2;
-			ybase = 63 - y;
-			if (buf[x] + buf[x + 32] >= y * 2) {
-				gdDrawPixel(xbase + 0, ybase, 1);
-				gdDrawPixel(xbase + 1, ybase, 1);
-				gdDrawPixel(xbase + 2, ybase, 1);
-			} else {
-				gdDrawPixel(xbase + 0, ybase, 0);
-				gdDrawPixel(xbase + 1, ybase, 0);
-				gdDrawPixel(xbase + 2, ybase, 0);
-			}
-		}
+	volatile uint8_t *buf = getSpData(fallSpeed);
+
+	for (x = 0; x < GD_SIZE_X / 4; x++) {
+		xbase = x << 2;
+
+		ybase = (buf[x] + buf[x + 32]) / 2;
+		drawSpCol(xbase, 3, 63, ybase, 32);
 	}
 #endif
+
 	return;
 }
 
 void switchSpMode(void)
 {
 	if (++spMode >= SP_MODE_END)
-		spMode = SP_MODE_STEREO;
+		spMode = SP_MODE_METER;
 
 	return;
 }
@@ -1524,7 +1523,27 @@ void showSpectrum(void)
 			ks0066WriteData(data);
 		}
 		break;
-	case SP_MODE_METER:
+	case SP_MODE_MIXED:
+		lcdGenLevels();
+		for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+			data = buf[i];
+			data += buf[FFT_SIZE / 2 + i];
+			data >>= 2;
+			ks0066SetXY(i, 0);
+			if (data < 8)
+				ks0066WriteData(' ');
+			else if (data < 15)
+				ks0066WriteData(data - 8);
+			else
+				ks0066WriteData(0xFF);
+			ks0066SetXY(i, 1);
+			if (data < 7)
+				ks0066WriteData(data);
+			else
+				ks0066WriteData(0xFF);
+		}
+		break;
+	default:
 		lcdGenBar(userAddSym);
 		left = 0;
 		right = 0;
@@ -1562,26 +1581,6 @@ void showSpectrum(void)
 			}
 		}
 		break;
-	default:
-		lcdGenLevels();
-		for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
-			data = buf[i];
-			data += buf[FFT_SIZE / 2 + i];
-			data >>= 2;
-			ks0066SetXY(i, 0);
-			if (data < 8)
-				ks0066WriteData(' ');
-			else if (data < 15)
-				ks0066WriteData(data - 8);
-			else
-				ks0066WriteData(0xFF);
-			ks0066SetXY(i, 1);
-			if (data < 7)
-				ks0066WriteData(data);
-			else
-				ks0066WriteData(0xFF);
-		}
-		break;
 	}
 #else
 	uint8_t x, xbase;
@@ -1589,33 +1588,25 @@ void showSpectrum(void)
 
 	switch (spMode) {
 	case SP_MODE_STEREO:
-		for (y = 0; y < GD_SIZE_Y / 2; y++) {
-			for (x = 0; x < GD_SIZE_X / 4; x++) {
-				xbase = x << 2;
-				ybase = 31 - y;
-				if (buf[x] >= y) {
-					gdDrawPixel(xbase + 0, ybase, 1);
-					gdDrawPixel(xbase + 1, ybase, 1);
-					gdDrawPixel(xbase + 2, ybase, 1);
-				} else {
-					gdDrawPixel(xbase + 0, ybase, 0);
-					gdDrawPixel(xbase + 1, ybase, 0);
-					gdDrawPixel(xbase + 2, ybase, 0);
-				}
-				ybase = 63 - y;
-				if (buf[x + 32] >= y) {
-					gdDrawPixel(xbase + 0, ybase, 1);
-					gdDrawPixel(xbase + 1, ybase, 1);
-					gdDrawPixel(xbase + 2, ybase, 1);
-				} else {
-					gdDrawPixel(xbase + 0, ybase, 0);
-					gdDrawPixel(xbase + 1, ybase, 0);
-					gdDrawPixel(xbase + 2, ybase, 0);
-				}
-			}
+		for (x = 0; x < GD_SIZE_X / 4; x++) {
+			xbase = x << 2;
+
+			ybase = buf[x];
+			drawSpCol(xbase, 3, 31, ybase, 31);
+
+			ybase = buf[x + 32];
+			drawSpCol(xbase, 3, 63, ybase, 31);
 		}
 		break;
-	case SP_MODE_METER:
+	case SP_MODE_MIXED:
+		for (x = 0; x < GD_SIZE_X / 4; x++) {
+			xbase = x << 2;
+
+			ybase = buf[x] + buf[x + 32];
+			drawSpCol(xbase, 3, 63, ybase, 63);
+		}
+		break;
+	default:
 		gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 		gdSetXY(0, 0);
 		writeStringEeprom(txtLabels[LABEL_LEFT_CHANNEL]);
@@ -1644,23 +1635,6 @@ void showSpectrum(void)
 					} else {
 						gdDrawPixel(x, y, 0);
 					}
-				}
-			}
-		}
-		break;
-	default:
-		for (y = 0; y < GD_SIZE_Y; y++) {
-			for (x = 0; x < GD_SIZE_X / 4; x++) {
-				xbase = x << 2;
-				ybase = 63 - y;
-				if (buf[x] + buf[x + 32] >= y) {
-					gdDrawPixel(xbase + 0, ybase, 1);
-					gdDrawPixel(xbase + 1, ybase, 1);
-					gdDrawPixel(xbase + 2, ybase, 1);
-				} else {
-					gdDrawPixel(xbase + 0, ybase, 0);
-					gdDrawPixel(xbase + 1, ybase, 0);
-					gdDrawPixel(xbase + 2, ybase, 0);
 				}
 			}
 		}
