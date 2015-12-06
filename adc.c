@@ -18,6 +18,10 @@ static const uint8_t hannTable[] PROGMEM = {
 	 38,  48,  58,  69,  81,  93, 105, 118,
 	131, 143, 156, 168, 180, 191, 202, 212,
 	221, 229, 236, 242, 247, 251, 254, 255,
+	255, 254, 251, 247, 242, 236, 229, 221,
+	212, 202, 191, 180, 168, 156, 143, 131,
+	118, 105,  93,  81,  69,  58,  48,  38,
+	 30,  22,  16,  10,   6,   3,   1,   0,
 };
 
 static const int16_t dbTable[N_DB - 1] PROGMEM = {
@@ -55,8 +59,9 @@ static void getValues(uint8_t mux)
 	uint8_t i = 0, j;
 	uint8_t hv;
 	uint8_t dcCorr = DC_CORR;
+	int16_t real;
 
-	ADMUX &= ~((1<<MUX2) | (1<<MUX1) |(1<<MUX0));
+	ADMUX &= ~((1<<MUX2) | (1<<MUX1) | (1<<MUX0));
 	ADMUX |= mux;										/* Mux ADC to required audio channel */
 
 	switch (mux) {										/* Set channel correction */
@@ -70,17 +75,20 @@ static void getValues(uint8_t mux)
 
 	do {
 		while (!(ADCSRA & (1<<ADSC)));					/* Wait for start measure */
+
 		j = revBits(i);
-		if (i < FFT_SIZE / 2)
-			hv = pgm_read_byte(&hannTable[i]);
-		else
-			hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
+
+		hv = pgm_read_byte(&hannTable[i]);
 
 		while (ADCSRA & (1<<ADSC));						/* Wait for finish measure */
-		fr[j] = ADCH - dcCorr;							/* Read channel value */
-		fr[j] = ((int32_t)hv * fr[j]) >> 6;				/* Apply Hann window */
 
+		real = ADCH - dcCorr;							/* Read channel value */
+		real *= hv;										/* Apply Hann window */
+		real >>= 6;
+
+		fr[j] = real;
 		fi[i] = 0;
+
 	} while (++i < FFT_SIZE);
 
 	return;
@@ -90,6 +98,7 @@ static void cplx2dB(int16_t *fr, int16_t *fi)
 {
 	uint8_t i, j;
 	int16_t calc;
+
 	for (i = 0; i < FFT_SIZE / 2; i++) {
 		calc = ((int32_t)fr[i] * fr[i] + (int32_t)fi[i] * fi[i]) >> 13;
 
@@ -98,33 +107,29 @@ static void cplx2dB(int16_t *fr, int16_t *fi)
 				break;
 		fr[i] = j;
 	}
-	for (i = 0; i < FFT_SIZE; i++)
-		fi[i] = 0;
+
 	return;
 }
 
 uint8_t *getSpData(uint8_t fallSpeed)
 {
 	uint8_t i;
+	uint8_t *p;
+	uint8_t mux;
 
-	getValues(MUX_LEFT);
-	fftRad4(fr, fi);
-	cplx2dB(fr, fi);
+	for (mux = MUX_LEFT; mux <=MUX_RIGHT; mux++) {
+		getValues(mux);
+		fftRad4(fr, fi);
+		cplx2dB(fr, fi);
 
-	for (i = 0; i < FFT_SIZE / 2; i++) {
-		(buf[i] > fallSpeed) ? (buf[i] -= fallSpeed) : (buf[i] = 1);
-		if (buf[i]-- <= fr[i])
-			buf[i] = fr[i];
-	}
+		p = &buf[mux * FFT_SIZE / 2];
 
-	getValues(MUX_RIGHT);
-	fftRad4(fr, fi);
-	cplx2dB(fr, fi);
-
-	for (i = FFT_SIZE / 2; i < FFT_SIZE; i++) {
-		(buf[i] > fallSpeed) ? (buf[i] -= fallSpeed) : (buf[i] = 1);
-		if (buf[i]-- <= fr[i - FFT_SIZE / 2])
-			buf[i] = fr[i - FFT_SIZE / 2];
+		for (i = 0; i < FFT_SIZE / 2; i++) {
+			(*p > fallSpeed) ? (*p -= fallSpeed) : (*p = 1);
+			if ((*p)-- <= fr[i])
+				*p = fr[i];
+			p++;
+		}
 	}
 
 	return buf;
