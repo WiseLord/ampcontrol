@@ -617,7 +617,7 @@ static void drawBarSpectrum(void)
 	for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
 		xbase = x * 3;
 
-		ybase = (buf[x] + buf[x + 32]) / 8 * 3;
+		ybase = (buf[x] + buf[x + 32]) * 3 / 8;
 		drawSpCol(xbase, 2, 63, ybase, 23);
 	}
 
