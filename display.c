@@ -1641,23 +1641,26 @@ void showSpectrum(void)
 			left += buf[x];
 			right += buf[x + 32];
 		}
-		left >>= 3;
-		right >>= 3;
-		for (x = 0; x < GD_SIZE_X; x++) {
-			if (x % 3 != 2) {
-				for (y = 12; y < 27; y++) {
-					if (x < left || y == 19) {
-						gdDrawPixel(x, y, 1);
-					} else {
-						gdDrawPixel(x, y, 0);
-					}
+		left >>= 4;
+		right >>= 4;
+
+		for (x = 0; x < 43; x++) {
+			for (y = 12; y < 27; y++) {
+				if (x < left || y == 19) {
+					gdDrawPixel(3 * x + 0, y, 1);
+					gdDrawPixel(3 * x + 1, y, 1);
+				} else {
+					gdDrawPixel(3 * x + 0, y, 0);
+					gdDrawPixel(3 * x + 1, y, 0);
 				}
-				for (y = 48; y < 63; y++) {
-					if (x < right || y == 55) {
-						gdDrawPixel(x, y, 1);
-					} else {
-						gdDrawPixel(x, y, 0);
-					}
+			}
+			for (y = 48; y < 63; y++) {
+				if (x < right || y == 55) {
+					gdDrawPixel(3 * x + 0, y, 1);
+					gdDrawPixel(3 * x + 1, y, 1);
+				} else {
+					gdDrawPixel(3 * x + 0, y, 0);
+					gdDrawPixel(3 * x + 1, y, 0);
 				}
 			}
 		}
