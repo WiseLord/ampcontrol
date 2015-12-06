@@ -621,17 +621,6 @@ static void drawBarSpectrum(void)
 		drawSpCol(xbase, 2, 63, ybase, 24);
 	}
 
-//		for (y = 0; y < GD_SIZE_Y / 8 * 3; y++) {
-//			ybase = 63 - y;
-//			if (buf[x] + buf[x + 32] >= y * 3) {
-//				gdDrawPixel(xbase + 0, ybase, 1);
-//				gdDrawPixel(xbase + 1, ybase, 1);
-//			} else {
-//				gdDrawPixel(xbase + 0, ybase, 0);
-//				gdDrawPixel(xbase + 1, ybase, 0);
-//			}
-//		}
-
 	return;
 }
 #endif
@@ -1604,6 +1593,40 @@ void showSpectrum(void)
 
 			ybase = buf[x] + buf[x + 32];
 			drawSpCol(xbase, 3, 63, ybase, 63);
+		}
+		break;
+	case SP_MODE_STEREO_THIN:
+		for (x = 0; x < GD_SIZE_X / 4; x++) {
+			xbase = x << 2;
+
+			ybase = buf[x];
+			drawSpCol(xbase, 1, 31, ybase, 31);
+			if (x != GD_SIZE_X / 4 - 1) {
+				ybase += buf[x + 1];
+				ybase /= 2;
+			}
+			drawSpCol(xbase + 2, 1, 31, ybase, 31);
+
+			ybase = buf[x + 32];
+			drawSpCol(xbase, 1, 63, ybase, 31);
+			if (x != GD_SIZE_X / 4 - 1) {
+				ybase += buf[x + 32 + 1];
+				ybase /= 2;
+			}
+			drawSpCol(xbase + 2, 1, 63, ybase, 31);
+		}
+		break;
+	case SP_MODE_MIXED_THIN:
+		for (x = 0; x < GD_SIZE_X / 4; x++) {
+			xbase = x << 2;
+
+			ybase = buf[x] + buf[x + 32];
+			drawSpCol(xbase, 1, 63, ybase, 63);
+			if (x != GD_SIZE_X / 4 - 1) {
+				ybase += buf[x + 1] + buf[x + 32 + 1];
+				ybase /= 2;
+			}
+			drawSpCol(xbase + 2, 1, 63, ybase, 63);
 		}
 		break;
 	default:

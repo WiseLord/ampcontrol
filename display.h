@@ -37,10 +37,12 @@
 /* Spectrum output mode */
 enum {
 	SP_MODE_METER = 0,
-
 	SP_MODE_STEREO,
 	SP_MODE_MIXED,
-
+#ifndef KS0066
+	SP_MODE_STEREO_THIN,
+	SP_MODE_MIXED_THIN,
+#endif
 	SP_MODE_END
 };
 

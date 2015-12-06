@@ -2050,17 +2050,27 @@
              </property>
              <item>
               <property name="text">
-               <string>Stereo</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
                <string>Bar levels</string>
               </property>
              </item>
              <item>
               <property name="text">
+               <string>Stereo</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>Mixed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Thin stereo</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Thin mixed</string>
               </property>
              </item>
             </widget>
