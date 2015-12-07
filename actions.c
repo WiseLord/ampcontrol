@@ -22,6 +22,8 @@ static uint8_t defDispMode(void)
 	} else {
 		ret = getDefDisplay();
 	}
+	if (sndGetMute())
+		ret = MODE_MUTE;
 
 	return ret;
 }
@@ -277,9 +279,13 @@ void handleAction(uint8_t action)
 		setDisplayTime(DISPLAY_TIME_SP);
 		break;
 	case CMD_RC_MUTE:
-		sndSetMute(!sndGetMute());
 		dispMode = MODE_MUTE;
-		setDisplayTime(DISPLAY_TIME_AUDIO);
+		if (sndGetMute()) {
+			sndSetMute(0);
+			setDisplayTime(DISPLAY_TIME_AUDIO);
+		} else {
+			sndSetMute(1);
+		}
 		break;
 	case ACTION_NEXT_RC_CMD:
 		displayClear();
@@ -298,21 +304,24 @@ void handleAction(uint8_t action)
 		break;
 	case CMD_RC_DEF_DISPLAY:
 		switch (getDefDisplay()) {
-		case MODE_SPECTRUM:
-			setDefDisplay(MODE_TIME);
-			break;
 		case MODE_TIME:
+			setDefDisplay(MODE_SPECTRUM);
+			break;
+		case MODE_SPECTRUM:
 			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
 				setDefDisplay(MODE_FM_RADIO);
 				break;
 			}
 		default:
-			setDefDisplay(MODE_SPECTRUM);
+			setDefDisplay(MODE_TIME);
 			break;
 		}
 		dispMode = getDefDisplay();
+		setDisplayTime(DISPLAY_TIME_SP);
 		break;
 	case CMD_RC_IN_0:
+		if (getDefDisplay() == MODE_SPECTRUM && tunerGetType() != TUNER_NO)
+			setDefDisplay(MODE_FM_RADIO);
 	case CMD_RC_IN_1:
 	case CMD_RC_IN_2:
 	case CMD_RC_IN_3:
@@ -595,8 +604,6 @@ void showScreen(void)
 		break;
 	case MODE_MUTE:
 		showMute();
-		if (sndGetMute())
-			setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case MODE_LOUDNESS:
 		showLoudness();
