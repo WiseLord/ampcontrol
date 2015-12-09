@@ -1353,9 +1353,8 @@ void showAlarm(void)
 		ks0066WriteData (0x05);
 	}
 #else
-	uint8_t i, j;
+	uint8_t i;
 	uint8_t *label;
-	uint8_t ch;
 
 	gdSetXY(4, 0);
 
@@ -1390,16 +1389,12 @@ void showAlarm(void)
 
 	/* Draw weekdays */
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+	label = txtLabels[LABEL_WEEKDAYS];
 	for (i = 0; i < 7; i++) {
 		gdSetXY(5 + 18 * i, 38);
-		j = 0;
-		label = txtLabels[LABEL_SUNDAY + (i + 1) % 7];
-		do {
-			ch = eeprom_read_byte(&label[j++]);
-		} while (ch == ' ');
-		gdWriteChar(ch);
+		gdWriteChar(eeprom_read_byte(&label[i * 2]));
 		gdWriteChar(0x7F);
-		gdWriteChar(eeprom_read_byte(&label[j++]));
+		gdWriteChar(eeprom_read_byte(&label[i * 2 + 1]));
 
 		gdDrawRect(3 + 18 * i, 47, 14, 14, 1);
 		if (getAlarm(DS1307_A0_WDAY) & (0x40 >> i))

@@ -345,6 +345,11 @@
             <string>Timer</string>
            </property>
           </row>
+          <row>
+           <property name="text">
+            <string>Weekdays</string>
+           </property>
+          </row>
           <column>
            <property name="text">
             <string>Translation</string>
