@@ -69,7 +69,7 @@ void tda731xSetSpeakers(void)
 void tda731xSetGain(void)
 {
 	I2CStart(TDA731X_I2C_ADDR);
-	I2CWriteByte(TDA731X_SW | (3 - sndPar[MODE_SND_VOLUME].value) << 3 | !_loudness << 2 | _input);
+	I2CWriteByte(TDA731X_SW | (3 - sndPar[MODE_SND_GAIN0 + _input].value) << 3 | !_loudness << 2 | _input);
 	I2CStop();
 
 	return;
