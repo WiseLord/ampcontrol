@@ -2060,22 +2060,32 @@
              </item>
              <item>
               <property name="text">
-               <string>Stereo</string>
+               <string>3x stereo</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Mixed</string>
+               <string>3x mixed</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Thin stereo</string>
+               <string>2x stereo</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Thin mixed</string>
+               <string>2x mixed</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>1x stereo</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>1x mixed</string>
               </property>
              </item>
             </widget>
