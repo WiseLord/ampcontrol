@@ -8,11 +8,10 @@
 
 static volatile int8_t encCnt;
 static volatile cmdID cmdBuf;
-static volatile int8_t encRes;
-static volatile uint8_t silenceTime;
+static int8_t encRes;
+static uint8_t silenceTime;
 
 /* Previous state */
-static volatile uint8_t btnSaveBuf;
 static volatile uint8_t encPrev = ENC_0;
 static volatile uint8_t btnPrev = BTN_STATE_0;
 
@@ -179,7 +178,7 @@ ISR (TIMER2_COMP_vect)
 		}
 		btnCnt = 0;
 	}
-	btnSaveBuf = btnNow;
+	btnPrev = btnNow;
 
 	/* Place RC event to command buffer if enough RC timer ticks */
 	IRData ir = takeIrData();
@@ -271,7 +270,7 @@ cmdID getBtnCmd(void)
 
 uint16_t getBtnBuf(void)
 {
-	return btnSaveBuf;
+	return btnPrev;
 }
 
 uint16_t getEncBuf(void)
