@@ -77,14 +77,14 @@ void pt2322SetTreble(void)
 void pt2322SetSpeakers(void)
 {
 	uint8_t i;
-	int8_t sp[PT2322_CH_END];
+	int8_t sp[PT2322_CH_END] = {0, 0, 0, 0, 0, 0};
 
 	if (sndPar[MODE_SND_BALANCE].value > 0) {
-		sp[PT2322_CH_FL] = sndPar[MODE_SND_BALANCE].value;
-		sp[PT2322_CH_RL] = sndPar[MODE_SND_BALANCE].value;
+		sp[PT2322_CH_FL] += sndPar[MODE_SND_BALANCE].value;
+		sp[PT2322_CH_RL] += sndPar[MODE_SND_BALANCE].value;
 	} else {
-		sp[PT2322_CH_FR] = -sndPar[MODE_SND_BALANCE].value;
-		sp[PT2322_CH_RR] = -sndPar[MODE_SND_BALANCE].value;
+		sp[PT2322_CH_FR] -= sndPar[MODE_SND_BALANCE].value;
+		sp[PT2322_CH_RR] -= sndPar[MODE_SND_BALANCE].value;
 	}
 
 	if (sndPar[MODE_SND_FRONTREAR].value > 0) {
