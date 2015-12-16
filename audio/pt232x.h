@@ -61,8 +61,8 @@ enum {
 
 #define PT2323_ENH_SURR			0b11010000
 #define PT2323_ENH_SURR_OFF		0b00000001
-#define PT2323_MUX				0b10010000
-#define PT2323_MUX_6DB			0b00000001
+#define PT2323_MIX				0b10010000
+#define PT2323_MIX_6DB			0b00000001
 
 /* Number of inputs */
 #define PT2323_IN_CNT			5
@@ -73,7 +73,7 @@ void pt2322SetBass(void);
 void pt2322SetMiddle(void);
 void pt2322SetTreble(void);
 void pt2322SetSpeakers(void);
-void pt2322SetMux(void);
+void pt2323SetGain(void);
 void pt2323SetInput(uint8_t in);
 void pt232xSetMute(uint8_t val);
 void pt2323SetSurround(uint8_t val);

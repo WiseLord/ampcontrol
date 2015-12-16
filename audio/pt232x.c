@@ -55,7 +55,7 @@ void pt2322SetVolume(void)
 
 void pt2322SetBass(void)
 {
-	pt2322SetBMT(PT2322_I2C_ADDR);
+	pt2322SetBMT(PT2322_BASS);
 
 	return;
 }
@@ -98,7 +98,7 @@ void pt2322SetSpeakers(void)
 	sp[PT2322_CH_CT] = -sndPar[MODE_SND_CENTER].value;
 	sp[PT2322_CH_SB] = -sndPar[MODE_SND_SUBWOOFER].value;
 
-	I2CStart(PT2323_I2C_ADDR);
+	I2CStart(PT2322_I2C_ADDR);
 	for (i = 0; i < PT2322_CH_END; i++) {
 		// PT2322_TRIM_XX
 		I2CWriteByte(((i + 1) << 4) | sp[i]);
@@ -108,10 +108,10 @@ void pt2322SetSpeakers(void)
 	return;
 }
 
-void pt2322SetMux(void)
+void pt2323SetGain(void)
 {
 	I2CStart(PT2323_I2C_ADDR);
-	I2CWriteByte(PT2323_MUX | sndPar[MODE_SND_GAIN0 + _input].value);
+	I2CWriteByte(PT2323_MIX | sndPar[MODE_SND_GAIN0 + _input].value);
 	I2CStop();
 
 	return;
@@ -125,7 +125,7 @@ void pt2323SetInput(uint8_t in)
 	I2CWriteByte(PT2323_INPUT_SWITCH | (PT2323_INPUT_ST1 - in));
 	I2CStop();
 
-	pt2322SetMux();
+	pt2323SetGain();
 
 	return;
 }
@@ -166,9 +166,9 @@ void pt2322SetEffect3d(uint8_t val)
 void pt2322SetToneDefeat(uint8_t val)
 {
 	if (val)
-		_sndFunc &= ~PT2322_TONE_OFF;
-	else
 		_sndFunc |= PT2322_TONE_OFF;
+	else
+		_sndFunc &= ~PT2322_TONE_OFF;
 
 	pt2322SetSndFunc();
 
