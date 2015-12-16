@@ -1,99 +1,27 @@
 #include "ks0108.h"
 
 #include <avr/pgmspace.h>
+#include <util/delay.h>
 
 const uint8_t *_font;
-static uint8_t _cs, _row, _col;
-static uint8_t csInv;		/* 0 for WG12864A, 1 for WG12864B */
+static uint8_t _row, _col;
 
 static uint8_t fp[FONT_PARAM_COUNT];
 
-static inline void ks0108SetPortCS()
+static void ks0108Strob()
 {
-	if (csInv) {
-		KS0108_CHIP_PORT |= (KS0108_CS1 | KS0108_CS2);
-		KS0108_CHIP_PORT &= ~_cs;
-	} else {
-		KS0108_CHIP_PORT &= ~(KS0108_CS1 | KS0108_CS2);
-		KS0108_CHIP_PORT |= _cs;
-	}
-	return;
-}
-
-static uint8_t ks0108Strob()
-{
-	uint8_t pin;
-
-	asm("nop");	/* 120ns */
-	asm("nop");
 	KS0108_CTRL_PORT |= KS0108_E;
-	asm("nop");	/* 300ns */
 	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	pin = KS0108_DATA_PIN;
 	KS0108_CTRL_PORT &= ~KS0108_E;
 
-	return pin;
-}
-
-uint8_t ks0108ReadStatus()
-{
-	uint8_t status;
-
-	KS0108_DATA_DDR = 0x00;
-
-	ks0108SetPortCS();
-
-	KS0108_CTRL_PORT |= KS0108_RW;
-	KS0108_CTRL_PORT &= ~KS0108_DI;
-
-	status = ks0108Strob();
-
-	return status;
-}
-
-void ks0108WaitWhile(uint8_t status)
-{
-	uint8_t i = 0;
-	while(ks0108ReadStatus() & status) {
-		if (i++ > 200)	/* Avoid endless loop */
-			return;
-	}
 	return;
-}
-
-uint8_t ks0108ReadData()
-{
-	uint8_t data;
-
-	ks0108WaitWhile(KS0108_STA_BUSY);
-	KS0108_CTRL_PORT |= KS0108_DI;
-
-	ks0108Strob();
-
-	ks0108WaitWhile(KS0108_STA_BUSY);
-	KS0108_CTRL_PORT |= KS0108_DI;
-
-	data = ks0108Strob();
-
-	return data;
 }
 
 void ks0108WriteCommand(uint8_t command)
 {
-	ks0108WaitWhile(KS0108_STA_BUSY);
-
-	KS0108_DATA_DDR = 0xFF;
-
-	ks0108SetPortCS();
-
-	KS0108_CTRL_PORT &= ~KS0108_RW;
+	_delay_us(50);
 	KS0108_CTRL_PORT &= ~KS0108_DI;
-
 	KS0108_DATA_PORT = command;
-
 	ks0108Strob();
 
 	return;
@@ -101,33 +29,26 @@ void ks0108WriteCommand(uint8_t command)
 
 void ks0108WriteData(uint8_t data)
 {
-	ks0108WaitWhile(KS0108_STA_BUSY);
-
-	KS0108_DATA_DDR = 0xFF;
-
-	ks0108SetPortCS();
-
-	KS0108_CTRL_PORT &= ~KS0108_RW;
+	_delay_us(50);
 	KS0108_CTRL_PORT |= KS0108_DI;
-
 	KS0108_DATA_PORT = data;
-
 	ks0108Strob();
 
-	if (++_col == 64) {
+	if (++_col >= KS0108_COLS * KS0108_CHIPS) {
 		_col = 0;
-
-		if (_cs & KS0108_CS2)
-			_row += fp[FONT_HEIGHT];
-		if (_row == KS0108_ROWS)
+		if (++_row >= KS0108_ROWS)
 			_row = 0;
+	}
 
-		if (_cs == KS0108_CS1)
-			_cs = KS0108_CS2;
-		else if (_cs == KS0108_CS2)
-			_cs = KS0108_CS1;
+	if (_col == KS0108_COLS || _col == 0) {
 
-		ks0108WriteCommand(KS0108_SET_ADDRESS);
+		if (_col == KS0108_COLS) {
+			KS0108_SET_CS2();
+		} else if (_col == 0) {
+			KS0108_SET_CS1();
+		}
+
+		ks0108WriteCommand(KS0108_SET_ADDRESS + (_col & (KS0108_COLS - 1)));
 		ks0108WriteCommand(KS0108_SET_PAGE + _row);
 	}
 	return;
@@ -136,39 +57,12 @@ void ks0108WriteData(uint8_t data)
 void ks0108Clear(void)
 {
 	uint8_t i, j;
-	uint8_t cs = _cs;
 
-	_cs = KS0108_CS1 | KS0108_CS2;
-	ks0108WriteCommand(KS0108_SET_ADDRESS + _col);
-	ks0108WriteCommand(KS0108_SET_PAGE + _row);
+	ks0108SetXY(0, 0);
 
 	for (i = 0; i < KS0108_ROWS; i++)
-		for (j = 0; j < KS0108_COLS; j++)
+		for (j = 0; j < KS0108_COLS * KS0108_CHIPS; j++)
 			ks0108WriteData(0x00);
-	_cs = cs;
-
-	return;
-}
-
-void ks0108TestDisplay() {
-	const uint8_t wrData[] = {0x55, 0xAA};
-	uint8_t rdData[] = {0, 0};
-	uint8_t i;
-
-	csInv = 0;
-
-	for (i = 0; i < 2; i++) {
-		ks0108WriteCommand(KS0108_SET_ADDRESS);
-		ks0108WriteCommand(KS0108_SET_PAGE);
-		ks0108WriteData(wrData[i]);
-
-		ks0108WriteCommand(KS0108_SET_ADDRESS);
-		ks0108WriteCommand(KS0108_SET_PAGE);
-		rdData[i] = ks0108ReadData();
-	}
-
-	if (wrData[0] != rdData[0] || wrData[1] != rdData[1])
-		csInv = 1;
 
 	return;
 }
@@ -178,6 +72,7 @@ void ks0108Init(void)
 	/* Set control lines as outputs */
 	KS0108_CTRL_DDR |= KS0108_DI | KS0108_RW | KS0108_E;
 	KS0108_CHIP_DDR |= KS0108_CS1 | KS0108_CS2 | KS0108_RES;
+	KS0108_DATA_DDR = 0xFF;
 
 	/* Reset */
 	KS0108_CHIP_PORT &= ~(KS0108_RES);
@@ -187,43 +82,47 @@ void ks0108Init(void)
 	asm("nop");
 	asm("nop");
 
-	/* Clear display  and reset addresses */
-	_cs = KS0108_CS1 | KS0108_CS2;
+	// Always in write mode
+	KS0108_CTRL_PORT &= ~KS0108_RW;
 
-	ks0108TestDisplay();
-
+	/* Init first controller */
+	KS0108_SET_CS1();
 	ks0108WriteCommand(KS0108_DISPLAY_START_LINE);
-	ks0108WriteCommand(KS0108_SET_ADDRESS);
-	ks0108WriteCommand(KS0108_SET_PAGE);
+	ks0108WriteCommand(KS0108_DISPLAY_ON);
+	/* Init second controller */
+	KS0108_SET_CS2();
+	ks0108WriteCommand(KS0108_DISPLAY_START_LINE);
+	ks0108WriteCommand(KS0108_DISPLAY_ON);
 
 	fp[FONT_HEIGHT] = 1;
 	ks0108Clear();
 
-	ks0108WriteCommand(KS0108_DISPLAY_ON);
-
 	_row = 0;
 	_col = 0;
-	_cs = KS0108_CS2;
 
 	return;
 }
 
 void ks0108SetXY(uint8_t x, uint8_t y)
 {
-	if (x > ((KS0108_COLS << 1) - 1))
-		y += fp[FONT_HEIGHT];
+	_col = x;
+	_row = y;
 
-	if ((x & ((KS0108_COLS << 1) - 1)) < KS0108_COLS)
-		_cs = KS0108_CS1;
-	else
-		_cs = KS0108_CS2;
+	if (_col >= KS0108_COLS * KS0108_CHIPS)
+		_col = 0;
+	if (_row >= KS0108_ROWS)
+		_row = 0;
 
-	_col = x & (KS0108_COLS - 1);
-	_row = y & (KS0108_ROWS - 1);
+	if (_col >= KS0108_COLS) {
+		KS0108_SET_CS2();
+	} else {
+		KS0108_SET_CS1();
+	}
 
-	ks0108WriteCommand(KS0108_SET_ADDRESS + _col);
+	ks0108WriteCommand(KS0108_SET_ADDRESS + (_col & (KS0108_COLS - 1)));
 	ks0108WriteCommand(KS0108_SET_PAGE + _row);
 
+	return;
 }
 
 void ks0108LoadFont(const uint8_t *font, uint8_t color)
@@ -239,11 +138,8 @@ void ks0108LoadFont(const uint8_t *font, uint8_t color)
 void ks0108WriteChar(uint8_t code)
 {
 	/* Store current position before writing to display */
-	uint8_t cs = _cs;
 	uint8_t row = _row;
 	uint8_t col = _col;
-	if (cs == KS0108_CS2)
-		col += KS0108_COLS;
 
 	uint8_t i, j;
 
