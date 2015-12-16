@@ -8,8 +8,8 @@ lc = $(shell echo $1 | tr A-Z a-z)
 # Fimware file base name
 TARG = ampcontrol_m16_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
 
-SPECT_SRC = fft.c adc.c
-CTRL_SRC = input.c rc5.c
+MCU = atmega16
+F_CPU = 16000000L
 
 ifeq ($(AUDIOPROC), TDA7313)
   AUDIO_SRC = audio/tda7313.c
@@ -21,11 +21,11 @@ endif
 
 FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
 ifeq ($(DISPLAY), KS0108)
-  DISP_SRC = display.c $(addprefix display/, ks0108.c $(FONTS))
+  DISP_SRC = $(addprefix display/, ks0108.c $(FONTS))
 else ifeq ($(DISPLAY), KS0066)
-  DISP_SRC = display.c display/ks0066.c
+  DISP_SRC = display/ks0066.c
 else ifeq ($(DISPLAY), LS020)
-  DISP_SRC = display.c $(addprefix display/, ls020.c $(FONTS))
+  DISP_SRC = $(addprefix display/, ls020.c $(FONTS))
 else ifeq ($(DISPLAY), PCF8574)
   DISP_SRC = display.c display/pcf8574.c
 endif
@@ -40,14 +40,16 @@ else ifeq ($(TUNER), RDA5807)
   TUNER_SRC = tuner/tuner.c tuner/rda5807.c
 endif
 
-SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS = $(wildcard *.c) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
 
-MCU = atmega16
-F_CPU = 16000000L
+# Build directory
+BUILDDIR = build
+
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 CC = avr-gcc
@@ -60,26 +62,28 @@ AD_MCU = -p $(MCU)
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
-OBJDIR = obj
-OBJS = $(addprefix $(OBJDIR)/, $(SRCS:.c=.o))
-ELF = $(OBJDIR)/$(TARG).elf
+OBJS = $(addprefix $(BUILDDIR)/, $(SRCS:.c=.o))
+ELF = $(BUILDDIR)/$(TARG).elf
 
-all: $(TARG)
+all: $(ELF) size
 
-$(TARG): $(OBJS)
+$(ELF): $(OBJS)
+	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
-	mkdir -p flash
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$@.hex
-	./size.sh $(ELF)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
 
-obj/%.o: %.c
-	mkdir -p $(dir $@)
+size:
+	@sh ./size.sh $(ELF)
+
+$(BUILDDIR)/%.o: %.c
+	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(BUILDDIR)
 
-flash: $(TARG)
+.PHONY: flash
+flash: $(ELF)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 fuse:
@@ -96,3 +100,6 @@ eeprom_by:
 
 eeprom_ua:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ua.bin:r
+
+# Other dependencies
+-include $(OBJS:.o=.d)
