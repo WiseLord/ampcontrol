@@ -425,20 +425,23 @@ void sndChangeParam(uint8_t mode, int8_t diff)
 
 void sndPowerOn(void)
 {
-	uint8_t i;
+	int8_t i;
 
 	if (_aproc == AUDIOPROC_PT232X)
 		pt232xReset();
 
 	sndSetMute(1);
 	sndSetInput(_input);
-	for (i = MODE_SND_VOLUME + 1; i < MODE_SND_GAIN0; i++)
-		sndPar[i].set();
-	sndSetMute(0);
+
 	sndSetLoudness(_loudness);
 	sndSetSurround(_surround);
 	sndSetEffect3d(_effect3d);
 	sndSetToneDefeat(_toneDefeat);
+
+	for (i = MODE_SND_GAIN0 - 1; i >= MODE_SND_VOLUME; i--)
+		sndPar[i].set();
+
+	sndSetMute(0);
 
 	return;
 }
