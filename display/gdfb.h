@@ -16,7 +16,7 @@
 #define GD_SIZE_X					ST7920_SIZE_X
 #define GD_SIZE_Y					ST7920_SIZE_Y
 
-#elif defined(KS0108A) || defined(KS0108B)
+#else
 
 #include "ks0108.h"
 
@@ -49,12 +49,17 @@ enum {
 	FONT_DIR_270
 };
 
-inline void gdInit(void);
-inline void gdClear(void);
-
-void gdSetBrightness(uint8_t br);
-
-inline void gdDrawPixel(uint8_t x, uint8_t y, uint8_t color);
+#if defined(ST7920)
+#define	gdInit() st7920Init()
+#define	gdClear() st7920Clear()
+#define gdSetBrightness(br) st7920SetBrightness(br)
+#define gdDrawPixel(x, y, color) st7920DrawPixel(x, y, color)
+#else
+#define gdInit() ks0108Init()
+#define gdClear() ks0108Clear()
+#define gdSetBrightness(br) ks0108SetBrightness(br);
+#define gdDrawPixel(x, y, color) ks0108DrawPixel(x, y, color)
+#endif
 
 void gdDrawHorizLine(uint8_t x1, uint8_t x2, uint8_t y, uint8_t color);
 void gdDrawVertLine(uint8_t x, uint8_t y1, uint8_t y2, uint8_t color);

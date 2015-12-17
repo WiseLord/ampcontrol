@@ -612,7 +612,7 @@ static void drawBarSpectrum(void)
 	uint8_t x, xbase;
 	uint8_t ybase;
 
-	volatile uint8_t *buf = getSpData(fallSpeed);
+	getSpData(fallSpeed);
 
 	for (x = 0; x < GD_SIZE_X / 4 - 1; x++) {
 		xbase = x * 3;
@@ -628,7 +628,7 @@ static void drawBarSpectrum(void)
 
 static void drawMiniSpectrum(void)
 {
-	volatile uint8_t *buf = getSpData(fallSpeed);
+	getSpData(fallSpeed);
 
 #ifdef KS0066
 	uint16_t data;
@@ -1451,7 +1451,7 @@ void showTimer(int16_t timer)
 	}
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
-	volatile uint8_t *buf = getSpData(fallSpeed);
+	getSpData(fallSpeed);
 
 	for (x = 0; x < GD_SIZE_X / 4; x++) {
 		xbase = x << 2;
@@ -1483,7 +1483,7 @@ void switchFallSpeed(void)
 
 void showSpectrum(void)
 {
-	volatile uint8_t *buf = getSpData(fallSpeed);
+	getSpData(fallSpeed);
 	uint16_t left, right;
 
 #ifdef KS0066

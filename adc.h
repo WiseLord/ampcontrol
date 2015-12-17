@@ -12,8 +12,10 @@
 
 #define DC_CORR				128
 
+extern uint8_t buf[FFT_SIZE];							/* Previous results: left and right */
+
 void adcInit(void);
-uint8_t *getSpData(uint8_t fallSpeed);
+void getSpData(uint8_t fallSpeed);
 uint16_t getSignalLevel(void);
 
 #endif /* ADC_H */

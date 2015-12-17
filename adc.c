@@ -8,7 +8,7 @@
 
 static int16_t fr[FFT_SIZE];							/* Real values */
 static int16_t fi[FFT_SIZE];							/* Imaginary values */
-static uint8_t buf[FFT_SIZE];							/* Previous results: left and right */
+uint8_t buf[FFT_SIZE];							/* Previous results: left and right */
 
 static uint8_t adcCorrLeft = DC_CORR;					/* Correction for left channel */
 static uint8_t adcCorrRight = DC_CORR;					/* Correction for right channel */
@@ -111,7 +111,7 @@ static void cplx2dB(int16_t *fr, int16_t *fi)
 	return;
 }
 
-uint8_t *getSpData(uint8_t fallSpeed)
+void getSpData(uint8_t fallSpeed)
 {
 	uint8_t i;
 	uint8_t *p;
@@ -132,7 +132,7 @@ uint8_t *getSpData(uint8_t fallSpeed)
 		}
 	}
 
-	return buf;
+	return;
 }
 
 uint16_t getSignalLevel(void)
