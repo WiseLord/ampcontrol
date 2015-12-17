@@ -31,46 +31,12 @@ void ks0108SetBrightness(uint8_t br)
 	return;
 }
 
-static void ks0108SetPort(uint8_t data)
-{
-	if (data & (1<<0)) PORT(KS0108_D0) |= KS0108_D0_LINE; else PORT(KS0108_D0) &= ~KS0108_D0_LINE;
-	if (data & (1<<1)) PORT(KS0108_D1) |= KS0108_D1_LINE; else PORT(KS0108_D1) &= ~KS0108_D1_LINE;
-	if (data & (1<<2)) PORT(KS0108_D2) |= KS0108_D2_LINE; else PORT(KS0108_D2) &= ~KS0108_D2_LINE;
-	if (data & (1<<3)) PORT(KS0108_D3) |= KS0108_D3_LINE; else PORT(KS0108_D3) &= ~KS0108_D3_LINE;
-	if (data & (1<<4)) PORT(KS0108_D4) |= KS0108_D4_LINE; else PORT(KS0108_D4) &= ~KS0108_D4_LINE;
-	if (data & (1<<5)) PORT(KS0108_D5) |= KS0108_D5_LINE; else PORT(KS0108_D5) &= ~KS0108_D5_LINE;
-	if (data & (1<<6)) PORT(KS0108_D6) |= KS0108_D6_LINE; else PORT(KS0108_D6) &= ~KS0108_D6_LINE;
-	if (data & (1<<7)) PORT(KS0108_D7) |= KS0108_D7_LINE; else PORT(KS0108_D7) &= ~KS0108_D7_LINE;
-
-	return;
-}
-
-static void ks0108SetDdr(uint8_t data)
-{
-	if (data & (1<<0)) DDR(KS0108_D0) |= KS0108_D0_LINE; else DDR(KS0108_D0) &= ~KS0108_D0_LINE;
-	if (data & (1<<1)) DDR(KS0108_D1) |= KS0108_D1_LINE; else DDR(KS0108_D1) &= ~KS0108_D1_LINE;
-	if (data & (1<<2)) DDR(KS0108_D2) |= KS0108_D2_LINE; else DDR(KS0108_D2) &= ~KS0108_D2_LINE;
-	if (data & (1<<3)) DDR(KS0108_D3) |= KS0108_D3_LINE; else DDR(KS0108_D3) &= ~KS0108_D3_LINE;
-	if (data & (1<<4)) DDR(KS0108_D4) |= KS0108_D4_LINE; else DDR(KS0108_D4) &= ~KS0108_D4_LINE;
-	if (data & (1<<5)) DDR(KS0108_D5) |= KS0108_D5_LINE; else DDR(KS0108_D5) &= ~KS0108_D5_LINE;
-	if (data & (1<<6)) DDR(KS0108_D6) |= KS0108_D6_LINE; else DDR(KS0108_D6) &= ~KS0108_D6_LINE;
-	if (data & (1<<7)) DDR(KS0108_D7) |= KS0108_D7_LINE; else DDR(KS0108_D7) &= ~KS0108_D7_LINE;
-
-	return;
-}
-
-static void ks0108Write(uint8_t type, uint8_t data)
+static void ks0108WriteCmd(uint8_t cmd)
 {
 	_delay_us(50);
 
-	if (type == KS0108_DATA)
-		PORT(KS0108_DI) |= KS0108_DI_LINE;
-	else
-		PORT(KS0108_DI) &= ~KS0108_DI_LINE;
-
-	PORT(KS0108_D0) |= KS0108_D0_LINE;
-
-	ks0108SetPort(data);
+	PORT(KS0108_DI) &= ~KS0108_DI_LINE;
+	PORT(KS0108_DPORT) = cmd;
 
 	PORT(KS0108_E) |= KS0108_E_LINE;
 	asm("nop");
@@ -81,12 +47,12 @@ static void ks0108Write(uint8_t type, uint8_t data)
 
 ISR (TIMER0_OVF_vect)
 {
-	/* 2MHz / (256 - 156) = 20000Hz => 20000Hz / 8 / 2 / 66 = 18.9 FPS */
+	// 2MHz / (256 - 156) = 20000Hz => 20000Hz / 8 / 2 / 66 = 18.9 FPS
 	TCNT0 = 156;
 
 	static uint8_t run = 1;
 	if (run)
-		ADCSRA |= 1<<ADSC;							/* Start ADC every second interrupt */
+		ADCSRA |= 1<<ADSC;							// Start ADC every second interrupt
 	run = !run;
 
 	static uint8_t i;
@@ -95,7 +61,7 @@ ISR (TIMER0_OVF_vect)
 
 	static uint8_t br;
 
-	if (j == 64) {									/* Phase 1 (Y) */
+	if (j == 64) {									// Phase 1 (Y)
 		if (++i >= 8) {
 			i = 0;
 			if (++cs >= KS0108_CHIPS)
@@ -109,50 +75,50 @@ ISR (TIMER0_OVF_vect)
 				break;
 			}
 		}
-		PORT(KS0108_DI) &= ~KS0108_DI_LINE;			/* Go to command mode */
-		ks0108SetPort(KS0108_SET_PAGE + i);
-	} else if (j == 65) {							/* Phase 2 (X) */
-		ks0108SetPort(KS0108_SET_ADDRESS);
-	} else {										/* Phase 3 (32 bytes of data) */
-		ks0108SetPort(fb[j + 64 * cs][i]);
+		PORT(KS0108_DI) &= ~KS0108_DI_LINE;			// Go to command mode
+		PORT(KS0108_DPORT) = KS0108_SET_PAGE + i;
+	} else if (j == 65) {							// Phase 2 (X)
+		PORT(KS0108_DPORT) = KS0108_SET_ADDRESS;
+	} else {										// Phase 3 (32 bytes of data)
+		PORT(KS0108_DPORT) = fb[j + 64 * cs][i];
 	}
 
-	PORT(KS0108_E) |= KS0108_E_LINE;				/* Strob */
+	PORT(KS0108_E) |= KS0108_E_LINE;				// Strob
 	asm("nop");
 	PORT(KS0108_E) &= ~KS0108_E_LINE;
 
 	if (++j >= 66) {
 		j = 0;
-		PORT(KS0108_DI) |= KS0108_DI_LINE;			/* Go to data mode */
+		PORT(KS0108_DI) |= KS0108_DI_LINE;			// Go to data mode
 	}
 
-	if (++br >= KS0108_MAX_BRIGHTNESS)				/* Loop brightness */
+	if (++br >= KS0108_MAX_BRIGHTNESS)				// Loop brightness
 		br = KS0108_MIN_BRIGHTNESS;
 
 	if (br == _br) {
-		PORT(KS0108_BCKL) &= ~KS0108_BCKL_LINE;		/* Turn backlight off */
+		PORT(KS0108_BCKL) &= ~KS0108_BCKL_LINE;		// Turn backlight off
 	} else if (br == 0)
-		PORT(KS0108_BCKL) |= KS0108_BCKL_LINE;		/* Turn backlight on */
+		PORT(KS0108_BCKL) |= KS0108_BCKL_LINE;		// Turn backlight on
 
 	return;
 }
 
 void ks0108Init(void)
 {
-	/* Set control and data lines as outputs */
+	// Set control and data lines as outputs
 	DDR(KS0108_DI) |= KS0108_DI_LINE;
 	DDR(KS0108_RW) |= KS0108_RW_LINE;
 	DDR(KS0108_E) |= KS0108_E_LINE;
 	DDR(KS0108_CS1) |= KS0108_CS1_LINE;
 	DDR(KS0108_CS2) |= KS0108_CS2_LINE;
 	DDR(KS0108_RES) |= KS0108_RES_LINE;
-	ks0108SetDdr(0xFF);
+	DDR(KS0108_DPORT) = 0xFF;
 
 	PORT(KS0108_RW) &= ~(KS0108_RW_LINE);
 	PORT(KS0108_DI) &= ~(KS0108_DI_LINE);
 	PORT(KS0108_E) &= ~(KS0108_E_LINE);
 
-	/* Reset */
+	// Reset
 	PORT(KS0108_RES) &= ~(KS0108_RES_LINE);
 	asm("nop");
 	asm("nop");
@@ -160,16 +126,15 @@ void ks0108Init(void)
 	asm("nop");
 	asm("nop");
 
-	/* Init first controller */
+	// Init first controller
 	KS0108_SET_CS1();
-	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_START_LINE);
-	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_ON);
-	/* Init second controller */
-	KS0108_SET_CS2();
-	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_START_LINE);
-	ks0108Write(KS0108_COMMAND, KS0108_DISPLAY_ON);
+	ks0108WriteCmd(KS0108_DISPLAY_START_LINE);
+	ks0108WriteCmd(KS0108_DISPLAY_ON);
 
-	PORT(KS0108_DI) |= KS0108_DI_LINE;
+	// Init second controller
+	KS0108_SET_CS2();
+	ks0108WriteCmd(KS0108_DISPLAY_START_LINE);
+	ks0108WriteCmd(KS0108_DISPLAY_ON);
 
 	DDR(KS0108_BCKL) |= KS0108_BCKL_LINE;
 
