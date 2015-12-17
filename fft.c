@@ -1,61 +1,63 @@
 #include "fft.h"
 #include <avr/pgmspace.h>
 
-static const uint8_t sinTable[N_WAVE / 4 + 1] PROGMEM = {
-	   0,   25,   50,   74,   98,  120,  142,  162,
-	 180,  197,  212,  225,  236,  244,  250,  254,
-	 255
+static const uint8_t sinTable[] PROGMEM = {
+	0,  25,  50,  74,  98, 120, 142, 162,
+	180, 197, 212, 225, 236, 244, 250, 254,
+	255, 254, 250, 244, 236, 225, 212, 197,
+	180, 162, 142, 120,  98,  74,  50,  25
 };
 
 #define mshf_16( a, b)    \
-({                        \
-int prod, val1=a, val2=b; \
-__asm__ __volatile__ (    \
-"muls %B1, %B2	\n\t"     \
-"mov %B0, r0    \n\t"	  \
-"mul %A1, %A2   \n\t"	  \
-"mov %A0, r1    \n\t"     \
-"mulsu %B1, %A2	\n\t"     \
-"add %A0, r0    \n\t"     \
-"adc %B0, r1    \n\t"     \
-"mulsu %B2, %A1	\n\t"     \
-"add %A0, r0    \n\t"     \
-"adc %B0, r1    \n\t"     \
-"clr r1         \n\t"     \
-: "=&d" (prod)            \
-: "a" (val1), "a" (val2)  \
-);                        \
-prod;                     \
-})
+	({                        \
+	int prod, val1=a, val2=b; \
+	__asm__ __volatile__ (    \
+	"muls %B1, %B2	\n\t"     \
+	"mov %B0, r0    \n\t"	  \
+	"mul %A1, %A2   \n\t"	  \
+	"mov %A0, r1    \n\t"     \
+	"mulsu %B1, %A2	\n\t"     \
+	"add %A0, r0    \n\t"     \
+	"adc %B0, r1    \n\t"     \
+	"mulsu %B2, %A1	\n\t"     \
+	"add %A0, r0    \n\t"     \
+	"adc %B0, r1    \n\t"     \
+	"clr r1         \n\t"     \
+	: "=&d" (prod)            \
+	: "a" (val1), "a" (val2)  \
+	);                        \
+	prod;                     \
+	})
 
-static int16_t sinTbl(uint8_t phi)
+inline int16_t sinTbl(uint8_t phi) __attribute__((always_inline));
+inline int16_t sinTbl(uint8_t phi)
 {
 	int16_t ret;
-	uint8_t neg = 0;
+	uint8_t neg = (phi >= N_WAVE / 2);
 
-	if (phi >= N_WAVE / 2) {
-		phi -= N_WAVE / 2;
-		neg = 1;
-	}
-	if (phi >= N_WAVE / 4)
-		phi = N_WAVE / 2 - phi;
-
-	ret = pgm_read_byte(&sinTable[phi]);
+	ret = pgm_read_byte(&sinTable[phi & 0x1F]);
 
 	return neg ? -ret : ret;
 }
 
-static inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
+inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d) __attribute__((always_inline));
+inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 {
 	*s = a + b;
 	*d = a - b;
+
+	return;
 }
 
-static inline void multShf(int16_t cos, int16_t sin,
-	int16_t x, int16_t y, int16_t *u, int16_t *v)
+inline void multShf(int16_t cos, int16_t sin,
+					int16_t x, int16_t y, int16_t *u, int16_t *v) __attribute__((always_inline));
+inline void multShf(int16_t cos, int16_t sin,
+					int16_t x, int16_t y, int16_t *u, int16_t *v)
 {
 	*u = (mshf_16(x, cos) - mshf_16(y, sin));
 	*v = (mshf_16(y, cos) + mshf_16(x, sin));
+
+	return;
 }
 
 void fftRad4(int16_t *fr, int16_t *fi)
