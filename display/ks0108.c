@@ -136,6 +136,10 @@ void ks0108Init(void)
 	ks0108WriteCmd(KS0108_DISPLAY_START_LINE);
 	ks0108WriteCmd(KS0108_DISPLAY_ON);
 
+	// Go to data mode
+	PORT(KS0108_DI) |= KS0108_DI_LINE;
+
+	// Enable backlight control
 	DDR(KS0108_BCKL) |= KS0108_BCKL_LINE;
 
 	return;
