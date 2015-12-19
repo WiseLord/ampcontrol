@@ -153,17 +153,20 @@ uint8_t getAction(void)
 	}
 	/* Disable most action in time edit mode */
 	if (dispMode == MODE_TIME_EDIT) {
-		if (action != CMD_RC_STBY && action != CMD_RC_TIME)
+		if (action != CMD_RC_STBY && action != CMD_RC_TIME &&
+			action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
 			action = ACTION_NOACTION;
 	}
 	/* Disable most actions in alarm edit mode */
 	if (dispMode == MODE_ALARM_EDIT) {
-		if (action != CMD_RC_STBY && action != CMD_RC_ALARM)
+		if (action != CMD_RC_STBY && action != CMD_RC_ALARM &&
+			action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
 			action = ACTION_NOACTION;
 	}
 	/* Disable most actions in FM edit mode */
 	if (dispMode == MODE_FM_TUNE) {
 		if (action != CMD_RC_STBY &&
+			action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP &&
 			action != CMD_RC_FM_MODE && action != CMD_RC_FM_STORE &&
 			action != CMD_RC_FM_DEC && action != CMD_RC_FM_INC &&
 			(action < CMD_RC_FM_0 || action > CMD_RC_FM_9)
