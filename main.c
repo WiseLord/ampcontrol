@@ -52,7 +52,7 @@ int main(void)
 	hwInit();
 
 	if (extFunc == USE_DS18B20) {
-		ds18x20Process();
+		ds18x20ConvertTemp();
 		setSensTimer(TEMP_MEASURE_TIME);
 	}
 
@@ -60,8 +60,9 @@ int main(void)
 		/* Control temperature */
 		if (extFunc == USE_DS18B20) {
 			if (getSensTimer() == 0) {
+				ds18x20GetAllTemps();
+				ds18x20ConvertTemp();
 				setSensTimer(SENSOR_POLL_INTERVAL);
-				ds18x20Process();
 			}
 			tempControlProcess();
 		}

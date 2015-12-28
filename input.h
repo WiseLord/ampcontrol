@@ -87,7 +87,7 @@ typedef enum {
 #define SILENCE_TIMER			180
 
 #define TEMP_MEASURE_TIME		2
-#define SENSOR_POLL_INTERVAL	10
+#define SENSOR_POLL_INTERVAL	5
 
 void rcCodesInit(void);
 void inputInit(void);

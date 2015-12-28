@@ -96,49 +96,6 @@ static void ds18x20Select(ds18x20Dev *dev)
 	return;
 }
 
-static void ds18x20GetAllTemps()
-{
-	uint8_t i, j;
-	uint8_t crc;
-	static uint8_t arr[DS18X20_SCRATCH_LEN];
-
-	for (i = 0; i < devCount; i++) {
-		if (ds18x20IsOnBus()) {
-			ds18x20Select(&devs[i]);
-			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
-
-			/* Control scratchpad checksum */
-			crc = 0;
-			for (j = 0; j < DS18X20_SCRATCH_LEN; j++) {
-				arr[j] = ds18x20GetByte();
-				crc = _crc_ibutton_update(crc, arr[j]);
-			}
-
-			if (crc == 0) {
-				/* Save first 2 bytes (temperature) of scratchpad */
-				for (j = 0; j < DS18X20_SCRATCH_TEMP_LEN; j++)
-					devs[i].sp[j] = arr[j];
-			}
-		}
-	}
-
-	return;
-}
-
-static void ds18x20ConvertTemp(void)
-{
-	ds18x20SendByte(DS18X20_CMD_SKIP_ROM);
-	ds18x20SendByte(DS18X20_CMD_CONVERT);
-
-#ifdef DS18X20_PARASITE_POWER
-	/* Set active 1 on port for at least 750ms as parasitic power */
-	PORT(ONE_WIRE) |= ONE_WIRE_LINE;
-	DDR(ONE_WIRE) |= ONE_WIRE_LINE;
-#endif
-
-	return;
-}
-
 static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 {
 	uint8_t currBit;
@@ -190,6 +147,51 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 	return newDeviation;
 }
 
+void ds18x20ConvertTemp(void)
+{
+	if (ds18x20IsOnBus()) {
+		ds18x20SendByte(DS18X20_CMD_SKIP_ROM);
+		ds18x20SendByte(DS18X20_CMD_CONVERT);
+
+#ifdef DS18X20_PARASITE_POWER
+	/* Set active 1 on port for at least 750ms as parasitic power */
+		PORT(ONE_WIRE) |= ONE_WIRE_LINE;
+		DDR(ONE_WIRE) |= ONE_WIRE_LINE;
+#endif
+	}
+
+	return;
+}
+
+void ds18x20GetAllTemps(void)
+{
+	uint8_t i, j;
+	uint8_t crc;
+	static uint8_t arr[DS18X20_SCRATCH_LEN];
+
+	for (i = 0; i < devCount; i++) {
+		if (ds18x20IsOnBus()) {
+			ds18x20Select(&devs[i]);
+			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
+
+			/* Control scratchpad checksum */
+			crc = 0;
+			for (j = 0; j < DS18X20_SCRATCH_LEN; j++) {
+				arr[j] = ds18x20GetByte();
+				crc = _crc_ibutton_update(crc, arr[j]);
+			}
+
+			if (crc == 0) {
+				/* Save first 2 bytes (temperature) of scratchpad */
+				for (j = 0; j < DS18X20_SCRATCH_TEMP_LEN; j++)
+					devs[i].sp[j] = arr[j];
+			}
+		}
+	}
+
+	return;
+}
+
 void ds18x20SearchDevices(void)
 {
 	uint8_t i, j;
@@ -229,17 +231,6 @@ void ds18x20SearchDevices(void)
 	devCount = count;
 
 	return;
-}
-
-uint8_t ds18x20Process(void)
-{
-	ds18x20GetAllTemps();
-
-	/* Convert temperature */
-	if (ds18x20IsOnBus())
-		ds18x20ConvertTemp();
-
-	return devCount;
 }
 
 int16_t ds18x20GetTemp(uint8_t num)
