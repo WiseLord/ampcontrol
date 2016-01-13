@@ -387,6 +387,14 @@ void MainWindow::setAudioproc(int proc)
         setAudioParam(dsbCenter, -15, 0, 1, MODE_SND_CENTER);
         wgtSubwoofer->show();
         setAudioParam(dsbSubwoofer, -15, 0, 1, MODE_SND_SUBWOOFER);
+        wgtGain0->show();
+        setAudioParam(dsbGain0, 0, 6, 6, MODE_SND_GAIN4);
+        wgtGain1->show();
+        setAudioParam(dsbGain1, 0, 6, 6, MODE_SND_GAIN4);
+        wgtGain2->show();
+        setAudioParam(dsbGain2, 0, 6, 6, MODE_SND_GAIN4);
+        wgtGain3->show();
+        setAudioParam(dsbGain3, 0, 6, 6, MODE_SND_GAIN4);
         wgtGain4->show();
         setAudioParam(dsbGain4, 0, 6, 6, MODE_SND_GAIN4);
         break;
