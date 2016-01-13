@@ -117,7 +117,7 @@ ISR(INT1_vect)
 			rc5Cmd |= 0x01;
 
 		if (rc5Cnt >= 13 && (rc5State == STATE_RC5_START1 || rc5State == STATE_RC5_MID0)) {
-			rc5TogBit = rc5Cmd & RC5_TOGB_MASK;
+			rc5TogBit = (rc5Cmd & RC5_TOGB_MASK) != 0;
 
 			irData.ready = 1;
 			irData.repeat = (rc5TogBit == rc5TogBitOld);
