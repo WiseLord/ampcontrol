@@ -225,6 +225,10 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
 		sndPar[MODE_SND_CENTER].grid = &grid_n15_0_1;
 		sndPar[MODE_SND_SUBWOOFER].grid = &grid_n15_0_1;
+		sndPar[MODE_SND_GAIN0].grid = &grid_0_6_6;
+		sndPar[MODE_SND_GAIN1].grid = &grid_0_6_6;
+		sndPar[MODE_SND_GAIN2].grid = &grid_0_6_6;
+		sndPar[MODE_SND_GAIN3].grid = &grid_0_6_6;
 		sndPar[MODE_SND_GAIN4].grid = &grid_0_6_6;
 		_inCnt = PT2323_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = pt2322SetVolume;
@@ -235,6 +239,10 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_BALANCE].set = pt2322SetSpeakers;
 		sndPar[MODE_SND_CENTER].set = pt2322SetSpeakers;
 		sndPar[MODE_SND_SUBWOOFER].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_GAIN0].set = pt2323SetGain;
+		sndPar[MODE_SND_GAIN1].set = pt2323SetGain;
+		sndPar[MODE_SND_GAIN2].set = pt2323SetGain;
+		sndPar[MODE_SND_GAIN3].set = pt2323SetGain;
 		sndPar[MODE_SND_GAIN4].set = pt2323SetGain;
 		break;
 	case AUDIOPROC_PGA2310:
