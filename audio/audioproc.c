@@ -186,7 +186,6 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
 		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
 		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
 		sndPar[MODE_SND_GAIN0].grid = &grid_0_11d25_3d75;
 		sndPar[MODE_SND_GAIN1].grid = &grid_0_11d25_3d75;
@@ -196,7 +195,6 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
 		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
