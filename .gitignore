@@ -3,3 +3,6 @@
 *.hex
 *.o
 *.lss
+build-*
+build/*
+*.creator.user
