@@ -48,6 +48,11 @@ static void powerOff(void)
 
 	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 
+	// Set low level on all inputs
+	PORT(IN0) &= ~IN0_LINE;
+	PORT(IN1) &= ~IN1_LINE;
+	PORT(IN2) &= ~IN2_LINE;
+
 	setStbyBrightness();
 	stopEditTime();
 
@@ -116,8 +121,12 @@ static void hwInit(void)
 	adcInit();							/* Analog-to-digital converter */
 	inputInit();						/* Buttons/encoder polling */
 
-	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
-	DDR(BCKL) |= BCKL_LINE;
+	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port as output */
+	DDR(BCKL) |= BCKL_LINE;				/* Backlight as output */
+
+	DDR(IN0) |= IN0_LINE;				/* In0 power control as output */
+	DDR(IN1) |= IN1_LINE;				/* In1 power control as output */
+	DDR(IN2) |= IN2_LINE;				/* In2 power control as output */
 
 	sei();								/* Gloabl interrupt enable */
 

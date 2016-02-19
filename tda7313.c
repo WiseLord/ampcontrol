@@ -146,6 +146,24 @@ void setChan(uint8_t ch)
 	chan = ch;
 	setGain(sndPar[SND_GAIN0 + chan].value);
 
+	// Set low level on all inputs
+	PORT(IN0) &= ~IN0_LINE;
+	PORT(IN1) &= ~IN1_LINE;
+	PORT(IN2) &= ~IN2_LINE;
+
+	// Set high level on selected input control
+	switch (chan) {
+	case 1:
+		PORT(IN1) |= IN1_LINE;
+		break;
+	case 2:
+		PORT(IN2) |= IN2_LINE;
+		break;
+	default:
+		PORT(IN0) |= IN0_LINE;
+		break;
+	}
+
 	return;
 }
 

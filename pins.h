@@ -32,6 +32,14 @@
 #define RC5					D
 #define RC5_LINE			(1<<3)
 
+/* Input control */
+#define IN0					B
+#define IN0_LINE			(1<<3)
+#define IN1					B
+#define IN1_LINE			(1<<4)
+#define IN2					B
+#define IN2_LINE			(1<<5)
+
 /* Standby/Mute port definitions */
 #define STMU_MUTE			B
 #define STMU_MUTE_LINE		(1<<7)
