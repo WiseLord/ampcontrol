@@ -75,7 +75,7 @@ $(BUILDDIR)/%.o: %.c
 	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(TUNER) -DKS0066_WIRE_$(WIRE) -c -o $@ $<
 
 clean:
-	rm -rf $(OBJDIR)
+	rm -rf $(BUILDDIR)
 
 .PHONY: flash
 flash: $(TARG)
