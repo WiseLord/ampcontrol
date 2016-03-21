@@ -1,8 +1,4 @@
-*.d
-*.elf
+build-*
+build/*
+*.user
 *.hex
-*.o
-*.lss
-*.DBK
-*.PWI
-*.creator.user
