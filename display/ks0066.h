@@ -76,8 +76,4 @@ void ks0066Init(void);
 void ks0066SetXY(uint8_t x, uint8_t y);
 void ks0066WriteString(char *string);
 
-void ks0066WriteHex(uint8_t data);
-
-void ks0066SetBacklight(uint8_t value);
-
 #endif /* KS0066_H */

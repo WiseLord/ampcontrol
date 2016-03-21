@@ -119,12 +119,9 @@ void ks0066Init(void)
 	DDR(KS0066_D0) |= KS0066_D0_LINE;
 #endif
 	DDR(KS0066_E) |= KS0066_E_LINE;
-//	DDR(KS0066_RW) |= KS0066_RW_LINE;
 	DDR(KS0066_RS) |= KS0066_RS_LINE;
 
-//	PORT(KS0066_BL) |= KS0066_BL_LINE;
 	PORT(KS0066_E) &= ~KS0066_E_LINE;
-//	PORT(KS0066_RW) &= ~KS0066_RW_LINE;
 	PORT(KS0066_RS) &= ~KS0066_RS_LINE;
 #endif
 
@@ -178,35 +175,6 @@ void ks0066WriteString(char *string)
 {
 	while(*string)
 		ks0066WriteData(*string++);
-
-	return;
-}
-
-void ks0066WriteHex(uint8_t data)
-{
-	uint8_t ch;
-
-	ch = (swap(data) & 0x0F) + '0';
-	if (ch > '9')
-		ch += 'A' - '9' - 1;
-	ks0066WriteData(ch);
-	ch = (data & 0x0F) + '0';
-	if (ch > '9')
-		ch += 'A' - '9' - 1;
-	ks0066WriteData(ch);
-
-	return;
-}
-
-void ks0066SetBacklight(uint8_t value)
-{
-#if defined(KS0066_WIRE_PCF8574)
-	if (value)
-		i2cData |= PCF8574_BL_LINE;
-	else
-		i2cData &= ~PCF8574_BL_LINE;
-	ks0066WriteCommand(KS0066_NO_COMMAND);
-#endif
 
 	return;
 }
