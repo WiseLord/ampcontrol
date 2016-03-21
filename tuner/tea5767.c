@@ -88,8 +88,9 @@ void tea5767ReadStatus(uint8_t *buf)
 	uint8_t i;
 
 	I2CStart(TEA5767_ADDR | I2C_READ);
-	for (i = 0; i < 5; i++)
-		I2CReadByte(&buf[i], 1);
+	for (i = 0; i < 4; i++)
+		I2CReadByte(&buf[i], I2C_ACK);
+	I2CReadByte(&buf[4], I2C_NOACK);
 	I2CStop();
 
 	return;
