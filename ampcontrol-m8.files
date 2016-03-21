@@ -5,8 +5,6 @@ audio/tda7318.c
 audio/tda7318.h
 audio/tda7439.c
 audio/tda7439.h
-display/ks0066.c
-display/ks0066.h
 tuner/lm7001.c
 tuner/lm7001.h
 tuner/rda5807.c
@@ -28,6 +26,8 @@ i2c.c
 i2c.h
 input.c
 input.h
+ks0066.c
+ks0066.h
 main.c
 Makefile
 pins.h

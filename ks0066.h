@@ -17,7 +17,7 @@
 #endif
 
 #if defined(KS0066_WIRE_PCF8574)
-#include "../i2c.h"
+#include "i2c.h"
 /* PCF8574 expander address inputs - 0 if soldered to ground, 1 if not */
 #define PCF8574_A2					(0 << 3)
 #define PCF8574_A1					(0 << 2)
@@ -28,7 +28,7 @@
 #define PCF8574_RW_LINE				(1<<1)
 #define PCF8574_RS_LINE				(1<<0)
 #else
-#include "../pins.h"
+#include "pins.h"
 #endif
 
 /* KS0066 instruction registers */

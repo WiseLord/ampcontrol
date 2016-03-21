@@ -10,10 +10,6 @@ TARG = ampcontrol_m8_$(call lc,$(WIRE))_$(call lc,$(AUDIOPROC))_$(call lc,$(TUNE
 MCU = atmega8
 F_CPU = 8000000L
 
-SPECT_SRC = fft.c adc.c
-CTRL_SRC = input.c rc5.c
-DISP_SRC = display.c display/ks0066.c
-
 ifeq ($(AUDIOPROC), TDA7313)
   AUDIO_SRC = audio/tda7313.c
 else ifeq ($(AUDIOPROC), TDA7318)
@@ -23,16 +19,16 @@ else ifeq ($(AUDIOPROC), TDA7439)
 endif
 
 ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner.c tuner/tea5767.c
+  TUNER_SRC = tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner.c tuner/tux032.c
+  TUNER_SRC = tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner.c tuner/lm7001.c
+  TUNER_SRC = tuner/lm7001.c
 else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner.c tuner/rda5807.c
+  TUNER_SRC = tuner/rda5807.c
 endif
 
-SRCS = main.c i2c.c ds1307.c $(SPECT_SRC) $(CTRL_SRC) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
+SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC)
 
 # Build directory
 BUILDDIR = build

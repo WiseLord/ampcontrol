@@ -5,7 +5,7 @@
 
 #include "ds1307.h"
 #include "audio/audio.h"
-#include "display/ks0066.h"
+#include "ks0066.h"
 
 /* Timers fo different screens */
 #define DISPLAY_TIME_TEST		15
