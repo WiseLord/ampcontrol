@@ -11,6 +11,12 @@ audio/tda7439.c
 audio/tda7439.h
 audio/tda7448.c
 audio/tda7448.h
+build-editor-Desktop_Qt_5_4_2-Debug/Makefile
+build-editor-Desktop_Qt_5_4_2-Debug/moc_aboutdialog.cpp
+build-editor-Desktop_Qt_5_4_2-Debug/moc_mainwindow.cpp
+build-editor-Desktop_Qt_5_4_2-Debug/qrc_res.cpp
+build-editor-Desktop_Qt_5_4_2-Debug/ui_aboutdialog.h
+build-editor-Desktop_Qt_5_4_2-Debug/ui_mainwindow.h
 display/font-digits-32.c
 display/font-ks0066-ru-08.c
 display/font-ks0066-ru-24.c
@@ -26,6 +32,13 @@ display/ks0108.c
 display/ks0108.h
 display/st7920.c
 display/st7920.h
+editor/aboutdialog.cpp
+editor/aboutdialog.h
+editor/lcdconverter.cpp
+editor/lcdconverter.h
+editor/main.cpp
+editor/mainwindow.cpp
+editor/mainwindow.h
 tuner/lm7001.c
 tuner/lm7001.h
 tuner/rda5807.c
