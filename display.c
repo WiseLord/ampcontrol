@@ -12,10 +12,6 @@ static int8_t brStby;							/* Brightness in standby mode */
 static int8_t brWork;							/* Brightness in working mode */
 static char strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
-static const uint8_t timeCurPos[] PROGMEM = {
-	7, 4, 1, 0, 12, 15, 79
-};
-
 static const uint8_t barSymbols[] PROGMEM = {
 	0x00, 0x10, 0x14, 0x15,
 };
@@ -244,7 +240,7 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 	return;
 }
 
-static void drawTm(timeMode tm)
+static void drawTm(uint8_t tm)
 {
 	ks0066WriteString(mkNumString(getTime(tm), 2, '0'));
 
@@ -256,31 +252,24 @@ void showTime(uint8_t **txtLabels)
 	readTime();
 	ks0066SetXY(0, 0);
 
-	drawTm(HOUR);
+	drawTm(DS1307_HOUR);
 	ks0066WriteData(':');
-	drawTm(MIN);
+	drawTm(DS1307_MIN);
 	ks0066WriteData(':');
-	drawTm(SEC);
+	drawTm(DS1307_SEC);
 
 	ks0066SetXY(11, 0);
-	drawTm(DAY);
+	drawTm(DS1307_DATE);
 	ks0066WriteData('.');
-	drawTm(MONTH);
+	drawTm(DS1307_MONTH);
 
 	ks0066SetXY(12, 1);
 	ks0066WriteString(mkNumString(20, 2, '0'));
-	drawTm(YEAR);
+	drawTm(DS1307_YEAR);
 
 	ks0066SetXY(0, 1);
 
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
-
-	if (getEtm() == NOEDIT) {
-		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
-	} else {
-		ks0066SetXY(pgm_read_byte(&timeCurPos[getEtm()]), 0);
-		ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
-	}
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
 
 	return;
 }
