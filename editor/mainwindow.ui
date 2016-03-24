@@ -2093,7 +2093,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>3</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -2121,37 +2121,17 @@
              </property>
              <item>
               <property name="text">
-               <string>Bar levels</string>
+               <string>Bar</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>3x stereo</string>
+               <string>Stereo</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>3x mixed</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>2x stereo</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>2x mixed</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>1x stereo</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>1x mixed</string>
+               <string>Mixed</string>
               </property>
              </item>
             </widget>
@@ -3139,22 +3119,6 @@
     <hint type="destinationlabel">
      <x>382</x>
      <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbxSpmode</sender>
-   <signal>activated(int)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setSpmode(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>759</x>
-     <y>74</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>765</x>
-     <y>61</y>
     </hint>
    </hints>
   </connection>

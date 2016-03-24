@@ -803,7 +803,7 @@ void switchTestMode(uint8_t index)
 	rcIndex = index;
 	setIrData(eeprom_read_byte((uint8_t*)EEPROM_RC_TYPE),
 			  eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR),
-							eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex));
+			  eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex));
 
 	return;
 }
@@ -1571,25 +1571,6 @@ void showSpectrum(void)
 
 	switch (spMode) {
 	case SP_MODE_STEREO:
-		for (x = 0; x < GD_SIZE_X / 4; x++) {
-			xbase = x << 2;
-
-			ybase = buf[x];
-			drawSpCol(xbase, 3, 31, ybase, 31);
-
-			ybase = buf[x + 32];
-			drawSpCol(xbase, 3, 63, ybase, 31);
-		}
-		break;
-	case SP_MODE_MIXED:
-		for (x = 0; x < GD_SIZE_X / 4; x++) {
-			xbase = x << 2;
-
-			ybase = buf[x] + buf[x + 32];
-			drawSpCol(xbase, 3, 63, ybase, 63);
-		}
-		break;
-	case SP_MODE_STEREO_DOUBLE:
 		for (x = 0; x < GD_SIZE_X / 6 + 1; x++) {
 			xbase = x * 6;
 
@@ -1608,7 +1589,7 @@ void showSpectrum(void)
 			drawSpCol(xbase + 3, 2, 63, ybase, 31);
 		}
 		break;
-	case SP_MODE_MIXED_DOUBLE:
+	case SP_MODE_MIXED:
 		for (x = 0; x < GD_SIZE_X / 6 + 1; x++) {
 			xbase = x * 6;
 
@@ -1619,40 +1600,6 @@ void showSpectrum(void)
 				ybase /= 2;
 			}
 			drawSpCol(xbase + 3, 2, 63, ybase, 63);
-		}
-		break;
-	case SP_MODE_STEREO_THIN:
-		for (x = 0; x < GD_SIZE_X / 4; x++) {
-			xbase = x << 2;
-
-			ybase = buf[x];
-			drawSpCol(xbase, 1, 31, ybase, 31);
-			if (x != GD_SIZE_X / 4 - 1) {
-				ybase += buf[x + 1];
-				ybase /= 2;
-			}
-			drawSpCol(xbase + 2, 1, 31, ybase, 31);
-
-			ybase = buf[x + 32];
-			drawSpCol(xbase, 1, 63, ybase, 31);
-			if (x != GD_SIZE_X / 4 - 1) {
-				ybase += buf[x + 32 + 1];
-				ybase /= 2;
-			}
-			drawSpCol(xbase + 2, 1, 63, ybase, 31);
-		}
-		break;
-	case SP_MODE_MIXED_THIN:
-		for (x = 0; x < GD_SIZE_X / 4; x++) {
-			xbase = x << 2;
-
-			ybase = buf[x] + buf[x + 32];
-			drawSpCol(xbase, 1, 63, ybase, 63);
-			if (x != GD_SIZE_X / 4 - 1) {
-				ybase += buf[x + 1] + buf[x + 32 + 1];
-				ybase /= 2;
-			}
-			drawSpCol(xbase + 2, 1, 63, ybase, 63);
 		}
 		break;
 	default:
