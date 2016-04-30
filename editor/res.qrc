@@ -9,11 +9,7 @@
         <file>icons/center.bmp</file>
         <file>icons/dvd.bmp</file>
         <file>icons/frontrear.bmp</file>
-        <file>icons/loud_off.bmp</file>
-        <file>icons/loud_on.bmp</file>
         <file>icons/middle.bmp</file>
-        <file>icons/mute_off.bmp</file>
-        <file>icons/mute_on.bmp</file>
         <file>icons/pc.bmp</file>
         <file>icons/preamp.bmp</file>
         <file>icons/subwoofer.bmp</file>
@@ -23,5 +19,10 @@
         <file>icons/tv.bmp</file>
         <file>icons/volume.bmp</file>
         <file>icons/usb.bmp</file>
+        <file>icons/ch51.bmp</file>
+        <file>icons/guitar.bmp</file>
+        <file>icons/turntables.bmp</file>
+        <file>icons/microphone.bmp</file>
+        <file>icons/projector.bmp</file>
     </qresource>
 </RCC>

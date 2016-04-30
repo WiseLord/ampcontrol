@@ -667,6 +667,24 @@
               </property>
               <property name="icon">
                <iconset resource="res.qrc">
+                <normaloff>:/icons/brightness.bmp</normaloff>:/icons/brightness.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/threshold.bmp</normaloff>:/icons/threshold.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
                 <normaloff>:/icons/tuner.bmp</normaloff>:/icons/tuner.bmp</iconset>
               </property>
              </item>
@@ -694,7 +712,7 @@
               </property>
               <property name="icon">
                <iconset resource="res.qrc">
-                <normaloff>:/icons/dvd.bmp</normaloff>:/icons/dvd.bmp</iconset>
+                <normaloff>:/icons/bluetooth.bmp</normaloff>:/icons/bluetooth.bmp</iconset>
               </property>
              </item>
              <item>
@@ -703,7 +721,7 @@
               </property>
               <property name="icon">
                <iconset resource="res.qrc">
-                <normaloff>:/icons/bluetooth.bmp</normaloff>:/icons/bluetooth.bmp</iconset>
+                <normaloff>:/icons/dvd.bmp</normaloff>:/icons/dvd.bmp</iconset>
               </property>
              </item>
              <item>
@@ -721,7 +739,7 @@
               </property>
               <property name="icon">
                <iconset resource="res.qrc">
-                <normaloff>:/icons/brightness.bmp</normaloff>:/icons/brightness.bmp</iconset>
+                <normaloff>:/icons/ch51.bmp</normaloff>:/icons/ch51.bmp</iconset>
               </property>
              </item>
              <item>
@@ -730,7 +748,34 @@
               </property>
               <property name="icon">
                <iconset resource="res.qrc">
-                <normaloff>:/icons/threshold.bmp</normaloff>:/icons/threshold.bmp</iconset>
+                <normaloff>:/icons/guitar.bmp</normaloff>:/icons/guitar.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/turntables.bmp</normaloff>:/icons/turntables.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/microphone.bmp</normaloff>:/icons/microphone.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/projector.bmp</normaloff>:/icons/projector.bmp</iconset>
               </property>
              </item>
             </widget>
