@@ -24,5 +24,8 @@
         <file>icons/turntables.bmp</file>
         <file>icons/microphone.bmp</file>
         <file>icons/projector.bmp</file>
+        <file>icons/cassette.bmp</file>
+        <file>icons/mixer.bmp</file>
+        <file>icons/satellite.bmp</file>
     </qresource>
 </RCC>
