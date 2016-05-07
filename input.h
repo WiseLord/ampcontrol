@@ -9,14 +9,16 @@
 #define ENC_B					0b10
 #define ENC_AB					0b11
 
-#define BTN_STATE_0				0b00000
-#define BTN_1					0b10000
-#define BTN_2					0b01000
-#define BTN_3					0b00100
-#define BTN_4					0b00010
-#define BTN_5					0b00001
-#define BTN_12					0b11000
-#define BTN_13					0b10100
+#define BTN_STATE_0				0b0000000
+#define BTN_A					ENC_A
+#define BTN_B					ENC_B
+#define BTN_1					0b1000000
+#define BTN_2					0b0100000
+#define BTN_3					0b0010000
+#define BTN_4					0b0001000
+#define BTN_5					0b0000100
+#define BTN_12					0b1100000
+#define BTN_13					0b1010000
 
 typedef enum {
 	CMD_RC_STBY,				// STBY
@@ -82,6 +84,7 @@ typedef enum {
 /* Handling long press actions */
 #define SHORT_PRESS				100
 #define LONG_PRESS				600
+#define AUTOREPEAT				300
 
 #define STBY_TIMER_OFF			-1
 #define SILENCE_TIMER			180

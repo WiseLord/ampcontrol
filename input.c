@@ -8,7 +8,7 @@
 
 static volatile int8_t encCnt;
 static volatile cmdID cmdBuf;
-static int8_t encRes;
+static int8_t encRes = 0;
 static uint8_t silenceTime;
 
 /* Previous state */
@@ -95,10 +95,12 @@ ISR (TIMER2_COMP_vect)
 	uint8_t encNow = ENC_0;
 	uint8_t btnNow = BTN_STATE_0;
 
-	if (~PIN(ENCODER_A) & ENCODER_A_LINE)
-		encNow |= ENC_A;
-	if (~PIN(ENCODER_B) & ENCODER_B_LINE)
-		encNow |= ENC_B;
+	if (encRes) {
+		if (~PIN(ENCODER_A) & ENCODER_A_LINE)
+			encNow |= ENC_A;
+		if (~PIN(ENCODER_B) & ENCODER_B_LINE)
+			encNow |= ENC_B;
+	}
 
 	if (~PIN(BUTTON_1) & BUTTON_1_LINE)
 		btnNow |= BTN_1;
@@ -110,20 +112,27 @@ ISR (TIMER2_COMP_vect)
 		btnNow |= BTN_4;
 	if (~PIN(BUTTON_5) & BUTTON_5_LINE)
 		btnNow |= BTN_5;
+	if (!encRes) {
+		if (~PIN(ENCODER_A) & ENCODER_A_LINE)
+			btnNow |= BTN_A;
+		if (~PIN(ENCODER_B) & ENCODER_B_LINE)
+			btnNow |= BTN_B;
+	}
 
 	/* If encoder event has happened, inc/dec encoder counter */
-	if ((encPrev == ENC_0 && encNow == ENC_A) ||
-		(encPrev == ENC_A && encNow == ENC_AB) ||
-		(encPrev == ENC_AB && encNow == ENC_B) ||
-		(encPrev == ENC_B && encNow == ENC_0))
-		encCnt++;
-	if ((encPrev == ENC_0 && encNow == ENC_B) ||
-		(encPrev == ENC_B && encNow == ENC_AB) ||
-		(encPrev == ENC_AB && encNow == ENC_A) ||
-		(encPrev == ENC_A && encNow == ENC_0))
-		encCnt--;
-	encPrev = encNow;								/* Save current encoder state */
-
+	if (encRes) {
+		if ((encPrev == ENC_0 && encNow == ENC_A) ||
+				(encPrev == ENC_A && encNow == ENC_AB) ||
+				(encPrev == ENC_AB && encNow == ENC_B) ||
+				(encPrev == ENC_B && encNow == ENC_0))
+			encCnt++;
+		if ((encPrev == ENC_0 && encNow == ENC_B) ||
+				(encPrev == ENC_B && encNow == ENC_AB) ||
+				(encPrev == ENC_AB && encNow == ENC_A) ||
+				(encPrev == ENC_A && encNow == ENC_0))
+			encCnt--;
+		encPrev = encNow;								/* Save current encoder state */
+	}
 	/* If button event has happened, place it to command buffer */
 	if (btnNow) {
 		if (btnNow == btnPrev) {
@@ -152,6 +161,18 @@ ISR (TIMER2_COMP_vect)
 					cmdBuf = CMD_BTN_13_LONG;
 					break;
 				}
+			} else if (!encRes) {
+				if (btnCnt == LONG_PRESS + AUTOREPEAT) {
+					switch (btnPrev) {
+					case BTN_A:
+						encCnt++;
+						break;
+					case BTN_B:
+						encCnt--;
+						break;
+					}
+					btnCnt = LONG_PRESS + 1;
+				}
 			}
 		} else {
 			btnPrev = btnNow;
@@ -174,6 +195,16 @@ ISR (TIMER2_COMP_vect)
 			case BTN_5:
 				cmdBuf = CMD_BTN_5;
 				break;
+			}
+			if (!encRes) {
+				switch (btnPrev) {
+				case BTN_A:
+					encCnt++;
+					break;
+				case BTN_B:
+					encCnt--;
+					break;
+				}
 			}
 		}
 		btnCnt = 0;
@@ -238,24 +269,29 @@ int8_t getEncoder(void)
 {
 	int8_t ret = 0;
 
-	if (encRes > 0) {
-		while (encCnt >= encRes) {
-			ret++;
-			encCnt -= encRes;
-		}
-		while (encCnt <= -encRes) {
-			ret--;
-			encCnt += encRes;
+	if (encRes) {
+		if (encRes > 0) {
+			while (encCnt >= encRes) {
+				ret++;
+				encCnt -= encRes;
+			}
+			while (encCnt <= -encRes) {
+				ret--;
+				encCnt += encRes;
+			}
+		} else {
+			while (encCnt <= encRes) {
+				ret++;
+				encCnt -= encRes;
+			}
+			while (encCnt >= -encRes) {
+				ret--;
+				encCnt += encRes;
+			}
 		}
 	} else {
-		while (encCnt <= encRes) {
-			ret++;
-			encCnt -= encRes;
-		}
-		while (encCnt >= -encRes) {
-			ret--;
-			encCnt += encRes;
-		}
+		ret = encCnt;
+		encCnt = 0;
 	}
 
 	return ret;
