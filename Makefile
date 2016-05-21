@@ -15,6 +15,8 @@ ifeq ($(DISPLAY), KS0066_16X2)
   DISP_SRC = display/ks0066.c
 else ifeq ($(DISPLAY), KS0066_16X2_PCF8574)
   DISP_SRC = display/ks0066.c
+else ifeq ($(DISPLAY), LS020)
+  DISP_SRC = display/ls020.c $(FONTS_SRC) $(ICONS_SRC)
 else ifeq ($(DISPLAY), ST7920)
   DISP_SRC = display/gdfb.c display/st7920.c $(FONTS_SRC) $(ICONS_SRC)
 else

@@ -122,10 +122,14 @@ const char STR_RC_RC6[]			PROGMEM = "RC6";
 const char STR_RC_NONE[]		PROGMEM = "---";
 
 const char STR_THRESHOLD[]		PROGMEM = "Threshold";
-const char STR_DEGREE[]			PROGMEM = "\xDF""C";
+const char STR_DEGREE[]			PROGMEM = "\x7F\xDF""C";
+#if defined(LS020)
+const char STR_SENSOR1[]		PROGMEM = "S 1: ";
+const char STR_SENSOR2[]		PROGMEM = "S 2: ";
+#else
 const char STR_SENSOR1[]		PROGMEM = "Sensor 1: ";
 const char STR_SENSOR2[]		PROGMEM = "Sensor 2: ";
-
+#endif
 const char STR_SPDIVSP[]		PROGMEM = "\x7F/\x7F";
 const char STR_SPARRSP[]		PROGMEM = " => ";
 const char STR_SPDOTSP[]		PROGMEM = "\x7F.\x7F";
@@ -460,6 +464,29 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			}
 		}
 	}
+#elif defined(LS020)
+	uint8_t i;
+	uint8_t color;
+
+	if (min + max) {
+		value = (int16_t)161 * (value - min) / (max - min);
+	} else {
+		value = (int16_t)80 * value / max;
+	}
+
+	for (i = 0; i < 161; i += 2) {
+		if (((min + max) && (value <= i)) || (!(min + max) &&
+											  (((value > 0) && ((i < 80) || (value + 80 < i))) ||
+											   ((value <= 0) && ((i > 80) || (value + 80 > i)))))) {
+			color = COLOR_BLACK;
+		} else {
+			color = COLOR_CYAN;
+		}
+
+		ls020DrawRect(i + 2, 58, i + 2, 67, color);
+		ls020DrawRect(i + 2, 68, i + 2, 68, COLOR_CYAN);
+		ls020DrawRect(i + 2, 69, i + 2, 78, color);
+	}
 #else
 	uint8_t i, j;
 	uint8_t color;
@@ -488,14 +515,17 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			}
 		}
 	}
-	return;
 #endif
+
+	return;
 }
 
 static void writeString(char *string)
 {
 #ifdef KS0066
 	ks0066WriteString (string);
+#elif defined(LS020)
+	ls020WriteString(string);
 #else
 	gdWriteString(string);
 #endif
@@ -559,13 +589,17 @@ static void showParValue(int8_t value)
 #ifdef KS0066
 	ks0066SetXY(11, 0);
 	writeNum(value, 3, ' ', 10);
+#elif defined(LS020)
+	ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
+	ls020SetXY(126, 88);
+	writeNum(value, 3, ' ', 10);
 #else
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(94, 30);
 	writeNum(value, 3, ' ', 10);
-	return;
-
 #endif
+
+	return;
 }
 
 static void showParLabel(const uint8_t *parLabel)
@@ -573,15 +607,28 @@ static void showParLabel(const uint8_t *parLabel)
 #ifdef KS0066
 	ks0066SetXY (0, 0);
 	writeStringEeprom(parLabel);
+#elif defined(LS020)
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+	ls020SetXY(2, 4);
+	writeStringEeprom(parLabel);
 #else
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
-	return;
-
 #endif
+
+	return;
 }
+
 #ifdef KS0066
+#elif defined(LS020)
+static void showParIcon(const uint8_t iconNum)
+{
+	ls020SetXY(148, 4);
+	ls020WriteIcon24(iconNum);
+
+	return;
+}
 #else
 static void showParIcon(const uint8_t iconNum)
 {
@@ -592,7 +639,40 @@ static void showParIcon(const uint8_t iconNum)
 }
 #endif
 
-#ifndef KS0066
+#ifdef KS0066
+#elif defined(LS020)
+static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_t max)
+{
+	uint8_t i;
+
+	val = (val < max ? btm - val : btm - max);
+
+	for (i = 0; i < w; i++) {
+		ls020DrawVertLine(xbase + i, btm, val, COLOR_YELLOW);
+		ls020DrawVertLine(xbase + i, val > (btm - max) ? val - 1 : val, btm - max, COLOR_BLACK);
+	}
+
+	return;
+}
+
+static void drawBarSpectrum(void)
+{
+	uint8_t x, xbase;
+	uint8_t ybase;
+
+	getSpData(fallSpeed);
+
+	for (x = 0; x < 31; x++) {
+		xbase = x * 4 + 2;
+
+		ybase = (buf[x] + buf[x + 32]) / 2;
+		drawSpCol(xbase, 2, 129, ybase, 31);
+		ls020DrawVertLine(xbase + 2, 129, 129 - 31, 0); // Clear space between bars
+	}
+
+	return;
+}
+#else
 static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_t max)
 {
 	uint8_t i;
@@ -655,6 +735,7 @@ static void drawMiniSpectrum(void)
 			}
 		}
 	}
+#elif defined(LS020)
 #else
 	uint8_t x, xbase;
 	uint8_t ybase;
@@ -677,6 +758,12 @@ static void drawTm(uint8_t tm)
 	} else {
 		writeString("  ");
 	}
+#elif defined(LS020)
+static void drawTm(uint8_t tm, const uint8_t *font, uint8_t mult)
+{
+	ls020LoadFont(font, getEtm() == tm ? COLOR_YELLOW : COLOR_CYAN, mult);
+	writeNum(getTime(tm), 2, '0', 10);
+	ls020LoadFont(font, COLOR_CYAN, mult);
 #else
 static void drawTm(uint8_t tm, const uint8_t *font)
 {
@@ -695,6 +782,12 @@ static void drawAm(uint8_t am)
 	} else {
 		writeString("  ");
 	}
+#elif defined(LS020)
+static void drawAm(uint8_t am, const uint8_t *font, uint8_t mult)
+{
+	ls020LoadFont(font, getEam() == am ? COLOR_YELLOW : COLOR_CYAN, mult);
+	writeNum(getAlarm(am), 2, '0', 10);
+	ls020LoadFont(font, COLOR_CYAN, mult);
 #else
 static void drawAm(uint8_t am, const uint8_t *font)
 {
@@ -730,6 +823,8 @@ void displayInit(void)
 #ifdef KS0066
 	ks0066Init();
 	lcdGenLevels();
+#elif defined(LS020)
+	ls020Init();
 #else
 	gdInit();
 #endif
@@ -749,6 +844,8 @@ void displayClear(void)
 {
 #ifdef KS0066
 	ks0066Clear();
+#elif defined(LS020)
+	ls020Clear();
 #else
 	gdClear();
 #endif
@@ -832,6 +929,54 @@ void showRcInfo(void)
 		writeStringPgm(STR_RC_NONE);
 		break;
 	}
+#elif defined(LS020)
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+	ls020SetXY(10, 4);
+	writeStringPgm(STR_IN_STATUS);
+
+	ls020SetXY(4, 22);
+	writeStringPgm(STR_BUTTONS);
+	ls020SetXY(60, 22);
+	writeNum(btnBuf, 5, '0', 2);
+	writeStringPgm(STR_SPDIVSP);
+	writeNum(encBuf, 2, '0', 2);
+
+	ls020SetXY(10, 48);
+	writeStringPgm(STR_LEARN);
+
+	ls020SetXY(4, 66);
+	writeStringPgm(STR_REMOTE);
+	ls020SetXY(60, 66);
+	switch (irBuf.type) {
+	case IR_TYPE_RC5:
+		writeStringPgm(STR_RC_RC5);
+		break;
+	case IR_TYPE_NEC:
+		writeStringPgm(STR_RC_NEC);
+		break;
+	default:
+		writeStringPgm(STR_RC_NONE);
+		break;
+	}
+
+	ls020SetXY(4, 84);
+	writeStringPgm(STR_ADDRESS);
+	ls020SetXY(60, 84);
+	writeNum(irBuf.address, 2, '0', 16);
+	writeStringPgm(STR_SPARRSP);
+	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR), 2, '0', 16);
+
+	ls020SetXY(4, 102);
+	writeStringPgm(STR_FUNCTION);
+	ls020SetXY(60, 102);
+	writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
+
+	ls020SetXY(4, 120);
+	writeStringPgm(STR_COMMAND);
+	ls020SetXY(60, 120);
+	writeNum(irBuf.command, 2, '0', 16);
+	writeStringPgm(STR_SPARRSP);
+	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
 #else
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(10, 0);
@@ -890,7 +1035,6 @@ void showRcInfo(void)
 void showTemp(void)
 {
 	int8_t tempTH = getTempTH();
-
 #ifdef KS0066
 	lcdGenBar (SYM_STEREO_DEGREE);
 	ks0066SetXY (0, 0);
@@ -905,6 +1049,25 @@ void showTemp(void)
 	writeString("  2:");
 	writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
 	writeString("\x07""C");
+#elif defined(LS020)
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+
+	ls020SetXY(2, 28 + 68);
+	writeStringPgm(STR_SENSOR1);
+	writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
+	writeStringPgm(STR_DEGREE);
+
+	ls020SetXY(2, 48 + 68);
+	writeStringPgm(STR_SENSOR2);
+	writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
+	writeStringPgm(STR_DEGREE);
+
+	showParValue(tempTH);
+	showBar(MIN_TEMP, MAX_TEMP, tempTH);
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+	ls020SetXY(2, 0);
+	writeStringPgm(STR_THRESHOLD);
+	showParIcon(ICON24_THRESHOLD);
 #else
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
@@ -935,7 +1098,6 @@ void showRadio(uint8_t tune)
 	tunerReadStatus();
 
 	uint8_t i;
-
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();
@@ -1016,7 +1178,76 @@ void showRadio(uint8_t tune)
 	} else {
 		writeString("  ");
 	}
+#elif defined(LS020)
+	/* Frequency value */
+	ls020SetXY(8, 2);
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 2);
+	writeNum(freq / 100, 3, ' ', 10);
+	writeStringPgm(STR_SPDOTSP);
+	writeNum(freq % 100, 2, '0', 10);
 
+	/* Signal level */
+	for (i = 0; i < 16; i+=2) {
+		if (i <= level) {
+			ls020DrawVertLine(158 + i, 9, 9 - i / 2, COLOR_CYAN);
+		} else {
+			ls020DrawVertLine(158 + i, 8, 0, COLOR_BLACK);
+			ls020DrawPixel(158 + i, 9, COLOR_CYAN);
+		}
+	}
+
+	/* Stereo indicator */
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+	ls020SetXY(162, 15);
+	if (tunerStereo())
+		writeStringPgm(STR_STEREO);
+	else
+		writeStringPgm(STR_SPACE2);
+
+	/* Favourite station number */
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+	ls020SetXY(155, 26);
+	ls020WriteChar(0xF5);						/* Heart symbol */
+
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+	ls020SetXY(162, 24);
+	if (favNum >= 0)
+		writeNum(favNum, 1, ' ', 10);
+	else
+		writeStringPgm(STR_MINUS1);
+
+	/* Station number */
+	ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
+	ls020SetXY(126, 88);
+	if (num)
+		writeNum(num, 3, ' ', 10);
+	else
+		writeStringPgm(STR_SPMINUS2);
+
+	/* Frequency scale */
+	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
+
+	/* Select between RDS and spectrum mode */
+	if (rdsGetFlag()) {
+		ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+		ls020SetXY(4, 104);
+		writeString(rdsGetText());
+		ls020DrawRect(ls020GetX(), 40, 103 - ls020GetX(), 24, 0);
+	} else {
+		drawBarSpectrum();
+	}
+
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+	if (tune == MODE_RADIO_TUNE) {
+		ls020SetXY(148, 121);
+		writeStringPgm(STR_TUNE);
+	} else {
+		ls020SetXY(80, 80);
+		if (rdsGetFlag())
+			writeStringPgm(STR_RDS);
+		else
+			writeStringPgm(STR_SPACE3);
+	}
 #else
 	/* Frequency value */
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
@@ -1104,6 +1335,12 @@ void showMute(void)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
+#elif defined(LS020)
+	ls020SetXY(96, 32);
+	if (sndGetMute())
+		ls020WriteIcon32(ICON32_MUTE_ON);
+	else
+		ls020WriteIcon32(ICON32_MUTE_OFF);
 #else
 	gdSetXY(96, 32);
 	if (sndGetMute())
@@ -1127,6 +1364,12 @@ void showLoudness(void)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
+#elif defined(LS020)
+	ls020SetXY(96, 32);
+	if (sndGetLoudness())
+		ls020WriteIcon32(ICON32_LOUDNESS_ON);
+	else
+		ls020WriteIcon32(ICON32_LOUDNESS_OFF);
 #else
 	gdSetXY(96, 32);
 	if (sndGetLoudness())
@@ -1150,6 +1393,12 @@ void showSurround()
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
+#elif defined(LS020)
+	ls020SetXY(96, 32);
+	if (sndGetSurround())
+		ls020WriteIcon32(ICON32_SURROUND_ON);
+	else
+		ls020WriteIcon32(ICON32_SURROUND_OFF);
 #else
 	gdSetXY(96, 32);
 	if (sndGetSurround())
@@ -1172,6 +1421,12 @@ void showEffect3d()
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
+#elif defined(LS020)
+	ls020SetXY(96, 32);
+	if (sndGetEffect3d())
+		ls020WriteIcon32(ICON32_EFFECT_3D_ON);
+	else
+		ls020WriteIcon32(ICON32_EFFECT_3D_OFF);
 #else
 	gdSetXY(96, 32);
 	if (sndGetEffect3d())
@@ -1194,6 +1449,12 @@ void showToneDefeat()
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
+#elif defined(LS020)
+	ls020SetXY(96, 32);
+	if (sndGetToneDefeat())
+		ls020WriteIcon32(ICON32_TONE_DEFEAT_ON);
+	else
+		ls020WriteIcon32(ICON32_TONE_DEFEAT_OFF);
 #else
 	gdSetXY(96, 32);
 	if (sndGetToneDefeat())
@@ -1212,6 +1473,10 @@ void showBrWork(void)
 #ifdef KS0066
 	ks0066SetXY(13, 0);
 	writeNum(brWork, 3, ' ', 10);
+#elif defined(LS020)
+	showParValue(brWork);
+	drawBarSpectrum();
+	showParIcon(ICON24_BRIGHTNESS);
 #else
 	showParValue(brWork);
 	drawBarSpectrum();
@@ -1241,6 +1506,11 @@ void showSndParam(sndMode mode)
 	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
 #ifdef KS0066
 	ks0066SetXY(14, 0);
+#elif defined(LS020)
+	drawBarSpectrum();
+	showParIcon(param->icon);
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+	ls020SetXY(162, 120);
 #else
 	drawBarSpectrum();
 	showParIcon(param->icon);
@@ -1272,6 +1542,29 @@ void showTime(void)
 	drawTm(DS1307_YEAR);
 
 	ks0066SetXY(0, 1);
+#elif defined(LS020)
+	ls020SetXY(2, 4);
+
+	drawTm(DS1307_HOUR, font_ks0066_ru_24, 2);
+	writeStringPgm(STR_SPCOLSP);
+	drawTm(DS1307_MIN, font_ks0066_ru_24, 2);
+	writeStringPgm(STR_SPCOLSP);
+	drawTm(DS1307_SEC, font_ks0066_ru_24, 2);
+
+	ls020SetXY(12, 64);
+
+	drawTm(DS1307_DATE, font_digits_32, 1);
+	writeStringPgm(STR_SPDOTSP);
+	drawTm(DS1307_MONTH, font_digits_32, 1);
+	writeStringPgm(STR_SPDOTSP);
+	if (getEtm() == DS1307_YEAR)
+		ls020LoadFont(font_digits_32, COLOR_YELLOW, 1);
+	writeStringPgm(STR_YEAR20);
+	writeStringPgm(STR_SP);
+	drawTm(DS1307_YEAR, font_digits_32, 1);
+
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+	ls020SetXY(24, 104);
 #else
 	gdSetXY(4, 0);
 
@@ -1303,9 +1596,9 @@ void showTime(void)
 
 void showAlarm(void)
 {
-#ifdef KS0066
 	uint8_t i;
 
+#ifdef KS0066
 	/* Draw alarm value */
 	ks0066SetXY(0, 0);
 	drawAm(DS1307_A0_HOUR);
@@ -1347,8 +1640,53 @@ void showAlarm(void)
 	} else {
 		ks0066WriteData (0x05);
 	}
+#elif defined(LS020)
+	uint8_t *label;
+
+	ls020SetXY(20, 4);
+
+	drawAm(DS1307_A0_HOUR, font_ks0066_ru_24, 2);
+	writeStringPgm(STR_SPCOLSP);
+	drawAm(DS1307_A0_MIN, font_ks0066_ru_24, 2);
+
+	/* Draw input icon selection rectangle */
+	if (getEam() == DS1307_A0_INPUT) {
+		ls020DrawFrame(96 + 48, 0, 127 + 48, 31, COLOR_YELLOW);
+		ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_YELLOW);
+	} else {
+		ls020DrawFrame(96 + 48, 0, 127 + 48, 31, COLOR_BLACK);
+		ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_BLACK);
+	}
+
+	ls020SetXY(100 + 48, 4);
+	/* Check that input number less than CHAN_CNT */
+	i = getAlarm(DS1307_A0_INPUT);
+	if (i >= sndInputCnt())
+		i = 0;
+	ls020WriteIcon24(sndParAddr(MODE_SND_GAIN0 + i)->icon);
+
+	/* Draw weekdays selection rectangle */
+	if (getEam() == DS1307_A0_WDAY) {
+		ls020DrawFrame(0, 130, 175, 93, COLOR_YELLOW);
+		ls020DrawFrame(1, 131, 174, 92, COLOR_YELLOW);
+	} else {
+		ls020DrawFrame(0, 130, 175, 93, COLOR_BLACK);
+		ls020DrawFrame(1, 131, 174, 92, COLOR_BLACK);
+	}
+
+	/* Draw weekdays */
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+	label = txtLabels[LABEL_WEEKDAYS];
+	for (i = 0; i < 7; i++) {
+		ls020SetXY(5 + 25 * i, 38 + 63);
+		ls020WriteChar(eeprom_read_byte(&label[i * 2]));
+		ls020WriteChar(0x7F);
+		ls020WriteChar(eeprom_read_byte(&label[i * 2 + 1]));
+
+		ls020DrawFrame(3 + 25 * i, 47 + 63, 21 + 25 * i, 60 + 68, COLOR_CYAN);
+		ls020DrawRect(6 + 25 * i, 50 + 63, 18 + 25 * i, 57 + 68, getAlarm(DS1307_A0_WDAY) & (0x40 >> i) ? COLOR_CYAN : COLOR_BCKG);
+	}
 #else
-	uint8_t i;
 	uint8_t *label;
 
 	gdSetXY(4, 0);
@@ -1398,6 +1736,7 @@ void showAlarm(void)
 			gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 0);
 	}
 #endif
+
 	return;
 }
 
@@ -1424,6 +1763,38 @@ void showTimer(int16_t timer)
 		writeString("--");
 	}
 	drawMiniSpectrum();
+#elif defined(LS020)
+	uint8_t x, xbase;
+	uint8_t ybase;
+
+	ls020SetXY(2, 4);
+
+	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 2);
+	if (timer >= 0) {
+		writeNum(timer / 3600, 2, '0', 10);
+		writeStringPgm(STR_SPCOLSP);
+		writeNum(timer / 60 % 60, 2, '0', 10);
+		writeStringPgm(STR_SPCOLSP);
+		writeNum(timer % 60, 2, '0', 10);
+	} else {
+		writeStringPgm(STR_MINUS2);
+		writeStringPgm(STR_SPCOLSP);
+		writeStringPgm(STR_MINUS2);
+		writeStringPgm(STR_SPCOLSP);
+		writeStringPgm(STR_MINUS2);
+	}
+
+	getSpData(fallSpeed);
+
+	for (x = 0; x < LS020_HEIGHT / 6 + 1; x++) {
+		xbase = x * 6;
+
+		ybase = buf[x] + buf[x + 32];
+		drawSpCol(xbase, 2, 131, 2 * ybase, 80);
+		ybase += buf[x + 1] + buf[x + 32 + 1];
+		ybase /= 2;
+		drawSpCol(xbase + 3, 2, 131, 2 * ybase, 80);
+	}
 #else
 	uint8_t x, xbase;
 	uint8_t ybase;
@@ -1478,10 +1849,10 @@ void switchFallSpeed(void)
 void showSpectrum(void)
 {
 	getSpData(fallSpeed);
-	uint16_t left, right;
 
 #ifdef KS0066
 	uint8_t i, data;
+	uint16_t left, right;
 
 	switch (spMode) {
 	case SP_MODE_STEREO:
@@ -1560,9 +1931,70 @@ void showSpectrum(void)
 		}
 		break;
 	}
+#elif defined(LS020)
+	uint8_t x, xbase;
+	uint8_t ybase;
+	uint16_t left, right;
+
+	switch (spMode) {
+	case SP_MODE_STEREO:
+		for (x = 0; x < LS020_HEIGHT / 6 + 1; x++) {
+			xbase = x * 6;
+
+			ybase = buf[x];
+			drawSpCol(xbase, 2, 65, 2 * ybase, 65);
+			ybase += buf[x + 1];
+			ybase /= 2;
+			drawSpCol(xbase + 3, 2, 65, 2 * ybase, 65);
+
+			ybase = buf[x + 32];
+			drawSpCol(xbase, 2, 131, 2 * ybase, 65);
+			ybase += buf[x + 32 + 1];
+			ybase /= 2;
+			drawSpCol(xbase + 3, 2, 131, 2 * ybase, 65);
+		}
+		break;
+	case SP_MODE_MIXED:
+		for (x = 0; x < LS020_HEIGHT / 6 + 1; x++) {
+			xbase = x * 6;
+
+			ybase = buf[x] + buf[x + 32];
+			drawSpCol(xbase, 2, 131, 2 * ybase, 131);
+			ybase += buf[x + 1] + buf[x + 32 + 1];
+			ybase /= 2;
+			drawSpCol(xbase + 3, 2, 131, 2 * ybase, 131);
+		}
+		break;
+	default:
+		ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+		ls020SetXY(2, 4);
+		writeStringEeprom(txtLabels[LABEL_LEFT_CHANNEL]);
+		ls020SetXY(2, 80);
+		writeStringEeprom(txtLabels[LABEL_RIGHT_CHANNEL]);
+		left = 0;
+		right = 0;
+		for (x = 0; x < 32; x++) {
+			left += buf[x];
+			right += buf[x + 32];
+		}
+		left >>= 3;
+		right >>= 3;
+
+		for (x = 0; x < 58; x++) {
+			ls020DrawRect(3 * x + 1, 20, 3 * x + 2, 29, x < left ? COLOR_YELLOW : COLOR_BLACK);
+			ls020DrawRect(3 * x + 1, 30, 3 * x + 2, 30, COLOR_YELLOW);
+			ls020DrawRect(3 * x + 1, 31, 3 * x + 2, 40, x < left ? COLOR_YELLOW : COLOR_BLACK);
+
+			ls020DrawRect(3 * x + 1, 96, 3 * x + 2, 105, x < left ? COLOR_YELLOW : COLOR_BLACK);
+			ls020DrawRect(3 * x + 1, 106, 3 * x + 2, 106, COLOR_YELLOW);
+			ls020DrawRect(3 * x + 1, 107, 3 * x + 2, 116, x < left ? COLOR_YELLOW : COLOR_BLACK);
+		}
+		break;
+	}
 #else
 	uint8_t x, xbase;
 	uint8_t y, ybase;
+	uint16_t left, right;
 
 	switch (spMode) {
 	case SP_MODE_STEREO:
@@ -1627,6 +2059,7 @@ void showSpectrum(void)
 		break;
 	}
 #endif
+
 	return;
 }
 
@@ -1637,6 +2070,8 @@ void setWorkBrightness(void)
 #if defined(KS0066_WIRE_PCF8574)
 	pcf8574SetBacklight(brWork);
 #endif
+#elif defined(LS020)
+	ls020SetBrightness(brWork);
 #else
 	gdSetBrightness(brWork);
 #endif
@@ -1650,6 +2085,8 @@ void setStbyBrightness(void)
 #if defined(KS0066_WIRE_PCF8574)
 	pcf8574SetBacklight(KS0066_BCKL_OFF);
 #endif
+#elif defined(LS020)
+	ls020SetBrightness(brStby);
 #else
 	gdSetBrightness(brStby);
 #endif

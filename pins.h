@@ -74,6 +74,17 @@
 #define ST7920_BCKL			C
 #define ST7920_BCKL_LINE	(1<<7)
 
+/* LS020 display */
+#define LS020_DPORT			B
+#define LS020_RS_LINE		(1<<1)
+#define LS020_RES_LINE		(1<<0)
+#define LS020_CS_LINE		(1<<4) // Hardware !SS
+#define LS020_CLK_LINE		(1<<7) // Hardware SCK
+#define LS020_DAT_LINE		(1<<5) // Hardware MOSI
+/* LS020 Backlight port */
+#define LS020_BCKL			C
+#define LS020_BCKL_LINE		(1<<7)
+
 /* Remote control definitions*/
 #define RC					D
 #define RC_LINE			(1<<3)
