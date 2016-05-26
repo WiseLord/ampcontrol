@@ -47,13 +47,13 @@ ISR(INT1_vect)
 
 	if (rcPin) {
 		necCnt++;
-		if ((delay > NEC_ZERO_WIDTH_MIN) && (delay < NEC_ZERO_WIDTH_MAX)) {
-			necCmd <<= 1UL;
-			necCmd &= ~1UL;
-		} else if ((delay > NEC_ONE_WIDTH_MIN) && (delay < NEC_ONE_WIDTH_MAX)) {
-			necCmd <<= 1UL;
-			necCmd |= 1UL;
-		} else if ((delay > NEC_REPEAT_WIDTH_MIN) && (delay < NEC_REPEAT_WIDTH_MAX)) {
+		if (RC_NEAR(delay, NEC_ZERO_WIDTH)) {
+			necCmd >>= 1;
+			necCmd &= ~0x80000000;
+		} else if (RC_NEAR(delay, NEC_ONE_WIDTH)) {
+			necCmd >>= 1;
+			necCmd |= 0x80000000;
+		} else if (RC_NEAR(delay, NEC_REPEAT_WIDTH)) {
 			if (ovfCnt < 6) {						// Less then 33 * 6 = 200ms
 				irData.ready = 1;
 				irData.repeat = 1;
@@ -66,8 +66,8 @@ ISR(INT1_vect)
 			irData.ready = 1;
 			irData.repeat = 0;
 			irData.type = IR_TYPE_NEC;
-			irData.address = (necCmd >> 24) & 0xFF;
-			irData.command = (necCmd >> 8) & 0xFF;
+			irData.address = necCmd & 0x00FF;
+			irData.command = (necCmd >> 16) & 0x00FF;
 			necCnt = 0;								// Reset
 			ovfCnt = 0;
 		}
@@ -91,9 +91,11 @@ ISR(INT1_vect)
 
 	event = (rcPin ? EVENT_RC5_SHORT_SPACE : EVENT_RC5_SHORT_PULSE);
 
-	if (delay > RC5_LONG_MIN && delay < RC5_LONG_MAX) {
+	if (RC_NEAR(delay, RC5_LONG)) {
 		event += 4;
-	} else if (delay < RC5_SHORT_MIN || delay > RC5_SHORT_MAX) {
+	} else if (RC_NEAR(delay, RC5_SHORT)) {
+		// nothing to change
+	} else {
 		rc5Cnt = 0;									// Reset
 		rc5State = STATE_RC5_MID1;
 	}

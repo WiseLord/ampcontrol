@@ -4,10 +4,36 @@
 #include <inttypes.h>
 #include "pins.h"
 
-#define RC5_SHORT_MIN				1422	// 889 us ± 20%
-#define RC5_SHORT_MAX				2134
-#define RC5_LONG_MIN				2845	// 1778 us  ± 20%
-#define RC5_LONG_MAX				4267
+// Time scale definitions and macroses
+#define RC_TIMER_MULT				2
+#define RC_DEV_MIN					0.8
+#define RC_DEV_MAX					1.2
+#define RC_MIN(delay)				((uint16_t)(delay * RC_TIMER_MULT * RC_DEV_MIN))
+#define RC_MAX(delay)				((uint16_t)(delay * RC_TIMER_MULT * RC_DEV_MAX))
+#define RC_NEAR(value, delay)		(value > RC_MIN(delay) && value < RC_MAX(delay))
+
+// Remote control types
+enum {
+	IR_TYPE_RC5,
+	IR_TYPE_NEC,
+
+	IR_TYPE_NONE = 0x0F
+};
+
+// Structure for strore data received
+typedef struct {
+	uint8_t ready : 1;
+	uint8_t repeat : 1;
+	uint8_t rsvd1 : 1;
+	uint8_t rsvd2 : 1;
+	uint8_t type : 4;
+	uint8_t address;
+	uint8_t command;
+} IRData;
+
+// RC5 definitions
+#define RC5_SHORT					889
+#define RC5_LONG					1778
 
 #define RC5_STBT_MASK				0x3000
 #define RC5_TOGB_MASK				0x0800
@@ -28,33 +54,13 @@ typedef enum {
 	STATE_RC5_START0 = 3,
 } RC5State;
 
-#define NEC_PULSE_WIDTH_MIN			896		//  560 us ± 20%
-#define NEC_PULSE_WIDTH_MAX			1344
-#define NEC_ZERO_WIDTH_MIN			896		//  560 us ± 20%
-#define NEC_ZERO_WIDTH_MAX			1344
-#define NEC_ONE_WIDTH_MIN			2688	// 1680 us ± 20%
-#define NEC_ONE_WIDTH_MAX			4032
-#define NEC_START_PULSE_WIDTH_MIN	14400	// 9000 us ± 20%
-#define NEC_START_PULSE_WIDTH_MAX	21600
-#define NEC_START_PAUSE_WIDTH_MIN	7200	// 4500 us ± 20%
-#define NEC_START_PAUSE_WIDTH_MAX	10800
-#define NEC_REPEAT_WIDTH_MIN		3600	// 2250 us ± 20%
-#define NEC_REPEAT_WIDTH_MAX		5400
-
-enum {
-	IR_TYPE_RC5,
-	IR_TYPE_NEC,
-
-	IR_TYPE_NONE = 0x0F
-};
-
-typedef struct {
-	uint8_t ready : 1;
-	uint8_t repeat : 1;
-	uint8_t type : 6;
-	uint8_t address;
-	uint8_t command;
-} IRData;
+// NEC definitions
+#define NEC_PULSE_WIDTH				560
+#define NEC_ZERO_WIDTH				560
+#define NEC_ONE_WIDTH				1680
+#define NEC_START_PULSE_WIDTH		9000
+#define NEC_START_PAUSE_WIDTH		4500
+#define NEC_REPEAT_WIDTH			2250
 
 void rcInit(void);
 
