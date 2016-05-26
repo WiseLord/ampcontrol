@@ -1574,19 +1574,13 @@ void showSpectrum(void)
 		for (x = 0; x < GD_SIZE_X / 6 + 1; x++) {
 			xbase = x * 6;
 
-			ybase = buf[x];
-			drawSpCol(xbase, 2, 31, ybase, 31);
-			ybase += buf[x + 1];
-			ybase /= 2;
-			drawSpCol(xbase + 3, 2, 31, ybase, 31);
-
-			ybase = buf[x + 32];
-			drawSpCol(xbase, 2, 63, ybase, 31);
-			if (x < GD_SIZE_X / 6) {
-				ybase += buf[x + 32 + 1];
+			for (y = 0; y < GD_SIZE_Y; y += 32) {
+				ybase = buf[x + y];
+				drawSpCol(xbase, 2, 31 + y, ybase, 31);
+				ybase += buf[x + 1];
 				ybase /= 2;
+				drawSpCol(xbase + 3, 2, 31 + y, ybase, 31);
 			}
-			drawSpCol(xbase + 3, 2, 63, ybase, 31);
 		}
 		break;
 	case SP_MODE_MIXED:
@@ -1595,10 +1589,8 @@ void showSpectrum(void)
 
 			ybase = buf[x] + buf[x + 32];
 			drawSpCol(xbase, 2, 63, ybase, 63);
-			if (x < GD_SIZE_X / 6) {
-				ybase += buf[x + 1] + buf[x + 32 + 1];
-				ybase /= 2;
-			}
+			ybase += buf[x + 1] + buf[x + 32 + 1];
+			ybase /= 2;
 			drawSpCol(xbase + 3, 2, 63, ybase, 63);
 		}
 		break;
