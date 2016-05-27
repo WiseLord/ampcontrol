@@ -32,7 +32,7 @@ ISR(INT1_vect)
 	// ===============================================================================
 
 	static uint8_t necCnt = 0;						// NEC bit counter
-	static uint32_t necCmd = 0;						// NEC command
+	static NECCmd necCmd;							// NEC command
 	static NECState necState = STATE_NEC_IDLE;		// NEC decoding state
 
 	if (rcPin) {
@@ -46,19 +46,21 @@ ISR(INT1_vect)
 			necCnt = 0;
 		} else if (necState == STATE_NEC_RECEIVE) {
 			necCnt++;
-			necCmd >>= 1;
+			necCmd.raw >>= 1;
 			if (RC_NEAR(delay, NEC_ZERO))
-				necCmd &= ~0x80000000;
+				necCmd.raw &= ~0x80000000;
 			else if (RC_NEAR(delay, NEC_ONE))
-				necCmd |= 0x80000000;
+				necCmd.raw |= 0x80000000;
 			else
 				necCnt = 0;
 			if (necCnt == 32) {
-				irData.ready = 1;
-				irData.repeat = 0;
-				irData.type = IR_TYPE_NEC;
-				irData.address = necCmd & 0xFF;
-				irData.command = (necCmd >> 16) & 0xFF;
+				if ((uint8_t)(~necCmd.ncmd) == necCmd.cmd) {
+					irData.ready = 1;
+					irData.repeat = 0;
+					irData.type = IR_TYPE_NEC;
+					irData.address = necCmd.laddr;
+					irData.command = necCmd.cmd;
+				}
 			}
 		}
 	} else {

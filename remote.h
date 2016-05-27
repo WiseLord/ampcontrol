@@ -69,6 +69,16 @@ typedef enum {
 	STATE_NEC_RECEIVE,
 } NECState;
 
+typedef union {
+	uint32_t raw;
+	struct {
+		uint8_t laddr;
+		uint8_t haddr;
+		uint8_t cmd;
+		uint8_t ncmd;
+	};
+} NECCmd;
+
 void rcInit(void);
 
 IRData takeIrData(void);
