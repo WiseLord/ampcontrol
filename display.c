@@ -1240,9 +1240,9 @@ void showSndParam(sndMode mode)
 #else
 	drawBarSpectrum();
 	showParIcon(param->icon);
-#endif
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(116, 56);
+#endif
 	writeStringEeprom(txtLabels[LABEL_DB]);
 
 	return;
