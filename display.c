@@ -562,11 +562,11 @@ static void showParValue(int8_t value)
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(94, 30);
 	writeNum(value, 3, ' ', 10);
-	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	return;
 
 #endif
 }
+
 static void showParLabel(const uint8_t *parLabel)
 {
 #ifdef KS0066
@@ -576,7 +576,6 @@ static void showParLabel(const uint8_t *parLabel)
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringEeprom(parLabel);
-	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	return;
 
 #endif
@@ -680,10 +679,7 @@ static void drawTm(uint8_t tm)
 #else
 static void drawTm(uint8_t tm, const uint8_t *font)
 {
-	if (getEtm() == tm)
-		gdLoadFont(font, 0, FONT_DIR_0);
-	else
-		gdLoadFont(font, 1, FONT_DIR_0);
+	gdLoadFont(font, getEtm() == tm ? 0 : 1, FONT_DIR_0);
 	writeNum(getTime(tm), 2, '0', 10);
 	gdLoadFont(font, 1, FONT_DIR_0);
 #endif
@@ -701,10 +697,7 @@ static void drawAm(uint8_t am)
 #else
 static void drawAm(uint8_t am, const uint8_t *font)
 {
-	if (getEam() == am)
-		gdLoadFont(font, 0, FONT_DIR_0);
-	else
-		gdLoadFont(font, 1, FONT_DIR_0);
+	gdLoadFont(font, getEam() == am ? 0 : 1, FONT_DIR_0);
 	writeNum(getAlarm(am), 2, '0', 10);
 	gdLoadFont(font, 1, FONT_DIR_0);
 #endif
@@ -926,7 +919,6 @@ void showTemp(void)
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringPgm(STR_THRESHOLD);
-	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	showParIcon(ICON24_THRESHOLD);
 
 #endif
@@ -1029,7 +1021,6 @@ void showRadio(uint8_t tune)
 	writeNum(freq / 100, 3, ' ', 10);
 	writeStringPgm(STR_SPDOTSP);
 	writeNum(freq % 100, 2, '0', 10);
-	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	/* Signal level */
 	gdSetXY (112, 0);
@@ -1043,6 +1034,7 @@ void showRadio(uint8_t tune)
 	}
 
 	/* Stereo indicator */
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(116, 12);
 	if (tunerStereo())
 		writeStringPgm(STR_STEREO);
@@ -1065,7 +1057,6 @@ void showRadio(uint8_t tune)
 		writeNum(num, 3, ' ', 10);
 	else
 		writeStringPgm(STR_SPMINUS2);
-	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	/* Frequency scale */
 	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
@@ -1249,8 +1240,9 @@ void showSndParam(sndMode mode)
 #else
 	drawBarSpectrum();
 	showParIcon(param->icon);
-	gdSetXY(116, 56);
 #endif
+	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+	gdSetXY(116, 56);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 
 	return;
@@ -1448,7 +1440,6 @@ void showTimer(int16_t timer)
 		writeStringPgm(STR_SPCOLSP);
 		writeStringPgm(STR_MINUS2);
 	}
-	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 
 	getSpData(fallSpeed);
 
