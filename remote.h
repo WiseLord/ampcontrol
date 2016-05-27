@@ -5,11 +5,11 @@
 #include "pins.h"
 
 // Time scale definitions and macroses
-#define RC_TIMER_MULT				2
+#define RC_TIMER_DIV				4	// 1MHz / 250kHz of Timer 1 => delays in us
 #define RC_DEV_MIN					0.8
 #define RC_DEV_MAX					1.2
-#define RC_MIN(delay)				((uint16_t)(delay * RC_TIMER_MULT * RC_DEV_MIN))
-#define RC_MAX(delay)				((uint16_t)(delay * RC_TIMER_MULT * RC_DEV_MAX))
+#define RC_MIN(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC_DEV_MIN))
+#define RC_MAX(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC_DEV_MAX))
 #define RC_NEAR(value, delay)		(value > RC_MIN(delay) && value < RC_MAX(delay))
 
 // Remote control types
@@ -55,12 +55,19 @@ typedef enum {
 } RC5State;
 
 // NEC definitions
-#define NEC_PULSE_WIDTH				560
-#define NEC_ZERO_WIDTH				560
-#define NEC_ONE_WIDTH				1680
-#define NEC_START_PULSE_WIDTH		9000
-#define NEC_START_PAUSE_WIDTH		4500
-#define NEC_REPEAT_WIDTH			2250
+#define NEC_INIT					9000
+#define NEC_START					4500
+#define NEC_REPEAT					2250
+#define NEC_ZERO					560
+#define NEC_ONE						1680
+#define NEC_PULSE					560
+
+typedef enum {
+	STATE_NEC_IDLE = 0,
+	STATE_NEC_INIT,
+	STATE_NEC_REPEAT,
+	STATE_NEC_RECEIVE,
+} NECState;
 
 void rcInit(void);
 

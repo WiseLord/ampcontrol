@@ -5,25 +5,14 @@
 #include <avr/pgmspace.h>
 
 static volatile IRData irData;						// Last decoded IR command
-static volatile uint8_t ovfCnt = 250;				// Overflow counter
 
 void rcInit(void)
 {
 	MCUCR |= (1<<ISC10);							// Set INT1 to trigger on any edge
 	DDR(RC) &= ~RC_LINE;							// Set PD3 (INT1) to input
 	TCCR1A = 0;										// Reset Timer1 counter
-	TCCR1B = (1<<CS11);								// Set Timer1 prescaler to 8 (2MHz)
+	TCCR1B = (1<<CS11) | (1<<CS10);					// Set Timer1 prescaler to 64 (250kHz)
 	GICR |= (1<<INT1);								// Enable INT3 interrupt
-
-	TIMSK = (1<<TOIE1);								// Enable Timer1 overflow interrupt
-
-	return;
-}
-
-ISR(TIMER1_OVF_vect)								// Overflow every 33ms
-{
-	if (ovfCnt <= 250)
-		ovfCnt++;
 
 	return;
 }
@@ -44,33 +33,41 @@ ISR(INT1_vect)
 
 	static uint8_t necCnt = 0;						// NEC bit counter
 	static uint32_t necCmd = 0;						// NEC command
+	static NECState necState = STATE_NEC_IDLE;		// NEC decoding state
 
 	if (rcPin) {
-		necCnt++;
-		if (RC_NEAR(delay, NEC_ZERO_WIDTH)) {
-			necCmd >>= 1;
-			necCmd &= ~0x80000000;
-		} else if (RC_NEAR(delay, NEC_ONE_WIDTH)) {
-			necCmd >>= 1;
-			necCmd |= 0x80000000;
-		} else if (RC_NEAR(delay, NEC_REPEAT_WIDTH)) {
-			if (ovfCnt < 6) {						// Less then 33 * 6 = 200ms
-				irData.ready = 1;
+		if (necState == STATE_NEC_INIT) {
+			if (RC_NEAR(delay, NEC_START)) {
+				necState = STATE_NEC_RECEIVE;
+			} else if (RC_NEAR(delay, NEC_REPEAT)) {
 				irData.repeat = 1;
-				ovfCnt = 0;
+				irData.ready = 1;
 			}
-		} else {
-			necCnt = 0;								// Reset
+			necCnt = 0;
+		} else if (necState == STATE_NEC_RECEIVE) {
+			necCnt++;
+			necCmd >>= 1;
+			if (RC_NEAR(delay, NEC_ZERO))
+				necCmd &= ~0x80000000;
+			else if (RC_NEAR(delay, NEC_ONE))
+				necCmd |= 0x80000000;
+			else
+				necCnt = 0;
+			if (necCnt == 32) {
+				irData.ready = 1;
+				irData.repeat = 0;
+				irData.type = IR_TYPE_NEC;
+				irData.address = necCmd & 0xFF;
+				irData.command = (necCmd >> 16) & 0xFF;
+			}
 		}
-		if (necCnt == 32) {
-			irData.ready = 1;
-			irData.repeat = 0;
-			irData.type = IR_TYPE_NEC;
-			irData.address = necCmd & 0x00FF;
-			irData.command = (necCmd >> 16) & 0x00FF;
-			necCnt = 0;								// Reset
-			ovfCnt = 0;
-		}
+	} else {
+		if (RC_NEAR(delay, NEC_PULSE) && necState != STATE_NEC_REPEAT)
+			necState = STATE_NEC_RECEIVE;
+		else if (RC_NEAR(delay, NEC_INIT))
+			necState = STATE_NEC_INIT;
+		else
+			necState = STATE_NEC_IDLE;
 	}
 
 	// ===============================================================================
