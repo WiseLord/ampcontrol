@@ -839,7 +839,7 @@ void showRcInfo(void)
 	gdSetXY(0, 10);
 	writeStringPgm(STR_BUTTONS);
 	gdSetXY(48, 10);
-	writeNum(btnBuf, 5, '0', 2);
+	writeNum(btnBuf >> 2, 5, '0', 2);
 	writeStringPgm(STR_SPDIVSP);
 	writeNum(encBuf, 2, '0', 2);
 

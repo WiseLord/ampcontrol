@@ -112,12 +112,6 @@ ISR (TIMER2_COMP_vect)
 		btnNow |= BTN_4;
 	if (~PIN(BUTTON_5) & BUTTON_5_LINE)
 		btnNow |= BTN_5;
-	if (!encRes) {
-		if (~PIN(ENCODER_A) & ENCODER_A_LINE)
-			btnNow |= BTN_A;
-		if (~PIN(ENCODER_B) & ENCODER_B_LINE)
-			btnNow |= BTN_B;
-	}
 
 	/* If encoder event has happened, inc/dec encoder counter */
 	if (encRes) {
@@ -131,8 +125,15 @@ ISR (TIMER2_COMP_vect)
 				(encPrev == ENC_AB && encNow == ENC_A) ||
 				(encPrev == ENC_A && encNow == ENC_0))
 			encCnt--;
-		encPrev = encNow;								/* Save current encoder state */
+		encPrev = encNow;
+	} else {
+		if (~PIN(ENCODER_A) & ENCODER_A_LINE)
+			btnNow |= BTN_A;
+		if (~PIN(ENCODER_B) & ENCODER_B_LINE)
+			btnNow |= BTN_B;
+		encPrev = btnNow & (BTN_A | BTN_B);
 	}
+
 	/* If button event has happened, place it to command buffer */
 	if (btnNow) {
 		if (btnNow == btnPrev) {

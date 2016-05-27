@@ -84,7 +84,7 @@ typedef enum {
 /* Handling long press actions */
 #define SHORT_PRESS				100
 #define LONG_PRESS				600
-#define AUTOREPEAT				300
+#define AUTOREPEAT				150
 
 #define STBY_TIMER_OFF			-1
 #define SILENCE_TIMER			180
