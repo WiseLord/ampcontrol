@@ -5,6 +5,7 @@
 #include <avr/pgmspace.h>
 
 static volatile IRData irData;						// Last decoded IR command
+static volatile uint8_t ovfCnt = 250;				// Overflow counter
 
 void rcInit(void)
 {
@@ -13,6 +14,16 @@ void rcInit(void)
 	TCCR1A = 0;										// Reset Timer1 counter
 	TCCR1B = (1<<CS11) | (1<<CS10);					// Set Timer1 prescaler to 64 (250kHz)
 	GICR |= (1<<INT1);								// Enable INT3 interrupt
+
+	TIMSK = (1<<TOIE1);								// Enable Timer1 overflow interrupt
+
+	return;
+}
+
+ISR(TIMER1_OVF_vect)								// Overflow every 1/(250kHz/65536) = 262ms
+{
+	if (ovfCnt <= 250)
+		ovfCnt++;
 
 	return;
 }
@@ -39,9 +50,10 @@ ISR(INT1_vect)
 		if (necState == STATE_NEC_INIT) {
 			if (RC_NEAR(delay, NEC_START)) {
 				necState = STATE_NEC_RECEIVE;
-			} else if (RC_NEAR(delay, NEC_REPEAT)) {
+			} else if (RC_NEAR(delay, NEC_REPEAT) && ovfCnt < 3) {
 				irData.repeat = 1;
 				irData.ready = 1;
+				ovfCnt = 0;
 			}
 			necCnt = 0;
 		} else if (necState == STATE_NEC_RECEIVE) {
@@ -60,6 +72,7 @@ ISR(INT1_vect)
 					irData.type = IR_TYPE_NEC;
 					irData.address = necCmd.laddr;
 					irData.command = necCmd.cmd;
+					ovfCnt = 0;
 				}
 			}
 		}
