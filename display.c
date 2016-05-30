@@ -118,6 +118,7 @@ const char STR_ADDRESS[]		PROGMEM = "Address";
 const char STR_COMMAND[]		PROGMEM = "Command";
 const char STR_RC_RC5[]			PROGMEM = "RC5";
 const char STR_RC_NEC[]			PROGMEM = "NEC";
+const char STR_RC_RC6[]			PROGMEM = "RC6";
 const char STR_RC_NONE[]		PROGMEM = "---";
 
 const char STR_THRESHOLD[]		PROGMEM = "Threshold";
@@ -855,6 +856,9 @@ void showRcInfo(void)
 		break;
 	case IR_TYPE_NEC:
 		writeStringPgm(STR_RC_NEC);
+		break;
+	case IR_TYPE_RC6:
+		writeStringPgm(STR_RC_RC6);
 		break;
 	default:
 		writeStringPgm(STR_RC_NONE);

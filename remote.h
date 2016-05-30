@@ -16,6 +16,7 @@
 enum {
 	IR_TYPE_RC5,
 	IR_TYPE_NEC,
+	IR_TYPE_RC6,
 
 	IR_TYPE_NONE = 0x0F
 };
@@ -31,27 +32,27 @@ typedef struct {
 	uint8_t command;
 } IRData;
 
-// RC5 definitions
-#define RC5_SHORT					889
-#define RC5_LONG					1778
+// RC5/RC6 definitions
+#define RC6_1T						444
+#define RC6_2T						889
+#define RC6_3T						1333
+#define RC6_4T						1778
+#define RC6_6T						2667
 
-#define RC5_STBT_MASK				0x3000
+#define RC5_STBT_MASK				0x2000
+#define RC5_FIBT_MASK				0x1000
 #define RC5_TOGB_MASK				0x0800
 #define RC5_ADDR_MASK				0x07C0
 #define RC5_COMM_MASK				0x003F
 
-typedef enum {
-	EVENT_RC5_SHORT_SPACE = 0,
-	EVENT_RC5_SHORT_PULSE = 2,
-	EVENT_RC5_LONG_SPACE  = 4,
-	EVENT_RC5_LONG_PULSE  = 6,
-} RC5Event;
+#define RC6_ADDR_MASK				0xFFC0
+#define RC6_COMM_MASK				0x00FF
 
 typedef enum {
-	STATE_RC5_START1 = 0,
-	STATE_RC5_MID1   = 1,
-	STATE_RC5_MID0   = 2,
-	STATE_RC5_START0 = 3,
+	STATE_RC5_MID0 = 0,
+	STATE_RC5_MID1,
+	STATE_RC5_START0,
+	STATE_RC5_START1,
 } RC5State;
 
 // NEC definitions
