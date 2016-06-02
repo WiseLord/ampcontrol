@@ -59,7 +59,7 @@ ISR(INT1_vect)
 		if (necState == STATE_NEC_INIT) {
 			if (RC_NEAR(delay, NEC_START)) {
 				necState = STATE_NEC_RECEIVE;
-			} else if (RC_NEAR(delay, NEC_REPEAT) && ovfCnt < 3) {
+			} else if (RC_NEAR(delay, NEC_REPEAT) && ovfCnt < 2) {
 				irData.repeat = 1;
 				irData.ready = 1;
 				ovfCnt = 0;
@@ -77,7 +77,10 @@ ISR(INT1_vect)
 			if (necCnt == 32) {
 				if ((uint8_t)(~necCmd.ncmd) == necCmd.cmd) {
 					irData.ready = 1;
-					irData.repeat = 0;
+					if (ovfCnt < 2)
+						irData.repeat = 1;
+					else
+						irData.repeat = 0;
 					irData.address = necCmd.laddr;
 					irData.command = necCmd.cmd;
 					ovfCnt = 0;

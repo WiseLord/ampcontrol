@@ -6,8 +6,8 @@
 
 // Time scale definitions and macroses
 #define RC_TIMER_DIV				4	// 1MHz / 250kHz of Timer 1 => delays in us
-#define RC_DEV_MIN					0.8
-#define RC_DEV_MAX					1.2
+#define RC_DEV_MIN					0.75
+#define RC_DEV_MAX					1.25
 #define RC_MIN(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC_DEV_MIN))
 #define RC_MAX(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC_DEV_MAX))
 #define RC_NEAR(value, delay)		(value > RC_MIN(delay) && value < RC_MAX(delay))
