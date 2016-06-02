@@ -78,7 +78,6 @@ ISR(INT1_vect)
 				if ((uint8_t)(~necCmd.ncmd) == necCmd.cmd) {
 					irData.ready = 1;
 					irData.repeat = 0;
-					irData.type = IR_TYPE_NEC;
 					irData.address = necCmd.laddr;
 					irData.command = necCmd.cmd;
 					ovfCnt = 0;
@@ -150,12 +149,17 @@ ISR(INT1_vect)
 		}
 	} else {
 		// Try to decode as NEC sequence
-		if (RC_NEAR(delay, NEC_PULSE) && necState != STATE_NEC_REPEAT)
+		if (RC_NEAR(delay, NEC_PULSE) && necState != STATE_NEC_REPEAT) {
 			necState = STATE_NEC_RECEIVE;
-		else if (RC_NEAR(delay, NEC_INIT))
+		} else if (RC_NEAR(delay, NEC_INIT)) {
 			necState = STATE_NEC_INIT;
-		else
+			irData.type = IR_TYPE_NEC;
+		} else if (RC_NEAR(delay, SAM_INIT)) {
+			necState = STATE_NEC_INIT;
+			irData.type = IR_TYPE_SAM;
+		} else {
 			necState = STATE_NEC_IDLE;
+		}
 		// Try to decode as RC6 sequence
 		if (RC_NEAR(delay, RC6_1T)) {
 			if (rc6State == STATE_RC5_START1) {

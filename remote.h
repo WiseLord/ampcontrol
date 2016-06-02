@@ -17,6 +17,7 @@ enum {
 	IR_TYPE_RC5,
 	IR_TYPE_NEC,
 	IR_TYPE_RC6,
+	IR_TYPE_SAM,
 
 	IR_TYPE_NONE = 0x0F
 };
@@ -55,8 +56,9 @@ typedef enum {
 	STATE_RC5_START1,
 } RC5State;
 
-// NEC definitions
+// NEC/Samsung definitions
 #define NEC_INIT					9000
+#define SAM_INIT					4500
 #define NEC_START					4500
 #define NEC_REPEAT					2250
 #define NEC_ZERO					560
