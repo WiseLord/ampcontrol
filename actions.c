@@ -363,6 +363,7 @@ void handleAction(uint8_t action)
 		switch (dispMode) {
 		case MODE_STANDBY:
 			dispMode = MODE_TEST;
+			setWorkBrightness();
 			switchTestMode(CMD_RC_STBY);
 			setDisplayTime(DISPLAY_TIME_TEST);
 			break;
@@ -372,6 +373,7 @@ void handleAction(uint8_t action)
 		switch (dispMode) {
 		case MODE_STANDBY:
 			dispMode = MODE_TEMP;
+			setWorkBrightness();
 			setDisplayTime(DISPLAY_TIME_TEMP);
 			break;
 		}
@@ -531,6 +533,7 @@ void handleExitDefaultMode(void)
 	if (getDisplayTime() == 0) {
 		switch (dispMode) {
 		case MODE_STANDBY:
+			setStbyBrightness();
 			break;
 		case MODE_TEMP:
 			saveTempParams();
@@ -586,15 +589,12 @@ void showScreen(void)
 	switch (dispMode) {
 	case MODE_STANDBY:
 		showTime();
-		setStbyBrightness();
 		break;
 	case MODE_TEST:
 		showRcInfo();
-		setWorkBrightness();
 		break;
 	case MODE_TEMP:
 		showTemp();
-		setWorkBrightness();
 		break;
 	case MODE_SPECTRUM:
 		showSpectrum();

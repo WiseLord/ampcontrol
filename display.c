@@ -12,10 +12,10 @@
 #include "tuner/rds.h"
 #include "alarm.h"
 
-int8_t brStby;								/* Brightness in standby mode */
-int8_t brWork;								/* Brightness in working mode */
+static int8_t brStby;						/* Brightness in standby mode */
+static int8_t brWork;						/* Brightness in working mode */
 
-uint8_t spMode;								/* Spectrum mode */
+static uint8_t spMode;						/* Spectrum mode */
 static uint8_t fallSpeed;					/* Spectrum fall speed */
 
 static uint8_t rcIndex = CMD_RC_STBY;
