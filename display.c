@@ -925,6 +925,9 @@ void showRcInfo(void)
 	case IR_TYPE_NEC:
 		writeStringPgm(STR_RC_NEC);
 		break;
+	case IR_TYPE_RC6:
+		writeStringPgm(STR_RC_RC6);
+		break;
 	default:
 		writeStringPgm(STR_RC_NONE);
 		break;
@@ -956,6 +959,9 @@ void showRcInfo(void)
 		break;
 	case IR_TYPE_NEC:
 		writeStringPgm(STR_RC_NEC);
+		break;
+	case IR_TYPE_RC6:
+		writeStringPgm(STR_RC_RC6);
 		break;
 	default:
 		writeStringPgm(STR_RC_NONE);
