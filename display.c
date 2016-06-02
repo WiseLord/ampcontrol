@@ -936,17 +936,20 @@ void showRcInfo(void)
 
 	ls020SetXY(4, 22);
 	writeStringPgm(STR_BUTTONS);
-	ls020SetXY(60, 22);
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+	ls020SetXY(60, 18);
 	writeNum(btnBuf, 5, '0', 2);
 	writeStringPgm(STR_SPDIVSP);
 	writeNum(encBuf, 2, '0', 2);
 
-	ls020SetXY(10, 48);
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+	ls020SetXY(10, 46);
 	writeStringPgm(STR_LEARN);
 
 	ls020SetXY(4, 66);
 	writeStringPgm(STR_REMOTE);
-	ls020SetXY(60, 66);
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+	ls020SetXY(60, 62);
 	switch (irBuf.type) {
 	case IR_TYPE_RC5:
 		writeStringPgm(STR_RC_RC5);
@@ -959,21 +962,25 @@ void showRcInfo(void)
 		break;
 	}
 
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
 	ls020SetXY(4, 84);
 	writeStringPgm(STR_ADDRESS);
-	ls020SetXY(60, 84);
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+	ls020SetXY(60, 82);
 	writeNum(irBuf.address, 2, '0', 16);
 	writeStringPgm(STR_SPARRSP);
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR), 2, '0', 16);
 
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
 	ls020SetXY(4, 102);
 	writeStringPgm(STR_FUNCTION);
 	ls020SetXY(60, 102);
 	writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
 
-	ls020SetXY(4, 120);
+	ls020SetXY(4, 118);
 	writeStringPgm(STR_COMMAND);
-	ls020SetXY(60, 120);
+	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+	ls020SetXY(60, 114);
 	writeNum(irBuf.command, 2, '0', 16);
 	writeStringPgm(STR_SPARRSP);
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
