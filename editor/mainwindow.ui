@@ -453,7 +453,12 @@
              </item>
              <item>
               <property name="text">
-               <string>PGA2310</string>
+               <string>TEA6330</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PGA2310 (m32 only)</string>
               </property>
              </item>
             </widget>
@@ -1824,7 +1829,7 @@
              </item>
              <item>
               <property name="text">
-               <string>LM7001</string>
+               <string>LM7001 (m32 only)</string>
               </property>
              </item>
             </widget>
@@ -2398,7 +2403,7 @@
            <item>
             <widget class="QLabel" name="lblExtfunc">
              <property name="text">
-              <string>EXTx pins function</string>
+              <string>EXTx pins function (m32 only)</string>
              </property>
             </widget>
            </item>
