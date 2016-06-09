@@ -20,6 +20,9 @@ static const sndGrid grid_n15_0_1           PROGMEM = {-15,  0, 1.00 * 8};	/* -1
 static const sndGrid grid_n96_31_1          PROGMEM = {-96, 31, 1.00 * 8};	/* -96..31dB with 1dB step */
 static const sndGrid grid_n7_7_1            PROGMEM = { -7,  7, 1.00 * 8};	/* -7..7dB with 1dB step */
 static const sndGrid grid_0_6_6             PROGMEM = {  0,  1, 6.00 * 8};	/* 0..6dB with 6dB step */
+static const sndGrid grid_n66_20_2          PROGMEM = {-33, 10, 2.00 * 8};	/* -66..20dB with 2dB step */
+static const sndGrid grid_n12_15_3          PROGMEM = { -4,  5, 3.00 * 8};	/* -12..15dB with 3dB step */
+static const sndGrid grid_n12_12_3          PROGMEM = { -4,  4, 3.00 * 8};	/* -12..12dB with 3dB step */
 
 sndParam sndPar[MODE_SND_END];
 static audioProc _aproc;
@@ -243,6 +246,19 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_GAIN3].set = pt2323SetGain;
 		sndPar[MODE_SND_GAIN4].set = pt2323SetGain;
 		break;
+	case AUDIOPROC_TEA6330:
+		sndPar[MODE_SND_VOLUME].grid = &grid_n66_20_2;
+		sndPar[MODE_SND_BASS].grid = &grid_n12_15_3;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n12_12_3;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n14_14_2;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n14_14_2;
+		_inCnt = TEA6330_IN_CNT;
+		sndPar[MODE_SND_VOLUME].set = tea6330SetVolume;
+		sndPar[MODE_SND_BASS].set = tea6330SetBass;
+		sndPar[MODE_SND_TREBLE].set = tea6330SetTreble;
+		sndPar[MODE_SND_FRONTREAR].set = tea6330SetFrontRear;
+		sndPar[MODE_SND_BALANCE].set = tea6330SetVolume;
+		break;
 	case AUDIOPROC_PGA2310:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n96_31_1;
 		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
@@ -327,6 +343,9 @@ void sndSetMute(uint8_t value)
 		break;
 	case AUDIOPROC_PT232X:
 		pt232xSetMute(_mute);
+		break;
+	case AUDIOPROC_TEA6330:
+		tea6330SetMute(_mute);
 		break;
 	case AUDIOPROC_PGA2310:
 		pga2310SetMute(_mute);

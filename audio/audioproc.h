@@ -6,6 +6,7 @@
 #include "tda7439.h"
 #include "tda7448.h"
 #include "pt232x.h"
+#include "tea6330.h"
 #include "pga2310.h"
 
 typedef enum {
@@ -18,6 +19,7 @@ typedef enum {
 	AUDIOPROC_PT2314,
 	AUDIOPROC_TDA7448,
 	AUDIOPROC_PT232X,
+	AUDIOPROC_TEA6330,
 	AUDIOPROC_PGA2310,
 	AUDIOPROC_END
 } audioProc;

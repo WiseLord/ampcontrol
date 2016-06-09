@@ -79,3 +79,5 @@ temp.c
 temp.h
 display/ls020.c
 display/ls020.h
+audio/tea6330.h
+audio/tea6330.c
