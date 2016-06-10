@@ -475,7 +475,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 		value = (int16_t)80 * value / max;
 	}
 
-	for (i = 0; i < 161; i += 2) {
+	for (i = 0; i < 161; i += 4) {
 		if (((min + max) && (value <= i)) || (!(min + max) &&
 											  (((value > 0) && ((i < 80) || (value + 80 < i))) ||
 											   ((value <= 0) && ((i > 80) || (value + 80 > i)))))) {
@@ -484,9 +484,9 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			color = COLOR_CYAN;
 		}
 
-		ls020DrawRect(i + 2, 58, i + 2, 67, color);
-		ls020DrawRect(i + 2, 68, i + 2, 68, COLOR_CYAN);
-		ls020DrawRect(i + 2, 69, i + 2, 78, color);
+		ls020DrawRect(i + 2, 58, i + 3, 67, color);
+		ls020DrawRect(i + 2, 68, i + 3, 68, COLOR_CYAN);
+		ls020DrawRect(i + 2, 69, i + 3, 78, color);
 	}
 #else
 	uint8_t i, j;
