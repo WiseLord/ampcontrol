@@ -46,29 +46,30 @@ const uint16_t power[26] PROGMEM = {
 
 static void ls020WriteCommand(uint16_t command)
 { 
-	PORT(LS020_DPORT) |= LS020_RS_LINE;
-	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
-
 	SPDR = command >> 8;
 	while(!(SPSR & (1<<SPIF)));
 	SPDR = command & 0xFF;
 	while(!(SPSR & (1<<SPIF)));
-
-	PORT(LS020_DPORT) |= LS020_CS_LINE;
 
 	return;
 }
 
 static void ls020WriteData(uint8_t data)
 {
-	SPDR = data;
 	while(!(SPSR & (1<<SPIF)));
+	SPDR = data;
 
 	return;
 }
 
 static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
+	// Set command mode
+	PORT(LS020_DPORT) |= LS020_RS_LINE;
+
+	// Start command sequence
+	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+
 	ls020WriteCommand(0x0504); /* Set Direction */
 #ifdef LS020_ROTATE_180
 	ls020WriteCommand(0x0800 + LS020_WIDTH - 1 - y1);
@@ -81,6 +82,11 @@ static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	ls020WriteCommand(0x0A00 + LS020_HEIGHT - 1 - x1);
 	ls020WriteCommand(0x0B00 + LS020_HEIGHT - 1 - x0);
 #endif
+
+	// Stop command sequence
+	PORT(LS020_DPORT) |= LS020_CS_LINE;
+
+	return;
 }
 
 void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
@@ -108,11 +114,18 @@ void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color
 
 	ls020SetWindow(x1, y1, x2, y2);
 
+	// Set data mode
 	PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+
+	// Start data sequence
 	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+
 	for (y = y1; y <= y2; y++)
 		for (x = x1; x <= x2; x++)
 			ls020WriteData(color);
+
+	// Stop data sequence
+	while(!(SPSR & (1<<SPIF)));
 	PORT(LS020_DPORT) |= LS020_CS_LINE;
 
 	return;
@@ -182,6 +195,12 @@ void ls020Init(void)
 	_delay_ms(5);
 	PORT(LS020_DPORT) |= LS020_RES_LINE;
 
+	// Set command mode
+	PORT(LS020_DPORT) |= LS020_RS_LINE;
+
+	// Start command sequence
+	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+
 	/* Display init magic */
 	for (i = 0; i < 2; i++)
 		ls020WriteCommand(pgm_read_word(init1 + i));
@@ -195,10 +214,11 @@ void ls020Init(void)
 	for (i = 0; i < 3; i++)
 		ls020WriteCommand(pgm_read_word(init4 + i));
 
-	PORT(LS020_DPORT) |= LS020_CS_LINE;
-
 	/* Set 8-bit color mode */
 	ls020WriteCommand(0xE800);
+
+	// Stop command sequence
+	PORT(LS020_DPORT) |= LS020_CS_LINE;
 
 	ls020Clear();
 
@@ -209,8 +229,17 @@ void ls020PowerOff(void)
 {
 	uint8_t i;
 
+	// Set command mode
+	PORT(LS020_DPORT) |= LS020_RS_LINE;
+
+	// Start command sequence
+	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+
 	for (i = 0; i < 26; i++)
 		ls020WriteCommand(pgm_read_word(power + i));
+
+	// Stop command sequence
+	PORT(LS020_DPORT) |= LS020_CS_LINE;
 
 	return;
 }
@@ -264,8 +293,12 @@ void ls020WriteChar(uint8_t code)
 
 	uint8_t pgmData[swd];
 
+	// Set data mode
 	PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+
+	// Start data sequence
 	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+
 	for (k = 0; k < fp[FONT_HEIGHT]; k++) {
 		for (j = 0; j < swd; j++) {
 #ifdef LS020_ROTATE_180
@@ -292,6 +325,9 @@ void ls020WriteChar(uint8_t code)
 			}
 		}
 	}
+
+	// Stop data sequence
+	while(!(SPSR & (1<<SPIF)));
 	PORT(LS020_DPORT) |= LS020_CS_LINE;
 
 	ls020SetXY(x + swd * fp[FONT_MULT], y);
