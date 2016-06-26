@@ -34,9 +34,11 @@ void tunerInit(uint8_t extFunc)
 	case TUNER_TUX032:
 		tux032Init();
 		break;
+#ifdef EXTFUNC
 	case TUNER_LM7001:
 		if (extFunc == USE_LM7001)
 			lm7001Init();
+#endif
 		break;
 	default:
 		break;
@@ -69,8 +71,10 @@ void tunerSetFreq(uint16_t freq)
 	case TUNER_TUX032:
 		tux032SetFreq(_freq);
 		break;
+#ifdef EXTFUNC
 	case TUNER_LM7001:
 		lm7001SetFreq(_freq);
+#endif
 	default:
 		break;
 	}

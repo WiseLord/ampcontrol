@@ -5,7 +5,9 @@
 #include "tea5767.h"
 #include "rda5807.h"
 #include "tux032.h"
+#ifdef EXTFUNC
 #include "lm7001.h"
+#endif
 
 typedef enum {
 	TUNER_NO = 0,
@@ -13,6 +15,7 @@ typedef enum {
 	TUNER_RDA5807,
 	TUNER_TUX032,
 	TUNER_LM7001,
+
 	TUNER_END
 } tunerIC;
 
