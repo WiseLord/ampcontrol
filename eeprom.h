@@ -26,6 +26,7 @@
 #define EEPROM_FM_FREQ				0x24
 
 /* Audio processor values */
+#define EEPROM_MAX_INPUT_CNT		0x26
 #define EEPROM_AUDIOPROC			0x27
 #define EEPROM_INPUT				0x28
 #define EEPROM_INPUT_ICONS			0x29

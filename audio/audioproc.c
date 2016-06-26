@@ -55,6 +55,7 @@ void sndInit(uint8_t extFunc)
 	_surround = eeprom_read_byte((uint8_t*)EEPROM_SURROUND);
 	_effect3d = eeprom_read_byte((uint8_t*)EEPROM_EFFECT3D);
 	_toneDefeat = eeprom_read_byte((uint8_t*)EEPROM_TONE_DEFEAT);
+	_inCnt = eeprom_read_byte((uint8_t*)EEPROM_MAX_INPUT_CNT);
 	_aproc = eeprom_read_byte((uint8_t*)EEPROM_AUDIOPROC);
 	_input = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
 	if (_aproc >= AUDIOPROC_END)
@@ -85,188 +86,173 @@ void sndInit(uint8_t extFunc)
 	}
 #endif
 
+	// Setup inputs
+	static uint8_t inCnt;
+	switch (_aproc) {
+	case AUDIOPROC_TDA7439:
+		inCnt = TDA7439_IN_CNT;
+		break;
+	case AUDIOPROC_TDA7312:
+		inCnt = TDA7312_IN_CNT;
+		break;
+	case AUDIOPROC_TDA7313:
+		inCnt = TDA7313_IN_CNT;
+		break;
+	case AUDIOPROC_TDA7314:
+		inCnt = TDA7314_IN_CNT;
+		break;
+	case AUDIOPROC_TDA7315:
+		inCnt = TDA7315_IN_CNT;
+		break;
+	case AUDIOPROC_TDA7318:
+		inCnt = TDA7318_IN_CNT;
+		break;
+	case AUDIOPROC_PT2314:
+		inCnt = PT2314_IN_CNT;
+		break;
+	case AUDIOPROC_TDA7448:
+		inCnt = TDA7448_IN_CNT;
+		break;
+	case AUDIOPROC_PT232X:
+		inCnt = PT2323_IN_CNT;
+		break;
+	case AUDIOPROC_TEA6330:
+		inCnt = TEA6330_IN_CNT;
+		break;
+#ifdef EXTFUNC
+	case AUDIOPROC_PGA2310:
+		inCnt = PGA2310_IN_CNT;
+		break;
+#endif
+	default:
+		inCnt = 1;
+		break;
+	}
+	// Limit global input count
+	if (_inCnt > inCnt || _inCnt == 0)
+		_inCnt = inCnt;
+	// Limit current input
+	if (_input >= inCnt)
+		_input = 0;
+
+	// Setup gain grid and functions
+	const sndGrid *grid = &grid_0_0_0;
+	void (*set)(void) = setNothing;
+	switch (_aproc) {
+	case AUDIOPROC_TDA7439:
+		grid = &grid_0_30_2;
+		set = tda7439SetGain;
+		break;
+	case AUDIOPROC_TDA7313:
+	case AUDIOPROC_PT2314:
+		grid = &grid_0_11d25_3d75;
+		set = tda731xSetGain;
+		break;
+	case AUDIOPROC_TDA7314:
+	case AUDIOPROC_TDA7318:
+		grid = &grid_0_18d75_6d25;
+		set = tda731xSetGain;
+		break;
+	case AUDIOPROC_PT232X:
+		grid = &grid_0_6_6;
+		set = pt2323SetGain;
+		break;
+	default:
+		break;
+	}
+	for (i = MODE_SND_GAIN0; i < MODE_SND_END; i++) {
+		sndPar[i].grid = grid;
+		sndPar[i].set = set;
+	}
+
 	/* Setup audio parameters grid and functions */
 	switch (_aproc) {
 	case AUDIOPROC_TDA7439:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_MIDDLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_PREAMP].grid = &grid_n47_0_1;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
-		sndPar[MODE_SND_GAIN0].grid = &grid_0_30_2;
-		sndPar[MODE_SND_GAIN1].grid = &grid_0_30_2;
-		sndPar[MODE_SND_GAIN2].grid = &grid_0_30_2;
-		sndPar[MODE_SND_GAIN3].grid = &grid_0_30_2;
-		_inCnt = TDA7439_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda7439SetSpeakers;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_BASS].set = tda7439SetBass;
+		sndPar[MODE_SND_MIDDLE].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_MIDDLE].set = tda7439SetMiddle;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_TREBLE].set = tda7439SetTreble;
+		sndPar[MODE_SND_PREAMP].grid = &grid_n47_0_1;
 		sndPar[MODE_SND_PREAMP].set = tda7439SetPreamp;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
 		sndPar[MODE_SND_BALANCE].set= tda7439SetSpeakers;
-		sndPar[MODE_SND_GAIN0].set = tda7439SetGain;
-		sndPar[MODE_SND_GAIN1].set = tda7439SetGain;
-		sndPar[MODE_SND_GAIN2].set = tda7439SetGain;
-		sndPar[MODE_SND_GAIN3].set = tda7439SetGain;
 		break;
 	case AUDIOPROC_TDA7312:
-		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
-		_inCnt = TDA7312_IN_CNT;
-		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
-		sndPar[MODE_SND_BASS].set = tda731xSetBass;
-		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
-		break;
 	case AUDIOPROC_TDA7313:
-		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
-		sndPar[MODE_SND_GAIN0].grid = &grid_0_11d25_3d75;
-		sndPar[MODE_SND_GAIN1].grid = &grid_0_11d25_3d75;
-		sndPar[MODE_SND_GAIN2].grid = &grid_0_11d25_3d75;
-		_inCnt = TDA7313_IN_CNT;
-		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
-		sndPar[MODE_SND_BASS].set = tda731xSetBass;
-		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
-		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
-		break;
 	case AUDIOPROC_TDA7314:
-		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
-		sndPar[MODE_SND_GAIN0].grid = &grid_0_18d75_6d25;
-		_inCnt = TDA7314_IN_CNT;
-		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
-		sndPar[MODE_SND_BASS].set = tda731xSetBass;
-		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
-		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
-		break;
 	case AUDIOPROC_TDA7315:
-		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
-		_inCnt = TDA7315_IN_CNT;
-		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
-		sndPar[MODE_SND_BASS].set = tda731xSetBass;
-		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
-		break;
 	case AUDIOPROC_TDA7318:
-		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
-		sndPar[MODE_SND_GAIN0].grid = &grid_0_18d75_6d25;
-		sndPar[MODE_SND_GAIN1].grid = &grid_0_18d75_6d25;
-		sndPar[MODE_SND_GAIN2].grid = &grid_0_18d75_6d25;
-		sndPar[MODE_SND_GAIN3].grid = &grid_0_18d75_6d25;
-		_inCnt = TDA7318_IN_CNT;
-		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
-		sndPar[MODE_SND_BASS].set = tda731xSetBass;
-		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
-		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
-		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
-		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN3].set =tda731xSetGain ;
-		break;
 	case AUDIOPROC_PT2314:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
-		sndPar[MODE_SND_GAIN0].grid = &grid_0_11d25_3d75;
-		sndPar[MODE_SND_GAIN1].grid = &grid_0_11d25_3d75;
-		sndPar[MODE_SND_GAIN2].grid = &grid_0_11d25_3d75;
-		sndPar[MODE_SND_GAIN3].grid = &grid_0_11d25_3d75;
-		_inCnt = PT2314_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
-		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN1].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN2].set = tda731xSetGain;
-		sndPar[MODE_SND_GAIN3].set = tda731xSetGain;
+		switch (_aproc) {
+		case AUDIOPROC_TDA7313:
+		case AUDIOPROC_TDA7314:
+		case AUDIOPROC_TDA7318:
+			sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
+			sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
+			break;
+		default:
+			break;
+		}
 		break;
 	case AUDIOPROC_TDA7448:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
-		sndPar[MODE_SND_FRONTREAR].grid = &grid_n7_7_1;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
-		sndPar[MODE_SND_CENTER].grid = &grid_n15_0_1;
-		sndPar[MODE_SND_SUBWOOFER].grid = &grid_n15_0_1;
-		_inCnt = TDA7448_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tda7448SetSpeakers;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n7_7_1;
 		sndPar[MODE_SND_FRONTREAR].set = tda7448SetSpeakers;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
 		sndPar[MODE_SND_BALANCE].set= tda7448SetSpeakers;
+		sndPar[MODE_SND_CENTER].grid = &grid_n15_0_1;
 		sndPar[MODE_SND_CENTER].set = tda7448SetSpeakers;
+		sndPar[MODE_SND_SUBWOOFER].grid = &grid_n15_0_1;
 		sndPar[MODE_SND_SUBWOOFER].set = tda7448SetSpeakers;
 		break;
 	case AUDIOPROC_PT232X:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
-		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_MIDDLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_FRONTREAR].grid = &grid_n7_7_1;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
-		sndPar[MODE_SND_CENTER].grid = &grid_n15_0_1;
-		sndPar[MODE_SND_SUBWOOFER].grid = &grid_n15_0_1;
-		sndPar[MODE_SND_GAIN0].grid = &grid_0_6_6;
-		sndPar[MODE_SND_GAIN1].grid = &grid_0_6_6;
-		sndPar[MODE_SND_GAIN2].grid = &grid_0_6_6;
-		sndPar[MODE_SND_GAIN3].grid = &grid_0_6_6;
-		sndPar[MODE_SND_GAIN4].grid = &grid_0_6_6;
-		_inCnt = PT2323_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = pt2322SetVolume;
+		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_BASS].set = pt2322SetBass;
+		sndPar[MODE_SND_MIDDLE].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_MIDDLE].set = pt2322SetMiddle;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_TREBLE].set = pt2322SetTreble;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n7_7_1;
 		sndPar[MODE_SND_FRONTREAR].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
 		sndPar[MODE_SND_BALANCE].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_CENTER].grid = &grid_n15_0_1;
 		sndPar[MODE_SND_CENTER].set = pt2322SetSpeakers;
+		sndPar[MODE_SND_SUBWOOFER].grid = &grid_n15_0_1;
 		sndPar[MODE_SND_SUBWOOFER].set = pt2322SetSpeakers;
-		sndPar[MODE_SND_GAIN0].set = pt2323SetGain;
-		sndPar[MODE_SND_GAIN1].set = pt2323SetGain;
-		sndPar[MODE_SND_GAIN2].set = pt2323SetGain;
-		sndPar[MODE_SND_GAIN3].set = pt2323SetGain;
-		sndPar[MODE_SND_GAIN4].set = pt2323SetGain;
 		break;
 	case AUDIOPROC_TEA6330:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n66_20_2;
-		sndPar[MODE_SND_BASS].grid = &grid_n12_15_3;
-		sndPar[MODE_SND_TREBLE].grid = &grid_n12_12_3;
-		sndPar[MODE_SND_FRONTREAR].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n14_14_2;
-		_inCnt = TEA6330_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = tea6330SetVolume;
+		sndPar[MODE_SND_BASS].grid = &grid_n12_15_3;
 		sndPar[MODE_SND_BASS].set = tea6330SetBass;
+		sndPar[MODE_SND_TREBLE].grid = &grid_n12_12_3;
 		sndPar[MODE_SND_TREBLE].set = tea6330SetTreble;
+		sndPar[MODE_SND_FRONTREAR].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_FRONTREAR].set = tea6330SetFrontRear;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_BALANCE].set = tea6330SetVolume;
 		break;
 #ifdef EXTFUNC
 	case AUDIOPROC_PGA2310:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n96_31_1;
-		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
-		_inCnt = PGA2310_IN_CNT;
 		sndPar[MODE_SND_VOLUME].set = pga2310SetSpeakers;
+		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
 		sndPar[MODE_SND_BALANCE].set = pga2310SetSpeakers;
 		break;
 #endif
@@ -488,7 +474,6 @@ void sndPowerOff(void)
 	eeprom_update_byte((uint8_t*)EEPROM_SURROUND, _surround);
 	eeprom_update_byte((uint8_t*)EEPROM_EFFECT3D, _effect3d);
 	eeprom_update_byte((uint8_t*)EEPROM_TONE_DEFEAT, _toneDefeat);
-	eeprom_update_byte((uint8_t*)EEPROM_AUDIOPROC, _aproc);
 	eeprom_update_byte((uint8_t*)EEPROM_INPUT, _input);
 
 	return;
