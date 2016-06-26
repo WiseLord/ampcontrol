@@ -60,8 +60,10 @@ void sndInit(uint8_t extFunc)
 	if (_aproc >= AUDIOPROC_END)
 		_aproc = AUDIOPROC_TDA7439;
 
+#ifdef EXTFUNC
 	if (_aproc == AUDIOPROC_PGA2310 && extFunc == USE_PGA2310)
 		pga2310Init(sndPar);
+#endif
 
 	/* Init grid and functions with empty values */
 	for (i = 0; i < MODE_SND_END; i++) {
@@ -146,24 +148,24 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
 		sndPar[MODE_SND_GAIN0].grid = &grid_0_18d75_6d25;
 		_inCnt = TDA7314_IN_CNT;
-		break;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
 		sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
 		sndPar[MODE_SND_GAIN0].set = tda731xSetGain;
+		break;
 	case AUDIOPROC_TDA7315:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
 		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
 		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
 		_inCnt = TDA7315_IN_CNT;
-		break;
 		sndPar[MODE_SND_VOLUME].set = tda731xSetVolume;
 		sndPar[MODE_SND_BASS].set = tda731xSetBass;
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
+		break;
 	case AUDIOPROC_TDA7318:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n78d75_0_1d25;
 		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
@@ -259,6 +261,7 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_FRONTREAR].set = tea6330SetFrontRear;
 		sndPar[MODE_SND_BALANCE].set = tea6330SetVolume;
 		break;
+#ifdef EXTFUNC
 	case AUDIOPROC_PGA2310:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n96_31_1;
 		sndPar[MODE_SND_BALANCE].grid = &grid_n15_15_1;
@@ -266,6 +269,7 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_VOLUME].set = pga2310SetSpeakers;
 		sndPar[MODE_SND_BALANCE].set = pga2310SetSpeakers;
 		break;
+#endif
 	default:
 		break;
 	}
@@ -347,9 +351,11 @@ void sndSetMute(uint8_t value)
 	case AUDIOPROC_TEA6330:
 		tea6330SetMute(_mute);
 		break;
+#ifdef EXTFUNC
 	case AUDIOPROC_PGA2310:
 		pga2310SetMute(_mute);
 		break;
+#endif
 	default:
 		break;
 	}

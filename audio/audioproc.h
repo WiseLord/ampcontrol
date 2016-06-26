@@ -7,7 +7,9 @@
 #include "tda7448.h"
 #include "pt232x.h"
 #include "tea6330.h"
+#ifdef EXTFUNC
 #include "pga2310.h"
+#endif
 
 typedef enum {
 	AUDIOPROC_TDA7439 = 0,

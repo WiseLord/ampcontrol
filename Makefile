@@ -63,7 +63,7 @@ size:
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(DISPLAY) -c -o $@ $<
+	$(CC) $(CFLAGS) -D$(DISPLAY) -DEXTFUNC -c -o $@ $<
 
 clean:
 	rm -rf $(BUILDDIR)
