@@ -5,7 +5,7 @@
 
 /* Tuner type selection */
 #if !defined(TEA5767) && !defined(TUX032) && !defined(LM7001) && !defined(RDA5807)
-#define RDA5807
+#define TEA5767
 #endif
 
 #if defined(TEA5767)

@@ -2,6 +2,7 @@
 #define TDA7313_H
 
 #include <inttypes.h>
+#include "../pins.h"
 
 #define TDA7313_ADDR			0b10001000
 
@@ -19,9 +20,7 @@
 
 #define MUTE_ON					1
 #define MUTE_OFF				0
-
-#define LOUDNESS_ON				0
-#define LOUDNESS_OFF			1
+#define MUTE_VAL				0x1F
 
 typedef struct {
 	int8_t value;
