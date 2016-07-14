@@ -2,7 +2,7 @@
 #define TDA7313_H
 
 #include <inttypes.h>
-#include "pins.h"
+#include "../pins.h"
 
 #define TDA7313_ADDR			0b10001000
 

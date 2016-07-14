@@ -17,6 +17,7 @@ main.c
 pins.h
 rc5.c
 rc5.h
-tda7313.c
-tda7313.h
+audio/audio.h
+audio/tda7313.c
+audio/tda7313.h
 Makefile

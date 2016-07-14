@@ -6,7 +6,7 @@ MCU      = atmega8
 F_CPU    = 8000000
 
 # Source files
-SRCS     = $(wildcard *.c)
+SRCS     = $(wildcard *.c) audio/tda7313.c
 
 # Build directory
 BUILDDIR = build

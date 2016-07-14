@@ -2,8 +2,8 @@
 
 #include <avr/eeprom.h>
 
-#include "i2c.h"
-#include "eeprom.h"
+#include "../i2c.h"
+#include "../eeprom.h"
 
 static uint8_t chan;
 static uint8_t mute;

@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #include "ds1307.h"
-#include "tda7313.h"
+#include "audio/audio.h"
 #include "ks0066.h"
 
 /* Timers fo different screens */

@@ -8,7 +8,7 @@
 #include "rc5.h"
 #include "i2c.h"
 
-#include "tda7313.h"
+#include "audio/audio.h"
 #include "display.h"
 
 #define LANG_EN		0
