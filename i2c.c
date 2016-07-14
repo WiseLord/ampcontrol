@@ -4,8 +4,8 @@
 
 void I2CInit(void)
 {
-	TWBR = 18;
-	TWSR = (1<<TWPS0);		/* Prescaler = 4, SCL=16000000/(16+2*18*4)=100000Hz */
+	TWBR = 8;
+	TWSR = (1<<TWPS0);		/* Prescaler = 4, SCL=8000000/(16+2*8*4)=100000Hz */
 	TWCR |= (1<<TWEN);		/* Enable TWI */
 	return;
 }
