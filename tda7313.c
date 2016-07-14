@@ -4,7 +4,6 @@
 
 #include "i2c.h"
 #include "eeprom.h"
-#include "pins.h"
 
 static uint8_t chan;
 static uint8_t mute;

@@ -32,13 +32,13 @@
 #define RC5					D
 #define RC5_LINE			(1<<3)
 
-/* Input control */
-#define IN0					B
-#define IN0_LINE			(1<<3)
-#define IN1					B
-#define IN1_LINE			(1<<4)
-#define IN2					B
-#define IN2_LINE			(1<<5)
+/* AVR ISP definitions */
+#define ISP_MOSI			B
+#define ISP_MOSI_LINE		(1<<3)
+#define ISP_MISO			B
+#define ISP_MISO_LINE		(1<<4)
+#define ISP_SCK				B
+#define ISP_SCK_LINE		(1<<5)
 
 /* Standby/Mute port definitions */
 #define STMU_MUTE			B

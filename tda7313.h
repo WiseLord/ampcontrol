@@ -2,6 +2,7 @@
 #define TDA7313_H
 
 #include <inttypes.h>
+#include "pins.h"
 
 #define TDA7313_ADDR			0b10001000
 
@@ -42,6 +43,14 @@ enum {
 };
 
 #define SND_PARAM_COUNT			8
+
+/* Input control */
+#define IN0					ISP_MOSI
+#define IN0_LINE			ISP_MOSI_LINE
+#define IN1					ISP_MISO
+#define IN1_LINE			ISP_MISO_LINE
+#define IN2					ISP_SCK
+#define IN2_LINE			ISP_SCK_LINE
 
 sndParam *sndParAddr(uint8_t index);
 
