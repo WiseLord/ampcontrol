@@ -55,14 +55,17 @@ SUBDIRS = audio display tuner
 
 OBJS = $(addprefix $(BUILDDIR)/, $(SRCS:.c=.o))
 ELF = $(BUILDDIR)/$(TARG).elf
+HEX = flash/$(TARG).hex
 
-all: $(ELF) size
+all: $(HEX) size
 
 $(ELF): $(OBJS)
 	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
 	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
+
+$(HEX): $(ELF)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
 
 size:
 	@sh ./size.sh $(ELF)
@@ -75,20 +78,25 @@ clean:
 	rm -rf $(BUILDDIR)
 
 .PHONY: flash
-flash: $(TARG)
-	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
+flash: $(HEX)
+	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:$(HEX):i
 
+.PHONY: fuse
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x24:m -U hfuse:w:0xC1:m
 
+.PHONY: eeprom_en
 eeprom_en:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_en.bin:r
 
+.PHONY: eeprom_ru
 eeprom_ru:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ru.bin:r
 
+.PHONY: eeprom_by
 eeprom_by:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_by.bin:r
 
+.PHONY: eeprom_ua
 eeprom_ua:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ua.bin:r
