@@ -5,7 +5,7 @@
 
 #include "eeprom.h"
 #include "input.h"
-#include "tuner.h"
+#include "tuner/tuner.h"
 #include "adc.h"
 
 static int8_t brStby;							/* Brightness in standby mode */

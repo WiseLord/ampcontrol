@@ -5,6 +5,8 @@ audio/tda7318.c
 audio/tda7318.h
 audio/tda7439.c
 audio/tda7439.h
+tuner/tuner.c
+tuner/tuner.h
 tuner/lm7001.c
 tuner/lm7001.h
 tuner/rda5807.c
@@ -33,5 +35,3 @@ Makefile
 pins.h
 rc5.c
 rc5.h
-tuner.c
-tuner.h

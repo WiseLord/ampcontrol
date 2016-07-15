@@ -18,14 +18,15 @@ else ifeq ($(AUDIOPROC), TDA7439)
   AUDIO_SRC = audio/tda7439.c
 endif
 
+TUNER_SRC = tuner/tuner.c
 ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner/tea5767.c
+  TUNER_SRC += tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner/tux032.c
+  TUNER_SRC += tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner/lm7001.c
+  TUNER_SRC += tuner/lm7001.c
 else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner/rda5807.c
+  TUNER_SRC += tuner/rda5807.c
 endif
 
 SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC)

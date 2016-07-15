@@ -9,13 +9,13 @@
 #endif
 
 #if defined(TEA5767)
-#include "tuner/tea5767.h"
+#include "tea5767.h"
 #elif defined(TUX032)
-#include "tuner/tux032.h"
+#include "tux032.h"
 #elif defined(LM7001)
-#include "tuner/lm7001.h"
+#include "lm7001.h"
 #elif defined(RDA5807)
-#include "tuner/rda5807.h"
+#include "rda5807.h"
 #endif
 
 #define FM_COUNT		64

@@ -9,8 +9,8 @@
 #include "i2c.h"
 
 #include "audio/audio.h"
+#include "tuner/tuner.h"
 #include "display.h"
-#include "tuner.h"
 
 uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
 

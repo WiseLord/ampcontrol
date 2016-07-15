@@ -40,6 +40,14 @@
 #define ISP_SCK				B
 #define ISP_SCK_LINE		(1<<5)
 
+/* LM7001 definitions */
+#define LM7001_DATA			ISP_MOSI
+#define LM7001_DATA_LINE	ISP_MOSI_LINE
+#define LM7001_CE			ISP_MISO
+#define LM7001_CE_LINE		ISP_MISO_LINE
+#define LM7001_CL			ISP_SCK
+#define LM7001_CL_LINE		ISP_SCK_LINE
+
 /* Standby/Mute port definitions */
 #define STMU_MUTE			B
 #define STMU_MUTE_LINE		(1<<7)
