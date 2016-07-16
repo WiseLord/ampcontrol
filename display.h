@@ -2,7 +2,7 @@
 #define DISPLAY_H
 
 #include <inttypes.h>
-#include "ds1307.h"
+#include "rtc.h"
 #include "audio/audioproc.h"
 
 #ifdef KS0066_16X2_PCF8574

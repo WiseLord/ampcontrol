@@ -59,8 +59,6 @@ alarm.c
 alarm.h
 display.c
 display.h
-ds1307.c
-ds1307.h
 ds18x20.c
 ds18x20.h
 eeprom.h
@@ -75,6 +73,8 @@ Makefile
 pins.h
 remote.c
 remote.h
+rtc.c
+rtc.h
 temp.c
 temp.h
 display/ls020.c

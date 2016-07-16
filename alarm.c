@@ -12,7 +12,7 @@ static uint8_t _eam = NOEDIT;	/* Edit alarm mode */
 
 int8_t getAlarm(uint8_t am)
 {
-	return alarm[am - DS1307_A0_HOUR];
+	return alarm[am - RTC_A0_HOUR];
 }
 
 uint8_t getEam(void)
@@ -26,14 +26,14 @@ int8_t *readAlarm(void)
 	uint8_t i;
 
 	I2CStart(DS1307_ADDR);
-	I2CWriteByte(DS1307_A0_HOUR);
+	I2CWriteByte(RTC_A0_HOUR);
 	I2CStart(DS1307_ADDR | I2C_READ);
-	for (i = DS1307_A0_HOUR; i < DS1307_A0_WDAY; i++) {
+	for (i = RTC_A0_HOUR; i < RTC_A0_WDAY; i++) {
 		temp = I2CReadByte(I2C_ACK);
-		alarm[i - DS1307_A0_HOUR] = temp;
+		alarm[i - RTC_A0_HOUR] = temp;
 	}
 	temp = I2CReadByte(I2C_NOACK);
-	alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] = temp;
+	alarm[RTC_A0_WDAY - RTC_A0_HOUR] = temp;
 	I2CStop();
 
 	return alarm;
@@ -44,9 +44,9 @@ static void writeAlarm(void)
 	uint8_t i;
 
 	I2CStart(DS1307_ADDR);
-	I2CWriteByte(DS1307_A0_HOUR);
-	for (i = DS1307_A0_HOUR; i <= DS1307_A0_WDAY; i++)
-		I2CWriteByte(alarm[i - DS1307_A0_HOUR]);
+	I2CWriteByte(RTC_A0_HOUR);
+	for (i = RTC_A0_HOUR; i <= RTC_A0_WDAY; i++)
+		I2CWriteByte(alarm[i - RTC_A0_HOUR]);
 	I2CStop();
 
 	return;
@@ -70,16 +70,16 @@ void editAlarm(void)
 {
 	switch (_eam) {
 	case NOEDIT:
-		_eam = DS1307_A0_HOUR;
+		_eam = RTC_A0_HOUR;
 		break;
-	case DS1307_A0_HOUR:
-		_eam = DS1307_A0_MIN;
+	case RTC_A0_HOUR:
+		_eam = RTC_A0_MIN;
 		break;
-	case DS1307_A0_MIN:
-		_eam = DS1307_A0_INPUT;
+	case RTC_A0_MIN:
+		_eam = RTC_A0_INPUT;
 		break;
-	case DS1307_A0_INPUT:
-		_eam = DS1307_A0_WDAY;
+	case RTC_A0_INPUT:
+		_eam = RTC_A0_WDAY;
 		break;
 	default:
 		_eam = NOEDIT;
@@ -92,33 +92,33 @@ void editAlarm(void)
 void changeAlarm(int diff)
 {
 	switch (_eam) {
-	case DS1307_A0_HOUR:
-		alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] += diff;
-		if (alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] > 23)
-			alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] = 0;
-		if (alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] < 0)
-			alarm[DS1307_A0_HOUR - DS1307_A0_HOUR] = 23;
+	case RTC_A0_HOUR:
+		alarm[RTC_A0_HOUR - RTC_A0_HOUR] += diff;
+		if (alarm[RTC_A0_HOUR - RTC_A0_HOUR] > 23)
+			alarm[RTC_A0_HOUR - RTC_A0_HOUR] = 0;
+		if (alarm[RTC_A0_HOUR - RTC_A0_HOUR] < 0)
+			alarm[RTC_A0_HOUR - RTC_A0_HOUR] = 23;
 		break;
-	case DS1307_A0_MIN:
-		alarm[DS1307_A0_MIN - DS1307_A0_HOUR] += diff;
-		if (alarm[DS1307_A0_MIN - DS1307_A0_HOUR] > 59)
-			alarm[DS1307_A0_MIN - DS1307_A0_HOUR] = 0;
-		if (alarm[DS1307_A0_MIN - DS1307_A0_HOUR] < 0)
-			alarm[DS1307_A0_MIN - DS1307_A0_HOUR] = 59;
+	case RTC_A0_MIN:
+		alarm[RTC_A0_MIN - RTC_A0_HOUR] += diff;
+		if (alarm[RTC_A0_MIN - RTC_A0_HOUR] > 59)
+			alarm[RTC_A0_MIN - RTC_A0_HOUR] = 0;
+		if (alarm[RTC_A0_MIN - RTC_A0_HOUR] < 0)
+			alarm[RTC_A0_MIN - RTC_A0_HOUR] = 59;
 		break;
-	case DS1307_A0_INPUT:
-		alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] += diff;
-		if (alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] >= sndInputCnt())
-			alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] = 0;
-		if (alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] < 0)
-			alarm[DS1307_A0_INPUT - DS1307_A0_HOUR] = sndInputCnt() - 1;
+	case RTC_A0_INPUT:
+		alarm[RTC_A0_INPUT - RTC_A0_HOUR] += diff;
+		if (alarm[RTC_A0_INPUT - RTC_A0_HOUR] >= sndInputCnt())
+			alarm[RTC_A0_INPUT - RTC_A0_HOUR] = 0;
+		if (alarm[RTC_A0_INPUT - RTC_A0_HOUR] < 0)
+			alarm[RTC_A0_INPUT - RTC_A0_HOUR] = sndInputCnt() - 1;
 		break;
-	case DS1307_A0_WDAY:
-		alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] += diff;
-		if (alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] < -64)
-			alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] = 0;
-		if (alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] < 0)
-			alarm[DS1307_A0_WDAY - DS1307_A0_HOUR] = 127;
+	case RTC_A0_WDAY:
+		alarm[RTC_A0_WDAY - RTC_A0_HOUR] += diff;
+		if (alarm[RTC_A0_WDAY - RTC_A0_HOUR] < -64)
+			alarm[RTC_A0_WDAY - RTC_A0_HOUR] = 0;
+		if (alarm[RTC_A0_WDAY - RTC_A0_HOUR] < 0)
+			alarm[RTC_A0_WDAY - RTC_A0_HOUR] = 127;
 		break;
 	default:
 		break;

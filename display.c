@@ -754,22 +754,22 @@ static void drawMiniSpectrum(void)
 #ifdef KS0066
 static void drawTm(uint8_t tm)
 {
-	if (getEtm() != tm || (getSecTimer() % 512) < 200) {
-		writeNum(getTime(tm), 2, '0', 10);
+	if (rtc.etm != tm || (getSecTimer() % 512) < 200) {
+		writeNum(*((int8_t*)&rtc + tm), 2, '0', 10);
 	} else {
 		writeString("  ");
 	}
 #elif defined(LS020)
 static void drawTm(uint8_t tm, const uint8_t *font, uint8_t mult)
 {
-	ls020LoadFont(font, getEtm() == tm ? COLOR_YELLOW : COLOR_CYAN, mult);
-	writeNum(getTime(tm), 2, '0', 10);
+	ls020LoadFont(font, rtc.etm == tm ? COLOR_YELLOW : COLOR_CYAN, mult);
+	writeNum(*((int8_t*)&rtc + tm), 2, '0', 10);
 	ls020LoadFont(font, COLOR_CYAN, mult);
 #else
 static void drawTm(uint8_t tm, const uint8_t *font)
 {
-	gdLoadFont(font, getEtm() == tm ? 0 : 1, FONT_DIR_0);
-	writeNum(getTime(tm), 2, '0', 10);
+	gdLoadFont(font, rtc.etm == tm ? 0 : 1, FONT_DIR_0);
+	writeNum(*((int8_t*)&rtc + tm), 2, '0', 10);
 	gdLoadFont(font, 1, FONT_DIR_0);
 #endif
 	return;
@@ -1549,70 +1549,70 @@ void showTime(void)
 {
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	drawTm (DS1307_HOUR);
+	drawTm (RTC_HOUR);
 	ks0066WriteData (':');
-	drawTm (DS1307_MIN);
+	drawTm (RTC_MIN);
 	ks0066WriteData (':');
-	drawTm (DS1307_SEC);
+	drawTm (RTC_SEC);
 
 	ks0066SetXY(11, 0);
-	drawTm(DS1307_DATE);
+	drawTm(RTC_DATE);
 	ks0066WriteData('.');
-	drawTm(DS1307_MONTH);
+	drawTm(RTC_MONTH);
 
 	ks0066SetXY(12, 1);
 	ks0066WriteString("20");
-	drawTm(DS1307_YEAR);
+	drawTm(RTC_YEAR);
 
 	ks0066SetXY(0, 1);
 #elif defined(LS020)
 	ls020SetXY(2, 4);
 
-	drawTm(DS1307_HOUR, font_ks0066_ru_24, 2);
+	drawTm(RTC_HOUR, font_ks0066_ru_24, 2);
 	writeStringPgm(STR_SPCOLSP);
-	drawTm(DS1307_MIN, font_ks0066_ru_24, 2);
+	drawTm(RTC_MIN, font_ks0066_ru_24, 2);
 	writeStringPgm(STR_SPCOLSP);
-	drawTm(DS1307_SEC, font_ks0066_ru_24, 2);
+	drawTm(RTC_SEC, font_ks0066_ru_24, 2);
 
 	ls020SetXY(12, 64);
 
-	drawTm(DS1307_DATE, font_digits_32, 1);
+	drawTm(RTC_DATE, font_digits_32, 1);
 	writeStringPgm(STR_SPDOTSP);
-	drawTm(DS1307_MONTH, font_digits_32, 1);
+	drawTm(RTC_MONTH, font_digits_32, 1);
 	writeStringPgm(STR_SPDOTSP);
-	if (getEtm() == DS1307_YEAR)
+	if (rtc.etm == RTC_YEAR)
 		ls020LoadFont(font_digits_32, COLOR_YELLOW, 1);
 	writeStringPgm(STR_YEAR20);
 	writeStringPgm(STR_SP);
-	drawTm(DS1307_YEAR, font_digits_32, 1);
+	drawTm(RTC_YEAR, font_digits_32, 1);
 
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
 	ls020SetXY(24, 104);
 #else
 	gdSetXY(4, 0);
 
-	drawTm(DS1307_HOUR, font_digits_32);
+	drawTm(RTC_HOUR, font_digits_32);
 	writeStringPgm(STR_SPCOLSP);
-	drawTm(DS1307_MIN, font_digits_32);
+	drawTm(RTC_MIN, font_digits_32);
 	writeStringPgm(STR_SPCOLSP);
-	drawTm(DS1307_SEC, font_digits_32);
+	drawTm(RTC_SEC, font_digits_32);
 
 	gdSetXY(9, 32);
 
-	drawTm(DS1307_DATE, font_ks0066_ru_24);
+	drawTm(RTC_DATE, font_ks0066_ru_24);
 	writeStringPgm(STR_SPDOTSP);
-	drawTm(DS1307_MONTH, font_ks0066_ru_24);
+	drawTm(RTC_MONTH, font_ks0066_ru_24);
 	writeStringPgm(STR_SPDOTSP);
-	if (getEtm() == DS1307_YEAR)
+	if (rtc.etm == RTC_YEAR)
 		gdLoadFont(font_ks0066_ru_24, 0, FONT_DIR_0);
 	writeStringPgm(STR_YEAR20);
 	writeStringPgm(STR_SP);
-	drawTm(DS1307_YEAR, font_ks0066_ru_24);
+	drawTm(RTC_YEAR, font_ks0066_ru_24);
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(32, 56);
 #endif
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtc.wday - 1) % 7]);
 
 	return;
 }
@@ -1624,18 +1624,18 @@ void showAlarm(void)
 #ifdef KS0066
 	/* Draw alarm value */
 	ks0066SetXY(0, 0);
-	drawAm(DS1307_A0_HOUR);
+	drawAm(RTC_A0_HOUR);
 	ks0066WriteData(':');
-	drawAm(DS1307_A0_MIN);
+	drawAm(RTC_A0_MIN);
 
 	/* Check that input number less than CHAN_CNT */
-	i = getAlarm(DS1307_A0_INPUT);
+	i = getAlarm(RTC_A0_INPUT);
 	if (i >= sndInputCnt())
 		i = 0;
 
 	/* Draw selected input */
 	ks0066SetXY(6, 0);
-	if (getEam() != DS1307_A0_INPUT || (getSecTimer() % 512) < 200) {
+	if (getEam() != RTC_A0_INPUT || (getSecTimer() % 512) < 200) {
 		writeStringEeprom(sndParAddr (MODE_SND_GAIN0 + i)->label);
 	}
 	/* Clear string tail */
@@ -1644,13 +1644,13 @@ void showAlarm(void)
 	/* Draw weekdays */
 	lcdGenAlarm ();
 	ks0066SetXY(0, 1);
-	if (getEam() != DS1307_A0_WDAY || (getSecTimer() % 512) < 200) {
+	if (getEam() != RTC_A0_WDAY || (getSecTimer() % 512) < 200) {
 		ks0066WriteData (0x04);
 	} else {
 		ks0066WriteData (0x03);
 	}
 	for (i = 0; i < 7; i++) {
-		if (getAlarm(DS1307_A0_WDAY) & (0x40 >> i)) {
+		if (getAlarm(RTC_A0_WDAY) & (0x40 >> i)) {
 			ks0066WriteData (0x01);
 		} else {
 			ks0066WriteData (0x00);
@@ -1658,7 +1658,7 @@ void showAlarm(void)
 		if (i != 6)
 			ks0066WriteData (0x02);
 	}
-	if (getEam() != DS1307_A0_WDAY || (getSecTimer() % 512) < 200) {
+	if (getEam() != RTC_A0_WDAY || (getSecTimer() % 512) < 200) {
 		ks0066WriteData (0x06);
 	} else {
 		ks0066WriteData (0x05);
@@ -1668,12 +1668,12 @@ void showAlarm(void)
 
 	ls020SetXY(20, 4);
 
-	drawAm(DS1307_A0_HOUR, font_ks0066_ru_24, 2);
+	drawAm(RTC_A0_HOUR, font_ks0066_ru_24, 2);
 	writeStringPgm(STR_SPCOLSP);
-	drawAm(DS1307_A0_MIN, font_ks0066_ru_24, 2);
+	drawAm(RTC_A0_MIN, font_ks0066_ru_24, 2);
 
 	/* Draw input icon selection rectangle */
-	if (getEam() == DS1307_A0_INPUT) {
+	if (getEam() == RTC_A0_INPUT) {
 		ls020DrawFrame(96 + 48, 0, 127 + 48, 31, COLOR_YELLOW);
 		ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_YELLOW);
 	} else {
@@ -1683,13 +1683,13 @@ void showAlarm(void)
 
 	ls020SetXY(100 + 48, 4);
 	/* Check that input number less than CHAN_CNT */
-	i = getAlarm(DS1307_A0_INPUT);
+	i = getAlarm(RTC_A0_INPUT);
 	if (i >= sndInputCnt())
 		i = 0;
 	ls020WriteIcon24(sndParAddr(MODE_SND_GAIN0 + i)->icon);
 
 	/* Draw weekdays selection rectangle */
-	if (getEam() == DS1307_A0_WDAY) {
+	if (getEam() == RTC_A0_WDAY) {
 		ls020DrawFrame(0, 130, 175, 93, COLOR_YELLOW);
 		ls020DrawFrame(1, 131, 174, 92, COLOR_YELLOW);
 	} else {
@@ -1707,19 +1707,19 @@ void showAlarm(void)
 		ls020WriteChar(eeprom_read_byte(&label[i * 2 + 1]));
 
 		ls020DrawFrame(3 + 25 * i, 47 + 63, 21 + 25 * i, 60 + 68, COLOR_CYAN);
-		ls020DrawRect(6 + 25 * i, 50 + 63, 18 + 25 * i, 57 + 68, getAlarm(DS1307_A0_WDAY) & (0x40 >> i) ? COLOR_CYAN : COLOR_BCKG);
+		ls020DrawRect(6 + 25 * i, 50 + 63, 18 + 25 * i, 57 + 68, getAlarm(RTC_A0_WDAY) & (0x40 >> i) ? COLOR_CYAN : COLOR_BCKG);
 	}
 #else
 	uint8_t *label;
 
 	gdSetXY(4, 0);
 
-	drawAm(DS1307_A0_HOUR, font_digits_32);
+	drawAm(RTC_A0_HOUR, font_digits_32);
 	writeStringPgm(STR_SPCOLSP);
-	drawAm(DS1307_A0_MIN, font_digits_32);
+	drawAm(RTC_A0_MIN, font_digits_32);
 
 	/* Draw input icon selection rectangle */
-	if (getEam() == DS1307_A0_INPUT) {
+	if (getEam() == RTC_A0_INPUT) {
 		gdDrawRect(96, 0, 32, 32, 1);
 		gdDrawRect(97, 1, 30, 30, 1);
 	} else {
@@ -1729,13 +1729,13 @@ void showAlarm(void)
 
 	gdSetXY(100, 4);
 	/* Check that input number less than CHAN_CNT */
-	i = getAlarm(DS1307_A0_INPUT);
+	i = getAlarm(RTC_A0_INPUT);
 	if (i >= sndInputCnt())
 		i = 0;
 	gdWriteIcon24(sndParAddr(MODE_SND_GAIN0 + i)->icon);
 
 	/* Draw weekdays selection rectangle */
-	if (getEam() == DS1307_A0_WDAY) {
+	if (getEam() == RTC_A0_WDAY) {
 		gdDrawRect(0, 34, 128, 30, 1);
 		gdDrawRect(1, 35, 126, 28, 1);
 	} else {
@@ -1753,7 +1753,7 @@ void showAlarm(void)
 		gdWriteChar(eeprom_read_byte(&label[i * 2 + 1]));
 
 		gdDrawRect(3 + 18 * i, 47, 14, 14, 1);
-		if (getAlarm(DS1307_A0_WDAY) & (0x40 >> i))
+		if (getAlarm(RTC_A0_WDAY) & (0x40 >> i))
 			gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 1);
 		else
 			gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 0);

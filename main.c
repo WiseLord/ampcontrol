@@ -29,6 +29,7 @@ static void hwInit(void)
 	rcInit();								/* IR Remote control */
 	inputInit();							/* Buttons/encoder polling */
 	adcInit();								/* Analog-to-digital converter */
+	rtc.etm = RTC_NOEDIT;
 
 	sei();									/* Gloabl interrupt enable */
 

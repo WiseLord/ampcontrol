@@ -3,10 +3,10 @@
 
 #include <inttypes.h>
 
-#define DS1307_A0_HOUR		0x08
-#define DS1307_A0_MIN		0x09
-#define DS1307_A0_INPUT		0x0A
-#define DS1307_A0_WDAY		0x0B
+#define RTC_A0_HOUR			0x08
+#define RTC_A0_MIN			0x09
+#define RTC_A0_INPUT		0x0A
+#define RTC_A0_WDAY			0x0B
 
 int8_t getAlarm(uint8_t am);
 uint8_t getEam(void);

@@ -208,14 +208,14 @@ void handleAction(uint8_t action)
 		PORT(STMU_STBY) &= ~STMU_STBY_LINE;
 
 		setStbyBrightness();
-		stopEditTime();
+		rtc.etm = RTC_NOEDIT;
 		setStbyTimer(STBY_TIMER_OFF);
 		disableSilenceTimer();
 
 		dispMode = MODE_STANDBY;
 		break;
 	case CMD_RC_TIMER:
-		stopEditTime();
+		rtc.etm = RTC_NOEDIT;
 		if (dispMode == MODE_TIMER) {
 			setSecTimer(2000);
 			stbyTimer = getStbyTimer();
@@ -246,16 +246,16 @@ void handleAction(uint8_t action)
 		setDisplayTime(DISPLAY_TIME_TIMER);
 		break;
 	case CMD_RC_TIME:
-		if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) {
-			editTime();
+		if ((dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) && rtc.etm != RTC_YEAR) {
+			rtcNextEditParam();
 			dispMode = MODE_TIME_EDIT;
 			setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-			if (!isETM()) {
+			if (rtc.etm == RTC_NOEDIT) {
 				dispMode = MODE_TIME;
 				setDisplayTime(DISPLAY_TIME_TIME);
 			}
 		} else {
-			stopEditTime();
+			rtc.etm = RTC_NOEDIT;
 			dispMode = MODE_TIME;
 			setDisplayTime(DISPLAY_TIME_TIME);
 		}
@@ -451,7 +451,7 @@ void handleEncoder(int8_t encCnt)
 			setDisplayTime(DISPLAY_TIME_TEMP);
 			break;
 		case MODE_TIME_EDIT:
-			changeTime(encCnt);
+			rtcChangeTime(encCnt);
 			setDisplayTime(DISPLAY_TIME_TIME_EDIT);
 			break;
 		case MODE_ALARM_EDIT:
@@ -508,16 +508,16 @@ uint8_t checkAlarmAndTime(void)
 	uint8_t ret = ACTION_NOACTION;
 
 	if (getClockTimer() == 0) {
-		readTime();
+		rtcReadTime();
 		readAlarm();
 
 		if (dispMode == MODE_STANDBY) {
-			if ((getTime(DS1307_SEC) == 0) &&
-				(getTime(DS1307_MIN) == getAlarm(DS1307_A0_MIN)) &&
-				(getTime(DS1307_HOUR) == getAlarm(DS1307_A0_HOUR)) &&
-				(getAlarm(DS1307_A0_WDAY) & (0x40 >> ((getTime(DS1307_WDAY) + 5) % 7)))
+			if ((rtc.sec == 0) &&
+				(rtc.min == getAlarm(RTC_A0_MIN)) &&
+				(rtc.hour == getAlarm(RTC_A0_HOUR)) &&
+				(getAlarm(RTC_A0_WDAY) & (0x40 >> ((rtc.wday + 5) % 7)))
 				) {
-				sndSetInput(getAlarm(DS1307_A0_INPUT));
+				sndSetInput(getAlarm(RTC_A0_INPUT));
 				ret = ACTION_EXIT_STANDBY;
 			}
 		}
