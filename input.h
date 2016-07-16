@@ -82,8 +82,8 @@ int8_t getEncoder(void);
 uint8_t getBtnCmd(void);
 uint16_t getRC5Buf(void);
 
-void setDisplayTime(uint8_t value);
-uint8_t getDisplayTime(void);
+uint16_t getDispTimer(void);
+void setDispTimer(uint16_t value);
 
 uint16_t getRtcTimer(void);
 void setRtcTimer(uint16_t val);

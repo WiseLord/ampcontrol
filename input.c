@@ -15,7 +15,7 @@ static volatile uint16_t rc5SaveBuf;
 static volatile uint8_t encPrev = ENC_0;
 static volatile uint8_t btnPrev = BTN_STATE_0;
 
-static volatile uint16_t displayTime;
+static volatile uint16_t dispTimer = 0;
 static volatile uint16_t rtcTimer = 0;
 
 static uint8_t rc5DeviceAddr;
@@ -213,15 +213,16 @@ ISR (TIMER2_COMP_vect)
 		cmdBuf = rc5CmdBuf;
 	}
 
-	/* Timer of current display mode */
-	if (displayTime)
-		displayTime--;
-
 	/* Time from last IR command */
 	if (rc5Timer < 1000)
 		rc5Timer++;
 
-	if (rtcTimer > 0)
+	// Current display mode timer
+	if (dispTimer)
+		dispTimer--;
+
+	// RTC poll timer
+	if (rtcTimer)
 		rtcTimer--;
 
 	return;
@@ -247,15 +248,16 @@ uint16_t getRC5Buf(void)
 	return rc5SaveBuf;
 }
 
-void setDisplayTime(uint8_t value)
+uint16_t getDispTimer(void)
 {
-	displayTime = value;
-	displayTime <<= 10;
+	return dispTimer;
 }
 
-uint8_t getDisplayTime(void)
+void setDispTimer(uint16_t value)
 {
-	return (displayTime | 0x3F) >> 10;
+	dispTimer = value;
+
+	return;
 }
 
 uint16_t getRtcTimer()
