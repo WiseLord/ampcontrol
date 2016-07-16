@@ -16,6 +16,7 @@ static volatile uint8_t encPrev = ENC_0;
 static volatile uint8_t btnPrev = BTN_STATE_0;
 
 static volatile uint16_t displayTime;
+static volatile uint16_t rtcTimer = 0;
 
 static uint8_t rc5DeviceAddr;
 static uint8_t rcCode[RC5_CMD_COUNT];		/* Array with rc5 commands */
@@ -220,6 +221,9 @@ ISR (TIMER2_COMP_vect)
 	if (rc5Timer < 1000)
 		rc5Timer++;
 
+	if (rtcTimer > 0)
+		rtcTimer--;
+
 	return;
 };
 
@@ -252,4 +256,16 @@ void setDisplayTime(uint8_t value)
 uint8_t getDisplayTime(void)
 {
 	return (displayTime | 0x3F) >> 10;
+}
+
+uint16_t getRtcTimer()
+{
+	return rtcTimer;
+}
+
+void setRtcTimer(uint16_t val)
+{
+	rtcTimer = val;
+
+	return;
 }

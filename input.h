@@ -69,6 +69,9 @@ enum {
 	CMD_EMPTY = 0xEF
 };
 
+// Timers
+#define RTC_POLL_TIME	1000
+
 // Handling long press actions */
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
@@ -81,5 +84,8 @@ uint16_t getRC5Buf(void);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);
+
+uint16_t getRtcTimer(void);
+void setRtcTimer(uint16_t val);
 
 #endif /* INPUT_H */

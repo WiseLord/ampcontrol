@@ -134,6 +134,12 @@ int main(void)
 		cmd = getBtnCmd();
 		rc5Buf = getRC5Buf();
 
+		/* Poll RTC for time */
+		if (getRtcTimer() == 0) {
+			rtcReadTime();
+			setRtcTimer(RTC_POLL_TIME);
+		}
+
 		/* Don't handle any command in test mode */
 		if (dispMode == MODE_TEST) {
 			if (cmd != CMD_EMPTY)
@@ -185,7 +191,7 @@ int main(void)
 				rtcNextEditParam();
 				dispMode = MODE_TIME_EDIT;
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-				if (rtc.etm != RTC_NOEDIT)
+				if (rtc.etm == RTC_NOEDIT)
 					setDisplayTime(DISPLAY_TIME_TIME);
 				break;
 #if !defined(NOTUNER)

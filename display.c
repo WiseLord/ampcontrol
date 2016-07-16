@@ -243,14 +243,16 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 
 static void drawTm(uint8_t tm)
 {
-	ks0066WriteString(mkNumString(*((int8_t*)&rtc + tm), 2, '0'));
+	if (tm == rtc.etm && getRtcTimer() < RTC_POLL_TIME / 2)
+		ks0066WriteString("  ");
+	else
+		ks0066WriteString(mkNumString(*((int8_t*)&rtc + tm), 2, '0'));
 
 	return;
 }
 
 void showTime(uint8_t **txtLabels)
 {
-	rtcReadTime();
 	ks0066SetXY(0, 0);
 
 	drawTm(RTC_HOUR);
