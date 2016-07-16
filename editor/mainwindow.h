@@ -65,7 +65,8 @@ private slots:
 
     void setTuner(int tuner);
     void setFmfreq(double value);
-    void setFmstep(double value);
+    void setFmstep1(double value);
+    void setFmstep2(double value);
     void setFmmono(int value);
     void setFmctrl();
 

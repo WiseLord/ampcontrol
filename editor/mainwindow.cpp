@@ -571,11 +571,13 @@ void MainWindow::aboutQt()
 
 void MainWindow::setTuner(int tuner)
 {
-    double fmStep = (double)eep[EEPROM_FM_STEP] / 100;
+    double fmStep1 = (double)eep[EEPROM_FM_STEP1] / 100;
+    double fmStep2 = (double)eep[EEPROM_FM_STEP2] / 100;
 
     cbxTuner->setCurrentIndex(tuner);
     wgtFmfreq->hide();
-    wgtFmstep->hide();
+    wgtFmstep1->hide();
+    wgtFmstep2->hide();
     wgtFmmono->hide();
     wgtFmctrl->hide();
 
@@ -596,10 +598,12 @@ void MainWindow::setTuner(int tuner)
     case TUNER_TUX032:
     case TUNER_LM7001:
         wgtFmfreq->show();
-        dsbFmfreq->setSingleStep(fmStep);
+        dsbFmfreq->setSingleStep(fmStep1);
         dsbFmfreq->setValue(getFreq(EEPROM_FM_FREQ));
-        wgtFmstep->show();
-        dsbFmstep->setValue(fmStep);
+        wgtFmstep1->show();
+        wgtFmstep2->show();
+        dsbFmstep1->setValue(fmStep1);
+        dsbFmstep2->setValue(fmStep2);
         break;
     }
 
@@ -612,11 +616,17 @@ void MainWindow::setFmfreq(double value)
     setFreq(value, EEPROM_FM_FREQ);
 }
 
-void MainWindow::setFmstep(double value)
+void MainWindow::setFmstep1(double value)
 {
     dsbFmfreq->setSingleStep(value);
-    eep[EEPROM_FM_STEP] = value * 100;
-    updateHexTable(EEPROM_FM_STEP);
+    eep[EEPROM_FM_STEP1] = value * 100;
+    updateHexTable(EEPROM_FM_STEP1);
+}
+
+void MainWindow::setFmstep2(double value)
+{
+    eep[EEPROM_FM_STEP2] = value * 100;
+    updateHexTable(EEPROM_FM_STEP2);
 }
 
 void MainWindow::setFmmono(int value)

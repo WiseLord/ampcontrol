@@ -13,6 +13,7 @@ QMAKE_CXXFLAGS += -std=c++11
 TARGET = ampcontroleditor
 TEMPLATE = app
 
+DEFINES += _TEA5767 _RDA580X _TUX032 _LM7001
 
 SOURCES += main.cpp\
 		mainwindow.cpp \
