@@ -7,6 +7,7 @@
 #include "input.h"
 #include "tuner/tuner.h"
 #include "adc.h"
+#include "rtc.h"
 
 static int8_t brStby;							/* Brightness in standby mode */
 static int8_t brWork;							/* Brightness in working mode */
@@ -242,34 +243,35 @@ void showSndParam(sndParam *param, uint8_t **txtLabels)
 
 static void drawTm(uint8_t tm)
 {
-	ks0066WriteString(mkNumString(getTime(tm), 2, '0'));
+	ks0066WriteString(mkNumString(*((int8_t*)&rtc + tm), 2, '0'));
 
 	return;
 }
 
 void showTime(uint8_t **txtLabels)
 {
-	readTime();
+	rtcReadTime();
 	ks0066SetXY(0, 0);
 
-	drawTm(DS1307_HOUR);
+	drawTm(RTC_HOUR);
 	ks0066WriteData(':');
-	drawTm(DS1307_MIN);
+	drawTm(RTC_MIN);
 	ks0066WriteData(':');
-	drawTm(DS1307_SEC);
+	drawTm(RTC_SEC);
+
 
 	ks0066SetXY(11, 0);
-	drawTm(DS1307_DATE);
+	drawTm(RTC_DATE);
 	ks0066WriteData('.');
-	drawTm(DS1307_MONTH);
+	drawTm(RTC_MONTH);
 
 	ks0066SetXY(12, 1);
 	ks0066WriteString(mkNumString(20, 2, '0'));
-	drawTm(DS1307_YEAR);
+	drawTm(RTC_YEAR);
 
 	ks0066SetXY(0, 1);
 
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + (getTime(DS1307_WDAY) - 1) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtc.wday - 1) % 7]);
 
 	return;
 }

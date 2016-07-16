@@ -19,8 +19,6 @@ adc.c
 adc.h
 display.c
 display.h
-ds1307.c
-ds1307.h
 eeprom.h
 fft.c
 fft.h
@@ -35,3 +33,5 @@ Makefile
 pins.h
 rc5.c
 rc5.h
+rtc.c
+rtc.h

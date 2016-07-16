@@ -7,6 +7,7 @@
 #include "input.h"
 #include "rc5.h"
 #include "i2c.h"
+#include "rtc.h"
 
 #include "audio/audio.h"
 #include "tuner/tuner.h"
@@ -52,7 +53,7 @@ static void powerOff(void)
 	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 
 	setStbyBrightness();
-	stopEditTime();
+	rtc.etm = RTC_NOEDIT;
 
 	return;
 }
@@ -181,10 +182,10 @@ int main(void)
 			switch (dispMode) {
 			case MODE_TIME:
 			case MODE_TIME_EDIT:
-				editTime();
+				rtcNextEditParam();
 				dispMode = MODE_TIME_EDIT;
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-				if (!isETM())
+				if (rtc.etm != RTC_NOEDIT)
 					setDisplayTime(DISPLAY_TIME_TIME);
 				break;
 #if !defined(NOTUNER)
@@ -196,7 +197,7 @@ int main(void)
 				}
 #endif
 			default:
-				stopEditTime();
+				rtc.etm = RTC_NOEDIT;
 				dispMode = MODE_TIME;
 				setDisplayTime(DISPLAY_TIME_TIME);
 				break;
@@ -360,7 +361,7 @@ int main(void)
 				setDisplayTime(DISPLAY_TIME_TEST);
 				break;
 			case MODE_TIME_EDIT:
-				changeTime(encCnt);
+				rtcChangeTime(encCnt);
 				setDisplayTime(DISPLAY_TIME_TIME_EDIT);
 				break;
 			case MODE_BR:
