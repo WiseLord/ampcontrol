@@ -8,4 +8,4 @@ void rdsSetBlocks(uint8_t *rdsBlock);
 void rdsDisable(void);
 uint8_t rdsGetFlag(void);
 
-#endif /* RDS_H */
+#endif // RDS_H

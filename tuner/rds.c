@@ -1,5 +1,4 @@
 #include "rds.h"
-#include "../display.h"
 
 static char rdsText[] = "        ";
 static uint8_t rdsFlag = 0;
@@ -11,12 +10,10 @@ char *rdsGetText(void)
 
 void rdsSetBlocks(uint8_t *rdsBlock)
 {
-	/*
-	 * rdsBlock[0..1] - RDS block A
-	 * rdsBlock[2..3] - RDS block B
-	 * rdsBlock[4..5] - RDS block C
-	 * rdsBlock[6..7] - RDS block D
-	 */
+	// rdsBlock[0..1] - RDS block A
+	// rdsBlock[2..3] - RDS block B
+	// rdsBlock[4..5] - RDS block C
+	// rdsBlock[6..7] - RDS block D
 
 	if (rdsBlock[6] >= 0x20 && rdsBlock[6] < 0xFF)
 		rdsText[(rdsBlock[3] & 0x03) * 2] = rdsBlock[6];

@@ -1317,7 +1317,7 @@ void showRadio(uint8_t tune)
 		writeStringPgm(STR_SPMINUS2);
 
 	/* Frequency scale */
-	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
+	showBar(tunerGetFreqMin()>>4, tunerGetFreqMax()>>4, freq>>4);
 
 	/* Select between RDS and spectrum mode */
 	if (rdsGetFlag()) {

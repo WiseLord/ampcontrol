@@ -36,8 +36,8 @@ display/st7920.h
 
 tuner/lm7001.c
 tuner/lm7001.h
-tuner/rda5807.c
-tuner/rda5807.h
+tuner/rda580x.c
+tuner/rda580x.h
 tuner/rds.c
 tuner/rds.h
 tuner/tea5767.c

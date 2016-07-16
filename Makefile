@@ -34,6 +34,11 @@ CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
+# Main definitions
+DEFINES  += -D$(DISPLAY) -DEXTFUNC
+# Supported tuners
+DEFINES += -D_TEA5767 -D_RDA580X -D_TUX032 -D_LM7001 -D_RDS
+
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
@@ -43,7 +48,7 @@ AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V -B 0.5
 
 SUBDIRS = audio display tuner
 
@@ -63,7 +68,7 @@ size:
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(DISPLAY) -DEXTFUNC -c -o $@ $<
+	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 clean:
 	rm -rf $(BUILDDIR)

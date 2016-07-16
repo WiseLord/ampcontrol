@@ -20,10 +20,13 @@
 
 /* FM tuner parameters valus */
 #define EEPROM_FM_TUNER				0x20
-#define EEPROM_FM_STEP				0x21
 #define EEPROM_FM_MONO				0x22
 #define EEPROM_FM_CTRL				0x23
 #define EEPROM_FM_FREQ				0x24
+#define EEPROM_FM_STEP1				0xD4
+#define EEPROM_FM_STEP2				0xD5
+#define EEPROM_FM_FREQ_MIN			0xEC
+#define EEPROM_FM_FREQ_MAX			0xEE
 
 /* Audio processor values */
 #define EEPROM_MAX_INPUT_CNT		0x26
