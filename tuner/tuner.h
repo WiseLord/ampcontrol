@@ -28,7 +28,7 @@ typedef enum {
 	TUNER_END
 } tunerIC;
 
-#define FM_COUNT			50
+#define FM_COUNT			62
 
 #define SEARCH_UP			1
 #define SEARCH_DOWN			-1

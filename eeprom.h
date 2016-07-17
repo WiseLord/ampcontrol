@@ -19,14 +19,19 @@
 #define EEPROM_TONE_DEFEAT			0x1D
 
 /* FM tuner parameters valus */
-#define EEPROM_FM_TUNER				0x20
-#define EEPROM_FM_MONO				0x22
-#define EEPROM_FM_CTRL				0x23
-#define EEPROM_FM_FREQ				0x24
-#define EEPROM_FM_STEP1				0xD4
-#define EEPROM_FM_STEP2				0xD5
-#define EEPROM_FM_FREQ_MIN			0xEC
-#define EEPROM_FM_FREQ_MAX			0xEE
+#define EEPROM_FM_TUNER				0x70
+#define EEPROM_FM_CTRL				(EEPROM_FM_TUNER + 0x01)
+#define EEPROM_FM_STEP1				(EEPROM_FM_TUNER + 0x02)
+#define EEPROM_FM_STEP2				(EEPROM_FM_TUNER + 0x03)
+#define EEPROM_FM_FREQ_MIN			(EEPROM_FM_TUNER + 0x04)
+#define EEPROM_FM_FREQ_MAX			(EEPROM_FM_TUNER + 0x06)
+#define EEPROM_FM_FREQ				(EEPROM_FM_TUNER + 0x08)
+#define EEPROM_FM_MONO				(EEPROM_FM_TUNER + 0x0A)
+#define EEPROM_FM_RDS				(EEPROM_FM_TUNER + 0x0B)
+
+/* FM stations */
+#define EEPROM_FAV_STATIONS			(EEPROM_FM_TUNER + 0x10)
+#define EEPROM_STATIONS				(EEPROM_FM_TUNER + 0x24)
 
 /* Audio processor values */
 #define EEPROM_MAX_INPUT_CNT		0x26
@@ -54,12 +59,8 @@
 /* RC commands array */
 #define EEPROM_RC_CMD				0x40
 
-/* FM stations */
-#define EEPROM_STATIONS				0x70
-#define EEPROM_FAV_STATIONS			0xD8
-
 /* Text labels (maximum 15 byte followed by \0) */
-#define EEPROM_LABELS_ADDR			0xF0
+#define EEPROM_LABELS_ADDR			0x110
 
 #define EEPROM_SIZE					0x400
 
