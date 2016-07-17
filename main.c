@@ -21,7 +21,7 @@ static void saveParams(void)
 	saveAudioParams();
 	saveDisplayParams();
 #if !defined(NOTUNER)
-	saveTunerParams();
+	tunerPowerOff();
 #endif
 
 	return;
@@ -36,7 +36,7 @@ static void powerOn(void)
 	_delay_ms(500);
 
 #if !defined(NOTUNER)
-	loadTunerParams();
+	tunerPowerOn();
 	tunerSetFreq(tunerGetFreq());
 #endif
 	setAudioParams();
@@ -108,7 +108,7 @@ static void hwInit(void)
 	loadAudioParams(txtLabels);			/* Load labels/icons/etc */
 	loadDispParams();					/* Load display params */
 #if !defined(NOTUNER)
-	loadTunerParams();
+	tunerPowerOn();
 #endif
 
 	powerOff();
@@ -259,11 +259,11 @@ int main(void)
 			if (dispMode == MODE_FM_RADIO) {
 #if !defined(NOTUNER)
 				if (cmd == CMD_BTN_3_LONG)
-					scanStoredFreq(SEARCH_DOWN);
+					tunerNextStation(SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
-					scanStoredFreq(SEARCH_UP);
+					tunerNextStation(SEARCH_UP);
 				else
-					storeStation();
+					tunerStoreStation();
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
 #endif
 #if defined(TDA7313)
@@ -318,10 +318,10 @@ int main(void)
 					tunerSetFreq(tunerGetFreq() - 10);
 					break;
 				case CMD_RC5_CHAN_UP:
-					scanStoredFreq(SEARCH_UP);
+					tunerNextStation(SEARCH_UP);
 					break;
 				case CMD_RC5_CHAN_DOWN:
-					scanStoredFreq(SEARCH_DOWN);
+					tunerNextStation(SEARCH_DOWN);
 					break;
 				}
 			}
@@ -346,7 +346,7 @@ int main(void)
 		case CMD_RC5_9:
 		case CMD_RC5_0:
 			setChan(0);
-			loadStation(cmd - CMD_RC5_1);
+			tunerLoadStation(cmd - CMD_RC5_1);
 			dispMode = MODE_FM_RADIO;
 			setDispTimer(DISPLAY_TIME_FM_RADIO);
 			break;

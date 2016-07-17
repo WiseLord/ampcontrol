@@ -149,7 +149,7 @@ void showRC5Info(uint16_t rc5Buf)
 void showRadio(void)
 {
 	uint16_t freq = tunerGetFreq();
-	uint8_t num = stationNum(freq);
+	uint8_t num = tunerStationNum(freq);
 
 	uint8_t lev;
 

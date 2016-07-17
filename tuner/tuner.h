@@ -30,21 +30,31 @@
 #define FM_FREQ_MAX		10800
 
 void tunerInit();
+
+
 void tunerSetFreq(uint16_t freq);
+uint16_t tunerGetFreq();
+
+
+
+
+
 
 void tunerReadStatus();
-uint16_t tunerGetFreq();
 void tunerSwitchMono();
 uint8_t tunerStereo();
 uint8_t tunerLevel();
 
-uint8_t stationNum(uint16_t freq);
-void scanStoredFreq(uint8_t direction);
-void loadStation(uint8_t num);
-void storeStation(void);
+uint8_t tunerStationNum(uint16_t freq);
+void tunerNextStation(uint8_t direction);
+void tunerLoadStation(uint8_t num);
+void tunerStoreStation(void);
 
-void loadTunerParams(void);
-void setTunerParams(void);
-void saveTunerParams(void);
+
+
+
+
+void tunerPowerOn(void);
+void tunerPowerOff(void);
 
 #endif /* TUNER_H */

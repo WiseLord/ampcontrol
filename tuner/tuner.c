@@ -10,6 +10,9 @@ uint16_t freqFM;
 
 void tunerInit()
 {
+	freqFM = eeprom_read_word((uint16_t*)EEPROM_FM_FREQ);
+	monoFM = eeprom_read_byte((uint8_t*)EEPROM_FM_MONO);
+
 #if defined(TEA5767)
 	tea5767Init();
 #elif defined(TUX032)
@@ -105,7 +108,7 @@ uint8_t tunerLevel()
 }
 
 /* Find station number (1..64) in EEPROM */
-uint8_t stationNum(uint16_t freq)
+uint8_t tunerStationNum(uint16_t freq)
 {
 	uint8_t i;
 
@@ -117,7 +120,7 @@ uint8_t stationNum(uint16_t freq)
 }
 
 /* Find nearest next/prev stored station */
-void scanStoredFreq(uint8_t direction)
+void tunerNextStation(uint8_t direction)
 {
 	uint8_t i;
 	uint16_t freqCell;
@@ -147,7 +150,7 @@ void scanStoredFreq(uint8_t direction)
 }
 
 /* Load station by number */
-void loadStation(uint8_t num)
+void tunerLoadStation(uint8_t num)
 {
 	uint16_t freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + num);
 
@@ -158,7 +161,7 @@ void loadStation(uint8_t num)
 }
 
 /* Save/delete station from eeprom */
-void storeStation(void)
+void tunerStoreStation(void)
 {
 	uint8_t i, j;
 	uint16_t freqCell;
@@ -192,22 +195,14 @@ void storeStation(void)
 	return;
 }
 
-void loadTunerParams(void)
-{
-	freqFM = eeprom_read_word((uint16_t*)EEPROM_FM_FREQ);
-	monoFM = eeprom_read_byte((uint8_t*)EEPROM_FM_MONO);
-
-	return;
-}
-
-void setTunerParams(void)
+void tunerPowerOn(void)
 {
 	tunerSetFreq(freqFM);
 
 	return;
 }
 
-void saveTunerParams(void)
+void tunerPowerOff(void)
 {
 	eeprom_update_word((uint16_t*)EEPROM_FM_FREQ, freqFM);
 	eeprom_update_byte((uint8_t*)EEPROM_FM_MONO, monoFM);
