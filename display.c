@@ -136,15 +136,14 @@ void showRC5Info(uint16_t rc5Buf)
 
 void showRadio(void)
 {
-	uint16_t freq = tunerGetFreq();
-	uint8_t num = tunerStationNum(freq);
+	uint8_t num = tunerStationNum();
 
 	/* Frequency value */
 	ks0066SetXY(0, 0);
 	ks0066WriteString("FM ");
-	writeNum(freq / 100, 3, ' ');
+	writeNum(tuner.freq / 100, 3, ' ');
 	ks0066WriteData('.');
-	writeNum(freq / 10 % 10, 1, ' ');
+	writeNum(tuner.freq / 10 % 10, 1, ' ');
 
 	/* Stereo indicator */
 	ks0066SetXY(9, 0);
@@ -165,7 +164,7 @@ void showRadio(void)
 	}
 
 	/* Frequency scale */
-	showBar(FM_FREQ_MIN, FM_FREQ_MAX, freq);
+	showBar(0, (tuner.fMax - tuner.fMin) >> 4, (tuner.freq - tuner.fMin) >> 4);
 
 	return;
 }

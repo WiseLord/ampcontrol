@@ -1,2 +1,4 @@
 /usr/avr/include
 .
+audio
+tuner

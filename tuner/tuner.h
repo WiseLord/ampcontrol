@@ -3,56 +3,75 @@
 
 #include <inttypes.h>
 
-/* Tuner type selection */
-#if !defined(_TEA5767) && !defined(_TUX032) && !defined(_LM7001) && !defined(_RDA5807)
-#define _TEA5767
-#endif
-
-#if defined(_TEA5767)
+#ifdef _TEA5767
 #include "tea5767.h"
-#elif defined(_TUX032)
+#endif
+#ifdef _RDA580X
+#include "rda580x.h"
+#endif
+#ifdef _TUX032
 #include "tux032.h"
-#elif defined(_LM7001)
+#endif
+#ifdef _LM7001
 #include "lm7001.h"
-#elif defined(_RDA5807)
-#include "rda5807.h"
 #endif
 
-#define FM_COUNT		50
+typedef enum {
+	TUNER_NO = 0,
+	TUNER_TEA5767,
+	TUNER_RDA5807,
+	TUNER_TUX032,
+	TUNER_LM7001,
+	TUNER_RDA5802,
+	TUNER_RDA5807_DF,
 
-#define SEARCH_DOWN		0
-#define SEARCH_UP		1
+	TUNER_END
+} tunerIC;
 
-#define FM_MONO			1
-#define FM_STEREO		0
+typedef struct {
+	tunerIC ic;
+	uint8_t ctrl;
+	uint8_t step1;
+	uint8_t step2;
+	uint16_t fMin;
+	uint16_t fMax;
+	uint16_t freq;
+	uint8_t mono;
+	uint8_t rds;
+} Tuner_type;
 
-#define FM_FREQ_MIN		8750
-#define FM_FREQ_MAX		10800
+extern Tuner_type tuner;
 
-void tunerInit();
+#define FM_BAND_DIV_FREQ	7600
 
+#define FM_COUNT			62
+#define FM_FAV_COUNT		10
 
-void tunerSetFreq(uint16_t freq);
-uint16_t tunerGetFreq();
+#define SEARCH_UP			1
+#define SEARCH_DOWN			-1
 
+void tunerInit(void);
 
+void tunerSetFreq();
 
+void tunerChangeFreq(int8_t mult);
 
+void tunerReadStatus(void);
+void tunerSwitchMono(void);
+uint8_t tunerStereo(void);
+uint8_t tunerLevel(void);
 
-
-void tunerReadStatus();
-void tunerSwitchMono();
-uint8_t tunerStereo();
-uint8_t tunerLevel();
-
-uint8_t tunerStationNum(uint16_t freq);
-void tunerNextStation(uint8_t direction);
+uint8_t tunerStationNum(void);
+void tunerNextStation(int8_t direction);
 void tunerLoadStation(uint8_t num);
 void tunerStoreStation(void);
 
+uint8_t tunerFavStationNum(void);
+void tunerLoadFavStation(uint8_t num);
+void tunerStoreFavStation(uint8_t num);
 
-
-
+void tunerSetMute(uint8_t mute);
+void tunerSetVolume(int8_t value);
 
 void tunerPowerOn(void);
 void tunerPowerOff(void);

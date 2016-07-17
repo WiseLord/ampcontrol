@@ -1,5 +1,5 @@
 AUDIOPROC = TDA7313
-TUNER = TEA5767
+TUNER = RDA580X
 WIRE = 4BIT
 
 # Lowercase argument
@@ -25,8 +25,8 @@ else ifeq ($(TUNER), TUX032)
   TUNER_SRC += tuner/tux032.c
 else ifeq ($(TUNER), LM7001)
   TUNER_SRC += tuner/lm7001.c
-else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC += tuner/rda5807.c
+else ifeq ($(TUNER), RDA580X)
+  TUNER_SRC += tuner/rda580x.c
 endif
 
 SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC)

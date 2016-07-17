@@ -13,27 +13,15 @@
 #include "tuner/tuner.h"
 #include "display.h"
 
-/* Save parameters to EEPROM */
-static void saveParams(void)
-{
-	saveAudioParams();
-	saveDisplayParams();
-	tunerPowerOff();
-
-	return;
-}
-
 /* Handle leaving standby mode */
 static void powerOn(void)
 {
-	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
-	setWorkBrightness();
-
-	_delay_ms(500);
-
 	tunerPowerOn();
-	tunerSetFreq(tunerGetFreq());
+	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	setAudioParams();
+	tunerSetMute(0);
+	setWorkBrightness();
+	tunerSetFreq();
 
 	return;
 }
@@ -41,14 +29,16 @@ static void powerOn(void)
 /* Handle entering standby mode */
 static void powerOff(void)
 {
-	muteVolume();
-
-	_delay_ms(100);
-
-	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
-
-	setStbyBrightness();
 	rtc.etm = RTC_NOEDIT;
+	setStbyBrightness();
+
+	muteVolume();
+	tunerSetMute(1);
+	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
+	saveAudioParams();
+	tunerPowerOff();
+
+	saveDisplayParams();
 
 	return;
 }
@@ -56,7 +46,6 @@ static void powerOff(void)
 /* Hardware initialization */
 static void hwInit(void)
 {
-
 	I2CInit();							/* I2C bus */
 	ks0066Init();
 
@@ -71,7 +60,6 @@ static void hwInit(void)
 	sei();								/* Gloabl interrupt enable */
 
 	loadDispSndParams();				/* Load display and audio params */
-	tunerPowerOn();
 
 	powerOff();
 
@@ -128,7 +116,6 @@ int main(void)
 				break;
 			default:
 				powerOff();
-				saveParams();
 				dispMode = MODE_STANDBY;
 				break;
 			}
@@ -159,7 +146,7 @@ int main(void)
 				break;
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
-					tunerSetFreq(tunerGetFreq() - 10);
+					tunerChangeFreq(SEARCH_DOWN);
 					setDispTimer(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -175,7 +162,7 @@ int main(void)
 			switch (dispMode) {
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
-					tunerSetFreq(tunerGetFreq() + 10);
+					tunerChangeFreq(SEARCH_UP);
 					setDispTimer(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
@@ -267,10 +254,10 @@ int main(void)
 			if (dispMode == MODE_FM_RADIO) {
 				switch (cmd) {
 				case CMD_RC5_FM_INC:
-					tunerSetFreq(tunerGetFreq() + 10);
+					tunerChangeFreq(SEARCH_UP);
 					break;
 				case CMD_RC5_FM_DEC:
-					tunerSetFreq(tunerGetFreq() - 10);
+					tunerChangeFreq(SEARCH_DOWN);
 					break;
 				case CMD_RC5_CHAN_UP:
 					tunerNextStation(SEARCH_UP);
@@ -348,6 +335,7 @@ int main(void)
 				break;
 			case MODE_TEST:
 				setStbyBrightness();
+				dispMode = MODE_STANDBY;
 				break;
 			default:
 				dispMode = MODE_SPECTRUM;

@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-#define TEA5767_ADDR			0b11000000
+#define TEA5767_I2C_ADDR		0b11000000
 
 /* Write mode register values */
 
@@ -65,8 +65,15 @@
 #define TEA5767_BUF_READY(buf)	(buf[0] & TEA5767_RF)
 #define TEA5767_BUF_STEREO(buf)	(buf[2] & TEA5767_STEREO)
 
-void tea5767Init(void);
-void tea5767SetFreq(uint16_t freq, uint8_t mono);
-void tea5767ReadStatus(uint8_t *buf);
+void tea5767Init(uint8_t ctrl);
 
-#endif // TEA5767_H
+void tea5767SetFreq(uint16_t freq, uint8_t mono);
+
+uint8_t *tea5767ReadStatus(void);
+
+void tea5767SetMute(uint8_t mute);
+
+void tea5767PowerOn();
+void tea5767PowerOff();
+
+#endif /* TEA5767_H */

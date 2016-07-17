@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-#define RDA5807M_ADDR				0b00100000
+#define RDA5807M_I2C_ADDR			0b00100000
 
 /* Write mode register values */
 
@@ -65,7 +65,7 @@
 #define RDA5807_SEEKTH				0x0F   /* Seek SNR threshold, 4bits, default 1000=32dB */
 
 /* 7 register (05L) */
-#define RDA5807_LNA_PORT_SEL		0xC0   /* Only for RDA5807FP 2 bit (10) to select FMIN input */
+#define RDA5807_LNA_PORT_SEL		(2<<6) /* Only for RDA5807FP 2 bit (10) to select FMIN input */
 #define RDA5807_VOLUME				0x0F   /* 4 bits volume (0000 - muted, 1111 - max) */
 
 /* 8 register (06H) */
@@ -120,11 +120,30 @@
  * or 4-11 => E when ABCD_E = 1
  */
 
+#define RDA5807_CHAN_SPACING		5
+
+#define RDA5807_VOL_MIN				0
+#define RDA5807_VOL_MAX				16
+
 #define RDA5807_BUF_READY(buf)	(buf[3] & RDA5807_FM_READY)
 #define RDA5807_BUF_STEREO(buf)	(buf[0] & RDA5807_ST)
 
-void rda5807Init(void);
-void rda5807SetFreq(uint16_t freq, uint8_t mono);
-void rda5807ReadStatus(uint8_t *buf);
+typedef enum {
+	RDA580X_RDA5807,
+	RDA580X_RDA5802,
+	RDA580X_RDA5807_DF,
+} rda580xIC;
+
+void rda580xInit(rda580xIC ic);
+
+void rda580xSetFreq(uint16_t freq, uint8_t mono);
+
+uint8_t *rda580xReadStatus(void);
+
+void rda580xSetMute(uint8_t mute);
+void rda580xSetVolume(int8_t value);
+
+void rda580xPowerOn(void);
+void rda580xPowerOff(void);
 
 #endif /* RDA5807M_H */
