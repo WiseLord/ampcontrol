@@ -584,13 +584,13 @@ void MainWindow::setTuner(int tuner)
     switch (tuner) {
     case TUNER_TEA5767:
         wgtFmctrl->show();
-        cbxFmctrlHcc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_HCC);
-        cbxFmctrlSnc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_SNC);
-        cbxFmctrlSm->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_SMUTE);
-        cbxFmctrlDtc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_DTC);
-        cbxFmctrlBl->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_BL);
-        cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_PLLREF);
-        cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_CTRL_XTAL);
+        cbxFmctrlHcc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_HCC);
+        cbxFmctrlSnc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_SNC);
+        cbxFmctrlSm->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_SMUTE);
+        cbxFmctrlDtc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_DTC);
+        cbxFmctrlBl->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_BL);
+        cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_PLLREF);
+        cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_XTAL);
     case TUNER_RDA5807:
         wgtFmmono->show();
         setFmmono(eep[EEPROM_FM_MONO]);
@@ -642,13 +642,13 @@ void MainWindow::setFmctrl()
 {
     char ctrl = 0;
 
-    if (cbxFmctrlHcc->isChecked()) ctrl |= TEA5767_CTRL_HCC;
-    if (cbxFmctrlSnc->isChecked()) ctrl |= TEA5767_CTRL_SNC;
-    if (cbxFmctrlSm->isChecked()) ctrl |= TEA5767_CTRL_SMUTE;
-    if (cbxFmctrlDtc->isChecked()) ctrl |= TEA5767_CTRL_DTC;
-    if (cbxFmctrlBl->isChecked()) ctrl |= TEA5767_CTRL_BL;
-    if (cbxFmctrlPllref->isChecked()) ctrl |= TEA5767_CTRL_PLLREF;
-    if (cbxFmctrlXtal->isChecked()) ctrl |= TEA5767_CTRL_XTAL;
+    if (cbxFmctrlHcc->isChecked()) ctrl |= TEA5767_HCC;
+    if (cbxFmctrlSnc->isChecked()) ctrl |= TEA5767_SNC;
+    if (cbxFmctrlSm->isChecked()) ctrl |= TEA5767_SMUTE;
+    if (cbxFmctrlDtc->isChecked()) ctrl |= TEA5767_DTC;
+    if (cbxFmctrlBl->isChecked()) ctrl |= TEA5767_BL;
+    if (cbxFmctrlPllref->isChecked()) ctrl |= TEA5767_PLLREF;
+    if (cbxFmctrlXtal->isChecked()) ctrl |= TEA5767_XTAL;
 
     eep[EEPROM_FM_CTRL] = ctrl;
     updateHexTable(EEPROM_FM_CTRL);
