@@ -81,22 +81,20 @@ clean:
 flash: $(HEX)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:$(HEX):i
 
-.PHONY: fuse
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x24:m -U hfuse:w:0xC1:m
 
-.PHONY: eeprom_en
 eeprom_en:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_en.bin:r
 
-.PHONY: eeprom_ru
 eeprom_ru:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ru.bin:r
 
-.PHONY: eeprom_by
 eeprom_by:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_by.bin:r
 
-.PHONY: eeprom_ua
 eeprom_ua:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ua.bin:r
+
+# Other dependencies
+-include $(OBJS:.o=.d)

@@ -320,16 +320,16 @@ void setStbyBrightness(void)
 
 void loadDispParams(void)
 {
-	brStby = eeprom_read_byte(eepromBrStby);
-	brWork = eeprom_read_byte(eepromBrWork);
+	brStby = eeprom_read_byte((uint8_t*)EEPROM_BR_STBY);
+	brWork = eeprom_read_byte((uint8_t*)EEPROM_BR_WORK);
 
 	return;
 }
 
 void saveDisplayParams(void)
 {
-	eeprom_update_byte(eepromBrStby, brStby);
-	eeprom_update_byte(eepromBrWork, brWork);
+	eeprom_update_byte((uint8_t*)EEPROM_BR_STBY, brStby);
+	eeprom_update_byte((uint8_t*)EEPROM_BR_WORK, brWork);
 
 	return;
 }

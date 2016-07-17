@@ -110,7 +110,7 @@ uint8_t stationNum(uint16_t freq)
 	uint8_t i;
 
 	for (i = 0; i < FM_COUNT; i++)
-		if (eeprom_read_word(eepromStations + i) == freq)
+		if (eeprom_read_word((uint16_t*)EEPROM_STATIONS + i) == freq)
 			return i + 1;
 
 	return 0;
@@ -124,7 +124,7 @@ void scanStoredFreq(uint8_t direction)
 	uint16_t freqFound = freqFM;
 
 	for (i = 0; i < FM_COUNT; i++) {
-		freqCell = eeprom_read_word(eepromStations + i);
+		freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + i);
 		if (freqCell != 0xFFFF) {
 			if (direction) {
 				if (freqCell > freqFM) {
@@ -149,7 +149,7 @@ void scanStoredFreq(uint8_t direction)
 /* Load station by number */
 void loadStation(uint8_t num)
 {
-	uint16_t freqCell = eeprom_read_word(eepromStations + num);
+	uint16_t freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + num);
 
 	if (freqCell != 0xFFFF)
 		tunerSetFreq(freqCell);
@@ -167,7 +167,7 @@ void storeStation(void)
 	freq = freqFM;
 
 	for (i = 0; i < FM_COUNT; i++) {
-		freqCell = eeprom_read_word(eepromStations + i);
+		freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + i);
 		if (freqCell < freq)
 			continue;
 		if (freqCell == freq) {
@@ -175,14 +175,14 @@ void storeStation(void)
 				if (j == FM_COUNT - 1)
 					freqCell = 0xFFFF;
 				else
-					freqCell = eeprom_read_word(eepromStations + j + 1);
-				eeprom_update_word(eepromStations + j, freqCell);
+					freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + j + 1);
+				eeprom_update_word((uint16_t*)EEPROM_STATIONS + j, freqCell);
 			}
 			break;
 		} else {
 			for (j = i; j < FM_COUNT; j++) {
-				freqCell = eeprom_read_word(eepromStations + j);
-				eeprom_update_word(eepromStations + j, freq);
+				freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + j);
+				eeprom_update_word((uint16_t*)EEPROM_STATIONS + j, freq);
 				freq = freqCell;
 			}
 			break;
@@ -194,8 +194,8 @@ void storeStation(void)
 
 void loadTunerParams(void)
 {
-	freqFM = eeprom_read_word(eepromFMFreq);
-	monoFM = eeprom_read_byte(eepromFMMono);
+	freqFM = eeprom_read_word((uint16_t*)EEPROM_FM_FREQ);
+	monoFM = eeprom_read_byte((uint8_t*)EEPROM_FM_MONO);
 
 	return;
 }
@@ -209,8 +209,8 @@ void setTunerParams(void)
 
 void saveTunerParams(void)
 {
-	eeprom_update_word(eepromFMFreq, freqFM);
-	eeprom_update_byte(eepromFMMono, monoFM);
+	eeprom_update_word((uint16_t*)EEPROM_FM_FREQ, freqFM);
+	eeprom_update_byte((uint8_t*)EEPROM_FM_MONO, monoFM);
 
 #if defined(TUX032)
 	tux032GoStby();

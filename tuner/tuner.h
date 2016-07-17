@@ -18,7 +18,7 @@
 #include "rda5807.h"
 #endif
 
-#define FM_COUNT		64
+#define FM_COUNT		50
 
 #define SEARCH_DOWN		0
 #define SEARCH_UP		1

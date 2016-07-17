@@ -4,14 +4,14 @@
 
 #define CHAN_SPACING 5
 
-static uint8_t buf[5];
+static uint8_t buf[8];
 
 static void rda5807WriteI2C(uint8_t *buf)
 {
 	uint8_t i;
 
 	I2CStart(RDA5807M_ADDR);
-	for (i = 0; i < 5; i++) {
+	for (i = 0; i < 8; i++) {
 		I2CWriteByte(buf[i]);
 	}
 	I2CStop();
@@ -43,6 +43,9 @@ void rda5807SetFreq(uint16_t freq, uint8_t mono)
 	buf[3] |= (RDA5807_TUNE | RDA5807_BAND_US_EUROPE | RDA5807_SPACE_50);
 
 	buf[4] = RDA5807_SOFTMUTE_EN;
+
+	buf[6] = 0b1000 & RDA5807_SEEKTH;
+	buf[7] = RDA5807_LNA_PORT_SEL | (RDA5807_VOLUME & 0x05);
 
 	rda5807WriteI2C(buf);
 

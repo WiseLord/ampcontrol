@@ -37,6 +37,7 @@ static void powerOn(void)
 
 #if !defined(NOTUNER)
 	loadTunerParams();
+	tunerSetFreq(tunerGetFreq());
 #endif
 	setAudioParams();
 
@@ -64,7 +65,7 @@ static void loadLabels(uint8_t **txtLabels)
 	uint8_t i;
 	uint8_t *addr;
 
-	addr = labelsAddr;
+	addr = (uint8_t*)EEPROM_LABELS_ADDR;
 	i = 0;
 
 	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {

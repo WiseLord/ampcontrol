@@ -180,7 +180,7 @@ void loadAudioParams(uint8_t **txtLabels)
 	uint8_t i;
 
 	for (i = 0; i < SND_PARAM_COUNT; i++)
-		sndPar[i].value = eeprom_read_byte(eepromVolume + i);
+		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
 
 	sndPar[SND_VOLUME].label = txtLabels[LABEL_VOLUME];
 	sndPar[SND_BASS].label = txtLabels[LABEL_BASS];
@@ -192,7 +192,7 @@ void loadAudioParams(uint8_t **txtLabels)
 	sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
 	sndPar[SND_GAIN3].label = txtLabels[LABEL_GAIN3];
 
-	chan = eeprom_read_byte(eepromChannel);
+	chan = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
 
 	sndPar[SND_VOLUME].set = setVolume;
 	sndPar[SND_BASS].set = setBass;
@@ -223,9 +223,9 @@ void saveAudioParams(void)
 	uint8_t i;
 
 	for (i = 0; i < SND_PARAM_COUNT; i++)
-		eeprom_update_byte(eepromVolume + i, sndPar[i].value);
+		eeprom_update_byte((uint8_t*)EEPROM_VOLUME + i, sndPar[i].value);
 
-	eeprom_update_byte(eepromChannel, chan);
+	eeprom_update_byte((uint8_t*)EEPROM_INPUT, chan);
 
 	return;
 }

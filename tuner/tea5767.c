@@ -18,7 +18,7 @@ static uint8_t ctrl;
 
 void tea5767Init(void)
 {
-	ctrl = eeprom_read_byte(eepromFMCtrl);
+	ctrl = eeprom_read_byte((uint8_t*)EEPROM_FM_CTRL);
 
 	return;
 }
