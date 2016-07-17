@@ -1132,9 +1132,9 @@ void showRadio(uint8_t tune)
 	/* Frequency value */
 	ks0066SetXY(0, 0);
 	writeString("FM ");
-	writeNum(freq / 100, 3, ' ', 10);
+	writeNum(tuner.freq / 100, 3, ' ', 10);
 	ks0066WriteData('.');
-	writeNum(freq % 100, 2, '0', 10);
+	writeNum(tuner.freq % 100, 2, '0', 10);
 
 	/* Signal level */
 	ks0066SetXY(12, 0);
@@ -1205,9 +1205,9 @@ void showRadio(uint8_t tune)
 	/* Frequency value */
 	ls020SetXY(8, 2);
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 2);
-	writeNum(freq / 100, 3, ' ', 10);
+	writeNum(tuner.freq / 100, 3, ' ', 10);
 	writeStringPgm(STR_SPDOTSP);
-	writeNum(freq % 100, 2, '0', 10);
+	writeNum(tuner.freq % 100, 2, '0', 10);
 
 	/* Signal level */
 	for (i = 0; i < 16; i+=2) {
@@ -1248,7 +1248,7 @@ void showRadio(uint8_t tune)
 		writeStringPgm(STR_SPMINUS2);
 
 	/* Frequency scale */
-	showBar(FM_FREQ_MIN>>4, FM_FREQ_MAX>>4, freq>>4);
+	showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.freq >> 4);
 
 	/* Select between RDS and spectrum mode */
 	if (rdsGetFlag()) {
