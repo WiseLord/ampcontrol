@@ -1124,7 +1124,7 @@ void showRadio(uint8_t tune)
 	uint16_t freq = tunerGetFreq();
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();
-	int8_t favNum = tunerFavStationNum();
+	uint8_t favNum = tunerFavStationNum();
 
 #ifdef KS0066
 	lcdGenBar(SYM_STEREO_DEGREE);
@@ -1156,8 +1156,8 @@ void showRadio(uint8_t tune)
 
 	/* Favourite station number */
 	ks0066SetXY(15, 0);
-	if (favNum >= 0) {
-		writeNum(favNum, 1, ' ', 10);
+	if (favNum) {
+		writeNum(favNum - 1, 1, ' ', 10);
 	} else {
 		writeString("-");
 	}
@@ -1234,8 +1234,8 @@ void showRadio(uint8_t tune)
 
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
 	ls020SetXY(162, 24);
-	if (favNum >= 0)
-		writeNum(favNum, 1, ' ', 10);
+	if (favNum)
+		writeNum(favNum - 1, 1, ' ', 10);
 	else
 		writeStringPgm(STR_MINUS1);
 
@@ -1303,8 +1303,8 @@ void showRadio(uint8_t tune)
 	gdSetXY(114, 23);
 	gdWriteChar(0xF5);						/* Heart symbol */
 	gdSetXY(122, 23);
-	if (favNum >= 0)
-		writeNum(favNum, 1, ' ', 10);
+	if (favNum)
+		writeNum(favNum - 1, 1, ' ', 10);
 	else
 		writeStringPgm(STR_MINUS1);
 
