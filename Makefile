@@ -40,6 +40,10 @@ CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
+# Main definitions
+DEFINES  += -D$(AUDIOPROC) -DKS0066_WIRE_$(WIRE)
+DEFINES += -D_$(TUNER)
+
 CC = avr-gcc
 OBJCOPY = avr-objcopy
 OBJDUMP = avr-objdump
@@ -72,7 +76,7 @@ size:
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(TUNER) -DKS0066_WIRE_$(WIRE) -c -o $@ $<
+	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 clean:
 	rm -rf $(BUILDDIR)

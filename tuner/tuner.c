@@ -13,13 +13,13 @@ void tunerInit()
 	freqFM = eeprom_read_word((uint16_t*)EEPROM_FM_FREQ);
 	monoFM = eeprom_read_byte((uint8_t*)EEPROM_FM_MONO);
 
-#if defined(TEA5767)
+#if defined(_TEA5767)
 	tea5767Init();
-#elif defined(TUX032)
+#elif defined(_TUX032)
 	tux032Init();
-#elif defined(LM7001)
+#elif defined(_LM7001)
 	lm7001Init();
-#elif defined(RDA5807)
+#elif defined(_RDA5807)
 	rda5807Init();
 #endif
 
@@ -33,13 +33,13 @@ void tunerSetFreq(uint16_t freq)
 	if (freq < FM_FREQ_MIN)
 		freq = FM_FREQ_MAX;
 
-#if defined(TEA5767)
+#if defined(_TEA5767)
 	tea5767SetFreq(freq, monoFM);
-#elif defined(TUX032)
+#elif defined(_TUX032)
 	tux032SetFreq(freq);
-#elif defined(LM7001)
+#elif defined(_LM7001)
 	lm7001SetFreq(freq);
-#elif defined(RDA5807)
+#elif defined(_RDA5807)
 	rda5807SetFreq(freq, monoFM);
 #endif
 	freqFM = freq;
@@ -49,11 +49,11 @@ void tunerSetFreq(uint16_t freq)
 
 void tunerReadStatus()
 {
-#if defined(TEA5767)
+#if defined(_TEA5767)
 	tea5767ReadStatus(bufFM);
-#elif defined(TUX032)
+#elif defined(_TUX032)
 	tux032ReadStatus(bufFM);
-#elif defined(RDA5807)
+#elif defined(_RDA5807)
 	rda5807ReadStatus(bufFM);
 #endif
 
@@ -67,7 +67,7 @@ uint16_t tunerGetFreq()
 
 void tunerSwitchMono()
 {
-#if defined(TEA5767) || defined(RDA5807)
+#if defined(_TEA5767) || defined(_RDA5807)
 	monoFM = !monoFM;
 	tunerSetFreq(tunerGetFreq());
 #endif
@@ -76,29 +76,29 @@ void tunerSwitchMono()
 
 uint8_t tunerStereo()
 {
-#if defined(TEA5767)
+#if defined(_TEA5767)
 	return TEA5767_BUF_STEREO(bufFM) && !monoFM;
-#elif defined(TUX032)
+#elif defined(_TUX032)
 	return !TUX032_BUF_STEREO(bufFM);
-#elif defined(LM7001)
+#elif defined(_LM7001)
 	return 1;
-#elif defined(RDA5807)
+#elif defined(_RDA5807)
 	return RDA5807_BUF_STEREO(bufFM) && !monoFM;
 #endif
 }
 
 uint8_t tunerLevel()
 {
-#if defined(TEA5767)
+#if defined(_TEA5767)
 	return (bufFM[3] & TEA5767_LEV_MASK) >> 4;
-#elif defined(TUX032)
+#elif defined(_TUX032)
 	if (tunerStereo())
 		return 13;
 	else
 		return 3;
-#elif defined(LM7001)
+#elif defined(_LM7001)
 	return 13;
-#elif defined(RDA5807)
+#elif defined(_RDA5807)
 	uint8_t rawLevel = (bufFM[2] & RDA5807_RSSI) >> 1;
 	if (rawLevel < 24)
 		return 0;
@@ -207,7 +207,7 @@ void tunerPowerOff(void)
 	eeprom_update_word((uint16_t*)EEPROM_FM_FREQ, freqFM);
 	eeprom_update_byte((uint8_t*)EEPROM_FM_MONO, monoFM);
 
-#if defined(TUX032)
+#if defined(_TUX032)
 	tux032GoStby();
 #endif
 

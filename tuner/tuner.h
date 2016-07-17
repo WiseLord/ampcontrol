@@ -4,17 +4,17 @@
 #include <inttypes.h>
 
 /* Tuner type selection */
-#if !defined(TEA5767) && !defined(TUX032) && !defined(LM7001) && !defined(RDA5807)
-#define TEA5767
+#if !defined(_TEA5767) && !defined(_TUX032) && !defined(_LM7001) && !defined(_RDA5807)
+#define _TEA5767
 #endif
 
-#if defined(TEA5767)
+#if defined(_TEA5767)
 #include "tea5767.h"
-#elif defined(TUX032)
+#elif defined(_TUX032)
 #include "tux032.h"
-#elif defined(LM7001)
+#elif defined(_LM7001)
 #include "lm7001.h"
-#elif defined(RDA5807)
+#elif defined(_RDA5807)
 #include "rda5807.h"
 #endif
 
