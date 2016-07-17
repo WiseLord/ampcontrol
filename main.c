@@ -20,9 +20,7 @@ static void saveParams(void)
 {
 	saveAudioParams();
 	saveDisplayParams();
-#if !defined(NOTUNER)
 	tunerPowerOff();
-#endif
 
 	return;
 }
@@ -35,10 +33,8 @@ static void powerOn(void)
 
 	_delay_ms(500);
 
-#if !defined(NOTUNER)
 	tunerPowerOn();
 	tunerSetFreq(tunerGetFreq());
-#endif
 	setAudioParams();
 
 	return;
@@ -96,9 +92,7 @@ static void hwInit(void)
 	rc5Init();						/* IR Remote control */
 	adcInit();						/* Analog-to-digital converter */
 	inputInit();					/* Buttons/encoder polling */
-#if !defined(NOTUNER)
 	tunerInit();					/* Tuner */
-#endif
 
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 	DDR(BCKL) |= BCKL_LINE;
@@ -107,9 +101,7 @@ static void hwInit(void)
 
 	loadAudioParams(txtLabels);			/* Load labels/icons/etc */
 	loadDispParams();					/* Load display params */
-#if !defined(NOTUNER)
 	tunerPowerOn();
-#endif
 
 	powerOff();
 
@@ -195,14 +187,12 @@ int main(void)
 				if (rtc.etm == RTC_NOEDIT)
 					setDispTimer(DISPLAY_TIME_TIME);
 				break;
-#if !defined(NOTUNER)
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_3) {
 					tunerSetFreq(tunerGetFreq() - 10);
 					setDispTimer(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
-#endif
 			default:
 				rtc.etm = RTC_NOEDIT;
 				dispMode = MODE_TIME;
@@ -213,14 +203,12 @@ int main(void)
 		case CMD_BTN_4:
 		case CMD_RC5_MUTE:
 			switch (dispMode) {
-#if !defined(NOTUNER)
 			case MODE_FM_RADIO:
 				if (cmd == CMD_BTN_4) {
 					tunerSetFreq(tunerGetFreq() + 10);
 					setDispTimer(DISPLAY_TIME_FM_RADIO);
 					break;
 				}
-#endif
 			default:
 				ks0066Clear();
 				switchMute();
@@ -257,7 +245,6 @@ int main(void)
 		case CMD_BTN_5_LONG:
 		case CMD_RC5_FM_STORE:
 			if (dispMode == MODE_FM_RADIO) {
-#if !defined(NOTUNER)
 				if (cmd == CMD_BTN_3_LONG)
 					tunerNextStation(SEARCH_DOWN);
 				else if (cmd == CMD_BTN_4_LONG)
@@ -265,7 +252,6 @@ int main(void)
 				else
 					tunerStoreStation();
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
-#endif
 #if defined(TDA7313)
 			} else if (cmd == CMD_BTN_4_LONG) {
 				ks0066Clear();
@@ -303,7 +289,6 @@ int main(void)
 			dispMode = MODE_GAIN;
 			setDispTimer(DISPLAY_TIME_GAIN);
 			break;
-#if !defined(NOTUNER)
 		case CMD_RC5_FM_INC:
 		case CMD_RC5_FM_DEC:
 		case CMD_RC5_CHAN_UP:
@@ -350,7 +335,6 @@ int main(void)
 			dispMode = MODE_FM_RADIO;
 			setDispTimer(DISPLAY_TIME_FM_RADIO);
 			break;
-#endif
 		}
 
 		/* Emulate RC5 VOL_UP/VOL_DOWN as encoder actions */
@@ -422,12 +406,10 @@ int main(void)
 			showSpectrum(getSpData());
 			_delay_ms(20);
 			break;
-#if !defined(NOTUNER)
 		case MODE_FM_RADIO:
 			tunerReadStatus();
 			showRadio();
 			break;
-#endif
 		case MODE_MUTE:
 			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
 			break;
