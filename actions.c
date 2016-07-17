@@ -15,7 +15,7 @@ static uint8_t defDispMode(void)
 	uint8_t ret;
 
 	if (getDefDisplay() == MODE_FM_RADIO) {
-		if (sndGetInput() != 0 || tunerGetType() == TUNER_NO)
+		if (sndGetInput() || !tuner.ic)
 			ret = MODE_SPECTRUM;
 		else
 			ret = MODE_FM_RADIO;
@@ -193,7 +193,7 @@ void handleAction(uint8_t action)
 		sndPowerOn();
 
 		tunerSetMute(sndGetInput());
-		tunerSetFreq(tunerGetFreq());
+		tunerSetFreq();
 
 		dispMode = MODE_SND_GAIN0 + sndGetInput();
 		setDisplayTime(DISPLAY_TIME_GAIN_START);
@@ -314,7 +314,7 @@ void handleAction(uint8_t action)
 			setDefDisplay(MODE_SPECTRUM);
 			break;
 		case MODE_SPECTRUM:
-			if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
+			if (!sndGetInput() && tuner.ic) {
 				setDefDisplay(MODE_FM_RADIO);
 				break;
 			}
@@ -326,7 +326,7 @@ void handleAction(uint8_t action)
 		setDisplayTime(DISPLAY_TIME_SP);
 		break;
 	case CMD_RC_IN_0:
-		if (getDefDisplay() == MODE_SPECTRUM && tunerGetType() != TUNER_NO)
+		if (getDefDisplay() == MODE_SPECTRUM && tuner.ic)
 			setDefDisplay(MODE_FM_RADIO);
 	case CMD_RC_IN_1:
 	case CMD_RC_IN_2:
@@ -382,7 +382,7 @@ void handleAction(uint8_t action)
 		}
 		break;
 	default:
-		if (sndGetInput() == 0 && tunerGetType() != TUNER_NO) {
+		if (!sndGetInput() && tuner.ic) {
 			switch (action) {
 			case CMD_RC_FM_0:
 			case CMD_RC_FM_1:

@@ -5,7 +5,7 @@
 static uint8_t wrBuf[5];
 static uint8_t rdBuf[5];
 
-static uint8_t ctrl = 0x79;
+uint16_t div = 12500;
 
 static void tea5767WriteI2C(void)
 {
@@ -19,52 +19,32 @@ static void tea5767WriteI2C(void)
 	return;
 }
 
-void tea5767Init(uint8_t tea5767Ctrl)
+void tea5767Init(uint8_t ctrl)
 {
-	ctrl = tea5767Ctrl;
-
 	wrBuf[0] = TEA5767_MUTE;
 
 	wrBuf[1] = 0;
 
 	wrBuf[2] = TEA5767_HLSI;
 
-	wrBuf[3] = 0;
-	if (ctrl & TEA5767_CTRL_HCC)
-		wrBuf[3] |= TEA5767_HCC;
-	if (ctrl & TEA5767_CTRL_SNC)
-		wrBuf[3] |= TEA5767_SNC;
-	if (ctrl & TEA5767_CTRL_SMUTE)
-		wrBuf[3] |= TEA5767_SMUTE;
-	if (ctrl & TEA5767_CTRL_BL)
-		wrBuf[3] |= TEA5767_BL;
-	if (ctrl & TEA5767_CTRL_XTAL)
-		wrBuf[3] |= TEA5767_XTAL;
+	wrBuf[3] = ctrl & (TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE | TEA5767_BL | TEA5767_XTAL);
+	if (ctrl & TEA5767_XTAL)
+		div = 8192;
 
-	wrBuf[4] = 0;
-	if (ctrl & TEA5767_CTRL_DTC)
-		wrBuf[4] |= TEA5767_DTC;
-	if (ctrl & TEA5767_CTRL_PLLREF)
-		wrBuf[4] |= TEA5767_PLLREF;
+	wrBuf[4] = ctrl & (TEA5767_DTC | TEA5767_PLLREF);
 
 	return;
 }
 
 void tea5767SetFreq(uint16_t freq, uint8_t mono)
 {
-	uint16_t div;
-
 	uint32_t fq = (uint32_t)freq * 10000 + 225000;
-
-	if (ctrl & TEA5767_CTRL_XTAL)
-		div = fq / 8192;
-	else
-		div = fq / 12500;
+	uint16_t pll = fq / div;
 
 	wrBuf[0] &= 0xC0;
-	wrBuf[0] |= (div >> 8) & 0x3F;
+	wrBuf[0] |= (pll >> 8) & 0x3F;
 
-	wrBuf[1] = div & 0xFF;
+	wrBuf[1] = pll & 0xFF;
 
 	if (mono)
 		wrBuf[2] |= TEA5767_MS;
@@ -103,8 +83,9 @@ void tea5767SetMute(uint8_t mute)
 
 void tea5767PowerOn(void)
 {
-	wrBuf[0] &= ~TEA5767_MUTE;
 	wrBuf[3] &= ~TEA5767_STBY;
+
+	tea5767SetMute(1);
 
 	return;
 }

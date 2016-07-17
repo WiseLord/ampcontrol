@@ -1121,7 +1121,7 @@ void showRadio(uint8_t tune)
 	tunerReadStatus();
 
 	uint8_t i;
-	uint16_t freq = tunerGetFreq();
+
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();
 	uint8_t favNum = tunerFavStationNum();
@@ -1178,7 +1178,7 @@ void showRadio(uint8_t tune)
 		writeString(rdsGetText ());
 	} else {
 		/* Frequency scale */
-		uint8_t value = (int16_t)36 * ((freq - FM_FREQ_MIN)>>4) / ((FM_FREQ_MAX - FM_FREQ_MIN)>>4);
+		uint8_t value = (int16_t)36 * ((tuner.freq - tuner.fMin) >> 4) / ((tuner.fMax - tuner.fMin) >> 4);
 		ks0066SetXY(0, 1);
 		for (i = 0; i < 12; i++) {
 			if (value / 3 > i) {
@@ -1276,9 +1276,9 @@ void showRadio(uint8_t tune)
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
 	writeStringPgm(STR_FM);
-	writeNum(freq / 100, 3, ' ', 10);
+	writeNum(tuner.freq / 100, 3, ' ', 10);
 	writeStringPgm(STR_SPDOTSP);
-	writeNum(freq % 100, 2, '0', 10);
+	writeNum(tuner.freq % 100, 2, '0', 10);
 
 	/* Signal level */
 	gdSetXY (112, 0);
@@ -1317,7 +1317,7 @@ void showRadio(uint8_t tune)
 		writeStringPgm(STR_SPMINUS2);
 
 	/* Frequency scale */
-	showBar(tunerGetFreqMin()>>4, tunerGetFreqMax()>>4, freq>>4);
+	showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.freq >> 4);
 
 	/* Select between RDS and spectrum mode */
 	if (rdsGetFlag()) {

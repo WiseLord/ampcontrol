@@ -4,29 +4,20 @@
 #include "../eeprom.h"
 
 uint8_t *bufFM;
-static tunerIC _tuner;
 
-static uint16_t _freq, _fMin, _fMax;
-static uint8_t _mono;
-static uint8_t _step1, _step2;
+Tuner_type tuner;
 
 void tunerInit(void)
 {
-	_tuner = eeprom_read_byte((uint8_t*)EEPROM_FM_TUNER);
-	_freq = eeprom_read_word((uint16_t*)EEPROM_FM_FREQ);
-	_fMin = eeprom_read_word((uint16_t*)EEPROM_FM_FREQ_MIN);
-	_fMax = eeprom_read_word((uint16_t*)EEPROM_FM_FREQ_MAX);
-	_mono = eeprom_read_byte((uint8_t*)EEPROM_FM_MONO);
-	_step1 = eeprom_read_byte((uint8_t*)EEPROM_FM_STEP1);
-	_step2 = eeprom_read_byte((uint8_t*)EEPROM_FM_STEP2);
+	eeprom_read_block(&tuner, (void*)EEPROM_FM_TUNER, sizeof(Tuner_type));
 
-	if (_tuner >= TUNER_END)
-		_tuner = TUNER_NO;
+	if (tuner.ic >= TUNER_END)
+		tuner.ic = TUNER_NO;
 
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
-		tea5767Init(eeprom_read_byte((uint8_t*)EEPROM_FM_CTRL));
+		tea5767Init(tuner.ctrl);
 		break;
 #endif
 #ifdef _RDA580X
@@ -54,46 +45,39 @@ void tunerInit(void)
 		break;
 	}
 
-	tunerSetFreq(_freq);
+	tunerSetFreq();
 
 	return;
 }
 
-tunerIC tunerGetType(void)
+void tunerSetFreq()
 {
-	return _tuner;
-}
+	if (tuner.freq < tuner.fMin)
+		tuner.freq = tuner.fMin;
+	else if (tuner.freq > tuner.fMax)
+		tuner.freq = tuner.fMax;
 
-void tunerSetFreq(uint16_t freq)
-{
-	if (freq > _fMax)
-		freq = _fMax;
-	if (freq < _fMin)
-		freq = _fMin;
-
-	_freq = freq;
-
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
-		tea5767SetFreq(_freq, _mono);
+		tea5767SetFreq(tuner.freq, tuner.mono);
 		break;
 #endif
 #ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		rda580xSetFreq(_freq, _mono);
+		rda580xSetFreq(tuner.freq, tuner.mono);
 		break;
 #endif
 #ifdef _TUX032
 	case TUNER_TUX032:
-		tux032SetFreq(_freq);
+		tux032SetFreq(tuner.freq);
 		break;
 #endif
 #ifdef _LM7001
 	case TUNER_LM7001:
-		lm7001SetFreq(_freq);
+		lm7001SetFreq(tuner.freq);
 		break;
 #endif
 	default:
@@ -103,50 +87,21 @@ void tunerSetFreq(uint16_t freq)
 	return;
 }
 
-uint16_t tunerGetFreq(void)
-{
-	return _freq;
-}
-
-uint16_t tunerGetFreqMin(void)
-{
-	return _fMin;
-}
-
-uint16_t tunerGetFreqMax(void)
-{
-	return _fMax;
-}
-
-uint8_t tunerGetMono(void)
-{
-	return _mono;
-}
-
 void tunerChangeFreq(int8_t mult)
 {
-	uint16_t freq;
+	if ((tuner.freq > FM_BAND_DIV_FREQ) || (mult > 0 && tuner.freq == FM_BAND_DIV_FREQ))
+		tuner.freq += tuner.step2 * mult;
+	else
+		tuner.freq += tuner.step1 * mult;
 
-	if (mult > 0) {
-		if (_freq >= 7600)
-			freq = _freq + _step2 * mult;
-		else
-			freq = _freq + _step1 * mult;
-	} else {
-		if (_freq <= 7600)
-			freq = _freq + _step1 * mult;
-		else
-			freq = _freq + _step2 * mult;
-	}
-
-	tunerSetFreq(freq);
+	tunerSetFreq();
 
 	return;
 }
 
 void tunerReadStatus(void)
 {
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
 		bufFM = tea5767ReadStatus();
@@ -173,14 +128,14 @@ void tunerReadStatus(void)
 
 void tunerSwitchMono(void)
 {
-	_mono = !_mono;
+	tuner.mono = !tuner.mono;
 
-	switch (_tuner) {
+	switch (tuner.ic) {
 	case TUNER_TEA5767:
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		tunerSetFreq(tunerGetFreq());
+		tunerSetFreq();
 		break;
 	default:
 		break;
@@ -193,17 +148,17 @@ uint8_t tunerStereo(void)
 {
 	uint8_t ret = 1;
 
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
-		ret = TEA5767_BUF_STEREO(bufFM) && !_mono;
+		ret = TEA5767_BUF_STEREO(bufFM) && !tuner.mono;
 		break;
 #endif
 #ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		ret = RDA5807_BUF_STEREO(bufFM) && !_mono;
+		ret = RDA5807_BUF_STEREO(bufFM) && !tuner.mono;
 		break;
 #endif
 #ifdef _TUX032
@@ -222,7 +177,7 @@ uint8_t tunerLevel(void)
 {
 	uint8_t ret = 0;
 
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
 		ret = (bufFM[3] & TEA5767_LEV_MASK) >> 4;
@@ -250,13 +205,13 @@ uint8_t tunerLevel(void)
 	return ret;
 }
 
-/* Find station number (1..50) in EEPROM */
+/* Find station number (1..62) in EEPROM */
 uint8_t tunerStationNum(void)
 {
 	uint8_t i;
 
 	for (i = 0; i < FM_COUNT; i++)
-		if (eeprom_read_word((uint16_t*)EEPROM_STATIONS + i) == _freq)
+		if (eeprom_read_word((uint16_t*)EEPROM_STATIONS + i) == tuner.freq)
 			return i + 1;
 
 	return 0;
@@ -267,8 +222,8 @@ uint8_t tunerFavStationNum(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < FM_COUNT; i++)
-		if (eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + i) == _freq)
+	for (i = 0; i < FM_FAV_COUNT; i++)
+		if (eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + i) == tuner.freq)
 			return i + 1;
 
 	return 0;
@@ -279,19 +234,19 @@ void tunerNextStation(int8_t direction)
 {
 	uint8_t i;
 	uint16_t freqCell;
-	uint16_t freqFound = _freq;
+	uint16_t freq = tuner.freq;
 
 	for (i = 0; i < FM_COUNT; i++) {
 		freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + i);
 		if (freqCell != 0xFFFF) {
 			if (direction == SEARCH_UP) {
-				if (freqCell > _freq) {
-					freqFound = freqCell;
+				if (freqCell > tuner.freq) {
+					freq = freqCell;
 					break;
 				}
 			} else {
-				if (freqCell < _freq) {
-					freqFound = freqCell;
+				if (freqCell < tuner.freq) {
+					freq = freqCell;
 				} else {
 					break;
 				}
@@ -299,7 +254,9 @@ void tunerNextStation(int8_t direction)
 		}
 	}
 
-	tunerSetFreq(freqFound);
+	tuner.freq = freq;
+
+	tunerSetFreq();
 
 	return;
 }
@@ -307,10 +264,12 @@ void tunerNextStation(int8_t direction)
 /* Load station by number */
 void tunerLoadStation(uint8_t num)
 {
-	uint16_t freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + num);
+	uint16_t freq = eeprom_read_word((uint16_t*)EEPROM_STATIONS + num);
 
-	if (freqCell != 0xFFFF)
-		tunerSetFreq(freqCell);
+	if (freq >= tuner.fMin && freq <= tuner.fMax) {
+		tuner.freq = freq;
+		tunerSetFreq();
+	}
 
 	return;
 }
@@ -318,8 +277,12 @@ void tunerLoadStation(uint8_t num)
 /* Load favourite station by number */
 void tunerLoadFavStation(uint8_t num)
 {
-	if (eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + num) != 0)
-		tunerSetFreq(eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + num));
+	uint16_t freq = eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + num);
+
+	if (freq >= tuner.fMin && freq <= tuner.fMax) {
+		tuner.freq = freq;
+		tunerSetFreq();
+	}
 
 	return;
 }
@@ -327,10 +290,12 @@ void tunerLoadFavStation(uint8_t num)
 /* Load favourite station by number */
 void tunerStoreFavStation(uint8_t num)
 {
-	if (eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + num) == _freq)
+	uint16_t freq = eeprom_read_word((uint16_t*)EEPROM_FAV_STATIONS + num);
+
+	if (freq == tuner.freq)
 		eeprom_update_word((uint16_t*)EEPROM_FAV_STATIONS + num, 0);
 	else
-		eeprom_update_word((uint16_t*)EEPROM_FAV_STATIONS + num, _freq);
+		eeprom_update_word((uint16_t*)EEPROM_FAV_STATIONS + num, tuner.freq);
 
 	return;
 }
@@ -342,7 +307,7 @@ void tunerStoreStation(void)
 	uint16_t freqCell;
 	uint16_t freq;
 
-	freq = _freq;
+	freq = tuner.freq;
 
 	for (i = 0; i < FM_COUNT; i++) {
 		freqCell = eeprom_read_word((uint16_t*)EEPROM_STATIONS + i);
@@ -372,7 +337,7 @@ void tunerStoreStation(void)
 
 void tunerSetMute(uint8_t mute)
 {
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
 		tea5767SetMute(mute);
@@ -399,7 +364,7 @@ void tunerSetMute(uint8_t mute)
 
 void tunerSetVolume(int8_t value)
 {
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
@@ -416,7 +381,7 @@ void tunerSetVolume(int8_t value)
 
 void tunerPowerOn(void)
 {
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
 		tea5767PowerOn();
@@ -438,18 +403,17 @@ void tunerPowerOn(void)
 		break;
 	}
 
-	tunerSetFreq(_freq);
+	tunerSetFreq();
 
 	return;
 }
 
 void tunerPowerOff(void)
 {
-	eeprom_update_word((uint16_t*)EEPROM_FM_FREQ, _freq);
-	eeprom_update_byte((uint8_t*)EEPROM_FM_MONO, _mono);
-	eeprom_update_byte((uint8_t*)EEPROM_FM_TUNER, _tuner);
+	eeprom_update_word((uint16_t*)EEPROM_FM_FREQ, tuner.freq);
+	eeprom_update_byte((uint8_t*)EEPROM_FM_MONO, tuner.mono);
 
-	switch (_tuner) {
+	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
 		tea5767PowerOff();

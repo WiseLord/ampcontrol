@@ -28,19 +28,31 @@ typedef enum {
 	TUNER_END
 } tunerIC;
 
+typedef struct {
+	tunerIC ic;
+	uint8_t ctrl;
+	uint8_t step1;
+	uint8_t step2;
+	uint16_t fMin;
+	uint16_t fMax;
+	uint16_t freq;
+	uint8_t mono;
+	uint8_t rds;
+} Tuner_type;
+
+extern Tuner_type tuner;
+
+#define FM_BAND_DIV_FREQ	7600
+
 #define FM_COUNT			62
+#define FM_FAV_COUNT		10
 
 #define SEARCH_UP			1
 #define SEARCH_DOWN			-1
 
 void tunerInit(void);
-tunerIC tunerGetType(void);
 
-void tunerSetFreq(uint16_t freq);
-uint16_t tunerGetFreq(void);
-uint16_t tunerGetFreqMin(void);
-uint16_t tunerGetFreqMax(void);
-uint8_t tunerGetMono(void);
+void tunerSetFreq();
 
 void tunerChangeFreq(int8_t mult);
 
