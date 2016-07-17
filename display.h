@@ -63,20 +63,20 @@ enum {
 
 void showRC5Info(uint16_t rc5Buf);
 void showRadio(void);
-void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
+void showBoolParam(uint8_t value, uint8_t labelIndex);
 
-void showBrWork(uint8_t **txtLabels);
+void showBrWork(void);
 void changeBrWork(int8_t diff);
 
-void showSndParam(sndParam *param, uint8_t **txtLabels);
+void showSndParam(sndParam *param);
 
-void showTime(uint8_t **txtLabels);
+void showTime(void);
 void showSpectrum(uint8_t *buf);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);
 
-void loadDispParams(void);
+void loadDispSndParams(void);
 void saveDisplayParams(void);
 
 #endif /* DISPLAY_H */

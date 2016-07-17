@@ -13,8 +13,6 @@
 #include "tuner/tuner.h"
 #include "display.h"
 
-uint8_t *txtLabels[LABELS_COUNT];	/* Array with text label pointers */
-
 /* Save parameters to EEPROM */
 static void saveParams(void)
 {
@@ -55,52 +53,24 @@ static void powerOff(void)
 	return;
 }
 
-/* Load text labels from EEPROM */
-static void loadLabels(uint8_t **txtLabels)
-{
-	uint8_t i;
-	uint8_t *addr;
-
-	addr = (uint8_t*)EEPROM_LABELS_ADDR;
-	i = 0;
-
-	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {
-		if (eeprom_read_byte(addr) != '\0') {
-			txtLabels[i] = addr;
-			addr++;
-			i++;
-			while (eeprom_read_byte(addr) != '\0' &&
-				   addr < (uint8_t*)EEPROM_SIZE) {
-				addr++;
-			}
-		} else {
-			addr++;
-		}
-	}
-
-	return;
-}
-
 /* Hardware initialization */
 static void hwInit(void)
 {
-	loadLabels(txtLabels);			/* Load text labels from EEPROM */
 
-	I2CInit();						/* I2C bus */
+	I2CInit();							/* I2C bus */
 	ks0066Init();
 
-	rc5Init();						/* IR Remote control */
-	adcInit();						/* Analog-to-digital converter */
-	inputInit();					/* Buttons/encoder polling */
-	tunerInit();					/* Tuner */
+	rc5Init();							/* IR Remote control */
+	adcInit();							/* Analog-to-digital converter */
+	inputInit();						/* Buttons/encoder polling */
+	tunerInit();						/* Tuner */
 
 	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
 	DDR(BCKL) |= BCKL_LINE;
 
-	sei();							/* Gloabl interrupt enable */
+	sei();								/* Gloabl interrupt enable */
 
-	loadAudioParams(txtLabels);			/* Load labels/icons/etc */
-	loadDispParams();					/* Load display params */
+	loadDispSndParams();				/* Load display and audio params */
 	tunerPowerOn();
 
 	powerOff();
@@ -392,7 +362,7 @@ int main(void)
 		/* Show things */
 		switch (dispMode) {
 		case MODE_STANDBY:
-			showTime(txtLabels);
+			showTime();
 			if (dispModePrev == MODE_TEST)
 				setStbyBrightness();
 			break;
@@ -411,22 +381,22 @@ int main(void)
 			showRadio();
 			break;
 		case MODE_MUTE:
-			showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
+			showBoolParam(getMute(), LABEL_MUTE);
 			break;
 #if defined(TDA7313)
 		case MODE_LOUDNESS:
-			showBoolParam(!getLoudness(), txtLabels[LABEL_LOUDNESS], txtLabels);
+			showBoolParam(!getLoudness(), LABEL_LOUDNESS);
 			break;
 #endif
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
-			showTime(txtLabels);
+			showTime();
 			break;
 		case MODE_BR:
-			showBrWork(txtLabels);
+			showBrWork();
 			break;
 		default:
-			showSndParam(curSndParam, txtLabels);
+			showSndParam(curSndParam);
 			break;
 		}
 
