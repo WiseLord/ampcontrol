@@ -8,14 +8,6 @@ static uint8_t buf[5];
 
 static uint8_t ctrl;
 
-#define TEA5767_HCC_CTRL		(1<<6)
-#define TEA5767_SNC_CTRL		(1<<5)
-#define TEA5767_SMUTE_CTRL		(1<<4)
-#define TEA5767_DTC_CTRL		(1<<3)
-#define TEA5767_BL_CTRL			(1<<2)
-#define TEA5767_PLLREF_CTRL		(1<<1)
-#define TEA5767_XTAL_CTRL		(1<<0)
-
 void tea5767Init(void)
 {
 	ctrl = eeprom_read_byte((uint8_t*)EEPROM_FM_CTRL);
@@ -44,7 +36,7 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono)
 
 	uint8_t tmpBuf;
 
-	if (ctrl & TEA5767_XTAL_CTRL)
+	if (ctrl & TEA5767_XTAL)
 		div = fq / 8192;
 	else
 		div = fq / 12500;
@@ -59,22 +51,22 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono)
 	buf[2] = tmpBuf;
 
 	tmpBuf = 0;
-	if (ctrl & TEA5767_HCC_CTRL)
+	if (ctrl & TEA5767_HCC)
 		tmpBuf |= TEA5767_HCC;
-	if (ctrl & TEA5767_SNC_CTRL)
+	if (ctrl & TEA5767_SNC)
 		tmpBuf |= TEA5767_SNC;
-	if (ctrl & TEA5767_SMUTE_CTRL)
+	if (ctrl & TEA5767_SMUTE)
 		tmpBuf |= TEA5767_SMUTE;
-	if (ctrl & TEA5767_BL_CTRL)
+	if (ctrl & TEA5767_BL)
 		tmpBuf |= TEA5767_BL;
-	if (ctrl & TEA5767_XTAL_CTRL)
+	if (ctrl & TEA5767_XTAL)
 		tmpBuf |= TEA5767_XTAL;
 	buf[3] = tmpBuf;
 
 	tmpBuf = 0;
-	if (ctrl & TEA5767_DTC_CTRL)
+	if (ctrl & TEA5767_DTC)
 		tmpBuf |= TEA5767_DTC;
-	if (ctrl & TEA5767_PLLREF_CTRL)
+	if (ctrl & TEA5767_PLLREF)
 		tmpBuf |= TEA5767_PLLREF;
 	buf[4] = tmpBuf;
 

@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-/* Parameters values */
+// Audio parameters values
 #define EEPROM_VOLUME			0x00
 #define EEPROM_BASS				0x01
 #define EEPROM_MIDDLE			0x02
@@ -15,7 +15,7 @@
 #define EEPROM_GAIN2			0x08
 #define EEPROM_GAIN3			0x09
 
-/* Some values stored in EEPROM */
+// Misc parameters
 #define EEPROM_LOUDNESS			0x0C
 #define EEPROM_INPUT			0x0D
 
@@ -24,26 +24,28 @@
 #define EEPROM_BR_STBY			0x12
 #define EEPROM_BR_WORK			0x13
 
-#define EEPROM_FM_TUNER			0x1A
-#define EEPROM_FM_MONO			0x19
-#define EEPROM_FM_CTRL			0x18
-#define EEPROM_FM_FREQ			0x16
-#define EEPROM_FM_STEP1			0xD4
-#define EEPROM_FM_STEP2			0xD5
-#define EEPROM_FM_FREQ_MIN		0xEC
-#define EEPROM_FM_FREQ_MAX		0xEE
-
 #define EEPROM_RC_ADDR			0x1C
 #define EEPROM_TEMP_TH			0x1D
 
-/* RC5 commands array */
-#define EEPROM_RC_CMD			0x40
+// RC5 commands array
+#define EEPROM_RC_CMD			0x20
+
+/* FM tuner parameters valus */
+#define EEPROM_FM_TUNER			0x50
+#define EEPROM_FM_CTRL			(EEPROM_FM_TUNER + 0x01)
+#define EEPROM_FM_STEP1			(EEPROM_FM_TUNER + 0x02)
+#define EEPROM_FM_STEP2			(EEPROM_FM_TUNER + 0x03)
+#define EEPROM_FM_FREQ_MIN		(EEPROM_FM_TUNER + 0x04)
+#define EEPROM_FM_FREQ_MAX		(EEPROM_FM_TUNER + 0x06)
+#define EEPROM_FM_FREQ			(EEPROM_FM_TUNER + 0x08)
+#define EEPROM_FM_MONO			(EEPROM_FM_TUNER + 0x0A)
+#define EEPROM_FM_RDS			(EEPROM_FM_TUNER + 0x0B)
 
 /* FM stations */
-#define EEPROM_STATIONS			0x70
-#define EEPROM_FAV_STATIONS		0xD8
+#define EEPROM_FAV_STATIONS		(EEPROM_FM_TUNER + 0x10)
+#define EEPROM_STATIONS			(EEPROM_FM_TUNER + 0x24)
 
-/* Text labels (maximum 15 byte followed by \0) */
+// Text labels (maximum 15 byte followed by \0)
 #define EEPROM_LABELS_ADDR		0xF0
 
 #define EEPROM_SIZE				0x200
