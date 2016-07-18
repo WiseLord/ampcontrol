@@ -299,6 +299,7 @@ void setWorkBrightness(void)
 void setStbyBrightness(void)
 {
 	setDispBr(brStby);
+	eeprom_update_byte((uint8_t*)EEPROM_BR_WORK, brWork);
 
 	return;
 }
@@ -331,13 +332,6 @@ void loadDispSndParams(void)
 
 	// Init audio labels and parameters
 	loadAudioParams(txtLabels);
-
-	return;
-}
-
-void saveDisplayParams(void)
-{
-	eeprom_update_byte((uint8_t*)EEPROM_BR_WORK, brWork);
 
 	return;
 }

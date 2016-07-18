@@ -2,64 +2,59 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "eeprom.h"
-#include "adc.h"
-#include "input.h"
-#include "rc5.h"
-#include "i2c.h"
-#include "rtc.h"
-
 #include "audio/audio.h"
 #include "tuner/tuner.h"
 #include "display.h"
 
-/* Handle leaving standby mode */
+#include "adc.h"
+#include "eeprom.h"
+#include "i2c.h"
+#include "input.h"
+#include "rc5.h"
+#include "rtc.h"
+
 static void powerOn(void)
 {
 	tunerPowerOn();
-	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	setAudioParams();
 	tunerSetMute(0);
+	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	setWorkBrightness();
 	tunerSetFreq();
 
 	return;
 }
 
-/* Handle entering standby mode */
 static void powerOff(void)
 {
 	rtc.etm = RTC_NOEDIT;
-	setStbyBrightness();
 
+	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	muteVolume();
 	tunerSetMute(1);
-	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	saveAudioParams();
 	tunerPowerOff();
-
-	saveDisplayParams();
+	setStbyBrightness();
 
 	return;
 }
 
-/* Hardware initialization */
 static void hwInit(void)
 {
-	I2CInit();							/* I2C bus */
-	ks0066Init();
+	I2CInit();							// I2C bus
+	ks0066Init();						// Display
 
-	rc5Init();							/* IR Remote control */
-	adcInit();							/* Analog-to-digital converter */
-	inputInit();						/* Buttons/encoder polling */
-	tunerInit();						/* Tuner */
+	rc5Init();							// RC5 IR remote control
+	adcInit();							// Analog-to-digital converter
+	inputInit();						// Buttons/encoder polling and timers
+	tunerInit();						// Tuner
 
-	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	/* Mute port */
-	DDR(BCKL) |= BCKL_LINE;
+	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	// Mute port
+	DDR(BCKL) |= BCKL_LINE;				// Backlight port
 
-	sei();								/* Gloabl interrupt enable */
+	sei();								// Gloabl interrupt enable
 
-	loadDispSndParams();				/* Load display and audio params */
+	loadDispSndParams();				// Display and audio params
 
 	powerOff();
 

@@ -77,6 +77,5 @@ void setWorkBrightness(void);
 void setStbyBrightness(void);
 
 void loadDispSndParams(void);
-void saveDisplayParams(void);
 
 #endif /* DISPLAY_H */
