@@ -16,18 +16,8 @@
 
 #define RC5_BUF_EMPTY	0
 
-typedef enum {
-	STATE_START1,
-	STATE_MID1,
-	STATE_MID0,
-	STATE_START0,
-	STATE_ERROR,
-	STATE_BEGIN,
-	STATE_END
-} rc5State;
+void rcInit(void);
 
-void rc5Init(void);
+uint16_t getRCRawBuf(void);
 
-uint16_t getRC5RawBuf(void);
-
-#endif // RC5_H
+#endif /* RC5_H */

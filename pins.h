@@ -29,8 +29,8 @@
 #define BCKL_LINE			(1<<3)
 
 /* RC5 definitions*/
-#define RC5					D
-#define RC5_LINE			(1<<3)
+#define RC					D
+#define RC_LINE				(1<<3)
 
 /* AVR ISP definitions */
 #define ISP_MOSI			B
