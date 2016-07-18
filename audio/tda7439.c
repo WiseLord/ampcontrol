@@ -9,7 +9,7 @@
 static uint8_t chan;
 static uint8_t mute;
 
-static sndParam sndPar[SND_PARAM_COUNT] = {
+static sndParam sndPar[MODE_SND_END] = {
 	{0x00, 0xB1, 0x00, 0x08},	/* Volume */
 	{0x00, 0xF9, 0x07, 0x10},	/* Bass */
 	{0x00, 0xF9, 0x07, 0x10},	/* Middle */
@@ -128,6 +128,10 @@ uint8_t getMute(void)
 	return mute;
 }
 
+uint8_t getLoudness(void)
+{
+	return 0;
+}
 
 void changeParam(sndParam *param, int8_t diff)
 {
@@ -194,24 +198,19 @@ void switchMute(void)
 	return;
 }
 
+void switchLoudness(void)
+{
+	return;
+}
 
 void loadAudioParams(uint8_t **txtLabels)
 {
 	uint8_t i;
 
-	for (i = 0; i < SND_PARAM_COUNT; i++)
+	for (i = 0; i < MODE_SND_END; i++) {
 		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
-
-	sndPar[MODE_SND_VOLUME].label = txtLabels[LABEL_VOLUME];
-	sndPar[MODE_SND_BASS].label = txtLabels[LABEL_BASS];
-	sndPar[MODE_SND_MIDDLE].label = txtLabels[LABEL_MIDDLE];
-	sndPar[MODE_SND_TREBLE].label = txtLabels[LABEL_TREBLE];
-	sndPar[MODE_SND_PREAMP].label = txtLabels[LABEL_PREAMP];
-	sndPar[MODE_SND_BALANCE].label = txtLabels[LABEL_BALANCE];
-	sndPar[MODE_SND_GAIN0].label = txtLabels[LABEL_GAIN0];
-	sndPar[MODE_SND_GAIN1].label = txtLabels[LABEL_GAIN1];
-	sndPar[MODE_SND_GAIN2].label = txtLabels[LABEL_GAIN2];
-	sndPar[MODE_SND_GAIN3].label = txtLabels[LABEL_GAIN3];
+		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
+	}
 
 	chan = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
 
@@ -245,7 +244,7 @@ void saveAudioParams(void)
 {
 	uint8_t i;
 
-	for (i = 0; i < SND_PARAM_COUNT; i++)
+	for (i = 0; i < MODE_SND_END; i++)
 		eeprom_update_byte((uint8_t*)EEPROM_VOLUME + i, sndPar[i].value);
 
 	eeprom_update_byte((uint8_t*)EEPROM_INPUT, chan);

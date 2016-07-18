@@ -13,7 +13,7 @@ static int8_t brStby;							/* Brightness in standby mode */
 static int8_t brWork;							/* Brightness in working mode */
 static char strbuf[STR_BUFSIZE + 1];			/* String buffer */
 
-uint8_t *txtLabels[LABELS_COUNT];				/* Array with text label pointers */
+uint8_t *txtLabels[LABEL_END];				/* Array with text label pointers */
 
 static const uint8_t barSymbols[] PROGMEM = {
 	0x00, 0x10, 0x14, 0x15,
@@ -316,7 +316,7 @@ void loadDispSndParams(void)
 	addr = (uint8_t*)EEPROM_LABELS_ADDR;
 	i = 0;
 
-	while (i < LABELS_COUNT && addr < (uint8_t*)EEPROM_SIZE) {
+	while (i < LABEL_END && addr < (uint8_t*)EEPROM_SIZE) {
 		if (eeprom_read_byte(addr) != '\0') {
 			txtLabels[i] = addr;
 			addr++;

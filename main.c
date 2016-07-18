@@ -118,12 +118,15 @@ int main(void)
 		case CMD_BTN_2:
 		case CMD_RC_NEXT_INPUT:
 			switch (dispMode) {
-			case MODE_GAIN:
+			case MODE_SND_GAIN0:
+			case MODE_SND_GAIN1:
+			case MODE_SND_GAIN2:
+			case MODE_SND_GAIN3:
 				nextChan();
 				ks0066Clear();
 			default:
 				curSndParam = sndParAddr(MODE_SND_GAIN0 + getChan());
-				dispMode = MODE_GAIN;
+				dispMode = MODE_SND_GAIN0 + getChan();
 				setDispTimer(DISPLAY_TIME_GAIN);
 				break;
 			}
@@ -171,12 +174,12 @@ int main(void)
 			break;
 		case CMD_BTN_5:
 		case CMD_RC_MENU:
-			if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
+			if (dispMode >= MODE_SND_VOLUME && dispMode < MODE_SND_BALANCE) {
 				curSndParam++;
 				dispMode++;
 			} else {
 				curSndParam = sndParAddr(MODE_SND_VOLUME);
-				dispMode = MODE_VOLUME;
+				dispMode = MODE_SND_VOLUME;
 			}
 			setDispTimer(DISPLAY_TIME_AUDIO);
 			break;
@@ -204,13 +207,11 @@ int main(void)
 				else
 					tunerStoreStation();
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
-#if defined(TDA7313)
 			} else if (cmd == CMD_BTN_4_LONG) {
 				ks0066Clear();
 				switchLoudness();
 				dispMode = MODE_LOUDNESS;
 				setDispTimer(DISPLAY_TIME_AUDIO);
-#endif
 			}
 			break;
 		case CMD_BTN_12_LONG:
@@ -221,24 +222,20 @@ int main(void)
 				break;
 			}
 			break;
-#if defined(TDA7313)
 		case CMD_RC_LOUDNESS:
 			ks0066Clear();
 			switchLoudness();
 			dispMode = MODE_LOUDNESS;
 			setDispTimer(DISPLAY_TIME_AUDIO);
 			break;
-#endif
 		case CMD_RC_INPUT_0:
 		case CMD_RC_INPUT_1:
 		case CMD_RC_INPUT_2:
-#if !defined(TDA7313)
 		case CMD_RC_INPUT_3:
-#endif
 			setChan(cmd - CMD_RC_INPUT_0);
 			ks0066Clear();
 			curSndParam = sndParAddr(MODE_SND_GAIN0 + getChan());
-			dispMode = MODE_GAIN;
+			dispMode = MODE_SND_GAIN0 + (cmd - CMD_RC_INPUT_0);
 			setDispTimer(DISPLAY_TIME_GAIN);
 			break;
 		case CMD_RC_FM_INC:
@@ -315,7 +312,7 @@ int main(void)
 			case MODE_TIME:
 			case MODE_FM_RADIO:
 				curSndParam = sndParAddr(MODE_SND_VOLUME);
-				dispMode = MODE_VOLUME;
+				dispMode = MODE_SND_VOLUME;
 			default:
 				changeParam(curSndParam, encCnt);
 				setDispTimer(DISPLAY_TIME_GAIN);
@@ -366,11 +363,9 @@ int main(void)
 		case MODE_MUTE:
 			showBoolParam(getMute(), LABEL_MUTE);
 			break;
-#if defined(TDA7313)
 		case MODE_LOUDNESS:
 			showBoolParam(!getLoudness(), LABEL_LOUDNESS);
 			break;
-#endif
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime();

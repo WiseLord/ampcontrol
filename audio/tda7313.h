@@ -2,7 +2,7 @@
 #define TDA7313_H
 
 #include <inttypes.h>
-#include "../pins.h"
+#include "audio.h"
 
 #define TDA7313_ADDR			0b10001000
 
@@ -21,28 +21,6 @@
 #define MUTE_ON					1
 #define MUTE_OFF				0
 #define MUTE_VAL				0x1F
-
-typedef struct {
-	int8_t value;
-	int8_t min;
-	int8_t max;
-	uint8_t step;
-	uint8_t *label;
-	void (*set)(int8_t value);
-} sndParam;
-
-enum {
-	MODE_SND_VOLUME,
-	MODE_SND_BASS,
-	MODE_SND_TREBLE,
-	MODE_SND_FRONTREAR,
-	MODE_SND_BALANCE,
-	MODE_SND_GAIN0,
-	MODE_SND_GAIN1,
-	MODE_SND_GAIN2
-};
-
-#define SND_PARAM_COUNT			8
 
 sndParam *sndParAddr(uint8_t index);
 

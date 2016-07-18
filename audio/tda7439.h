@@ -2,6 +2,7 @@
 #define TDA7439_H
 
 #include <inttypes.h>
+#include "audio.h"
 
 #define TDA7439_ADDR			0b10001000
 
@@ -22,34 +23,11 @@
 #define MUTE_ON					1
 #define MUTE_OFF				0
 
-typedef struct {
-	int8_t value;
-	int8_t min;
-	int8_t max;
-	uint8_t step;
-	uint8_t *label;
-	void (*set)(int8_t value);
-} sndParam;
-
-enum {
-	MODE_SND_VOLUME,
-	MODE_SND_BASS,
-	MODE_SND_MIDDLE,
-	MODE_SND_TREBLE,
-	MODE_SND_PREAMP,
-	MODE_SND_BALANCE,
-	MODE_SND_GAIN0,
-	MODE_SND_GAIN1,
-	MODE_SND_GAIN2,
-	MODE_SND_GAIN3
-};
-
-#define SND_PARAM_COUNT			10
-
 sndParam *sndParAddr(uint8_t index);
 
 uint8_t getChan(void);
 uint8_t getMute(void);
+uint8_t getLoudness(void);
 
 void changeParam(sndParam *sndPar, int8_t diff);
 
@@ -60,6 +38,7 @@ void muteVolume(void);
 void unmuteVolume(void);
 
 void switchMute(void);
+void switchLoudness(void);
 
 void loadAudioParams(uint8_t **txtLabels);
 void setAudioParams(void);

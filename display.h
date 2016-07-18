@@ -26,24 +26,9 @@
 
 /* Display modes */
 enum {
+	MODE_SPECTRUM = MODE_SND_END,
 	MODE_STANDBY,
-	MODE_SPECTRUM,
 	MODE_FM_RADIO,
-
-	MODE_VOLUME,
-	MODE_BASS,
-#if defined(TDA7439)
-	MODE_MIDDLE,
-#endif
-	MODE_TREBLE,
-#if defined(TDA7439)
-	MODE_PREAMP,
-#elif defined(TDA7313) || defined(TDA7318)
-	MODE_FRONTREAR,
-#endif
-	MODE_BALANCE,
-
-	MODE_GAIN,
 
 	MODE_TIME,
 	MODE_TIME_EDIT,

@@ -2,6 +2,7 @@
 #define EEPROM_H
 
 #include <inttypes.h>
+#include "audio/audio.h"
 
 // Audio parameters values
 #define EEPROM_VOLUME			0x00
@@ -52,18 +53,7 @@
 
 /* EEPROM saved labels */
 enum {
-	LABEL_VOLUME,
-	LABEL_BASS,
-	LABEL_MIDDLE,
-	LABEL_TREBLE,
-	LABEL_PREAMP,
-	LABEL_FRONTREAR,
-	LABEL_BALANCE,
-	LABEL_GAIN0,
-	LABEL_GAIN1,
-	LABEL_GAIN2,
-	LABEL_GAIN3,
-	LABEL_MUTE,
+	LABEL_MUTE = MODE_SND_END,
 	LABEL_LOUDNESS,
 	LABEL_ON,
 	LABEL_OFF,
@@ -77,9 +67,9 @@ enum {
 	LABEL_FRIDAY,
 	LABEL_SADURDAY,
 
-	LABEL_BR_WORK
-};
+	LABEL_BR_WORK,
 
-#define LABELS_COUNT			24
+	LABEL_END
+};
 
 #endif /* EEPROM_H */
