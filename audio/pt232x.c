@@ -4,7 +4,6 @@
 #include "../i2c.h"
 
 static uint8_t _sndFunc;
-static uint8_t _input;
 
 static void pt2322SetSndFunc(void)
 {
@@ -111,18 +110,16 @@ void pt2322SetSpeakers(void)
 void pt2323SetGain(void)
 {
 	I2CStart(PT2323_I2C_ADDR);
-	I2CWriteByte(PT2323_MIX | sndPar[MODE_SND_GAIN0 + _input].value);
+	I2CWriteByte(PT2323_MIX | sndPar[MODE_SND_GAIN0 + aproc.input].value);
 	I2CStop();
 
 	return;
 }
 
-void pt2323SetInput(uint8_t in)
+void pt2323SetInput(void)
 {
-	_input = in;
-
 	I2CStart(PT2323_I2C_ADDR);
-	I2CWriteByte(PT2323_INPUT_SWITCH | (PT2323_INPUT_ST1 - in));
+	I2CWriteByte(PT2323_INPUT_SWITCH | (PT2323_INPUT_ST1 - aproc.input));
 	I2CStop();
 
 	pt2323SetGain();
@@ -130,9 +127,9 @@ void pt2323SetInput(uint8_t in)
 	return;
 }
 
-void pt232xSetMute(uint8_t val)
+void pt232xSetMute(void)
 {
-	if (val)
+	if (aproc.mute)
 		_sndFunc |= PT2322_MUTE_ON;
 	else
 		_sndFunc &= ~PT2322_MUTE_ON;
@@ -142,18 +139,18 @@ void pt232xSetMute(uint8_t val)
 	return;
 }
 
-void pt2323SetSurround(uint8_t val)
+void pt2323SetSurround(void)
 {
 	I2CStart(PT2323_I2C_ADDR);
-	I2CWriteByte(PT2323_ENH_SURR | !val);
+	I2CWriteByte(PT2323_ENH_SURR | !aproc.surround);
 	I2CStop();
 
 	return;
 }
 
-void pt2322SetEffect3d(uint8_t val)
+void pt2322SetEffect3d(void)
 {
-	if (val)
+	if (aproc.effect3d)
 		_sndFunc &= ~PT2322_3D_OFF;
 	else
 		_sndFunc |= PT2322_3D_OFF;
@@ -163,9 +160,9 @@ void pt2322SetEffect3d(uint8_t val)
 	return;
 }
 
-void pt2322SetToneDefeat(uint8_t val)
+void pt2322SetToneDefeat()
 {
-	if (val)
+	if (aproc.toneDefeat)
 		_sndFunc |= PT2322_TONE_OFF;
 	else
 		_sndFunc &= ~PT2322_TONE_OFF;

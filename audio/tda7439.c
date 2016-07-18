@@ -3,8 +3,6 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-static uint8_t _input;
-
 static void tda7439SetBMT(uint8_t param)
 {
 	int8_t val = sndPar[MODE_SND_BASS + param - TDA7439_BASS].value;
@@ -77,18 +75,17 @@ void tda7439SetGain(void)
 {
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_INPUT_GAIN);
-	I2CWriteByte(sndPar[MODE_SND_GAIN0 + _input].value);
+	I2CWriteByte(sndPar[MODE_SND_GAIN0 + aproc.input].value);
 	I2CStop();
 
 	return;
 }
 
-void tda7439SetInput(uint8_t in)
+void tda7439SetInput(void)
 {
-	_input = in;
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_INPUT_SELECT);
-	I2CWriteByte(TDA7439_IN_CNT - 1 - in);
+	I2CWriteByte(TDA7439_IN_CNT - 1 - aproc.input);
 	I2CStop();
 
 	tda7439SetGain();
@@ -96,9 +93,9 @@ void tda7439SetInput(uint8_t in)
 	return;
 }
 
-void tda7439SetMute(uint8_t val)
+void tda7439SetMute(void)
 {
-	if (val) {
+	if (aproc.mute) {
 		I2CStart(TDA7439_I2C_ADDR);
 		I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
 		I2CWriteByte(TDA7439_SPEAKER_MUTE);

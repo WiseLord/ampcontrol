@@ -31,7 +31,7 @@ void tda7439SetMiddle(void);
 void tda7439SetTreble(void);
 void tda7439SetPreamp(void);
 void tda7439SetGain(void);
-void tda7439SetInput(uint8_t in);
-void tda7439SetMute(uint8_t val);
+void tda7439SetInput(void);
+void tda7439SetMute(void);
 
 #endif /* TDA7439_H */

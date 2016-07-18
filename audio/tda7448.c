@@ -53,11 +53,11 @@ void tda7448SetSpeakers(void)
 	return;
 }
 
-void tda7448SetMute(uint8_t val)
+void tda7448SetMute(void)
 {
 	uint8_t i;
 
-	if (val) {
+	if (aproc.mute) {
 		I2CStart(TDA7448_I2C_ADDR);
 		I2CWriteByte(TDA7448_AUTO_INC);
 		for (i = 0; i < TDA7448_END; i++)

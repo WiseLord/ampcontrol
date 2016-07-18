@@ -118,10 +118,10 @@ int main(void)
 			case MODE_SND_GAIN1:
 			case MODE_SND_GAIN2:
 			case MODE_SND_GAIN3:
-				sndSetInput(sndGetInput() < sndInputCnt() - 1 ? sndGetInput() + 1 : 0);
+				sndSetInput(aproc.input < aproc.inCnt - 1 ? aproc.input + 1 : 0);
 				ks0066Clear();
 			default:
-				dispMode = MODE_SND_GAIN0 + sndGetInput();
+				dispMode = MODE_SND_GAIN0 + aproc.input;
 				setDispTimer(DISPLAY_TIME_GAIN);
 				break;
 			}
@@ -161,7 +161,7 @@ int main(void)
 				}
 			default:
 				ks0066Clear();
-				sndSetMute(!sndGetMute());
+				sndSetMute(!aproc.mute);
 				dispMode = MODE_MUTE;
 				setDispTimer(DISPLAY_TIME_CHAN);
 				break;
@@ -179,7 +179,7 @@ int main(void)
 			break;
 		case CMD_BTN_2_LONG:
 		case CMD_RC_DISPLAY:
-			if (sndGetInput() == 0) {
+			if (aproc.input == 0) {
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
 				dispMode = MODE_FM_RADIO;
 			}
@@ -208,7 +208,7 @@ int main(void)
 			break;
 		case CMD_RC_LOUDNESS:
 			ks0066Clear();
-			sndSetLoudness(!sndGetLoudness());
+			sndSetLoudness(!aproc.loudness);
 			dispMode = MODE_LOUDNESS;
 			setDispTimer(DISPLAY_TIME_AUDIO);
 			break;
@@ -218,7 +218,7 @@ int main(void)
 		case CMD_RC_INPUT_3:
 			sndSetInput(cmd - CMD_RC_INPUT_0);
 			ks0066Clear();
-			dispMode = MODE_SND_GAIN0 + sndGetInput();
+			dispMode = MODE_SND_GAIN0 + aproc.input;
 			setDispTimer(DISPLAY_TIME_GAIN);
 			break;
 		case CMD_RC_FM_INC:
@@ -246,7 +246,7 @@ int main(void)
 			setDispTimer(DISPLAY_TIME_FM_RADIO);
 			break;
 		case CMD_RC_FM_MONO:
-			if (sndGetInput() == 0) {
+			if (aproc.input == 0) {
 				tunerSwitchMono();
 				dispMode = MODE_FM_RADIO;
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
@@ -343,10 +343,10 @@ int main(void)
 			showRadio();
 			break;
 		case MODE_MUTE:
-			showBoolParam(sndGetMute(), LABEL_MUTE);
+			showBoolParam(aproc.mute, LABEL_MUTE);
 			break;
 		case MODE_LOUDNESS:
-			showBoolParam(!sndGetLoudness(), LABEL_LOUDNESS);
+			showBoolParam(!aproc.loudness, LABEL_LOUDNESS);
 			break;
 		case MODE_TIME:
 		case MODE_TIME_EDIT:

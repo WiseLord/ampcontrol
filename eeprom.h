@@ -12,15 +12,15 @@
 #define EEPROM_BR_STBY			0x12
 #define EEPROM_BR_WORK			0x13
 
-#define EEPROM_MAX_INPUT_CNT	0x16
-#define EEPROM_AUDIOPROC		0x17
+// Audio bool parameters values
+#define EEPROM_AUDIOPROC		0x16
+#define EEPROM_MAX_INPUT_CNT	0x17
 #define EEPROM_INPUT			0x18
 
-// Audio bool parameters values
-#define EEPROM_LOUDNESS			0x1A
-#define EEPROM_SURROUND			0x1B
-#define EEPROM_EFFECT3D			0x1C
-#define EEPROM_TONE_DEFEAT		0x1D
+#define EEPROM_LOUDNESS			0x19
+#define EEPROM_SURROUND			0x1A
+#define EEPROM_EFFECT3D			0x1B
+#define EEPROM_TONE_DEFEAT		0x1C
 
 // RC5 commands array
 #define EEPROM_RC_TYPE			0x1E

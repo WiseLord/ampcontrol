@@ -74,11 +74,11 @@ void pt2322SetMiddle(void);
 void pt2322SetTreble(void);
 void pt2322SetSpeakers(void);
 void pt2323SetGain(void);
-void pt2323SetInput(uint8_t in);
-void pt232xSetMute(uint8_t val);
-void pt2323SetSurround(uint8_t val);
-void pt2322SetEffect3d(uint8_t val);
-void pt2322SetToneDefeat(uint8_t val);
+void pt2323SetInput(void);
+void pt232xSetMute(void);
+void pt2323SetSurround(void);
+void pt2322SetEffect3d(void);
+void pt2322SetToneDefeat();
 
 
 #endif /* PT232X_H */

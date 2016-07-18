@@ -31,8 +31,6 @@ void tda731xSetBass(void);
 void tda731xSetTreble(void);
 void tda731xSetSpeakers(void);
 void tda731xSetGain(void);
-void tda731xSetInput(uint8_t in);
-void tda731xSetMute(uint8_t val);
-void tda731xSetLoudness(uint8_t val);
+void tda731xSetMute(void);
 
 #endif /* TDA731X_H */

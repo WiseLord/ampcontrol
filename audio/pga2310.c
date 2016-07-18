@@ -71,9 +71,9 @@ void pga2310SetSpeakers(void)
 	return;
 }
 
-void pga2310SetMute(uint8_t val)
+void pga2310SetMute(void)
 {
-	if (val) {
+	if (aproc.mute) {
 		pga2310SendGainLevels(PGA2310_MUTE, PGA2310_MUTE);
 	} else {
 		pga2310SetSpeakers();
