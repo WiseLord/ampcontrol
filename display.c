@@ -209,8 +209,10 @@ void changeBrWork(int8_t diff)
 }
 
 /* Show audio parameter */
-void showSndParam(sndParam *param)
+void showSndParam(uint8_t mode)
 {
+	sndParam *param = &sndPar[mode];
+
 	ks0066SetXY(0, 0);
 	writeStringEeprom(param->label);
 

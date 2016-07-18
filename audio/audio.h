@@ -29,6 +29,8 @@ enum {
 	MODE_SND_END
 };
 
+extern sndParam sndPar[MODE_SND_END];
+
 /* Integral circuits definitions */
 #if !defined(TDA7313) && !defined(TDA7318) && !defined(TDA7439)
 #define TDA7313

@@ -22,13 +22,12 @@
 #define MUTE_OFF				0
 #define MUTE_VAL				0x1F
 
-sndParam *sndParAddr(uint8_t index);
-
 uint8_t getChan(void);
 uint8_t getMute(void);
 uint8_t getLoudness(void);
 
-void changeParam(sndParam *sndPar, int8_t diff);
+void sndNextParam(uint8_t *mode);
+void sndChangeParam(uint8_t mode, int8_t diff);
 
 void setChan(uint8_t ch);
 void nextChan(void);

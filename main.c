@@ -66,8 +66,6 @@ int main(void)
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = dispMode;
 
-	sndParam *curSndParam = sndParAddr(MODE_SND_VOLUME);
-
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_END;
 	uint16_t rc5Buf = RC5_BUF_EMPTY;
@@ -125,7 +123,6 @@ int main(void)
 				nextChan();
 				ks0066Clear();
 			default:
-				curSndParam = sndParAddr(MODE_SND_GAIN0 + getChan());
 				dispMode = MODE_SND_GAIN0 + getChan();
 				setDispTimer(DISPLAY_TIME_GAIN);
 				break;
@@ -174,13 +171,7 @@ int main(void)
 			break;
 		case CMD_BTN_5:
 		case CMD_RC_MENU:
-			if (dispMode >= MODE_SND_VOLUME && dispMode < MODE_SND_BALANCE) {
-				curSndParam++;
-				dispMode++;
-			} else {
-				curSndParam = sndParAddr(MODE_SND_VOLUME);
-				dispMode = MODE_SND_VOLUME;
-			}
+			sndNextParam(&dispMode);
 			setDispTimer(DISPLAY_TIME_AUDIO);
 			break;
 		case CMD_BTN_1_LONG:
@@ -234,8 +225,7 @@ int main(void)
 		case CMD_RC_INPUT_3:
 			setChan(cmd - CMD_RC_INPUT_0);
 			ks0066Clear();
-			curSndParam = sndParAddr(MODE_SND_GAIN0 + getChan());
-			dispMode = MODE_SND_GAIN0 + (cmd - CMD_RC_INPUT_0);
+			dispMode = MODE_SND_GAIN0 + getChan();
 			setDispTimer(DISPLAY_TIME_GAIN);
 			break;
 		case CMD_RC_FM_INC:
@@ -311,10 +301,9 @@ int main(void)
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
-				curSndParam = sndParAddr(MODE_SND_VOLUME);
 				dispMode = MODE_SND_VOLUME;
 			default:
-				changeParam(curSndParam, encCnt);
+				sndChangeParam(dispMode, encCnt);
 				setDispTimer(DISPLAY_TIME_GAIN);
 				break;
 			}
@@ -374,7 +363,7 @@ int main(void)
 			showBrWork();
 			break;
 		default:
-			showSndParam(curSndParam);
+			showSndParam(dispMode);
 			break;
 		}
 

@@ -1,4 +1,4 @@
-AUDIOPROC = TDA7439
+AUDIOPROC = TDA7313
 TUNER = RDA580X
 WIRE = 4BIT
 
@@ -53,7 +53,7 @@ AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V -B 0.5
 
 SUBDIRS = audio display tuner
 

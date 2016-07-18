@@ -53,7 +53,7 @@ void showBoolParam(uint8_t value, uint8_t labelIndex);
 void showBrWork(void);
 void changeBrWork(int8_t diff);
 
-void showSndParam(sndParam *param);
+void showSndParam(uint8_t mode);
 
 void showTime(void);
 void showSpectrum(uint8_t *buf);
