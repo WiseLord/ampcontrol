@@ -1373,7 +1373,7 @@ void showMute(void)
 		ls020WriteIcon32(ICON32_MUTE_OFF);
 #else
 	gdSetXY(96, 32);
-	if (sndGetMute())
+	if (aproc.mute)
 		gdWriteIcon32(ICON32_MUTE_ON);
 	else
 		gdWriteIcon32(ICON32_MUTE_OFF);
@@ -1402,7 +1402,7 @@ void showLoudness(void)
 		ls020WriteIcon32(ICON32_LOUDNESS_OFF);
 #else
 	gdSetXY(96, 32);
-	if (sndGetLoudness())
+	if (aproc.loudness)
 		gdWriteIcon32(ICON32_LOUDNESS_ON);
 	else
 		gdWriteIcon32(ICON32_LOUDNESS_OFF);
@@ -1431,7 +1431,7 @@ void showSurround()
 		ls020WriteIcon32(ICON32_SURROUND_OFF);
 #else
 	gdSetXY(96, 32);
-	if (sndGetSurround())
+	if (aproc.surround)
 		gdWriteIcon32(ICON32_SURROUND_ON);
 	else
 		gdWriteIcon32(ICON32_SURROUND_OFF);
@@ -1459,7 +1459,7 @@ void showEffect3d()
 		ls020WriteIcon32(ICON32_EFFECT_3D_OFF);
 #else
 	gdSetXY(96, 32);
-	if (sndGetEffect3d())
+	if (aproc.effect3d)
 		gdWriteIcon32(ICON32_EFFECT_3D_ON);
 	else
 		gdWriteIcon32(ICON32_EFFECT_3D_OFF);
@@ -1487,7 +1487,7 @@ void showToneDefeat()
 		ls020WriteIcon32(ICON32_TONE_DEFEAT_OFF);
 #else
 	gdSetXY(96, 32);
-	if (sndGetToneDefeat())
+	if (aproc.toneDefeat)
 		gdWriteIcon32(ICON32_TONE_DEFEAT_ON);
 	else
 		gdWriteIcon32(ICON32_TONE_DEFEAT_OFF);
@@ -1737,7 +1737,7 @@ void showAlarm(void)
 	gdSetXY(100, 4);
 	/* Check that input number less than CHAN_CNT */
 	i = getAlarm(RTC_A0_INPUT);
-	if (i >= sndInputCnt())
+	if (i >= aproc.inCnt)
 		i = 0;
 	gdWriteIcon24(sndPar[MODE_SND_GAIN0 + i].icon);
 

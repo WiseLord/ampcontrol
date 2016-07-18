@@ -25,15 +25,7 @@ static const sndGrid grid_n12_15_3          PROGMEM = { -4,  5, 3.00 * 8};	/* -1
 static const sndGrid grid_n12_12_3          PROGMEM = { -4,  4, 3.00 * 8};	/* -12..12dB with 3dB step */
 
 sndParam sndPar[MODE_SND_END];
-static audioProc _aproc;
-
-static uint8_t _inCnt;
-static uint8_t _input;
-static uint8_t _mute;
-static uint8_t _loudness;
-static uint8_t _surround;
-static uint8_t _effect3d;
-static uint8_t _toneDefeat;
+Audioproc_type aproc;
 
 static void setNothing(void)
 {
@@ -51,18 +43,18 @@ void sndInit(uint8_t extFunc)
 		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
-	_loudness = eeprom_read_byte((uint8_t*)EEPROM_LOUDNESS);
-	_surround = eeprom_read_byte((uint8_t*)EEPROM_SURROUND);
-	_effect3d = eeprom_read_byte((uint8_t*)EEPROM_EFFECT3D);
-	_toneDefeat = eeprom_read_byte((uint8_t*)EEPROM_TONE_DEFEAT);
-	_inCnt = eeprom_read_byte((uint8_t*)EEPROM_MAX_INPUT_CNT);
-	_aproc = eeprom_read_byte((uint8_t*)EEPROM_AUDIOPROC);
-	_input = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
-	if (_aproc >= AUDIOPROC_END)
-		_aproc = AUDIOPROC_TDA7439;
+	aproc.loudness = eeprom_read_byte((uint8_t*)EEPROM_LOUDNESS);
+	aproc.surround = eeprom_read_byte((uint8_t*)EEPROM_SURROUND);
+	aproc.effect3d = eeprom_read_byte((uint8_t*)EEPROM_EFFECT3D);
+	aproc.toneDefeat = eeprom_read_byte((uint8_t*)EEPROM_TONE_DEFEAT);
+	aproc.inCnt = eeprom_read_byte((uint8_t*)EEPROM_MAX_INPUT_CNT);
+	aproc.ic = eeprom_read_byte((uint8_t*)EEPROM_AUDIOPROC);
+	aproc.input = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
+	if (aproc.ic >= AUDIOPROC_END)
+		aproc.ic = AUDIOPROC_TDA7439;
 
 #ifdef _PGA2310
-	if (_aproc == AUDIOPROC_PGA2310 && extFunc == USE_PGA2310)
+	if (aproc.ic == AUDIOPROC_PGA2310 && extFunc == USE_PGA2310)
 		pga2310Init(sndPar);
 #endif
 
@@ -88,7 +80,7 @@ void sndInit(uint8_t extFunc)
 
 	// Setup inputs
 	static uint8_t inCnt;
-	switch (_aproc) {
+	switch (aproc.ic) {
 #ifdef _TDA7439
 	case AUDIOPROC_TDA7439:
 		inCnt = TDA7439_IN_CNT;
@@ -139,16 +131,16 @@ void sndInit(uint8_t extFunc)
 		break;
 	}
 	// Limit global input count
-	if (_inCnt > inCnt || _inCnt == 0)
-		_inCnt = inCnt;
+	if (aproc.inCnt > inCnt || aproc.inCnt == 0)
+		aproc.inCnt = inCnt;
 	// Limit current input
-	if (_input >= inCnt)
-		_input = 0;
+	if (aproc.input >= inCnt)
+		aproc.input = 0;
 
 	// Setup gain grid and functions
 	const sndGrid *grid = &grid_0_0_0;
 	void (*set)(void) = setNothing;
-	switch (_aproc) {
+	switch (aproc.ic) {
 #ifdef _TDA7439
 	case AUDIOPROC_TDA7439:
 		grid = &grid_0_30_2;
@@ -182,7 +174,7 @@ void sndInit(uint8_t extFunc)
 	}
 
 	/* Setup audio parameters grid and functions */
-	switch (_aproc) {
+	switch (aproc.ic) {
 #ifdef _TDA7439
 	case AUDIOPROC_TDA7439:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
@@ -214,7 +206,7 @@ void sndInit(uint8_t extFunc)
 		sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
 		sndPar[MODE_SND_BALANCE].grid = &grid_n18d75_18d75_1d25;
 		sndPar[MODE_SND_BALANCE].set = tda731xSetSpeakers;
-		switch (_aproc) {
+		switch (aproc.ic) {
 		case AUDIOPROC_TDA7313:
 		case AUDIOPROC_TDA7314:
 		case AUDIOPROC_TDA7318:
@@ -289,21 +281,16 @@ void sndInit(uint8_t extFunc)
 	return;
 }
 
-uint8_t sndInputCnt(void)
-{
-	return _inCnt;
-}
-
 void sndSetInput(uint8_t input)
 {
-	if (input >= _inCnt)
+	if (input >= aproc.inCnt)
 		input = 0;
-	_input = input;
+	aproc.input = input;
 
-	switch (_aproc) {
+	switch (aproc.ic) {
 #ifdef _TDA7439
 	case AUDIOPROC_TDA7439:
-		tda7439SetInput(_input);
+		tda7439SetInput();
 		break;
 #endif
 #ifdef _TDA731X
@@ -313,12 +300,12 @@ void sndSetInput(uint8_t input)
 	case AUDIOPROC_TDA7315:
 	case AUDIOPROC_TDA7318:
 	case AUDIOPROC_PT2314:
-		tda731xSetInput(_input);
+		tda731xSetInput();
 		break;
 #endif
 #ifdef _PT232X
 	case AUDIOPROC_PT232X:
-		pt2323SetInput(_input);
+		pt2323SetInput();
 		break;
 #endif
 	default:
@@ -328,25 +315,19 @@ void sndSetInput(uint8_t input)
 	return;
 }
 
-uint8_t sndGetInput(void)
-{
-	return _input;
-}
-
-
 void sndSetMute(uint8_t value)
 {
-	_mute = value;
+	aproc.mute = value;
 
-	if (_mute)
+	if (aproc.mute)
 		PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	else
 		PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 
-	switch (_aproc) {
+	switch (aproc.ic) {
 #ifdef _TDA7439
 	case AUDIOPROC_TDA7439:
-		tda7439SetMute(_mute);
+		tda7439SetMute();
 		break;
 #endif
 #ifdef _TDA731X
@@ -356,27 +337,27 @@ void sndSetMute(uint8_t value)
 	case AUDIOPROC_TDA7315:
 	case AUDIOPROC_TDA7318:
 	case AUDIOPROC_PT2314:
-		tda731xSetMute(_mute);
+		tda731xSetMute();
 		break;
 #endif
 #ifdef _TDA7448
 	case AUDIOPROC_TDA7448:
-		tda7448SetMute(_mute);
+		tda7448SetMute();
 		break;
 #endif
 #ifdef _PT232X
 	case AUDIOPROC_PT232X:
-		pt232xSetMute(_mute);
+		pt232xSetMute();
 		break;
 #endif
 #ifdef _TEA6330
 	case AUDIOPROC_TEA6330:
-		tea6330SetMute(_mute);
+		tea6330SetMute();
 		break;
 #endif
 #ifdef _PGA2310
 	case AUDIOPROC_PGA2310:
-		pga2310SetMute(_mute);
+		pga2310SetMute();
 		break;
 #endif
 	default:
@@ -386,78 +367,53 @@ void sndSetMute(uint8_t value)
 	return;
 }
 
-uint8_t sndGetMute(void)
-{
-	return _mute;
-}
-
 void sndSetLoudness(uint8_t value)
 {
-	_loudness = value;
-
 #ifdef _TDA731X
-	if (_aproc == AUDIOPROC_TDA7313 || _aproc == AUDIOPROC_TDA7314 ||
-			_aproc == AUDIOPROC_TDA7315 || _aproc == AUDIOPROC_PT2314)
-		tda731xSetLoudness(_loudness);
+	aproc.loudness = value;
+
+	if (aproc.ic == AUDIOPROC_TDA7313 || aproc.ic == AUDIOPROC_TDA7314 ||
+			aproc.ic == AUDIOPROC_TDA7315 || aproc.ic == AUDIOPROC_PT2314)
+		tda731xSetLoudness();
 #endif
 
 	return;
-}
-
-uint8_t sndGetLoudness(void)
-{
-	return _loudness;
 }
 
 void sndSetSurround(uint8_t value)
 {
-	_surround = value;
-
 #ifdef _PT232X
-	if (_aproc == AUDIOPROC_PT232X)
-		pt2323SetSurround(_surround);
+	aproc.surround = value;
+
+	if (aproc.ic == AUDIOPROC_PT232X)
+		pt2323SetSurround();
 #endif
 
 	return;
-}
-
-uint8_t sndGetSurround(void)
-{
-	return _surround;
 }
 
 void sndSetEffect3d(uint8_t value)
 {
-	_effect3d = value;
-
 #ifdef _PT232X
-	if (_aproc == AUDIOPROC_PT232X)
-		pt2322SetEffect3d(_effect3d);
+	aproc.effect3d = value;
+
+	if (aproc.ic == AUDIOPROC_PT232X)
+		pt2322SetEffect3d();
 #endif
 
 	return;
-}
-
-uint8_t sndGetEffect3d(void)
-{
-	return _effect3d;
 }
 
 void sndSetToneDefeat(uint8_t value)
 {
-	_toneDefeat = value;
-
 #ifdef _PT232X
-	if (_aproc == AUDIOPROC_PT232X)
-		pt2322SetToneDefeat(_toneDefeat);
+	aproc.toneDefeat = value;
+
+	if (aproc.ic == AUDIOPROC_PT232X)
+		pt2322SetToneDefeat();
 #endif
 
 	return;
-}
-
-uint8_t sndGetToneDefeat(void)
-{
-	return _toneDefeat;
 }
 
 void sndNextParam(uint8_t *mode)
@@ -490,17 +446,17 @@ void sndPowerOn(void)
 	int8_t i;
 
 #ifdef _PT232X
-	if (_aproc == AUDIOPROC_PT232X)
+	if (aproc.ic == AUDIOPROC_PT232X)
 		pt232xReset();
 #endif
 
 	sndSetMute(1);
-	sndSetInput(_input);
+	sndSetInput(aproc.input);
 
-	sndSetLoudness(_loudness);
-	sndSetSurround(_surround);
-	sndSetEffect3d(_effect3d);
-	sndSetToneDefeat(_toneDefeat);
+	sndSetLoudness(aproc.loudness);
+	sndSetSurround(aproc.surround);
+	sndSetEffect3d(aproc.effect3d);
+	sndSetToneDefeat(aproc.toneDefeat);
 
 	for (i = MODE_SND_GAIN0 - 1; i >= MODE_SND_VOLUME; i--)
 		sndPar[i].set();
@@ -517,11 +473,11 @@ void sndPowerOff(void)
 	for (i = 0; i < MODE_SND_END; i++)
 		eeprom_update_byte((uint8_t*)EEPROM_VOLUME + i, sndPar[i].value);
 
-	eeprom_update_byte((uint8_t*)EEPROM_LOUDNESS, _loudness);
-	eeprom_update_byte((uint8_t*)EEPROM_SURROUND, _surround);
-	eeprom_update_byte((uint8_t*)EEPROM_EFFECT3D, _effect3d);
-	eeprom_update_byte((uint8_t*)EEPROM_TONE_DEFEAT, _toneDefeat);
-	eeprom_update_byte((uint8_t*)EEPROM_INPUT, _input);
+	eeprom_update_byte((uint8_t*)EEPROM_LOUDNESS, aproc.loudness);
+	eeprom_update_byte((uint8_t*)EEPROM_SURROUND, aproc.surround);
+	eeprom_update_byte((uint8_t*)EEPROM_EFFECT3D, aproc.effect3d);
+	eeprom_update_byte((uint8_t*)EEPROM_TONE_DEFEAT, aproc.toneDefeat);
+	eeprom_update_byte((uint8_t*)EEPROM_INPUT, aproc.input);
 
 	return;
 }

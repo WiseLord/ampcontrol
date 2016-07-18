@@ -38,4 +38,32 @@ typedef enum {
 
 extern sndParam sndPar[MODE_SND_END];
 
+typedef enum {
+	AUDIOPROC_TDA7439 = 0,
+	AUDIOPROC_TDA7312,
+	AUDIOPROC_TDA7313,
+	AUDIOPROC_TDA7314,
+	AUDIOPROC_TDA7315,
+	AUDIOPROC_TDA7318,
+	AUDIOPROC_PT2314,
+	AUDIOPROC_TDA7448,
+	AUDIOPROC_PT232X,
+	AUDIOPROC_TEA6330,
+	AUDIOPROC_PGA2310,
+	AUDIOPROC_END
+} aprocIC;
+
+typedef struct {
+	aprocIC ic;
+	uint8_t inCnt;
+	uint8_t input;
+	uint8_t loudness;
+	uint8_t surround;
+	uint8_t effect3d;
+	uint8_t toneDefeat;
+	uint8_t mute;
+} Audioproc_type;
+
+extern Audioproc_type aproc;
+
 #endif /* AUDIO_H */

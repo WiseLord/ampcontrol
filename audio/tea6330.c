@@ -66,11 +66,11 @@ void tea6330SetFrontRear()
 	return;
 }
 
-void tea6330SetMute(uint8_t val)
+void tea6330SetMute(void)
 {
 	I2CStart(TEA6330_I2C_ADDR);
 	I2CWriteByte(TEA6330_AUDIO_SW);
-	I2CWriteByte(val ? TEA6330_GMU : 0);
+	I2CWriteByte(aproc.mute ? TEA6330_GMU : 0);
 	I2CStop();
 
 	return;

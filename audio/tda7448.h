@@ -28,6 +28,6 @@ enum {
 
 void tda7448SetSpeakers(void);
 
-void tda7448SetMute(uint8_t val);
+void tda7448SetMute(void);
 
 #endif /* TDA7448_H */

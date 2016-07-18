@@ -108,10 +108,10 @@ void changeAlarm(int diff)
 		break;
 	case RTC_A0_INPUT:
 		alarm[RTC_A0_INPUT - RTC_A0_HOUR] += diff;
-		if (alarm[RTC_A0_INPUT - RTC_A0_HOUR] >= sndInputCnt())
+		if (alarm[RTC_A0_INPUT - RTC_A0_HOUR] >= aproc.inCnt)
 			alarm[RTC_A0_INPUT - RTC_A0_HOUR] = 0;
 		if (alarm[RTC_A0_INPUT - RTC_A0_HOUR] < 0)
-			alarm[RTC_A0_INPUT - RTC_A0_HOUR] = sndInputCnt() - 1;
+			alarm[RTC_A0_INPUT - RTC_A0_HOUR] = aproc.inCnt - 1;
 		break;
 	case RTC_A0_WDAY:
 		alarm[RTC_A0_WDAY - RTC_A0_HOUR] += diff;

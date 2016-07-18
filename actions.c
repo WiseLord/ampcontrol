@@ -15,14 +15,14 @@ static uint8_t defDispMode(void)
 	uint8_t ret;
 
 	if (getDefDisplay() == MODE_FM_RADIO) {
-		if (sndGetInput() || !tuner.ic)
+		if (aproc.input || !tuner.ic)
 			ret = MODE_SPECTRUM;
 		else
 			ret = MODE_FM_RADIO;
 	} else {
 		ret = getDefDisplay();
 	}
-	if (sndGetMute())
+	if (aproc.mute)
 		ret = MODE_MUTE;
 
 	return ret;
@@ -116,19 +116,19 @@ uint8_t getAction(void)
 
 	/* Remap NEXT/PREV_INPUT actions to INPUT_X */
 	if (action == CMD_RC_IN_NEXT) {
-		action = CMD_RC_IN_0 + sndGetInput();
+		action = CMD_RC_IN_0 + aproc.input;
 		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
 			action += 1;
-			if (action >= CMD_RC_IN_0 + sndInputCnt())
+			if (action >= CMD_RC_IN_0 + aproc.inCnt)
 				action = CMD_RC_IN_0;
 		}
 	}
 	if (action == CMD_RC_IN_PREV) {
-		action = CMD_RC_IN_0 + sndGetInput();
+		action = CMD_RC_IN_0 + aproc.input;
 		if (dispMode >= MODE_SND_GAIN0 && dispMode < MODE_SND_END) {
 			action -= 1;
 			if (action < CMD_RC_IN_0)
-				action += sndInputCnt();
+				action += aproc.inCnt;
 		}
 	}
 
@@ -192,10 +192,10 @@ void handleAction(uint8_t action)
 		tunerPowerOn();
 		sndPowerOn();
 
-		tunerSetMute(sndGetInput());
+		tunerSetMute(aproc.input);
 		tunerSetFreq();
 
-		dispMode = MODE_SND_GAIN0 + sndGetInput();
+		dispMode = MODE_SND_GAIN0 + aproc.input;
 		setDisplayTime(DISPLAY_TIME_GAIN_START);
 		enableSilenceTimer();
 
@@ -284,9 +284,9 @@ void handleAction(uint8_t action)
 		break;
 	case CMD_RC_MUTE:
 		dispMode = MODE_MUTE;
-		if (sndGetMute()) {
+		if (aproc.mute) {
 			sndSetMute(0);
-			tunerSetMute(sndGetInput());
+			tunerSetMute(aproc.input);
 			setDisplayTime(DISPLAY_TIME_AUDIO);
 		} else {
 			tunerSetMute(1);
@@ -314,7 +314,7 @@ void handleAction(uint8_t action)
 			setDefDisplay(MODE_SPECTRUM);
 			break;
 		case MODE_SPECTRUM:
-			if (!sndGetInput() && tuner.ic) {
+			if (!aproc.input && tuner.ic) {
 				setDefDisplay(MODE_FM_RADIO);
 				break;
 			}
@@ -333,27 +333,27 @@ void handleAction(uint8_t action)
 	case CMD_RC_IN_3:
 	case CMD_RC_IN_4:
 		sndSetInput(action - CMD_RC_IN_0);
-		dispMode = MODE_SND_GAIN0 + sndGetInput();
+		dispMode = MODE_SND_GAIN0 + aproc.input;
 		setDisplayTime(DISPLAY_TIME_GAIN);
-		tunerSetMute(sndGetMute() || sndGetInput());
+		tunerSetMute(aproc.mute || aproc.input);
 		break;
 	case CMD_RC_LOUDNESS:
-		sndSetLoudness(!sndGetLoudness());
+		sndSetLoudness(!aproc.loudness);
 		dispMode = MODE_LOUDNESS;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_SURROUND:
-		sndSetSurround(!sndGetSurround());
+		sndSetSurround(aproc.surround);
 		dispMode = MODE_SURROUND;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_EFFECT_3D:
-		sndSetEffect3d(!sndGetEffect3d());
+		sndSetEffect3d(aproc.effect3d);
 		dispMode = MODE_EFFECT_3D;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_TONE_DEFEAT:
-		sndSetToneDefeat(!sndGetToneDefeat());
+		sndSetToneDefeat(aproc.toneDefeat);
 		dispMode = MODE_TONE_DEFEAT;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
@@ -382,7 +382,7 @@ void handleAction(uint8_t action)
 		}
 		break;
 	default:
-		if (!sndGetInput() && tuner.ic) {
+		if (!aproc.input && tuner.ic) {
 			switch (action) {
 			case CMD_RC_FM_0:
 			case CMD_RC_FM_1:

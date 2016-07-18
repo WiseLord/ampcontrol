@@ -11,6 +11,6 @@
 
 void pga2310Init(sndParam *sp);
 void pga2310SetSpeakers(void);
-void pga2310SetMute(uint8_t val);
+void pga2310SetMute(void);
 
 #endif /* PGA2310_H */

@@ -29,6 +29,6 @@ void tea6330SetBass(void);
 void tea6330SetTreble(void);
 void tea6330SetFrontRear(void);
 
-void tea6330SetMute(uint8_t val);
+void tea6330SetMute(void);
 
 #endif // TEA6330_H
