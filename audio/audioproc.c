@@ -49,17 +49,18 @@ void sndInit(uint8_t extFunc)
 #if   !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
 	aproc.ic = AUDIOPROC_NO;
 #elif  defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
-	aproc.ic = _TDA7439;
+	aproc.ic = AUDIOPROC_TDA7439;
 #elif !defined(_TDA7439) &&  defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
-	aproc.ic = _TDA731X;
+	if (aproc.ic < AUDIOPROC_TDA7312 || aproc.ic >= AUDIOPROC_PT2314)
+		aproc.ic = AUDIOPROC_TDA7313;
 #elif !defined(_TDA7439) && !defined(_TDA731X) &&  defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
-	aproc.ic = _TDA7448;
+	aproc.ic = AUDIOPROC_TDA7448;
 #elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) &&  defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
-	aproc.ic = _PT232X;
+	aproc.ic = AUDIOPROC_PT232X;
 #elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) &&  defined(_TEA6330) && !defined(_PGA2310)
-	aproc.ic = _TEA6330;
+	aproc.ic = AUDIOPROC_TEA6330;
 #elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && defined(_PGA2310)
-	aproc.ic = _PGA2310;
+	aproc.ic = AUDIOPROC_PGA2310;
 #else
 	if (aproc.ic >= AUDIOPROC_END)
 		aproc.ic = AUDIOPROC_NO;
