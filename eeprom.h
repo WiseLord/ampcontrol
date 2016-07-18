@@ -6,29 +6,25 @@
 
 // Audio parameters values
 #define EEPROM_VOLUME			0x00
-#define EEPROM_BASS				0x01
-#define EEPROM_MIDDLE			0x02
-#define EEPROM_TREBLE			0x03
-#define EEPROM_PREAMP			0x04
-#define EEPROM_BALANCE			0x05
-#define EEPROM_GAIN0			0x06
-#define EEPROM_GAIN1			0x07
-#define EEPROM_GAIN2			0x08
-#define EEPROM_GAIN3			0x09
-
-// Misc parameters
-#define EEPROM_LOUDNESS			0x0C
-#define EEPROM_INPUT			0x0D
 
 #define EEPROM_SP_MODE			0x10
 #define EEPROM_DISPLAY			0x11
 #define EEPROM_BR_STBY			0x12
 #define EEPROM_BR_WORK			0x13
 
-#define EEPROM_RC_ADDR			0x1C
-#define EEPROM_TEMP_TH			0x1D
+#define EEPROM_MAX_INPUT_CNT	0x16
+#define EEPROM_AUDIOPROC		0x17
+#define EEPROM_INPUT			0x18
+
+// Audio bool parameters values
+#define EEPROM_LOUDNESS			0x1A
+#define EEPROM_SURROUND			0x1B
+#define EEPROM_EFFECT3D			0x1C
+#define EEPROM_TONE_DEFEAT		0x1D
 
 // RC5 commands array
+#define EEPROM_RC_TYPE			0x1E
+#define EEPROM_RC_ADDR			0x1F
 #define EEPROM_RC_CMD			0x20
 
 /* FM tuner parameters valus */
