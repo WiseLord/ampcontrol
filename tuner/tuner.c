@@ -11,8 +11,22 @@ void tunerInit(void)
 {
 	eeprom_read_block(&tuner, (void*)EEPROM_FM_TUNER, sizeof(Tuner_type));
 
+	// If defined only tuner, use it despite on eeprom value
+#if   !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001)
+	tuner.ic = TUNER_NO;
+#elif  defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001)
+	tuner.ic = TUNER_TEA5767;
+#elif !defined(_TEA5767) &&  defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001)
+	if (tuner.ic != TUNER_RDA5802 && tuner.ic != TUNER_RDA5807_DF)
+		tuner.ic = TUNER_RDA5807;
+#elif !defined(_TEA5767) && !defined(_RDA580X) &&  defined(_TUX032) && !defined(_LM7001)
+	tuner.ic = TUNER_TUX032;
+#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) &&  defined(_LM7001)
+	tuner.ic = TUNER_LM7001;
+#else
 	if (tuner.ic >= TUNER_END)
 		tuner.ic = TUNER_NO;
+#endif
 
 	switch (tuner.ic) {
 #ifdef _TEA5767
