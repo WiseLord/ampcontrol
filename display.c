@@ -122,6 +122,11 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	return;
 }
 
+uint8_t **getTxtLabels(void)
+{
+	return txtLabels;
+}
+
 void showRC5Info(uint16_t rc5Buf)
 {
 	ks0066SetXY(0, 0);
@@ -306,13 +311,10 @@ void setStbyBrightness(void)
 	return;
 }
 
-void loadDispSndParams(void)
+void displayInit(void)
 {
 	uint8_t i;
 	uint8_t *addr;
-
-	brStby = eeprom_read_byte((uint8_t*)EEPROM_BR_STBY);
-	brWork = eeprom_read_byte((uint8_t*)EEPROM_BR_WORK);
 
 	/* Load text labels from EEPROM */
 	addr = (uint8_t*)EEPROM_LABELS_ADDR;
@@ -332,8 +334,10 @@ void loadDispSndParams(void)
 		}
 	}
 
-	// Init audio labels and parameters
-	loadAudioParams(txtLabels);
+	ks0066Init();						// Display
+
+	brStby = eeprom_read_byte((uint8_t*)EEPROM_BR_STBY);
+	brWork = eeprom_read_byte((uint8_t*)EEPROM_BR_WORK);
 
 	return;
 }

@@ -46,6 +46,8 @@ enum {
 
 #define STR_BUFSIZE		16
 
+uint8_t **getTxtLabels(void);
+
 void showRC5Info(uint16_t rc5Buf);
 void showRadio(void);
 void showBoolParam(uint8_t value, uint8_t labelIndex);
@@ -61,6 +63,6 @@ void showSpectrum(uint8_t *buf);
 void setWorkBrightness(void);
 void setStbyBrightness(void);
 
-void loadDispSndParams(void);
+void displayInit(void);
 
 #endif /* DISPLAY_H */

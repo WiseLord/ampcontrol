@@ -4,6 +4,7 @@
 
 #include "../i2c.h"
 #include "../eeprom.h"
+#include "../display.h"
 
 static uint8_t chan;
 static uint8_t mute;
@@ -106,17 +107,25 @@ static void setGain(int8_t gain)
 	return;
 }
 
-uint8_t getChan(void)
+uint8_t sndGetInput(void)
 {
 	return chan;
 }
 
-uint8_t getMute(void)
+void sndSetMute(uint8_t value)
+{
+	if (mute)
+		setVolume(sndPar[MODE_SND_VOLUME].min);
+	else
+		setVolume(sndPar[MODE_SND_VOLUME].value);
+}
+
+uint8_t sndGetMute(void)
 {
 	return mute;
 }
 
-uint8_t getLoudness(void)
+uint8_t sndGetLoudness(void)
 {
 	return loud;
 }
@@ -149,7 +158,7 @@ void sndChangeParam(uint8_t mode, int8_t diff)
 }
 
 
-void setChan(uint8_t ch)
+void sndSetInput(uint8_t ch)
 {
 	chan = ch;
 	setGain(sndPar[MODE_SND_GAIN0 + chan].value);
@@ -157,57 +166,19 @@ void setChan(uint8_t ch)
 	return;
 }
 
-void nextChan(void)
+void sndSetLoudness(uint8_t value)
 {
-	chan++;
-	if (chan >= CHAN_CNT)
-		chan = 0;
-	setChan(chan);
-
-	return;
-}
-
-
-void muteVolume(void)
-{
-	setVolume(sndPar[MODE_SND_VOLUME].min);
-	mute = MUTE_ON;
-
-	return;
-}
-
-void unmuteVolume(void)
-{
-	setVolume(sndPar[MODE_SND_VOLUME].value);
-	mute = MUTE_OFF;
-
-	return;
-}
-
-
-void switchMute(void)
-{
-	if (mute == MUTE_ON) {
-		unmuteVolume();
-	} else {
-		muteVolume();
-	}
-
-	return;
-}
-
-void switchLoudness(void)
-{
-	loud = !loud;
+	loud = value;
 	setGain(sndPar[MODE_SND_GAIN0 + chan].value);
 
 	return;
 }
 
 
-void loadAudioParams(uint8_t **txtLabels)
+void sndInit(void)
 {
 	uint8_t i;
+	uint8_t **txtLabels = getTxtLabels();
 
 	for (i = 0; i < MODE_SND_END; i++) {
 		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
@@ -230,19 +201,19 @@ void loadAudioParams(uint8_t **txtLabels)
 	return;
 }
 
-void setAudioParams(void)
+void sndPowerOn(void)
 {
-	muteVolume();
-	setChan(chan);
+	sndSetMute(1);
+	sndSetInput(chan);
 	setBass(sndPar[MODE_SND_BASS].value);
 	setBalance(0);
 	setTreble(sndPar[MODE_SND_TREBLE].value);
-	unmuteVolume();
+	sndSetMute(0);
 
 	return;
 }
 
-void saveAudioParams(void)
+void sndPowerOff(void)
 {
 	uint8_t i;
 
@@ -253,4 +224,9 @@ void saveAudioParams(void)
 	eeprom_update_byte((uint8_t*)EEPROM_INPUT, chan);
 
 	return;
+}
+
+uint8_t sndInputCnt()
+{
+	return CHAN_CNT;
 }

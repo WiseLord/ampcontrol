@@ -16,7 +16,7 @@
 static void powerOn(void)
 {
 	tunerPowerOn();
-	setAudioParams();
+	sndPowerOn();
 	tunerSetMute(0);
 	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	setWorkBrightness();
@@ -30,9 +30,9 @@ static void powerOff(void)
 	rtc.etm = RTC_NOEDIT;
 
 	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
-	muteVolume();
+	sndSetMute(1);
 	tunerSetMute(1);
-	saveAudioParams();
+	sndPowerOff();
 	tunerPowerOff();
 	setStbyBrightness();
 
@@ -42,7 +42,7 @@ static void powerOff(void)
 static void hwInit(void)
 {
 	I2CInit();							// I2C bus
-	ks0066Init();						// Display
+	displayInit();						// Display
 
 	rcInit();							// RC5 IR remote control
 	adcInit();							// Analog-to-digital converter
@@ -54,7 +54,7 @@ static void hwInit(void)
 
 	sei();								// Gloabl interrupt enable
 
-	loadDispSndParams();				// Display and audio params
+	sndInit();							// Audio params, labels
 
 	powerOff();
 
@@ -120,10 +120,10 @@ int main(void)
 			case MODE_SND_GAIN1:
 			case MODE_SND_GAIN2:
 			case MODE_SND_GAIN3:
-				nextChan();
+				sndSetInput(sndGetInput() < sndInputCnt() - 1 ? sndGetInput() + 1 : 0);
 				ks0066Clear();
 			default:
-				dispMode = MODE_SND_GAIN0 + getChan();
+				dispMode = MODE_SND_GAIN0 + sndGetInput();
 				setDispTimer(DISPLAY_TIME_GAIN);
 				break;
 			}
@@ -163,7 +163,7 @@ int main(void)
 				}
 			default:
 				ks0066Clear();
-				switchMute();
+				sndSetMute(!sndGetMute());
 				dispMode = MODE_MUTE;
 				setDispTimer(DISPLAY_TIME_CHAN);
 				break;
@@ -181,7 +181,7 @@ int main(void)
 			break;
 		case CMD_BTN_2_LONG:
 		case CMD_RC_DISPLAY:
-			if (getChan() == 0) {
+			if (sndGetInput() == 0) {
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
 				dispMode = MODE_FM_RADIO;
 			}
@@ -198,11 +198,6 @@ int main(void)
 				else
 					tunerStoreStation();
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
-			} else if (cmd == CMD_BTN_4_LONG) {
-				ks0066Clear();
-				switchLoudness();
-				dispMode = MODE_LOUDNESS;
-				setDispTimer(DISPLAY_TIME_AUDIO);
 			}
 			break;
 		case CMD_BTN_12_LONG:
@@ -215,7 +210,7 @@ int main(void)
 			break;
 		case CMD_RC_LOUDNESS:
 			ks0066Clear();
-			switchLoudness();
+			sndSetLoudness(!sndGetLoudness());
 			dispMode = MODE_LOUDNESS;
 			setDispTimer(DISPLAY_TIME_AUDIO);
 			break;
@@ -223,16 +218,16 @@ int main(void)
 		case CMD_RC_INPUT_1:
 		case CMD_RC_INPUT_2:
 		case CMD_RC_INPUT_3:
-			setChan(cmd - CMD_RC_INPUT_0);
+			sndSetInput(cmd - CMD_RC_INPUT_0);
 			ks0066Clear();
-			dispMode = MODE_SND_GAIN0 + getChan();
+			dispMode = MODE_SND_GAIN0 + sndGetInput();
 			setDispTimer(DISPLAY_TIME_GAIN);
 			break;
 		case CMD_RC_FM_INC:
 		case CMD_RC_FM_DEC:
 		case CMD_RC_CHAN_UP:
 		case CMD_RC_CHAN_DOWN:
-			setChan(0);
+			sndSetInput(0);
 			if (dispMode == MODE_FM_RADIO) {
 				switch (cmd) {
 				case CMD_RC_FM_INC:
@@ -253,7 +248,7 @@ int main(void)
 			setDispTimer(DISPLAY_TIME_FM_RADIO);
 			break;
 		case CMD_RC_FM_MONO:
-			if (getChan() == 0) {
+			if (sndGetInput() == 0) {
 				tunerSwitchMono();
 				dispMode = MODE_FM_RADIO;
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
@@ -269,7 +264,7 @@ int main(void)
 		case CMD_RC_8:
 		case CMD_RC_9:
 		case CMD_RC_0:
-			setChan(0);
+			sndSetInput(0);
 			tunerLoadStation(cmd - CMD_RC_1);
 			dispMode = MODE_FM_RADIO;
 			setDispTimer(DISPLAY_TIME_FM_RADIO);
@@ -350,10 +345,10 @@ int main(void)
 			showRadio();
 			break;
 		case MODE_MUTE:
-			showBoolParam(getMute(), LABEL_MUTE);
+			showBoolParam(sndGetMute(), LABEL_MUTE);
 			break;
 		case MODE_LOUDNESS:
-			showBoolParam(!getLoudness(), LABEL_LOUDNESS);
+			showBoolParam(!sndGetLoudness(), LABEL_LOUDNESS);
 			break;
 		case MODE_TIME:
 		case MODE_TIME_EDIT:

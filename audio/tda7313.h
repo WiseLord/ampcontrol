@@ -22,24 +22,23 @@
 #define MUTE_OFF				0
 #define MUTE_VAL				0x1F
 
-uint8_t getChan(void);
-uint8_t getMute(void);
-uint8_t getLoudness(void);
+void sndInit(void);
+
+uint8_t sndInputCnt(void);
+
+void sndSetInput(uint8_t ch);
+uint8_t sndGetInput(void);
+
+void sndSetMute(uint8_t value);
+uint8_t sndGetMute(void);
+
+void sndSetLoudness(uint8_t value);
+uint8_t sndGetLoudness(void);
 
 void sndNextParam(uint8_t *mode);
 void sndChangeParam(uint8_t mode, int8_t diff);
 
-void setChan(uint8_t ch);
-void nextChan(void);
-
-void muteVolume(void);
-void unmuteVolume(void);
-
-void switchMute(void);
-void switchLoudness(void);
-
-void loadAudioParams(uint8_t **txtLabels);
-void setAudioParams(void);
-void saveAudioParams(void);
+void sndPowerOn(void);
+void sndPowerOff(void);
 
 #endif /* TDA7313_H */
