@@ -408,6 +408,11 @@
              </property>
              <item>
               <property name="text">
+               <string>No audioproc</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>TDA7439</string>
               </property>
              </item>

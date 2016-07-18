@@ -43,15 +43,27 @@ void sndInit(uint8_t extFunc)
 		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
-	aproc.loudness = eeprom_read_byte((uint8_t*)EEPROM_LOUDNESS);
-	aproc.surround = eeprom_read_byte((uint8_t*)EEPROM_SURROUND);
-	aproc.effect3d = eeprom_read_byte((uint8_t*)EEPROM_EFFECT3D);
-	aproc.toneDefeat = eeprom_read_byte((uint8_t*)EEPROM_TONE_DEFEAT);
-	aproc.inCnt = eeprom_read_byte((uint8_t*)EEPROM_MAX_INPUT_CNT);
-	aproc.ic = eeprom_read_byte((uint8_t*)EEPROM_AUDIOPROC);
-	aproc.input = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
+
+	eeprom_read_block(&aproc, (void*)EEPROM_AUDIOPROC, sizeof(Audioproc_type) - 1);
+
+#if   !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
+	aproc.ic = AUDIOPROC_NO;
+#elif  defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
+	aproc.ic = _TDA7439;
+#elif !defined(_TDA7439) &&  defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
+	aproc.ic = _TDA731X;
+#elif !defined(_TDA7439) && !defined(_TDA731X) &&  defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
+	aproc.ic = _TDA7448;
+#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) &&  defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310)
+	aproc.ic = _PT232X;
+#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) &&  defined(_TEA6330) && !defined(_PGA2310)
+	aproc.ic = _TEA6330;
+#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && defined(_PGA2310)
+	aproc.ic = _PGA2310;
+#else
 	if (aproc.ic >= AUDIOPROC_END)
-		aproc.ic = AUDIOPROC_TDA7439;
+		aproc.ic = AUDIOPROC_NO;
+#endif
 
 #ifdef _PGA2310
 	if (aproc.ic == AUDIOPROC_PGA2310 && extFunc == USE_PGA2310)
