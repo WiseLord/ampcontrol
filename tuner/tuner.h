@@ -15,6 +15,9 @@
 #ifdef _LM7001
 #include "lm7001.h"
 #endif
+#ifdef _RDS
+#include "rds.h"
+#endif
 
 typedef enum {
 	TUNER_NO = 0,
