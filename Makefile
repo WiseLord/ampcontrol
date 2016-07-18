@@ -1,4 +1,4 @@
-AUDIOPROC = TDA7313
+AUDIOPROC = TDA7439
 TUNER = RDA580X
 WIRE = 4BIT
 
@@ -10,12 +10,19 @@ TARG = ampcontrol_m8_$(call lc,$(WIRE))_$(call lc,$(AUDIOPROC))_$(call lc,$(TUNE
 MCU = atmega8
 F_CPU = 8000000L
 
-ifeq ($(AUDIOPROC), TDA7313)
-  AUDIO_SRC = audio/tda7313.c
-else ifeq ($(AUDIOPROC), TDA7318)
-  AUDIO_SRC = audio/tda7318.c
-else ifeq ($(AUDIOPROC), TDA7439)
-  AUDIO_SRC = audio/tda7439.c
+AUDIO_SRC = audio/audioproc.c
+ifeq ($(AUDIOPROC), TDA7439)
+  AUDIO_SRC += audio/tda7439.c
+else ifeq ($(AUDIOPROC), TDA731X)
+  AUDIO_SRC += audio/tda731x.c
+else ifeq ($(AUDIOPROC), TDA7448)
+  AUDIO_SRC += audio/tda7448.c
+else ifeq ($(AUDIOPROC), PT232X)
+  AUDIO_SRC += audio/pt232x.c
+else ifeq ($(AUDIOPROC), TEA6330)
+  AUDIO_SRC += audio/tea6330.c
+else ifeq ($(AUDIOPROC), PGA2310)
+  AUDIO_SRC += audio/pga2310.c
 endif
 
 TUNER_SRC = tuner/tuner.c
@@ -41,8 +48,11 @@ CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 # Main definitions
-DEFINES  += -D$(AUDIOPROC) -DKS0066_WIRE_$(WIRE)
+DEFINES  += -DKS0066_WIRE_$(WIRE) -DKS0066
+# Supported tuners
 DEFINES += -D_$(TUNER)
+# Supported audioprocessors
+DEFINES += -D_$(AUDIOPROC)
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy

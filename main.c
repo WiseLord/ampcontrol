@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "audio/audio.h"
+#include "audio/audioproc.h"
 #include "tuner/tuner.h"
 #include "display.h"
 
@@ -54,7 +54,7 @@ static void hwInit(void)
 
 	sei();								// Gloabl interrupt enable
 
-	sndInit();							// Audio params, labels
+	sndInit(USE_LM7001);				// Audio params, labels
 
 	powerOff();
 

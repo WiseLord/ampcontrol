@@ -4,45 +4,34 @@
 #include <inttypes.h>
 #include "audio.h"
 
-#define TDA7439_ADDR			0b10001000
+/* I2C address */
+#define TDA7439_I2C_ADDR			0b10001000
 
-#define CHAN_CNT				4
+/* I2C function selection */
+#define TDA7439_INPUT_SELECT		0x00
+#define TDA7439_INPUT_GAIN			0x01
+#define TDA7439_PREAMP				0x02
+#define TDA7439_BASS				0x03
+#define TDA7439_MIDDLE				0x04
+#define TDA7439_TREBLE				0x05
+#define TDA7439_VOLUME_RIGHT		0x06
+#define TDA7439_VOLUME_LEFT			0x07
 
-/* TDA7439 I2C function selection */
-#define TDA7439_INPUT_SELECT	0x00
-#define TDA7439_INPUT_GAIN		0x01
-#define TDA7439_PREAMP			0x02
-#define TDA7439_BASS			0x03
-#define TDA7439_MIDDLE			0x04
-#define TDA7439_TREBLE			0x05
-#define TDA7439_VOLUME_RIGHT	0x06
-#define TDA7439_VOLUME_LEFT		0x07
-/* I2c autoincrement flag */
-#define TDA7439_AUTO_INC		0x10
+#define TDA7439_SPEAKER_MUTE		0b01111111
 
-#define MUTE_ON					1
-#define MUTE_OFF				0
+/* I2C autoincrement flag */
+#define TDA7439_AUTO_INC			0x10
 
-void sndInit(void);
+/* Number of inputs */
+#define TDA7439_IN_CNT				4
 
-uint8_t sndInputCnt(void);
-
-void sndSetInput(uint8_t ch);
-uint8_t sndGetInput(void);
-
-void switchMute(void);
-void muteVolume(void);
-void unmuteVolume(void);
-void sndSetMute(uint8_t value);
-uint8_t sndGetMute(void);
-
-void sndSetLoudness(uint8_t value);
-uint8_t sndGetLoudness(void);
-
-void sndNextParam(uint8_t *mode);
-void sndChangeParam(uint8_t mode, int8_t diff);
-
-void sndPowerOn(void);
-void sndPowerOff(void);
+void tda7439SetSpeakers(void);
+void tda7439SetBass(void);
+void tda7439SetMiddle(void);
+void tda7439SetTreble(void);
+void tda7439SetPreamp(void);
+void tda7439SetGain(void);
+void tda7439SetInput(uint8_t in);
+void tda7439SetMute(uint8_t val);
 
 #endif /* TDA7439_H */

@@ -1,12 +1,20 @@
 Makefile
 
 audio/audio.h
-audio/tda7313.c
-audio/tda7313.h
-audio/tda7318.c
-audio/tda7318.h
+audio/audioproc.c
+audio/audioproc.h
+audio/pga2310.c
+audio/pga2310.h
+audio/pt232x.c
+audio/pt232x.h
+audio/tda731x.c
+audio/tda731x.h
 audio/tda7439.c
 audio/tda7439.h
+audio/tda7448.c
+audio/tda7448.h
+audio/tea6330.c
+audio/tea6330.h
 
 tuner/lm7001.c
 tuner/lm7001.h

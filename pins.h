@@ -28,6 +28,15 @@
 #define BCKL				C
 #define BCKL_LINE			(1<<3)
 
+/* Ext function options */
+enum {
+	USE_DS18B20 = 0,
+	USE_LM7001,
+	USE_PGA2310,
+
+	USE_EXT_END
+};
+
 /* RC5 definitions*/
 #define RC					D
 #define RC_LINE				(1<<3)

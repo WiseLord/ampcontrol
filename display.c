@@ -228,7 +228,7 @@ void showSndParam(uint8_t mode)
 	ks0066SetXY(14, 0);
 	writeStringEeprom(txtLabels[LABEL_DB]);
 
-	showBar(param->min, param->max, param->value);
+	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
 
 	return;
 }
