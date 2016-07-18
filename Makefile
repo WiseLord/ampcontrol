@@ -35,9 +35,11 @@ CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 # Main definitions
-DEFINES  += -D$(DISPLAY) -DEXTFUNC
+DEFINES  += -D$(DISPLAY)
 # Supported tuners
 DEFINES += -D_TEA5767 -D_RDA580X -D_TUX032 -D_LM7001 -D_RDS
+# Supported audioprocessors
+DEFINES += -D_TDA7439 -D_TDA731X -D_TDA7448 -D_PT232X -D_TEA6330 -D_PGA2310
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy

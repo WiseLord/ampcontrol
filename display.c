@@ -9,7 +9,6 @@
 #include "ds18x20.h"
 #include "temp.h"
 #include "adc.h"
-#include "tuner/rds.h"
 #include "alarm.h"
 
 static int8_t brStby;						/* Brightness in standby mode */
@@ -1320,6 +1319,7 @@ void showRadio(uint8_t tune)
 	showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.freq >> 4);
 
 	/* Select between RDS and spectrum mode */
+#ifdef _RDS
 	if (rdsGetFlag()) {
 		gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 		gdSetXY(0, 40);
@@ -1328,6 +1328,9 @@ void showRadio(uint8_t tune)
 	} else {
 		drawBarSpectrum();
 	}
+#else
+	drawBarSpectrum();
+#endif
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	if (tune == MODE_RADIO_TUNE) {
@@ -1335,10 +1338,14 @@ void showRadio(uint8_t tune)
 		writeStringPgm(STR_TUNE);
 	} else {
 		gdSetXY(110, 56);
+#ifdef _RDS
 		if (rdsGetFlag())
 			writeStringPgm(STR_RDS);
 		else
 			writeStringPgm(STR_SPACE3);
+#else
+		writeStringPgm(STR_SPACE3);
+#endif
 	}
 #endif
 

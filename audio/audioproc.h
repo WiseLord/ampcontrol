@@ -2,12 +2,24 @@
 #define AUDIOPROC_H
 
 #include <inttypes.h>
-#include "tda731x.h"
+#include "audio.h"
+
+#ifdef _TDA7439
 #include "tda7439.h"
+#endif
+#ifdef _TDA731X
+#include "tda731x.h"
+#endif
+#ifdef _TDA7448
 #include "tda7448.h"
+#endif
+#ifdef _PT232X
 #include "pt232x.h"
+#endif
+#ifdef _TEA6330
 #include "tea6330.h"
-#ifdef EXTFUNC
+#endif
+#ifdef _PGA2310
 #include "pga2310.h"
 #endif
 
