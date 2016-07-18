@@ -66,7 +66,7 @@ int main(void)
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = dispMode;
 
-	sndParam *curSndParam = sndParAddr(SND_VOLUME);
+	sndParam *curSndParam = sndParAddr(MODE_SND_VOLUME);
 
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_END;
@@ -122,7 +122,7 @@ int main(void)
 				nextChan();
 				ks0066Clear();
 			default:
-				curSndParam = sndParAddr(SND_GAIN0 + getChan());
+				curSndParam = sndParAddr(MODE_SND_GAIN0 + getChan());
 				dispMode = MODE_GAIN;
 				setDispTimer(DISPLAY_TIME_GAIN);
 				break;
@@ -175,7 +175,7 @@ int main(void)
 				curSndParam++;
 				dispMode++;
 			} else {
-				curSndParam = sndParAddr(SND_VOLUME);
+				curSndParam = sndParAddr(MODE_SND_VOLUME);
 				dispMode = MODE_VOLUME;
 			}
 			setDispTimer(DISPLAY_TIME_AUDIO);
@@ -237,7 +237,7 @@ int main(void)
 #endif
 			setChan(cmd - CMD_RC_INPUT_0);
 			ks0066Clear();
-			curSndParam = sndParAddr(SND_GAIN0 + getChan());
+			curSndParam = sndParAddr(MODE_SND_GAIN0 + getChan());
 			dispMode = MODE_GAIN;
 			setDispTimer(DISPLAY_TIME_GAIN);
 			break;
@@ -314,7 +314,7 @@ int main(void)
 			case MODE_SPECTRUM:
 			case MODE_TIME:
 			case MODE_FM_RADIO:
-				curSndParam = sndParAddr(SND_VOLUME);
+				curSndParam = sndParAddr(MODE_SND_VOLUME);
 				dispMode = MODE_VOLUME;
 			default:
 				changeParam(curSndParam, encCnt);

@@ -28,14 +28,14 @@ static void setVolume(int8_t val)
 	int8_t spLeft = val;
 	int8_t spRight = val;
 
-	if (sndPar[SND_BALANCE].value > 0) {
-		spLeft -= sndPar[SND_BALANCE].value;
-		if (spLeft < sndPar[SND_VOLUME].min)
-			spLeft = sndPar[SND_VOLUME].min;
+	if (sndPar[MODE_SND_BALANCE].value > 0) {
+		spLeft -= sndPar[MODE_SND_BALANCE].value;
+		if (spLeft < sndPar[MODE_SND_VOLUME].min)
+			spLeft = sndPar[MODE_SND_VOLUME].min;
 	} else {
-		spRight += sndPar[SND_BALANCE].value;
-		if (spRight < sndPar[SND_VOLUME].min)
-			spRight = sndPar[SND_VOLUME].min;
+		spRight += sndPar[MODE_SND_BALANCE].value;
+		if (spRight < sndPar[MODE_SND_VOLUME].min)
+			spRight = sndPar[MODE_SND_VOLUME].min;
 	}
 	I2CStart(TDA7439_ADDR);
 	I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
@@ -96,7 +96,7 @@ static void setPreamp(int8_t val)
 
 static void setBalance(int8_t val)
 {
-	setVolume(sndPar[SND_VOLUME].value);
+	setVolume(sndPar[MODE_SND_VOLUME].value);
 
 	return;
 }
@@ -145,7 +145,7 @@ void changeParam(sndParam *param, int8_t diff)
 void setChan(uint8_t ch)
 {
 	chan = ch;
-	setGain(sndPar[SND_GAIN0 + ch].value);
+	setGain(sndPar[MODE_SND_GAIN0 + ch].value);
 
 	I2CStart(TDA7439_ADDR);
 	I2CWriteByte(TDA7439_INPUT_SELECT);
@@ -168,7 +168,7 @@ void nextChan(void)
 
 void muteVolume(void)
 {
-	setVolume(sndPar[SND_VOLUME].min);
+	setVolume(sndPar[MODE_SND_VOLUME].min);
 	mute = MUTE_ON;
 
 	return;
@@ -176,7 +176,7 @@ void muteVolume(void)
 
 void unmuteVolume(void)
 {
-	setVolume(sndPar[SND_VOLUME].value);
+	setVolume(sndPar[MODE_SND_VOLUME].value);
 	mute = MUTE_OFF;
 
 	return;
@@ -202,28 +202,28 @@ void loadAudioParams(uint8_t **txtLabels)
 	for (i = 0; i < SND_PARAM_COUNT; i++)
 		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
 
-	sndPar[SND_VOLUME].label = txtLabels[LABEL_VOLUME];
-	sndPar[SND_BASS].label = txtLabels[LABEL_BASS];
-	sndPar[SND_MIDDLE].label = txtLabels[LABEL_MIDDLE];
-	sndPar[SND_TREBLE].label = txtLabels[LABEL_TREBLE];
-	sndPar[SND_PREAMP].label = txtLabels[LABEL_PREAMP];
-	sndPar[SND_BALANCE].label = txtLabels[LABEL_BALANCE];
-	sndPar[SND_GAIN0].label = txtLabels[LABEL_GAIN0];
-	sndPar[SND_GAIN1].label = txtLabels[LABEL_GAIN1];
-	sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
-	sndPar[SND_GAIN3].label = txtLabels[LABEL_GAIN3];
+	sndPar[MODE_SND_VOLUME].label = txtLabels[LABEL_VOLUME];
+	sndPar[MODE_SND_BASS].label = txtLabels[LABEL_BASS];
+	sndPar[MODE_SND_MIDDLE].label = txtLabels[LABEL_MIDDLE];
+	sndPar[MODE_SND_TREBLE].label = txtLabels[LABEL_TREBLE];
+	sndPar[MODE_SND_PREAMP].label = txtLabels[LABEL_PREAMP];
+	sndPar[MODE_SND_BALANCE].label = txtLabels[LABEL_BALANCE];
+	sndPar[MODE_SND_GAIN0].label = txtLabels[LABEL_GAIN0];
+	sndPar[MODE_SND_GAIN1].label = txtLabels[LABEL_GAIN1];
+	sndPar[MODE_SND_GAIN2].label = txtLabels[LABEL_GAIN2];
+	sndPar[MODE_SND_GAIN3].label = txtLabels[LABEL_GAIN3];
 
 	chan = eeprom_read_byte((uint8_t*)EEPROM_INPUT);
 
-	sndPar[SND_VOLUME].set = setVolume;
-	sndPar[SND_BASS].set = setBass;
-	sndPar[SND_MIDDLE].set = setMiddle;
-	sndPar[SND_TREBLE].set = setTreble;
-	sndPar[SND_PREAMP].set = setPreamp;
-	sndPar[SND_BALANCE].set = setBalance;
+	sndPar[MODE_SND_VOLUME].set = setVolume;
+	sndPar[MODE_SND_BASS].set = setBass;
+	sndPar[MODE_SND_MIDDLE].set = setMiddle;
+	sndPar[MODE_SND_TREBLE].set = setTreble;
+	sndPar[MODE_SND_PREAMP].set = setPreamp;
+	sndPar[MODE_SND_BALANCE].set = setBalance;
 
 	for (i = 0; i < CHAN_CNT; i++)
-		sndPar[SND_GAIN0 + i].set = setGain;
+		sndPar[MODE_SND_GAIN0 + i].set = setGain;
 
 	return;
 }
@@ -232,10 +232,10 @@ void setAudioParams(void)
 {
 	muteVolume();
 	setChan(chan);
-	setBass(sndPar[SND_BASS].value);
-	setPreamp(sndPar[SND_PREAMP].value);
-	setMiddle(sndPar[SND_MIDDLE].value);
-	setTreble(sndPar[SND_TREBLE].value);
+	setBass(sndPar[MODE_SND_BASS].value);
+	setPreamp(sndPar[MODE_SND_PREAMP].value);
+	setMiddle(sndPar[MODE_SND_MIDDLE].value);
+	setTreble(sndPar[MODE_SND_TREBLE].value);
 	unmuteVolume();
 
 	return;
