@@ -28,8 +28,6 @@ typedef enum {
 
 void sndInit(uint8_t extFunc);
 
-sndParam *sndParAddr(uint8_t index);
-
 uint8_t sndInputCnt(void);
 
 void sndSetInput(uint8_t input);

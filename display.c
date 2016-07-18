@@ -1522,7 +1522,7 @@ void changeBrWork(int8_t diff)
 
 void showSndParam(sndMode mode)
 {
-	sndParam *param = sndParAddr(mode);
+	sndParam *param = &sndPar[mode];
 
 	showParLabel(param->label);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
@@ -1732,7 +1732,7 @@ void showAlarm(void)
 	i = getAlarm(RTC_A0_INPUT);
 	if (i >= sndInputCnt())
 		i = 0;
-	gdWriteIcon24(sndParAddr(MODE_SND_GAIN0 + i)->icon);
+	gdWriteIcon24(sndPar[MODE_SND_GAIN0 + i].icon);
 
 	/* Draw weekdays selection rectangle */
 	if (getEam() == RTC_A0_WDAY) {

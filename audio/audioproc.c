@@ -263,11 +263,6 @@ void sndInit(uint8_t extFunc)
 	return;
 }
 
-sndParam *sndParAddr(uint8_t index)
-{
-	return &sndPar[index];
-}
-
 uint8_t sndInputCnt(void)
 {
 	return _inCnt;
@@ -429,7 +424,7 @@ void sndNextParam(uint8_t *mode)
 
 void sndChangeParam(uint8_t mode, int8_t diff)
 {
-	sndParam *param = sndParAddr(mode);
+	sndParam *param = &sndPar[mode];
 	param->value += diff;
 	if (param->value > (int8_t)pgm_read_byte(&param->grid->max))
 		param->value = (int8_t)pgm_read_byte(&param->grid->max);
