@@ -18,7 +18,6 @@ static void powerOn(void)
 	tunerPowerOn();
 	sndPowerOn();
 	tunerSetMute(0);
-	PORT(STMU_MUTE) |= STMU_MUTE_LINE;
 	setWorkBrightness();
 	tunerSetFreq();
 
@@ -29,7 +28,6 @@ static void powerOff(void)
 {
 	rtc.etm = RTC_NOEDIT;
 
-	PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	sndSetMute(1);
 	tunerSetMute(1);
 	sndPowerOff();
