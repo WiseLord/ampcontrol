@@ -110,13 +110,13 @@ int main(void)
 				action = CMD_RC_MUTE;
 			break;
 		case CMD_BTN_5:
-			action = CMD_RC_MENU;
+			action = CMD_RC_NEXT_SNDPAR;
 			break;
 		case CMD_BTN_1_LONG:
-			action = CMD_RC_BACKLIGHT;
+			action = CMD_RC_BRIGHTNESS;
 			break;
 		case CMD_BTN_2_LONG:
-			action = CMD_RC_DISPLAY;
+			action = CMD_RC_DEF_DISPLAY;
 			break;
 		case CMD_BTN_3_LONG:
 			action = CMD_RC_FM_MODE;
@@ -187,15 +187,15 @@ int main(void)
 			dispMode = MODE_MUTE;
 			setDispTimer(DISPLAY_TIME_CHAN);
 			break;
-		case CMD_RC_MENU:
+		case CMD_RC_NEXT_SNDPAR:
 			sndNextParam(&dispMode);
 			setDispTimer(DISPLAY_TIME_AUDIO);
 			break;
-		case CMD_RC_BACKLIGHT:
+		case CMD_RC_BRIGHTNESS:
 			dispMode = MODE_BR;
 			setDispTimer(DISPLAY_TIME_BR);
 			break;
-		case CMD_RC_DISPLAY:
+		case CMD_RC_DEF_DISPLAY:
 			if (aproc.input == 0) {
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
 				dispMode = MODE_FM_RADIO;
@@ -222,7 +222,7 @@ int main(void)
 			break;
 		default:
 			if (!aproc.input && tuner.ic) {
-				if (action >= CMD_RC_CHAN_UP && action <= CMD_RC_FM_MONO) {
+				if (action >= CMD_RC_FM_INC && action <= CMD_RC_FM_9) {
 					if (dispMode != MODE_FM_RADIO)
 						fmMode = MODE_RADIO_CHAN;
 					dispMode = MODE_FM_RADIO;
@@ -245,9 +245,9 @@ int main(void)
 					tunerSwitchMono();
 					break;
 				default:
-					if (action >= CMD_RC_1 && action <= CMD_RC_0) {
+					if (action >= CMD_RC_FM_0 && action <= CMD_RC_FM_9) {
 						sndSetInput(0);
-						tunerLoadStation(action - CMD_RC_1);
+						tunerLoadStation(action - CMD_RC_FM_0);
 					}
 					break;
 				}
