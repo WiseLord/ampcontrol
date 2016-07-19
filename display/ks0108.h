@@ -3,10 +3,6 @@
 
 #include <inttypes.h>
 
-#ifdef KS0108B
-#define KS0108_CS_INV
-#endif
-
 /* Display geometry */
 #define KS0108_COLS					64
 #define KS0108_ROWS					8
@@ -32,11 +28,17 @@
 #define KS0108_MIN_BRIGHTNESS		0
 #define KS0108_MAX_BRIGHTNESS		32
 
+#define KS0108_PHASE_SET_PAGE		64
+#define KS0108_PHASE_SET_ADDR		65
+#define KS0108_PHASE_READ_PORT		66
+
 void ks0108SetBrightness(uint8_t br);
 
 void ks0108Init(void);
-void ks0108Clear();
+void ks0108Clear(void);
 
 void ks0108DrawPixel(uint8_t x, uint8_t y, uint8_t color);
+
+uint8_t ks0108GetPins(void);
 
 #endif /* KS0108_H */

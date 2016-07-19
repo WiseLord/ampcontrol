@@ -1,45 +1,26 @@
 #ifndef FBGD_H
 #define FBGD_H
 
+#include "st7920.h"
+#include "ks0108.h"
+#include "fonts.h"
+#include "icons.h"
+
 /* Display selection  */
 #if !defined(ST7920) && !defined(KS0108A) && !defined(KS0108B)
 #define KS0108A
 #endif
 
-#if defined(ST7920)
-
-#include "st7920.h"
-
-#define GD_MIN_BRIGHTNESS			ST7920_MIN_BRIGHTNESS
-#define GD_MAX_BRIGHTNESS			ST7920_MAX_BRIGHTNESS
-
-#define GD_SIZE_X					ST7920_SIZE_X
-#define GD_SIZE_Y					ST7920_SIZE_Y
-
-#else
-
-#include "ks0108.h"
-
-#define GD_MIN_BRIGHTNESS			KS0108_MIN_BRIGHTNESS
-#define GD_MAX_BRIGHTNESS			KS0108_MAX_BRIGHTNESS
-
-#define GD_SIZE_X					KS0108_COLS * KS0108_CHIPS
-#define GD_SIZE_Y					KS0108_ROWS * 8
-
-#endif
-
-#include "fonts.h"
-#include "icons.h"
-
-#define FONT_PARAM_COUNT			7
 enum {
-	FONT_HEIGHT,
+	FONT_HEIGHT = 0,
 	FONT_LTSPPOS,
 	FONT_CCNT,
 	FONT_OFTA,
 	FONT_OFTNA,
 	FONT_COLOR,
-	FONT_DIRECTION
+	FONT_DIRECTION,
+
+	FONT_PARAM_END
 };
 
 enum {
@@ -50,15 +31,25 @@ enum {
 };
 
 #if defined(ST7920)
+#define GD_MIN_BRIGHTNESS			ST7920_MIN_BRIGHTNESS
+#define GD_MAX_BRIGHTNESS			ST7920_MAX_BRIGHTNESS
+#define GD_SIZE_X					ST7920_SIZE_X
+#define GD_SIZE_Y					ST7920_SIZE_Y
 #define	gdInit() st7920Init()
 #define	gdClear() st7920Clear()
 #define gdSetBrightness(br) st7920SetBrightness(br)
 #define gdDrawPixel(x, y, color) st7920DrawPixel(x, y, color)
+#define gdGetPins() st7920GetPins()
 #else
+#define GD_MIN_BRIGHTNESS			KS0108_MIN_BRIGHTNESS
+#define GD_MAX_BRIGHTNESS			KS0108_MAX_BRIGHTNESS
+#define GD_SIZE_X					KS0108_COLS * KS0108_CHIPS
+#define GD_SIZE_Y					KS0108_ROWS * 8
 #define gdInit() ks0108Init()
 #define gdClear() ks0108Clear()
-#define gdSetBrightness(br) ks0108SetBrightness(br);
+#define gdSetBrightness(br) ks0108SetBrightness(br)
 #define gdDrawPixel(x, y, color) ks0108DrawPixel(x, y, color)
+#define gdGetPins() ks0108GetPins()
 #endif
 
 void gdDrawHorizLine(uint8_t x1, uint8_t x2, uint8_t y, uint8_t color);

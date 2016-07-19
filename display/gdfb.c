@@ -4,7 +4,7 @@
 #include <avr/eeprom.h>
 
 const uint8_t *_font;
-static uint8_t fp[FONT_PARAM_COUNT];
+static uint8_t fp[FONT_PARAM_END];
 
 static uint8_t _x, _y;
 
@@ -159,7 +159,7 @@ void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction)
 	uint8_t i;
 
 	_font = font + 5;
-	for (i = 0; i < FONT_PARAM_COUNT - 1; i++)
+	for (i = 0; i < FONT_PARAM_END - 1; i++)
 		fp[i] = pgm_read_byte(font + i);
 	fp[FONT_COLOR] = color;
 	fp[FONT_DIRECTION] = direction;

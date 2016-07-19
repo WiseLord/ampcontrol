@@ -44,11 +44,17 @@
 #define ST7920_MIN_BRIGHTNESS		0
 #define ST7920_MAX_BRIGHTNESS		32
 
+#define ST7920_PHASE_SET_PAGE		32
+#define ST7920_PHASE_SET_ADDR		33
+#define ST7920_PHASE_READ_PORT		34
+
 void st7920SetBrightness(uint8_t br);
 
 void st7920Init(void);
 void st7920Clear();
 
 void st7920DrawPixel(uint8_t x, uint8_t y, uint8_t color);
+
+uint8_t st7920GetPins(void);
 
 #endif /* ST7920_H */
