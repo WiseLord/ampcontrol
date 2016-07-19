@@ -3,11 +3,11 @@
 
 #include <inttypes.h>
 
-/* Display size */
+// Display size
 #define KS0066_SCREEN_WIDTH			16
 #define KS0066_SCREEN_HEIGHT		2
 
-/* KS0066 wiring type, if not set any, autoselect PCF8574 */
+// KS0066 wiring type, if not set any, autoselect PCF8574
 #ifndef KS0066_WIRE_8BIT
 #ifndef KS0066_WIRE_4BIT
 #ifndef KS0066_WIRE_PCF8574
@@ -16,9 +16,8 @@
 #endif
 #endif
 
-#if defined(KS0066_WIRE_PCF8574)
-#include "i2c.h"
-/* PCF8574 expander address inputs - 0 if soldered to ground, 1 if not */
+// PCF8574 expander address inputs - 0 if soldered to ground, 1 if not
+#ifdef KS0066_WIRE_PCF8574
 #define PCF8574_A2					(0 << 3)
 #define PCF8574_A1					(0 << 2)
 #define PCF8574_A0					(0 << 1)
@@ -27,11 +26,9 @@
 #define PCF8574_E_LINE				(1<<2)
 #define PCF8574_RW_LINE				(1<<1)
 #define PCF8574_RS_LINE				(1<<0)
-#else
-#include "pins.h"
 #endif
 
-/* KS0066 instruction registers */
+// KS0066 instruction registers
 #define KS0066_NO_COMMAND			0x00
 
 #define KS0066_CLEAR				0x01
@@ -56,17 +53,16 @@
 	#define KS0066_5X10				0x04
 
 #define KS0066_SET_CGRAM			0x40
-
 #define KS0066_SET_DDRAM			0x80
 
-/* Some useful defines */
+// Some useful defines
 #define KS0066_LINE_WIDTH			0x40
 #define KS0066_STA_BUSY				0x80
 
 #define KS0066_BCKL_OFF				0
 #define KS0066_BCKL_ON				1
 
-/* Functions */
+// Functions
 void ks0066WriteCommand(uint8_t cmd);
 void ks0066WriteData(uint8_t data);
 
@@ -76,4 +72,4 @@ void ks0066Init(void);
 void ks0066SetXY(uint8_t x, uint8_t y);
 void ks0066WriteString(char *string);
 
-#endif /* KS0066_H */
+#endif // KS0066_H

@@ -10,6 +10,8 @@ TARG = ampcontrol_m8_$(call lc,$(WIRE))_$(call lc,$(AUDIOPROC))_$(call lc,$(TUNE
 MCU = atmega8
 F_CPU = 8000000L
 
+DISP_SRC = display/ks0066.c
+
 AUDIO_SRC = audio/audioproc.c
 ifeq ($(AUDIOPROC), TDA7439)
   AUDIO_SRC += audio/tda7439.c
@@ -36,7 +38,7 @@ else ifeq ($(TUNER), RDA580X)
   TUNER_SRC += tuner/rda580x.c
 endif
 
-SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC)
+SRCS = $(wildcard *.c) $(DISP_SRC) $(AUDIO_SRC) $(TUNER_SRC)
 
 # Build directory
 BUILDDIR = build

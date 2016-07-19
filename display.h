@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 #include "audio/audio.h"
-#include "ks0066.h"
+#include "display/ks0066.h"
 
 // Timers for different screens (ms)
 #define DISPLAY_TIME_TEST		15000U

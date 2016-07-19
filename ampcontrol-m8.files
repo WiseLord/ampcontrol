@@ -16,6 +16,9 @@ audio/tda7448.h
 audio/tea6330.c
 audio/tea6330.h
 
+display/ks0066.c
+display/ks0066.h
+
 tuner/lm7001.c
 tuner/lm7001.h
 tuner/rda580x.c
@@ -40,8 +43,6 @@ i2c.c
 i2c.h
 input.c
 input.h
-ks0066.c
-ks0066.h
 main.c
 pins.h
 remote.c

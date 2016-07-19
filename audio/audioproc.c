@@ -32,7 +32,7 @@ static void setNothing(void)
 	return;
 }
 
-void sndInit(uint8_t extFunc)
+void sndInit(void)
 {
 	uint8_t i;
 
@@ -67,7 +67,7 @@ void sndInit(uint8_t extFunc)
 #endif
 
 #ifdef _PGA2310
-	if (aproc.ic == AUDIOPROC_PGA2310 && extFunc == USE_PGA2310)
+	if (aproc.ic == AUDIOPROC_PGA2310)
 		pga2310Init(sndPar);
 #endif
 

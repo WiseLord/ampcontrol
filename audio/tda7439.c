@@ -28,7 +28,7 @@ void tda7439SetSpeakers(void)
 	} else {
 		spRight += sndPar[MODE_SND_BALANCE].value;
 		if (spRight < volMin)
-			spRight = volMin	;
+			spRight = volMin;
 	}
 
 	I2CStart(TDA7439_I2C_ADDR);

@@ -52,7 +52,7 @@ static void hwInit(void)
 
 	sei();								// Gloabl interrupt enable
 
-	sndInit(USE_LM7001);				// Audio params, labels
+	sndInit();							// Audio params, labels
 
 	powerOff();
 

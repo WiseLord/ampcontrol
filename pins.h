@@ -28,15 +28,6 @@
 #define BCKL				C
 #define BCKL_LINE			(1<<3)
 
-/* Ext function options */
-enum {
-	USE_DS18B20 = 0,
-	USE_LM7001,
-	USE_PGA2310,
-
-	USE_EXT_END
-};
-
 /* RC5 definitions*/
 #define RC					D
 #define RC_LINE				(1<<3)
@@ -56,6 +47,14 @@ enum {
 #define LM7001_CE_LINE		ISP_MISO_LINE
 #define LM7001_CL			ISP_SCK
 #define LM7001_CL_LINE		ISP_SCK_LINE
+
+/* PGA2310 definitions */
+#define PGA2310_SDI			ISP_MOSI
+#define PGA2310_SDI_LINE	ISP_MOSI_LINE
+#define PGA2310_CS			ISP_MISO
+#define PGA2310_CS_LINE		ISP_MISO_LINE
+#define PGA2310_SCLK		ISP_SCK
+#define PGA2310_SCLK_LINE	ISP_SCK_LINE
 
 /* Standby/Mute port definitions */
 #define STMU_MUTE			B
