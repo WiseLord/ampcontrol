@@ -52,9 +52,9 @@ void inputInit()
 	PORT(ENCODER_A) |= ENCODER_A_LINE;
 	PORT(ENCODER_B) |= ENCODER_B_LINE;
 
-	/* Set timer prescaller to 128 (62.5 kHz) and reset on match*/
-	TCCR2 = ((1<<CS22) | (0<<CS21) | (1<<CS20) | (1<<WGM21));
-	OCR2 = 62;						/* 62500/62 => 1008 polls/sec */
+	/* Set timer prescaller to 64 (125 kHz) and reset on match */
+	TCCR2 = ((1<<CS22) | (0<<CS21) | (0<<CS20) | (1<<WGM21));
+	OCR2 = 125;						/* 125000/125 => 1000 polls/sec */
 	TCNT2 = 0;						/* Reset timer value */
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
