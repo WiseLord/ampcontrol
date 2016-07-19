@@ -313,7 +313,7 @@ void sndSetInput(uint8_t input)
 	case AUDIOPROC_TDA7315:
 	case AUDIOPROC_TDA7318:
 	case AUDIOPROC_PT2314:
-		tda731xSetInput();
+		tda731xSetGain();
 		break;
 #endif
 #ifdef _PT232X
@@ -387,7 +387,7 @@ void sndSetLoudness(uint8_t value)
 
 	if (aproc.ic == AUDIOPROC_TDA7313 || aproc.ic == AUDIOPROC_TDA7314 ||
 			aproc.ic == AUDIOPROC_TDA7315 || aproc.ic == AUDIOPROC_PT2314)
-		tda731xSetLoudness();
+		tda731xSetGain();
 #endif
 
 	return;

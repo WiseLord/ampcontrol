@@ -73,13 +73,6 @@ void tda731xSetGain(void)
 	return;
 }
 
-void tda731xSetInput(void)
-{
-	tda731xSetGain();
-
-	return;
-}
-
 void tda731xSetMute(void)
 {
 	I2CStart(TDA731X_I2C_ADDR);
@@ -92,13 +85,6 @@ void tda731xSetMute(void)
 		tda731xSetSpeakers();
 	}
 	I2CStop();
-
-	return;
-}
-
-void tda731xSetLoudness(void)
-{
-	tda731xSetGain();
 
 	return;
 }
