@@ -832,19 +832,6 @@ void displayInit(void)
 	return;
 }
 
-void displayClear(void)
-{
-#ifdef KS0066
-	ks0066Clear();
-#elif defined(LS020)
-	ls020Clear();
-#else
-	gdClear();
-#endif
-
-	return;
-}
-
 uint8_t **getTxtLabels(void)
 {
 	return txtLabels;

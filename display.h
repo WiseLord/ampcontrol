@@ -17,17 +17,20 @@
 #include "display/ks0066.h"
 #define MIN_BRIGHTNESS			KS0066_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			KS0066_MAX_BRIGHTNESS
-#define writeString(x)			 ks0066WriteString(x)
+#define writeString(x)			ks0066WriteString(x)
+#define displayClear()			ks0066Clear()
 #elif defined(LS020)
 #include "display/ls020.h"
 #define MIN_BRIGHTNESS			LS020_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			LS020_MAX_BRIGHTNESS
 #define writeString(x)			ls020WriteString(x)
+#define displayClear()			ls020Clear()
 #else
 #include "display/gdfb.h"
 #define MIN_BRIGHTNESS			GD_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			GD_MAX_BRIGHTNESS
 #define writeString(x)			gdWriteString(x)
+#define displayClear()			gdClear()
 #endif
 
 /* Backlight state */
@@ -78,7 +81,6 @@ enum {
 };
 
 void displayInit(void);
-void displayClear(void);
 
 uint8_t **getTxtLabels(void);
 

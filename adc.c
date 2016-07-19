@@ -122,7 +122,7 @@ void getSpData(uint8_t fallSpeed)
 		fftRad4(fr, fi);
 		cplx2dB(fr, fi);
 
-		p = &buf[mux * FFT_SIZE / 2];
+		p = &buf[(mux - MUX_LEFT) * FFT_SIZE / 2];
 
 		for (i = 0; i < FFT_SIZE / 2; i++) {
 			(*p > fallSpeed) ? (*p -= fallSpeed) : (*p = 1);
