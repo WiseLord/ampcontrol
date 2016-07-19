@@ -34,7 +34,7 @@ typedef enum {
 	CMD_RC_SP_MODE,
 	CMD_RC_LOUDNESS,
 	CMD_RC_CHAN_UP,
-	CMD_RC_CHAN_DOWN,
+	CMD_RC_FM_MODE,
 
 	CMD_RC_FM_INC,
 	CMD_RC_FM_DEC,
@@ -77,7 +77,7 @@ enum {
 };
 
 // Timers
-#define RTC_POLL_TIME	1000
+#define RTC_POLL_TIME	500
 
 // Handling long press actions */
 #define SHORT_PRESS		100
@@ -88,16 +88,14 @@ enum {
 #define RC_VOL_REPEAT	400
 #define RC_PRESS_LIMIT	1000
 
+extern uint16_t dispTimer;
+extern uint16_t rtcTimer;
+
 void inputInit();
 
 int8_t getEncoder(void);
 uint8_t getBtnCmd(void);
-uint16_t getRC5Buf(void);
 
-uint16_t getDispTimer(void);
 void setDispTimer(uint16_t value);
-
-uint16_t getRtcTimer(void);
-void setRtcTimer(uint16_t val);
 
 #endif /* INPUT_H */

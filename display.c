@@ -153,7 +153,7 @@ void showRC5Info(void)
 	return;
 }
 
-void showRadio(void)
+void showRadio(uint8_t mode)
 {
 	uint8_t num = tunerStationNum();
 	tunerReadStatus();
@@ -175,12 +175,13 @@ void showRadio(void)
 	// Temporary disabled
 
 	/* Station number */
-	ks0066SetXY(13, 0);
-	if (num) {
-		writeNum(num, 3, ' ');
-	} else {
-		ks0066WriteString(" --");
-	}
+	ks0066SetXY(14, 0);
+	if (mode == MODE_RADIO_TUNE && rtcTimer < RTC_POLL_TIME / 2)
+		ks0066WriteString("  ");
+	else if (num)
+		writeNum(num, 2, ' ');
+	else
+		ks0066WriteString("--");
 
 	/* Frequency scale */
 	showBar(0, (tuner.fMax - tuner.fMin) >> 4, (tuner.freq - tuner.fMin) >> 4);
@@ -246,7 +247,7 @@ void showSndParam(uint8_t mode)
 
 static void drawTm(uint8_t tm)
 {
-	if (tm == rtc.etm && getRtcTimer() < RTC_POLL_TIME / 2)
+	if (tm == rtc.etm && rtcTimer < RTC_POLL_TIME / 2)
 		ks0066WriteString("  ");
 	else
 		writeNum(*((int8_t*)&rtc + tm), 2, '0');

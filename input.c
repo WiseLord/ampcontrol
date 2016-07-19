@@ -11,12 +11,11 @@ static volatile int8_t encCnt = 0;
 static volatile uint8_t cmdBuf = CMD_RC_END;
 
 /* Previous state */
-static volatile uint16_t rc5SaveBuf;
 static volatile uint8_t encPrev = ENC_0;
 static volatile uint8_t btnPrev = BTN_STATE_0;
 
-static volatile uint16_t dispTimer = 0;
-static volatile uint16_t rtcTimer = 0;
+uint16_t dispTimer = 0;
+uint16_t rtcTimer = 0;
 
 //static uint8_t rcType;
 static uint8_t rcAddr;
@@ -230,16 +229,6 @@ uint8_t getBtnCmd(void)
 	return ret;
 }
 
-uint16_t getRC5Buf(void)
-{
-	return rc5SaveBuf;
-}
-
-uint16_t getDispTimer(void)
-{
-	return dispTimer;
-}
-
 void setDispTimer(uint16_t value)
 {
 	dispTimer = value;
@@ -247,14 +236,3 @@ void setDispTimer(uint16_t value)
 	return;
 }
 
-uint16_t getRtcTimer()
-{
-	return rtcTimer;
-}
-
-void setRtcTimer(uint16_t val)
-{
-	rtcTimer = val;
-
-	return;
-}

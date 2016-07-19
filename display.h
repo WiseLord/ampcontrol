@@ -17,8 +17,13 @@
 #define DISPLAY_TIME_SP			3000U
 #define DISPLAY_TIME_BR			3000U
 
+/* Backlight state */
 #define BACKLIGHT_ON			1
 #define BACKLIGHT_OFF			0
+
+/* Radio tuning mode */
+#define MODE_RADIO_TUNE			1
+#define MODE_RADIO_CHAN			0
 
 /* Data stored in user characters */
 #define LCD_LEVELS				0
@@ -49,7 +54,7 @@ enum {
 uint8_t **getTxtLabels(void);
 
 void showRC5Info(void);
-void showRadio(void);
+void showRadio(uint8_t mode);
 void showBoolParam(uint8_t value, uint8_t labelIndex);
 
 void showBrWork(void);

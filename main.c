@@ -63,6 +63,7 @@ int main(void)
 {
 	uint8_t dispMode = MODE_STANDBY;
 	uint8_t dispModePrev = dispMode;
+	uint8_t fmMode = MODE_FM_RADIO;
 
 	int8_t encCnt = 0;
 	CmdID cmd;
@@ -72,9 +73,9 @@ int main(void)
 
 	while (1) {
 		/* Poll RTC for time */
-		if (getRtcTimer() == 0) {
+		if (rtcTimer == 0) {
 			rtcReadTime();
-			setRtcTimer(RTC_POLL_TIME);
+			rtcTimer = RTC_POLL_TIME;
 		}
 
 
@@ -118,12 +119,9 @@ int main(void)
 			action = CMD_RC_DISPLAY;
 			break;
 		case CMD_BTN_3_LONG:
-			action = CMD_RC_CHAN_DOWN;
+			action = CMD_RC_FM_MODE;
 			break;
 		case CMD_BTN_4_LONG:
-			action = CMD_RC_CHAN_UP;
-			break;
-		case CMD_BTN_5_LONG:
 			action = CMD_RC_FM_STORE;
 			break;
 		case CMD_BTN_12_LONG:
@@ -225,21 +223,20 @@ int main(void)
 		default:
 			if (!aproc.input && tuner.ic) {
 				if (action >= CMD_RC_CHAN_UP && action <= CMD_RC_FM_MONO) {
+					if (dispMode != MODE_FM_RADIO)
+						fmMode = MODE_RADIO_CHAN;
 					dispMode = MODE_FM_RADIO;
 					setDispTimer(DISPLAY_TIME_FM_RADIO);
 				}
 				switch (action) {
-				case CMD_RC_CHAN_UP:
-					tunerNextStation(SEARCH_UP);
-					break;
-				case CMD_RC_CHAN_DOWN:
-					tunerNextStation(SEARCH_DOWN);
+				case CMD_RC_FM_MODE:
+					fmMode = !fmMode;
 					break;
 				case CMD_RC_FM_INC:
-					tunerChangeFreq(SEARCH_UP);
+					tunerNextStation(SEARCH_UP);
 					break;
 				case CMD_RC_FM_DEC:
-					tunerChangeFreq(SEARCH_DOWN);
+					tunerNextStation(SEARCH_DOWN);
 					break;
 				case CMD_RC_FM_STORE:
 					tunerStoreStation();
@@ -247,20 +244,11 @@ int main(void)
 				case CMD_RC_FM_MONO:
 					tunerSwitchMono();
 					break;
-				case CMD_RC_1:
-				case CMD_RC_2:
-				case CMD_RC_3:
-				case CMD_RC_4:
-				case CMD_RC_5:
-				case CMD_RC_6:
-				case CMD_RC_7:
-				case CMD_RC_8:
-				case CMD_RC_9:
-				case CMD_RC_0:
-					sndSetInput(0);
-					tunerLoadStation(action - CMD_RC_1);
-					break;
 				default:
+					if (action >= CMD_RC_1 && action <= CMD_RC_0) {
+						sndSetInput(0);
+						tunerLoadStation(action - CMD_RC_1);
+					}
 					break;
 				}
 			}
@@ -292,8 +280,14 @@ int main(void)
 				changeBrWork(encCnt);
 				setDispTimer(DISPLAY_TIME_BR);
 				break;
+			case MODE_FM_RADIO: {
+				if (fmMode == MODE_RADIO_TUNE) {
+					tunerChangeFreq(encCnt);
+					setDispTimer(DISPLAY_TIME_FM_RADIO);
+					break;
+				}
+			}
 			case MODE_SPECTRUM:
-			case MODE_FM_RADIO:
 			case MODE_TIME:
 			case MODE_MUTE:
 			case MODE_LOUDNESS:
@@ -308,7 +302,7 @@ int main(void)
 
 
 		/* Exit to default mode */
-		if (getDispTimer() == 0) {
+		if (dispTimer == 0) {
 			switch (dispMode) {
 			case MODE_STANDBY:
 			case MODE_TEST:
@@ -343,7 +337,7 @@ int main(void)
 			showSpectrum();
 			break;
 		case MODE_FM_RADIO:
-			showRadio();
+			showRadio(fmMode);
 			break;
 		case MODE_MUTE:
 			showBoolParam(aproc.mute, LABEL_MUTE);
