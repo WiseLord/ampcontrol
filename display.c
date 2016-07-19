@@ -103,7 +103,7 @@ static void writeNum(int8_t value, uint8_t width, uint8_t lead)
 static void writeHexDigit(uint8_t hex)
 {
 	if (hex > 9)
-		hex += ('A' - '9' + 1);
+		hex += ('A' - '9' - 1);
 
 	ks0066WriteData(hex + '0');
 
@@ -156,6 +156,7 @@ void showRC5Info(void)
 void showRadio(void)
 {
 	uint8_t num = tunerStationNum();
+	tunerReadStatus();
 
 	/* Frequency value */
 	ks0066WriteString("FM ");
@@ -277,10 +278,11 @@ void showTime(void)
 	return;
 }
 
-void showSpectrum(uint8_t *buf)
+void showSpectrum(void)
 {
 	uint8_t i;
 	uint8_t val;
+	uint8_t *buf = getSpData();
 
 	lcdGenLevels();
 
@@ -313,7 +315,6 @@ void setWorkBrightness(void)
 void setStbyBrightness(void)
 {
 	setDispBr(brStby);
-	eeprom_update_byte((uint8_t*)EEPROM_BR_WORK, brWork);
 
 	return;
 }
@@ -347,4 +348,9 @@ void displayInit(void)
 	brWork = eeprom_read_byte((uint8_t*)EEPROM_BR_WORK);
 
 	return;
+}
+
+void displayPowerOff()
+{
+	eeprom_update_byte((uint8_t*)EEPROM_BR_WORK, brWork);
 }

@@ -7,8 +7,8 @@
 #include "remote.h"
 #include "eeprom.h"
 
-static volatile int8_t encCnt;
-static volatile uint8_t cmdBuf;
+static volatile int8_t encCnt = 0;
+static volatile uint8_t cmdBuf = CMD_RC_END;
 
 /* Previous state */
 static volatile uint16_t rc5SaveBuf;
@@ -59,9 +59,6 @@ void inputInit()
 	TIMSK |= (1<<OCIE2);			/* Enable timer compare match interrupt */
 
 	rcCodesInit();
-
-	encCnt = 0;
-	cmdBuf = CMD_END;
 }
 
 static CmdID rcCmdIndex(uint8_t rcCmd)
@@ -184,7 +181,7 @@ ISR (TIMER2_COMP_vect)
 	/* Place RC5 event to command buffer if enough RC5 timer ticks */
 	IRData ir = takeIrData();
 
-	CmdID rcCmdBuf = CMD_END;
+	CmdID rcCmdBuf = CMD_RC_END;
 
 	if (ir.ready && (/*ir.type == rcType && */ir.address == rcAddr)) {
 		if (!ir.repeat || (rcTimer > RC_LONG_PRESS)) {
@@ -199,7 +196,7 @@ ISR (TIMER2_COMP_vect)
 		}
 	}
 
-	if (cmdBuf == CMD_END)
+	if (cmdBuf == CMD_RC_END)
 		cmdBuf = rcCmdBuf;
 
 
@@ -229,7 +226,7 @@ int8_t getEncoder(void)
 uint8_t getBtnCmd(void)
 {
 	uint8_t ret = cmdBuf;
-	cmdBuf = CMD_END;
+	cmdBuf = CMD_RC_END;
 	return ret;
 }
 

@@ -58,11 +58,12 @@ void changeBrWork(int8_t diff);
 void showSndParam(uint8_t mode);
 
 void showTime(void);
-void showSpectrum(uint8_t *buf);
+void showSpectrum(void);
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);
 
 void displayInit(void);
+void displayPowerOff(void);
 
 #endif /* DISPLAY_H */
