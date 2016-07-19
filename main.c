@@ -66,15 +66,12 @@ int main(void)
 
 	int8_t encCnt = 0;
 	uint8_t cmd = CMD_END;
-	uint16_t rc5Buf = RC5_BUF_EMPTY;
-	uint16_t rc5BufPrev = RC5_BUF_EMPTY;
 
 	hwInit();
 
 	while (1) {
 		encCnt = getEncoder();
 		cmd = getBtnCmd();
-		rc5Buf = getRC5Buf();
 
 		/* Poll RTC for time */
 		if (getRtcTimer() == 0) {
@@ -292,9 +289,12 @@ int main(void)
 				setDispTimer(DISPLAY_TIME_BR);
 				break;
 			case MODE_SPECTRUM:
-			case MODE_TIME:
 			case MODE_FM_RADIO:
+			case MODE_TIME:
+			case MODE_MUTE:
+			case MODE_LOUDNESS:
 				dispMode = MODE_SND_VOLUME;
+				aproc.mute = 0;
 			default:
 				sndChangeParam(dispMode, encCnt);
 				setDispTimer(DISPLAY_TIME_GAIN);
@@ -322,6 +322,7 @@ int main(void)
 			ks0066Clear();
 
 		/* Show things */
+		ks0066SetXY(0, 0);
 		switch (dispMode) {
 		case MODE_STANDBY:
 			showTime();
@@ -329,10 +330,8 @@ int main(void)
 				setStbyBrightness();
 			break;
 		case MODE_TEST:
-			showRC5Info(rc5Buf);
+			showRC5Info();
 			setWorkBrightness();
-			if (rc5Buf != rc5BufPrev)
-				setDispTimer(DISPLAY_TIME_TEST);
 			break;
 		case MODE_SPECTRUM:
 			showSpectrum(getSpData());
@@ -362,8 +361,6 @@ int main(void)
 
 		/* Save current mode */
 		dispModePrev = dispMode;
-		/* Save current RC5 raw buf */
-		rc5BufPrev = rc5Buf;
 	}
 
 	return 0;

@@ -8,6 +8,7 @@
 #include "tuner/tuner.h"
 #include "adc.h"
 #include "rtc.h"
+#include "remote.h"
 
 static int8_t brStby;							/* Brightness in standby mode */
 static int8_t brWork;							/* Brightness in working mode */
@@ -99,6 +100,16 @@ static void writeNum(int8_t value, uint8_t width, uint8_t lead)
 	return;
 }
 
+static void writeHexDigit(uint8_t hex)
+{
+	if (hex > 9)
+		hex += ('A' - '9' + 1);
+
+	ks0066WriteData(hex + '0');
+
+	return;
+}
+
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
 	uint8_t i;
@@ -127,14 +138,17 @@ uint8_t **getTxtLabels(void)
 	return txtLabels;
 }
 
-void showRC5Info(uint16_t rc5Buf)
+void showRC5Info(void)
 {
-	ks0066SetXY(0, 0);
-	ks0066WriteString("RC=");
-	writeNum((rc5Buf >> 6) & 0x1F, 2, ' ');
+	IRData irData = takeIrData();
+
+	ks0066WriteString("RC CM");
 	ks0066SetXY(0, 1);
-	ks0066WriteString("CM=");
-	writeNum(rc5Buf & 0x3F, 2, ' ');
+	writeHexDigit(irData.address >> 4);
+	writeHexDigit(irData.address & 0x0F);
+	ks0066WriteData(' ');
+	writeHexDigit(irData.command >> 4);
+	writeHexDigit(irData.command & 0x0F);
 
 	return;
 }
@@ -144,7 +158,6 @@ void showRadio(void)
 	uint8_t num = tunerStationNum();
 
 	/* Frequency value */
-	ks0066SetXY(0, 0);
 	ks0066WriteString("FM ");
 	writeNum(tuner.freq / 100, 3, ' ');
 	ks0066WriteData('.');
@@ -176,7 +189,6 @@ void showRadio(void)
 
 void showBoolParam(uint8_t value, uint8_t labelIndex)
 {
-	ks0066SetXY(0, 0);
 	writeStringEeprom(txtLabels[labelIndex]);
 	ks0066SetXY(1, 1);
 	if (value)
@@ -190,7 +202,6 @@ void showBoolParam(uint8_t value, uint8_t labelIndex)
 /* Show brightness control */
 void showBrWork(void)
 {
-	ks0066SetXY(0, 0);
 	writeStringEeprom(txtLabels[LABEL_BR_WORK]);
 
 	ks0066SetXY(13, 0);
@@ -218,7 +229,6 @@ void showSndParam(uint8_t mode)
 {
 	sndParam *param = &sndPar[mode];
 
-	ks0066SetXY(0, 0);
 	writeStringEeprom(param->label);
 
 	//	(((int16_t)(param->value) * param->step + 4) >> 3);
@@ -245,14 +255,11 @@ static void drawTm(uint8_t tm)
 
 void showTime(void)
 {
-	ks0066SetXY(0, 0);
-
 	drawTm(RTC_HOUR);
 	ks0066WriteData(':');
 	drawTm(RTC_MIN);
 	ks0066WriteData(':');
 	drawTm(RTC_SEC);
-
 
 	ks0066SetXY(11, 0);
 	drawTm(RTC_DATE);

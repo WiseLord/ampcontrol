@@ -18,11 +18,13 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 static volatile uint16_t dispTimer = 0;
 static volatile uint16_t rtcTimer = 0;
 
+//static uint8_t rcType;
 static uint8_t rcAddr;
 static uint8_t rcCode[CMD_RC_END];	/* Array with rc commands */
 
 void rcCodesInit(void)
 {
+//	rcType = eeprom_read_byte((uint8_t*)EEPROM_RC_TYPE);
 	rcAddr = eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR);
 	eeprom_read_block(rcCode, (uint8_t*)EEPROM_RC_CMD, CMD_RC_END);
 
@@ -62,21 +64,21 @@ void inputInit()
 	cmdBuf = CMD_END;
 }
 
-static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
+static CmdID rcCmdIndex(uint8_t rcCmd)
 {
-	uint8_t i;
+	CmdID i;
 
 	for (i = 0; i < CMD_RC_END; i++)
-		if (rc5Cmd == rcCode[i])
+		if (rcCmd == rcCode[i])
 			return i;
 
-	return CMD_END;
+	return CMD_RC_END;
 }
 
 ISR (TIMER2_COMP_vect)
 {
 	static int16_t btnCnt = 0;		/* Buttons press duration value */
-	static uint16_t rc5Timer;
+	static uint16_t rcTimer;
 
 	/* Current state */
 	uint8_t encNow = ENC_0;
@@ -180,44 +182,30 @@ ISR (TIMER2_COMP_vect)
 	}
 
 	/* Place RC5 event to command buffer if enough RC5 timer ticks */
-	uint16_t rc5Buf = getRCRawBuf();
-	if (rc5Buf != RC5_BUF_EMPTY)
-		rc5SaveBuf = rc5Buf;
+	IRData ir = takeIrData();
 
+	CmdID rcCmdBuf = CMD_END;
 
-	static uint8_t togBitNow = 0;
-	static uint8_t togBitPrev = 0;
-
-	uint8_t rc5CmdBuf = CMD_END;
-	uint8_t rc5Cmd;
-
-	if ((rc5Buf != RC5_BUF_EMPTY) && ((rc5Buf & RC5_ADDR_MASK) >> 6 == rcAddr)) {
-		if (rc5Buf & RC5_TOGB_MASK)
-			togBitNow = 1;
-		else
-			togBitNow = 0;
-
-		rc5Cmd = rc5Buf & RC5_COMM_MASK;
-		if ((togBitNow != togBitPrev) || (rc5Timer > 800)) {
-			rc5Timer = 0;
-			rc5CmdBuf = rc5CmdIndex(rc5Cmd);
+	if (ir.ready && (/*ir.type == rcType && */ir.address == rcAddr)) {
+		if (!ir.repeat || (rcTimer > RC_LONG_PRESS)) {
+			rcTimer = 0;
+			rcCmdBuf = rcCmdIndex(ir.command);
 		}
-		if (rc5Cmd == rcCode[CMD_RC_VOL_UP] || rc5Cmd == rcCode[CMD_RC_VOL_DOWN]) {
-			if (rc5Timer > 400) {
-				rc5Timer = 360;
-				rc5CmdBuf = rc5CmdIndex(rc5Cmd);
+		if (ir.command == rcCode[CMD_RC_VOL_UP] || ir.command == rcCode[CMD_RC_VOL_DOWN]) {
+			if (rcTimer > RC_VOL_REPEAT) {
+				rcTimer = RC_VOL_DELAY;
+				rcCmdBuf = rcCmdIndex(ir.command);
 			}
 		}
-		togBitPrev = togBitNow;
 	}
 
-	if (cmdBuf == CMD_END) {
-		cmdBuf = rc5CmdBuf;
-	}
+	if (cmdBuf == CMD_END)
+		cmdBuf = rcCmdBuf;
+
 
 	/* Time from last IR command */
-	if (rc5Timer < 1000)
-		rc5Timer++;
+	if (rcTimer < RC_PRESS_LIMIT)
+		rcTimer++;
 
 	// Current display mode timer
 	if (dispTimer)

@@ -16,8 +16,24 @@
 
 #define RC5_BUF_EMPTY	0
 
+enum {
+	IR_TYPE_RC5,
+
+	IR_TYPE_NONE = 0x0F
+};
+
+typedef struct {
+	uint8_t ready : 1;
+	uint8_t repeat : 1;
+	uint8_t type : 6;
+	uint8_t address;
+	uint8_t command;
+} IRData;
+
 void rcInit(void);
 
-uint16_t getRCRawBuf(void);
+IRData takeIrData(void);
+IRData getIrData(void);
+void setIrData(uint8_t type, uint8_t addr, uint8_t cmd);
 
 #endif /* RC5_H */

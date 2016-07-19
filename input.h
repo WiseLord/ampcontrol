@@ -18,7 +18,7 @@
 #define BTN_12			0b11000
 #define BTN_13			0b10100
 
-enum {
+typedef enum {
 	CMD_RC_STBY,
 	CMD_RC_MUTE,
 	CMD_RC_MENU,
@@ -67,7 +67,7 @@ enum {
 	CMD_BTN_12_LONG,
 
 	CMD_END = 0xEF
-};
+} CmdID;
 
 // Timers
 #define RTC_POLL_TIME	1000
@@ -75,6 +75,11 @@ enum {
 // Handling long press actions */
 #define SHORT_PRESS		100
 #define LONG_PRESS		600
+
+#define RC_LONG_PRESS	800
+#define RC_VOL_DELAY	360
+#define RC_VOL_REPEAT	400
+#define RC_PRESS_LIMIT	1000
 
 void inputInit();
 

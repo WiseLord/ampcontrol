@@ -48,7 +48,7 @@ enum {
 
 uint8_t **getTxtLabels(void);
 
-void showRC5Info(uint16_t rc5Buf);
+void showRC5Info(void);
 void showRadio(void);
 void showBoolParam(uint8_t value, uint8_t labelIndex);
 
