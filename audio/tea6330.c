@@ -16,7 +16,7 @@ void tea6330SetVolume()
 	} else {
 		spRight += sndPar[MODE_SND_BALANCE].value;
 		if (spRight < volMin)
-			spRight = volMin	;
+			spRight = volMin;
 	}
 
 	I2CStart(TEA6330_I2C_ADDR);

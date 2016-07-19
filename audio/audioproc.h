@@ -23,7 +23,7 @@
 #include "pga2310.h"
 #endif
 
-void sndInit(uint8_t extFunc);
+void sndInit(void);
 
 void sndSetInput(uint8_t input);
 

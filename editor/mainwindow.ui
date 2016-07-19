@@ -2490,12 +2490,7 @@
              </item>
              <item>
               <property name="text">
-               <string>LM7001</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>PGA2310</string>
+               <string>Software SPI</string>
               </property>
              </item>
             </widget>

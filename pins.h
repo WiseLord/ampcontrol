@@ -116,8 +116,7 @@
 /* Ext function options */
 enum {
 	USE_DS18B20 = 0,
-	USE_LM7001,
-	USE_PGA2310,
+	USE_SW_SPI,
 
 	USE_EXT_END
 };
