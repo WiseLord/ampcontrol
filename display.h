@@ -17,14 +17,17 @@
 #include "display/ks0066.h"
 #define MIN_BRIGHTNESS			KS0066_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			KS0066_MAX_BRIGHTNESS
+#define writeString(x)			 ks0066WriteString(x)
 #elif defined(LS020)
 #include "display/ls020.h"
 #define MIN_BRIGHTNESS			LS020_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			LS020_MAX_BRIGHTNESS
+#define writeString(x)			ls020WriteString(x)
 #else
 #include "display/gdfb.h"
 #define MIN_BRIGHTNESS			GD_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			GD_MAX_BRIGHTNESS
+#define writeString(x)			gdWriteString(x)
 #endif
 
 /* Backlight state */

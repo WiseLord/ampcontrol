@@ -55,8 +55,9 @@ enum {
 	MODE_TEST,
 
 	MODE_BR,
-
-	MODE_TEMP
+	MODE_TEMP,
+	
+	MODE_END
 };
 
 uint8_t getAction(void);

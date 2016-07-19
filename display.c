@@ -148,6 +148,9 @@ const char STR_RDS[]			PROGMEM = "RDS";
 
 const char STR_YEAR20[]			PROGMEM = "20";
 
+const char STR_PREFIX_BIN[]		PROGMEM = "0b\x7F";
+const char STR_PREFIX_HEX[]		PROGMEM = "0x\x7F";
+
 #ifdef KS0066
 static uint8_t userSybmols = LCD_END;		/* Generated user symbols for ks0066 */
 static uint8_t userAddSym = SYM_END;		/* Additional user symbol */
@@ -520,18 +523,6 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	return;
 }
 
-static void writeString(char *string)
-{
-#ifdef KS0066
-	ks0066WriteString (string);
-#elif defined(LS020)
-	ls020WriteString(string);
-#else
-	gdWriteString(string);
-#endif
-	return;
-}
-
 static void writeStringEeprom(const uint8_t *string)
 {
 	uint8_t i;
@@ -544,7 +535,8 @@ static void writeStringEeprom(const uint8_t *string)
 	return;
 }
 
-static void writeStringPgm(const char *string) {
+static void writeStringPgm(const char *string)
+{
 	strcpy_P(strbuf, string);
 	writeString(strbuf);
 
@@ -902,13 +894,13 @@ void switchTestMode(uint8_t index)
 void showRcInfo(void)
 {
 	IRData irBuf = getIrData();
-	uint8_t btnBuf = getBtnBuf();
+	uint16_t btnBuf = getBtnBuf();
 	uint8_t encBuf = getEncBuf();
 
 #ifdef KS0066
 	ks0066SetXY(0, 0);
-	writeString("B=");
-	writeNum(btnBuf + (encBuf << 6), 2, '0', 16);
+	writeString("I=");
+	writeNum(btnBuf + encBuf, 2, '0', 16);
 	writeString(" ");
 	writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
 
@@ -944,7 +936,7 @@ void showRcInfo(void)
 	writeStringPgm(STR_BUTTONS);
 	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
 	ls020SetXY(60, 18);
-	writeNum(btnBuf, 5, '0', 2);
+	writeNum(btnBuf >> 2, 5, '0', 2);
 	writeStringPgm(STR_SPDIVSP);
 	writeNum(encBuf, 2, '0', 2);
 
@@ -1004,8 +996,10 @@ void showRcInfo(void)
 	gdSetXY(0, 10);
 	writeStringPgm(STR_BUTTONS);
 	gdSetXY(48, 10);
-	writeNum(btnBuf >> 2, 5, '0', 2);
+	writeStringPgm(STR_PREFIX_HEX);
+	writeNum(btnBuf, 4, '0', 16);
 	writeStringPgm(STR_SPDIVSP);
+	writeStringPgm(STR_PREFIX_BIN);
 	writeNum(encBuf, 2, '0', 2);
 
 	gdSetXY(10, 20);
@@ -1035,8 +1029,10 @@ void showRcInfo(void)
 	gdSetXY(0, 39);
 	writeStringPgm(STR_ADDRESS);
 	gdSetXY(48, 39);
+	writeStringPgm(STR_PREFIX_HEX);
 	writeNum(irBuf.address, 2, '0', 16);
 	writeStringPgm(STR_SPARRSP);
+	writeStringPgm(STR_PREFIX_HEX);
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_ADDR), 2, '0', 16);
 
 	gdSetXY(0, 48);
@@ -1047,8 +1043,10 @@ void showRcInfo(void)
 	gdSetXY(0, 57);
 	writeStringPgm(STR_COMMAND);
 	gdSetXY(48, 57);
+	writeStringPgm(STR_PREFIX_HEX);
 	writeNum(irBuf.command, 2, '0', 16);
 	writeStringPgm(STR_SPARRSP);
+	writeStringPgm(STR_PREFIX_HEX);
 	writeNum(eeprom_read_byte((uint8_t*)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
 #endif
 	return;
@@ -1361,13 +1359,13 @@ void showMute(void)
 	lcdGenBar(SYM_MUTE_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (sndGetMute ())
+	if (aproc.mute)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (sndGetMute())
+	if (aproc.mute)
 		ls020WriteIcon32(ICON32_MUTE_ON);
 	else
 		ls020WriteIcon32(ICON32_MUTE_OFF);
@@ -1390,13 +1388,13 @@ void showLoudness(void)
 	lcdGenBar(SYM_LOUDNESS_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (sndGetLoudness ())
+	if (aproc.loudness)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (sndGetLoudness())
+	if (aproc.loudness)
 		ls020WriteIcon32(ICON32_LOUDNESS_ON);
 	else
 		ls020WriteIcon32(ICON32_LOUDNESS_OFF);
@@ -1419,13 +1417,13 @@ void showSurround()
 	lcdGenBar(SYM_SURROUND_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (sndGetSurround())
+	if (aproc.surround)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (sndGetSurround())
+	if (aproc.surround)
 		ls020WriteIcon32(ICON32_SURROUND_ON);
 	else
 		ls020WriteIcon32(ICON32_SURROUND_OFF);
@@ -1447,13 +1445,13 @@ void showEffect3d()
 	lcdGenBar(SYM_EFFECT_3D_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (sndGetEffect3d())
+	if (aproc.effect3d)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (sndGetEffect3d())
+	if (aproc.effect3d)
 		ls020WriteIcon32(ICON32_EFFECT_3D_ON);
 	else
 		ls020WriteIcon32(ICON32_EFFECT_3D_OFF);
@@ -1475,13 +1473,13 @@ void showToneDefeat()
 	lcdGenBar(SYM_TONE_DEFEAT_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (sndGetToneDefeat())
+	if (aproc.toneDefeat)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (sndGetToneDefeat())
+	if (aproc.toneDefeat)
 		ls020WriteIcon32(ICON32_TONE_DEFEAT_ON);
 	else
 		ls020WriteIcon32(ICON32_TONE_DEFEAT_OFF);
@@ -1637,13 +1635,13 @@ void showAlarm(void)
 
 	/* Check that input number less than CHAN_CNT */
 	i = getAlarm(RTC_A0_INPUT);
-	if (i >= sndInputCnt())
+	if (i >= aproc.inCnt)
 		i = 0;
 
 	/* Draw selected input */
 	ks0066SetXY(6, 0);
 	if (getEam() != RTC_A0_INPUT || (getSecTimer() % 512) < 200) {
-		writeStringEeprom(sndParAddr (MODE_SND_GAIN0 + i)->label);
+		writeStringEeprom(sndPar[MODE_SND_GAIN0 + i].label);
 	}
 	/* Clear string tail */
 	ks0066WriteTail (' ', 15);
@@ -1691,9 +1689,9 @@ void showAlarm(void)
 	ls020SetXY(100 + 48, 4);
 	/* Check that input number less than CHAN_CNT */
 	i = getAlarm(RTC_A0_INPUT);
-	if (i >= sndInputCnt())
+	if (i >= aproc.inCnt)
 		i = 0;
-	ls020WriteIcon24(sndParAddr(MODE_SND_GAIN0 + i)->icon);
+	ls020WriteIcon24(sndPar[MODE_SND_GAIN0 + i].icon);
 
 	/* Draw weekdays selection rectangle */
 	if (getEam() == RTC_A0_WDAY) {
