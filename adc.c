@@ -6,15 +6,22 @@
 #include "fft.h"
 #include "pins.h"
 
-static int16_t fr[FFT_SIZE];						/* Real values for left channel */
-static int16_t fi[FFT_SIZE];						/* Imaginary values */
-static uint8_t buf[FFT_SIZE / 4];					/* Buffer with previous fft results */
+static int16_t fr[FFT_SIZE];							/* Real values for left channel */
+static int16_t fi[FFT_SIZE];							/* Imaginary values */
+static uint8_t buf[FFT_SIZE / 4];						/* Buffer with previous fft results */
 
 static const uint8_t hannTable[] PROGMEM = {
 	  0,   1,   3,   6,  10,  16,  22,  30,
 	 38,  48,  58,  69,  81,  93, 105, 118,
 	131, 143, 156, 168, 180, 191, 202, 212,
 	221, 229, 236, 242, 247, 251, 254, 255,
+};
+
+static const int16_t dbTable[N_DB] PROGMEM = {
+	   1,    2,    3,    6,
+	  10,   18,   33,   59,
+	 105,  187,  335,  599,
+	1071, 1915, 3425, 6125
 };
 
 static uint8_t _br;
@@ -43,62 +50,63 @@ ISR (TIMER0_OVF_vect)
 
 	static uint8_t br;
 
-	if (++br >= DISP_MAX_BR)						/* Loop brightness */
+	if (++br >= DISP_MAX_BR)							/* Loop brightness */
 		br = DISP_MIN_BR;
 
 	if (br >= _br)
-		PORT(BCKL) &= ~BCKL_LINE;					/* Turn backlight off */
+		PORT(BCKL) &= ~BCKL_LINE;						/* Turn backlight off */
 	else
-		PORT(BCKL) |= BCKL_LINE;					/* Turn backlight on */
+		PORT(BCKL) |= BCKL_LINE;						/* Turn backlight on */
 
 	return;
 };
 
 static uint8_t revBits(uint8_t x)
 {
-	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);		/* 00abcdef => 00badcfe */
-	x = (x & 0x0C) | swap(x & 0x33);				/* 00badcfe => 00fedcba */
+	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);			/* 00abcdef => 00badcfe */
+	x = (x & 0x0C) | swap(x & 0x33);					/* 00badcfe => 00fedcba */
 
 	return x;
 }
 
 static void getValues()
 {
-	uint8_t i = 0, j;
+	uint8_t i, j;
 	uint8_t hv;
 
-	while (!(ADCSRA & (1<<ADSC)));					/* Wait for start measure */
+	for (i = 0; i < FFT_SIZE; i++) {
 
-	do {
+		while (!(ADCSRA & (1<<ADSC)));					/* Wait for start measure */
+
 		j = revBits(i);
 		if (i < FFT_SIZE / 2)
 			hv = pgm_read_byte(&hannTable[i]);
 		else
 			hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
 
-		while (ADCSRA & (1<<ADSC));					/* Wait for finish measure */
-		fr[j] = ADCH - DC_CORR;						/* Read left channel value */
-		fr[j] = ((int32_t)hv * fr[j]) >> 6;			/* Apply Hann window */
-		while (!(ADCSRA & (1<<ADSC)));				/* Wait for start measure */
+		while (ADCSRA & (1<<ADSC));						/* Wait for finish measure */
 
-		fi[i++] = 0;
-	} while (i < FFT_SIZE);
+		fr[j] = ADCH - DC_CORR;							/* Read left channel value */
+		fr[j] = ((int32_t)hv * fr[j]) >> 6;				/* Apply Hann window */
+
+		fi[i] = 0;
+	}
 
 	return;
 }
 
-/* NEW value is displayed if bigger then OLD. Otherwise OLD-1 is displayed */
-static void slowFall()
+void cplx2dB(int16_t *fr, int16_t *fi)
 {
-	uint8_t i;
-	int16_t fl;
+	uint8_t i, j;
+	int16_t calc;
 
-	for (i = 0; i < FFT_SIZE / 4; i++) {
-		fl = fr[2 * i] + fr[2 * i + 1];
-		if (fl < buf[i])
-			buf[i]--;
-		else
-			buf[i] = fl;
+	for (i = 0; i < FFT_SIZE / 2; i++) {
+		calc = ((int32_t)fr[i] * fr[i] + (int32_t)fi[i] * fi[i]) >> 13;
+
+		for (j = 0; j < N_DB - 1; j++)
+			if (calc <= pgm_read_word(&dbTable[j]))
+				break;
+		fr[i] = j;
 	}
 
 	return;
@@ -106,12 +114,18 @@ static void slowFall()
 
 uint8_t *getSpData()
 {
-	getValues();
+	uint8_t i;
 
+	getValues();
 	fftRad4(fr, fi);
 	cplx2dB(fr, fi);
 
-	slowFall();
+	for (i = 0; i < FFT_SIZE / 4; i++) {
+		if (fr[i] < buf[i])
+			buf[i]--;
+		else
+			buf[i] = fr[i];
+	}
 
 	return buf;
 }
