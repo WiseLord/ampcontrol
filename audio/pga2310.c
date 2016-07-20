@@ -1,4 +1,5 @@
 #include "pga2310.h"
+#include "audio.h"
 
 #include <avr/pgmspace.h>
 #include "../pins.h"
@@ -37,7 +38,7 @@ void pga2310SendGainLevels(uint8_t right, uint8_t left)
 	return;
 }
 
-void pga2310Init(sndParam *sp)
+void pga2310Init(void)
 {
 	DDR(PGA2310_SDI) |= PGA2310_SDI_LINE;
 	DDR(PGA2310_SCLK) |= PGA2310_SCLK_LINE;

@@ -2,7 +2,6 @@
 #define TDA731X_H
 
 #include <inttypes.h>
-#include "audio.h"
 
 /* I2C address */
 #define TDA731X_I2C_ADDR			0b10001000
