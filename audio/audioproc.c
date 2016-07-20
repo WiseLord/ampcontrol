@@ -224,7 +224,7 @@ void sndInit(void)
 		case AUDIOPROC_TDA7314:
 		case AUDIOPROC_TDA7318:
 			sndPar[MODE_SND_FRONTREAR].grid = &grid_n18d75_18d75_1d25;
-			sndPar[MODE_SND_TREBLE].set = tda731xSetTreble;
+			sndPar[MODE_SND_FRONTREAR].set = tda731xSetSpeakers;
 			break;
 		default:
 			break;
