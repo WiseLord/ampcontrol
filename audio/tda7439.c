@@ -1,4 +1,5 @@
 #include "tda7439.h"
+#include "audio.h"
 
 #include <avr/pgmspace.h>
 #include "../i2c.h"

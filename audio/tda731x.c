@@ -1,4 +1,5 @@
 #include "tda731x.h"
+#include "audio.h"
 
 #include "../i2c.h"
 

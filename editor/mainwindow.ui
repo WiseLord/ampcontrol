@@ -466,6 +466,11 @@
                <string>PGA2310 (m32 only)</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>RDA580x volume</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>

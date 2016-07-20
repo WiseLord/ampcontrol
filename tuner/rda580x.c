@@ -148,6 +148,20 @@ void rda580xSetVolume(int8_t value)
 	return;
 }
 
+void rda580xSetBass(uint8_t value)
+{
+	if (value)
+		wrBuf[0] |= RDA5807_BASS;
+	else
+		wrBuf[0] &= ~RDA5807_BASS;
+	wrBuf[3] &= ~RDA5807_TUNE;
+
+	rda580xWriteI2C(8);
+
+	return;
+}
+
+
 void rda580xPowerOn(void)
 {
 	wrBuf[1] |= RDA5807_ENABLE;

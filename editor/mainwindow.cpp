@@ -254,6 +254,10 @@ void MainWindow::setAudioproc(int proc)
         wgtToneDefeat->show();
         cbxToneDefeat->setCurrentIndex(eep[EEPROM_TONE_DEFEAT]);
         break;
+    case AUDIOPROC_RDA580X:
+        wgtLoudness->show();
+        cbxLoudness->setCurrentIndex(eep[EEPROM_LOUDNESS]);
+        break;
     }
 
     /* Handle maximum inputs */
@@ -403,6 +407,10 @@ void MainWindow::setAudioproc(int proc)
         setAudioParam(dsbVolume, -96, 31, 1, MODE_SND_VOLUME);
         wgtBalance->show();
         setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
+        break;
+    case AUDIOPROC_RDA580X:
+        wgtVolume->show();
+        setAudioParam(dsbVolume, 0, 15, 1, MODE_SND_VOLUME);
         break;
     }
 

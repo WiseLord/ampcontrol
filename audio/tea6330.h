@@ -2,7 +2,6 @@
 #define TEA6330_H
 
 #include <inttypes.h>
-#include "audio.h"
 
 // I2C address
 #define TEA6330_I2C_ADDR			0b10000000
