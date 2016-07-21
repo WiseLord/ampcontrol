@@ -98,6 +98,10 @@ void tunerSetFreq()
 		break;
 	}
 
+#ifdef _RDS
+	rdsDisable(); // Clear RDS buffer
+#endif
+
 	return;
 }
 
