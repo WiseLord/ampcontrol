@@ -120,13 +120,21 @@
  * or 4-11 => E when ABCD_E = 1
  */
 
+#define RDA5807_BUF_READY(buf)	(buf[3] & RDA5807_FM_READY)
+#define RDA5807_BUF_STEREO(buf)	(buf[0] & RDA5807_ST)
+
 #define RDA5807_CHAN_SPACING		5
 
 #define RDA5807_VOL_MIN				0
 #define RDA5807_VOL_MAX				16
 
-#define RDA5807_BUF_READY(buf)	(buf[3] & RDA5807_FM_READY)
-#define RDA5807_BUF_STEREO(buf)	(buf[0] & RDA5807_ST)
+#define RDA5807_WR_BYTES			14
+#define RDA5802_WR_BYTES			10
+
+#define RDA5802_MIN_FREQ			6500
+#define RDA5807_MIN_FREQ			5000
+
+#define RDA5807_BAND_CHANGE_FREQ	8700
 
 typedef enum {
 	RDA580X_RDA5807,

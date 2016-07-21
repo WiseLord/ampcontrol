@@ -9,7 +9,7 @@
 
 static uint8_t wrBuf[14];
 static uint8_t rdBuf[12];
-static uint8_t _volume = RDA5807_VOL_MAX;
+
 static rda580xIC _ic;
 
 static const uint8_t initData[] PROGMEM = {
@@ -23,7 +23,7 @@ static const uint8_t initData[] PROGMEM = {
 	/* 7*/ RDA5807_LNA_PORT_SEL | RDA5807_VOLUME,
 	/* 8*/ 0,
 	/* 9*/ 0,
-	/*10*/ 0x80 & RDA5807_TH_SOFRBLEND,
+	/*10*/ (0x80 & RDA5807_TH_SOFRBLEND),
 	/*11*/ 0,
 	/*12*/ 0,
 	/*13*/ 0,
@@ -33,8 +33,8 @@ static void rda580xWriteI2C(uint8_t bytes)
 {
 	uint8_t i;
 
-	if (_ic != RDA580X_RDA5807_DF && bytes > 8)
-		bytes = 8;
+	if (_ic == RDA580X_RDA5802)
+		bytes = RDA5802_WR_BYTES;
 
 	I2CStart(RDA5807M_I2C_ADDR);
 	for (i = 0; i < bytes; i++)
@@ -47,6 +47,7 @@ static void rda580xWriteI2C(uint8_t bytes)
 void rda580xInit(rda580xIC ic)
 {
 	_ic = ic;
+	// TODO: RDS enable/disable by software
 
 	uint8_t i;
 
@@ -59,35 +60,38 @@ void rda580xInit(rda580xIC ic)
 	if (_ic == RDA580X_RDA5807_DF)
 		wrBuf[11] |= RDA5807_FREQ_MODE;
 
-	rda580xWriteI2C(14);
-
 	return;
 }
 
 void rda580xSetFreq(uint16_t freq, uint8_t mono)
 {
 	uint16_t chan;
+	uint16_t fMin = RDA5807_MIN_FREQ;
+	uint8_t band = RDA5807_BAND_EASTEUROPE;
 
 	if (mono)
 		wrBuf[0] |= RDA5807_MONO;
 	else
 		wrBuf[0] &= ~RDA5807_MONO;
 
-	if (_ic == RDA580X_RDA5807_DF) {
-		wrBuf[12] = ((freq - 5000) * 10) >> 8;
-		wrBuf[13] = ((freq - 5000) * 10) & 0xFF;
-	} else {
-		chan = (freq - 6500) / RDA5807_CHAN_SPACING;
-		wrBuf[2] = chan >> 2;								/* 8 MSB */
-		wrBuf[3] &= 0x3F;
-		wrBuf[3] |= RDA5807_TUNE | ((chan & 0x03) << 6);	/* 2 LSB */
+	if (_ic == RDA580X_RDA5802)
+		fMin = RDA5802_MIN_FREQ;
+
+	if (freq >= RDA5807_BAND_CHANGE_FREQ) {
+		fMin = RDA5807_BAND_CHANGE_FREQ;
+		band = RDA5807_BAND_US_EUROPE;
 	}
 
-	rda580xWriteI2C(14);
+	// Freq in grid
+	chan = (freq - fMin) / RDA5807_CHAN_SPACING;
+	wrBuf[2] = chan >> 2;								/* 8 MSB */
+	wrBuf[3] = ((chan & 0x03) << 6) | RDA5807_TUNE | band | RDA5807_SPACE_50;
 
-#ifdef _RDS
-	rdsDisable();
-#endif
+	// Direct freq
+	wrBuf[12] = ((freq - fMin) * 10) >> 8;
+	wrBuf[13] = ((freq - fMin) * 10) & 0xFF;
+
+	rda580xWriteI2C(RDA5807_WR_BYTES);
 
 	return;
 }
@@ -130,20 +134,21 @@ void rda580xSetMute(uint8_t mute)
 		wrBuf[0] |= RDA5807_DMUTE;
 	wrBuf[3] &= ~RDA5807_TUNE;
 
-	rda580xWriteI2C(8);
+	rda580xWriteI2C(RDA5802_WR_BYTES);
 
 	return;
 }
 
 void rda580xSetVolume(int8_t value)
 {
-	_volume = value;
+	uint8_t vol = value;
 
-	wrBuf[7] &= ~RDA5807_VOLUME;
-	if (_volume)
-		wrBuf[7] |= (_volume - 1);
+	if (vol > RDA5807_VOL_MAX)
+		vol = RDA5807_VOL_MAX;
 
-	rda580xSetMute(!_volume);
+	if (value)
+		wrBuf[7] = RDA5807_LNA_PORT_SEL | (vol - 1);
+	rda580xSetMute(!vol);
 
 	return;
 }
@@ -156,7 +161,7 @@ void rda580xSetBass(uint8_t value)
 		wrBuf[0] &= ~RDA5807_BASS;
 	wrBuf[3] &= ~RDA5807_TUNE;
 
-	rda580xWriteI2C(8);
+	rda580xWriteI2C(RDA5802_WR_BYTES);
 
 	return;
 }
@@ -166,8 +171,6 @@ void rda580xPowerOn(void)
 {
 	wrBuf[1] |= RDA5807_ENABLE;
 
-	rda580xSetMute(1);
-
 	return;
 }
 
@@ -175,7 +178,7 @@ void rda580xPowerOff(void)
 {
 	wrBuf[1] &= ~RDA5807_ENABLE;
 
-	rda580xSetMute(1);
+	rda580xWriteI2C(RDA5802_WR_BYTES);
 
 	return;
 }
