@@ -280,11 +280,11 @@ void sndInit(void)
 		sndPar[MODE_SND_VOLUME].grid = &grid_n79_0_1;
 		sndPar[MODE_SND_VOLUME].set = pt2322SetVolume;
 		sndPar[MODE_SND_BASS].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_BASS].set = pt2322SetBass;
+		sndPar[MODE_SND_BASS].set = pt2322SetBMT;
 		sndPar[MODE_SND_MIDDLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_MIDDLE].set = pt2322SetMiddle;
+		sndPar[MODE_SND_MIDDLE].set = pt2322SetBMT;
 		sndPar[MODE_SND_TREBLE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_TREBLE].set = pt2322SetTreble;
+		sndPar[MODE_SND_TREBLE].set = pt2322SetBMT;
 		sndPar[MODE_SND_FRONTREAR].grid = &grid_n7_7_1;
 		sndPar[MODE_SND_FRONTREAR].set = pt2322SetSpeakers;
 		sndPar[MODE_SND_BALANCE].grid = &grid_n7_7_1;
@@ -396,7 +396,7 @@ void sndSetMute(uint8_t value)
 #endif
 #ifdef _PT232X
 	case AUDIOPROC_PT232X:
-		pt232xSetMute();
+		pt2322SetSndFunc();
 		break;
 #endif
 #ifdef _TEA6330
@@ -454,7 +454,7 @@ void sndSetEffect3d(uint8_t value)
 #ifdef _PT232X
 	aproc.effect3d = value;
 	if (aproc.ic == AUDIOPROC_PT232X)
-		pt2322SetEffect3d();
+		pt2322SetSndFunc();
 #endif
 
 	return;
@@ -465,7 +465,7 @@ void sndSetToneDefeat(uint8_t value)
 #ifdef _PT232X
 	aproc.toneDefeat = value;
 	if (aproc.ic == AUDIOPROC_PT232X)
-		pt2322SetToneDefeat();
+		pt2322SetSndFunc();
 #endif
 
 	return;
