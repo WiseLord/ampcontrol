@@ -1,11 +1,10 @@
 #include "tea5767.h"
+#include "tuner.h"
 
 #include "../i2c.h"
 
 static uint8_t wrBuf[5];
 static uint8_t rdBuf[5];
-
-uint16_t div = 12500;
 
 static void tea5767WriteI2C(void)
 {
@@ -19,26 +18,29 @@ static void tea5767WriteI2C(void)
 	return;
 }
 
-void tea5767Init(uint8_t ctrl)
+void tea5767Init(void)
 {
-	wrBuf[0] = TEA5767_MUTE;
+	wrBuf[0] = 0;
 
 	wrBuf[1] = 0;
 
 	wrBuf[2] = TEA5767_HLSI;
 
-	wrBuf[3] = ctrl & (TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE | TEA5767_BL | TEA5767_XTAL);
-	if (ctrl & TEA5767_XTAL)
-		div = 8192;
+	wrBuf[3] = tuner.ctrl & (TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE | TEA5767_BL | TEA5767_XTAL);
 
-	wrBuf[4] = ctrl & (TEA5767_DTC | TEA5767_PLLREF);
+	wrBuf[4] = tuner.ctrl & (TEA5767_DTC | TEA5767_PLLREF);
 
 	return;
 }
 
-void tea5767SetFreq(uint16_t freq, uint8_t mono)
+void tea5767SetFreq(void)
 {
-	uint32_t fq = (uint32_t)freq * 10000 + 225000;
+	uint32_t fq = (uint32_t)tuner.freq * 10000 + 225000;
+	uint16_t div = 12500;
+
+	if (tuner.ctrl & TEA5767_XTAL)
+		div = 8192;
+
 	uint16_t pll = fq / div;
 
 	wrBuf[0] &= 0xC0;
@@ -46,7 +48,7 @@ void tea5767SetFreq(uint16_t freq, uint8_t mono)
 
 	wrBuf[1] = pll & 0xFF;
 
-	if (mono)
+	if (tuner.mono)
 		wrBuf[2] |= TEA5767_MS;
 	else
 		wrBuf[2] &= ~TEA5767_MS;
@@ -69,9 +71,9 @@ uint8_t *tea5767ReadStatus(void)
 	return rdBuf;
 }
 
-void tea5767SetMute(uint8_t mute)
+void tea5767SetMute(void)
 {
-	if (mute)
+	if (tuner.mute)
 		wrBuf[0] |= TEA5767_MUTE;
 	else
 		wrBuf[0] &= ~TEA5767_MUTE;
@@ -85,8 +87,6 @@ void tea5767PowerOn(void)
 {
 	wrBuf[3] &= ~TEA5767_STBY;
 
-	tea5767SetMute(1);
-
 	return;
 }
 
@@ -94,7 +94,7 @@ void tea5767PowerOff(void)
 {
 	wrBuf[3] |= TEA5767_STBY;
 
-	tea5767SetMute(1);
+	tea5767WriteI2C();
 
 	return;
 }

@@ -1,4 +1,5 @@
 #include "tux032.h"
+#include "tuner.h"
 
 #include "../i2c.h"
 
@@ -24,9 +25,9 @@ void tux032Init(void)
 	return;
 }
 
-void tux032SetFreq(uint16_t freq)
+void tux032SetFreq(void)
 {
-	freq = freq / 5 + 214;
+	uint16_t freq = tuner.freq / 5 + 214;
 
 	wrBuf[0] = 0x80;
 	wrBuf[1] = freq >> 8;
@@ -50,9 +51,9 @@ uint8_t *tux032ReadStatus(void)
 	return rdBuf;
 }
 
-void tux032SetMute(uint8_t mute)
+void tux032SetMute(void)
 {
-	if (mute)
+	if (tuner.mute)
 		tux032PowerOff();
 	else
 		tux032PowerOn();

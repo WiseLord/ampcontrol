@@ -3,6 +3,22 @@
 #include <avr/eeprom.h>
 #include "../eeprom.h"
 
+#ifdef _TEA5767
+#include "tea5767.h"
+#endif
+#ifdef _RDA580X
+#include "rda580x.h"
+#endif
+#ifdef _TUX032
+#include "tux032.h"
+#endif
+#ifdef _LM7001
+#include "lm7001.h"
+#endif
+#ifdef _RDS
+#include "rds.h"
+#endif
+
 uint8_t *bufFM;
 
 Tuner_type tuner;
@@ -31,18 +47,14 @@ void tunerInit(void)
 	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
-		tea5767Init(tuner.ctrl);
+		tea5767Init();
 		break;
 #endif
 #ifdef _RDA580X
 	case TUNER_RDA5807:
-		rda580xInit(RDA580X_RDA5807);
-		break;
 	case TUNER_RDA5802:
-		rda580xInit(RDA580X_RDA5802);
-		break;
 	case TUNER_RDA5807_DF:
-		rda580xInit(RDA580X_RDA5807_DF);
+		rda580xInit();
 		break;
 #endif
 #ifdef _TUX032
@@ -74,24 +86,24 @@ void tunerSetFreq()
 	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
-		tea5767SetFreq(tuner.freq, tuner.mono);
+		tea5767SetFreq();
 		break;
 #endif
 #ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		rda580xSetFreq(tuner.freq, tuner.mono);
+		rda580xSetFreq();
 		break;
 #endif
 #ifdef _TUX032
 	case TUNER_TUX032:
-		tux032SetFreq(tuner.freq);
+		tux032SetFreq();
 		break;
 #endif
 #ifdef _LM7001
 	case TUNER_LM7001:
-		lm7001SetFreq(tuner.freq);
+		lm7001SetFreq();
 		break;
 #endif
 	default:
@@ -353,24 +365,16 @@ void tunerStoreStation(void)
 	return;
 }
 
-void tunerSetMute(uint8_t mute)
+void tunerSetVolume(int8_t value)
 {
+	tuner.volume = value;
+
 	switch (tuner.ic) {
-#ifdef _TEA5767
-	case TUNER_TEA5767:
-		tea5767SetMute(mute);
-		break;
-#endif
 #ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		rda580xSetMute(mute);
-		break;
-#endif
-#ifdef _TUX032
-	case TUNER_TUX032:
-		tux032SetMute(mute);
+		rda580xSetVolume();
 		break;
 #endif
 	default:
@@ -380,14 +384,26 @@ void tunerSetMute(uint8_t mute)
 	return;
 }
 
-void tunerSetVolume(int8_t value)
+void tunerSetMute(uint8_t value)
 {
+	tuner.mute = value;
+
 	switch (tuner.ic) {
+#ifdef _TEA5767
+	case TUNER_TEA5767:
+		tea5767SetMute();
+		break;
+#endif
 #ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		rda580xSetVolume(value);
+		rda580xSetMute();
+		break;
+#endif
+#ifdef _TUX032
+	case TUNER_TUX032:
+		tux032SetMute();
 		break;
 #endif
 	default:
@@ -395,6 +411,23 @@ void tunerSetVolume(int8_t value)
 	}
 
 	return;
+}
+
+void tunerSetBass(int8_t value)
+{
+	tuner.bass = value;
+
+	switch (tuner.ic) {
+#ifdef _RDA580X
+	case TUNER_RDA5807:
+	case TUNER_RDA5802:
+	case TUNER_RDA5807_DF:
+		rda580xSetBass();
+		break;
+#endif
+	default:
+		break;
+	}
 }
 
 void tunerPowerOn(void)

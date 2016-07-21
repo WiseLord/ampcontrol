@@ -3,22 +3,6 @@
 
 #include <inttypes.h>
 
-#ifdef _TEA5767
-#include "tea5767.h"
-#endif
-#ifdef _RDA580X
-#include "rda580x.h"
-#endif
-#ifdef _TUX032
-#include "tux032.h"
-#endif
-#ifdef _LM7001
-#include "lm7001.h"
-#endif
-#ifdef _RDS
-#include "rds.h"
-#endif
-
 typedef enum {
 	TUNER_NO = 0,
 	TUNER_TEA5767,
@@ -41,6 +25,9 @@ typedef struct {
 	uint16_t freq;
 	uint8_t mono;
 	uint8_t rds;
+	int8_t volume;
+	uint8_t mute;
+	uint8_t bass;
 } Tuner_type;
 
 extern Tuner_type tuner;
@@ -73,8 +60,9 @@ uint8_t tunerFavStationNum(void);
 void tunerLoadFavStation(uint8_t num);
 void tunerStoreFavStation(uint8_t num);
 
-void tunerSetMute(uint8_t mute);
 void tunerSetVolume(int8_t value);
+void tunerSetMute(uint8_t value);
+void tunerSetBass(int8_t value);
 
 void tunerPowerOn(void);
 void tunerPowerOff(void);

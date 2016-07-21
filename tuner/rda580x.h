@@ -136,22 +136,16 @@
 
 #define RDA5807_BAND_CHANGE_FREQ	8700
 
-typedef enum {
-	RDA580X_RDA5807,
-	RDA580X_RDA5802,
-	RDA580X_RDA5807_DF,
-} rda580xIC;
+void rda580xInit(void);
 
-void rda580xInit(rda580xIC ic);
-
-void rda580xSetFreq(uint16_t freq, uint8_t mono);
+void rda580xSetFreq(void);
 
 uint8_t *rda580xReadStatus(void);
 
-void rda580xSetMute(uint8_t mute);
-void rda580xSetVolume(int8_t value);
+void rda580xSetMute(void);
+void rda580xSetVolume(void);
 
-void rda580xSetBass(uint8_t value);
+void rda580xSetBass(void);
 
 void rda580xPowerOn(void);
 void rda580xPowerOff(void);
