@@ -4,26 +4,6 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-static uint8_t _sndFunc;
-
-static void pt2322SetSndFunc(void)
-{
-	I2CStart(PT2322_I2C_ADDR);
-	I2CWriteByte(PT2322_FUNCTION | _sndFunc);
-	I2CStop();
-
-	return;
-}
-
-static void pt2322SetBMT(uint8_t param) {
-	int8_t val = sndPar[MODE_SND_BASS + ((param - PT2322_BASS) >> 4)].value;
-	I2CStart(PT2322_I2C_ADDR);
-	I2CWriteByte(param | (val > 0 ? 15 - val : 7 + val));
-	I2CStop();
-
-	return;
-}
-
 void pt232xReset()
 {
 	I2CStart(PT2322_I2C_ADDR);
@@ -53,23 +33,18 @@ void pt2322SetVolume(void)
 	return;
 }
 
-void pt2322SetBass(void)
+void pt2322SetBMT(void)
 {
-	pt2322SetBMT(PT2322_BASS);
+	int8_t val;
+	uint8_t mode = MODE_SND_BASS;
+	uint8_t param = PT2322_BASS;
 
-	return;
-}
-
-void pt2322SetMiddle(void)
-{
-	pt2322SetBMT(PT2322_MIDDLE);
-
-	return;
-}
-
-void pt2322SetTreble(void)
-{
-	pt2322SetBMT(PT2322_TREBLE);
+	I2CStart(PT2322_I2C_ADDR);
+	while (mode <= MODE_SND_MIDDLE) {
+		val = sndPar[mode++].value;
+		I2CWriteByte(param++ | (val > 0 ? 15 - val : 7 + val));
+	}
+	I2CStop();
 
 	return;
 }
@@ -128,14 +103,20 @@ void pt2323SetInput(void)
 	return;
 }
 
-void pt232xSetMute(void)
+void pt2322SetSndFunc(void)
 {
-	if (aproc.mute)
-		_sndFunc |= PT2322_MUTE_ON;
-	else
-		_sndFunc &= ~PT2322_MUTE_ON;
+	uint8_t sndFunc = PT2322_FUNCTION;
 
-	pt2322SetSndFunc();
+	if (aproc.mute)
+		sndFunc |= PT2322_MUTE_ON;
+	if (!aproc.effect3d)
+		sndFunc |= PT2322_3D_OFF;
+	if (aproc.toneDefeat)
+		sndFunc |= PT2322_TONE_OFF;
+
+	I2CStart(PT2322_I2C_ADDR);
+	I2CWriteByte(sndFunc);
+	I2CStop();
 
 	return;
 }
@@ -145,30 +126,6 @@ void pt2323SetSurround(void)
 	I2CStart(PT2323_I2C_ADDR);
 	I2CWriteByte(PT2323_ENH_SURR | !aproc.surround);
 	I2CStop();
-
-	return;
-}
-
-void pt2322SetEffect3d(void)
-{
-	if (aproc.effect3d)
-		_sndFunc &= ~PT2322_3D_OFF;
-	else
-		_sndFunc |= PT2322_3D_OFF;
-
-	pt2322SetSndFunc();
-
-	return;
-}
-
-void pt2322SetToneDefeat()
-{
-	if (aproc.toneDefeat)
-		_sndFunc |= PT2322_TONE_OFF;
-	else
-		_sndFunc &= ~PT2322_TONE_OFF;
-
-	pt2322SetSndFunc();
 
 	return;
 }
