@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 #include "rtc.h"
-#include "audio/audioproc.h"
+#include "audio/audio.h"
 
 #ifdef KS0066_16X2_PCF8574
 #define KS0066

@@ -3,7 +3,7 @@
 
 #include "inttypes.h"
 
-#include "audio/audioproc.h"
+#include "audio/audio.h"
 #include "input.h"
 
 /* Timers for different screens */

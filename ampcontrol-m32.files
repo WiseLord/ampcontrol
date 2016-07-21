@@ -1,8 +1,7 @@
 Makefile
 
+audio/audio.c
 audio/audio.h
-audio/audioproc.c
-audio/audioproc.h
 audio/pga2310.c
 audio/pga2310.h
 audio/pt232x.c

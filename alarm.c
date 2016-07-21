@@ -1,7 +1,7 @@
 #include "alarm.h"
 
 #include "i2c.h"
-#include "audio/audioproc.h"
+#include "audio/audio.h"
 
 #define DS1307_ADDR			0b11010000
 #define NOEDIT				0xFF
