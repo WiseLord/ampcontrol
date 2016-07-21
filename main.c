@@ -2,7 +2,7 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "audio/audioproc.h"
+#include "audio/audio.h"
 #include "tuner/tuner.h"
 #include "display.h"
 

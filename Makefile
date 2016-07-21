@@ -12,7 +12,7 @@ F_CPU = 8000000L
 
 DISP_SRC = display/ks0066.c
 
-AUDIO_SRC = audio/audioproc.c
+AUDIO_SRC = audio/audio.c
 ifeq ($(AUDIOPROC), TDA7439)
   AUDIO_SRC += audio/tda7439.c
 else ifeq ($(AUDIOPROC), TDA731X)

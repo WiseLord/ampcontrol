@@ -1,4 +1,4 @@
-#include "audioproc.h"
+#include "audio.h"
 
 #include <avr/eeprom.h>
 #include <avr/pgmspace.h>
