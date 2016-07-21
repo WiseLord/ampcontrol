@@ -17,7 +17,6 @@ static void powerOn(void)
 {
 	tunerPowerOn();
 	sndPowerOn();
-	tunerSetMute(0);
 	setWorkBrightness();
 	tunerSetFreq();
 
@@ -29,7 +28,6 @@ static void powerOff(void)
 	rtc.etm = RTC_NOEDIT;
 
 	sndSetMute(1);
-	tunerSetMute(1);
 	sndPowerOff();
 	tunerPowerOff();
 	displayPowerOff();
@@ -292,8 +290,8 @@ int main(void)
 			case MODE_MUTE:
 			case MODE_LOUDNESS:
 				dispMode = MODE_SND_VOLUME;
-				aproc.mute = 0;
 			default:
+				sndSetMute(0);
 				sndChangeParam(dispMode, encCnt);
 				setDispTimer(DISPLAY_TIME_GAIN);
 				break;

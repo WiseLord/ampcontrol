@@ -21,7 +21,6 @@
 #define LM7001_CTRL_WORD	(LM7001_CTRL_S | LM7001_CTRL_R2)
 
 void lm7001Init(void);
-
-void lm7001SetFreq(uint16_t freq);
+void lm7001SetFreq(void);
 
 #endif /* LM7001_H */

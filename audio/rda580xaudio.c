@@ -2,23 +2,27 @@
 #include "audio.h"
 
 #include "../pins.h"
+#include "../tuner/tuner.h"
 #include "../tuner/rda580x.h"
 
 void rda580xAudioSetVolume(void)
 {
-	rda580xSetVolume(sndPar[MODE_SND_VOLUME].value);
+	tuner.volume = sndPar[MODE_SND_VOLUME].value;
+	rda580xSetVolume();
 
 	return;
 }
 
 void rda580xAudioSetMute()
 {
-	rda580xSetMute(aproc.mute);
+	tuner.mute = aproc.mute;
+	rda580xSetMute();
 
 	return;
 }
 
 void rda580xAudioBass()
 {
-	rda580xSetBass(aproc.loudness);
+	tuner.bass = aproc.loudness;
+	rda580xSetBass();
 }

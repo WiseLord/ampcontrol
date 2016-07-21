@@ -11,11 +11,11 @@
 
 void tux032Init(void);
 
-void tux032SetFreq(uint16_t freq);
+void tux032SetFreq(void);
 
 uint8_t *tux032ReadStatus(void);
 
-void tux032SetMute(uint8_t mute);
+void tux032SetMute(void);
 
 void tux032PowerOn(void);
 void tux032PowerOff(void);
