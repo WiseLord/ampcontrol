@@ -9,14 +9,14 @@
 #endif
 
 static uint8_t wrBuf[14] = {
-	RDA5807_DHIZ | RDA5807_DMUTE,
-	RDA5807_CLK_MODE_32768 | RDA5807_NEW_METHOD | RDA5807_ENABLE,
+	RDA580X_DHIZ | RDA580X_DMUTE,
+	RDA580X_CLK_MODE_32768 | RDA5807_NEW_METHOD | RDA580X_ENABLE,
 	0,
-	RDA5807_BAND_EASTEUROPE | RDA5807_SPACE_50,
+	RDA580X_BAND_EASTEUROPE | RDA580X_SPACE_50,
 	0,
 	0,
 	0b1000 & RDA5807_SEEKTH,
-	RDA5807_LNA_PORT_SEL | RDA5807_VOLUME,
+	RDA580X_LNA_PORT_SEL_LNAP | RDA580X_VOLUME,
 	0,
 	0,
 	(0x80 & RDA5807_TH_SOFRBLEND),
@@ -56,25 +56,25 @@ void rda580xSetFreq(void)
 {
 	uint16_t chan;
 	uint16_t fMin = RDA5807_MIN_FREQ;
-	uint8_t band = RDA5807_BAND_EASTEUROPE;
+	uint8_t band = RDA580X_BAND_EASTEUROPE;
 
 	if (tuner.mono)
-		wrBuf[0] |= RDA5807_MONO;
+		wrBuf[0] |= RDA580X_MONO;
 	else
-		wrBuf[0] &= ~RDA5807_MONO;
+		wrBuf[0] &= ~RDA580X_MONO;
 
 	if (tuner.ic == TUNER_RDA5802)
 		fMin = RDA5802_MIN_FREQ;
 
 	if (tuner.freq >= RDA5807_BAND_CHANGE_FREQ) {
 		fMin = RDA5807_BAND_CHANGE_FREQ;
-		band = RDA5807_BAND_US_EUROPE;
+		band = RDA580X_BAND_US_EUROPE;
 	}
 
 	// Freq in grid
 	chan = (tuner.freq - fMin) / RDA5807_CHAN_SPACING;
 	wrBuf[2] = chan >> 2;								/* 8 MSB */
-	wrBuf[3] = ((chan & 0x03) << 6) | RDA5807_TUNE | band | RDA5807_SPACE_50;
+	wrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | band | RDA580X_SPACE_50;
 
 	// Direct freq
 	wrBuf[12] = ((tuner.freq - fMin) * 10) >> 8;
@@ -121,33 +121,33 @@ void rda580xSetAudio(void)
 		tuner.volume = RDA5807_VOL_MAX;
 
 	if (tuner.mute || !tuner.volume)
-		wrBuf[0] &= ~RDA5807_DMUTE;
+		wrBuf[0] &= ~RDA580X_DMUTE;
 	else
-		wrBuf[0] |= RDA5807_DMUTE;
+		wrBuf[0] |= RDA580X_DMUTE;
 
 	if (tuner.bass)
 		wrBuf[0] |= RDA5807_BASS;
 	else
 		wrBuf[0] &= ~RDA5807_BASS;
 
-	wrBuf[3] &= ~RDA5807_TUNE;
+	wrBuf[3] &= ~RDA580X_TUNE;
 
 	if (tuner.volume)
-		wrBuf[7] = RDA5807_LNA_PORT_SEL | (tuner.volume - 1);
+		wrBuf[7] = RDA580X_LNA_PORT_SEL_LNAP | (tuner.volume - 1);
 
 	rda580xWriteI2C(RDA5802_WR_BYTES);
 }
 
 void rda580xPowerOn(void)
 {
-	wrBuf[1] |= RDA5807_ENABLE;
+	wrBuf[1] |= RDA580X_ENABLE;
 
 	return;
 }
 
 void rda580xPowerOff(void)
 {
-	wrBuf[1] &= ~RDA5807_ENABLE;
+	wrBuf[1] &= ~RDA580X_ENABLE;
 
 	rda580xWriteI2C(RDA5802_WR_BYTES);
 
