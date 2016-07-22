@@ -8,25 +8,23 @@
 #include "rds.h"
 #endif
 
-static uint8_t wrBuf[14];
-static uint8_t rdBuf[12];
-
-static const uint8_t initData[] PROGMEM = {
-	/* 0*/ RDA5807_DHIZ | RDA5807_DMUTE,
-	/* 1*/ RDA5807_CLK_MODE_32768 | RDA5807_NEW_METHOD | RDA5807_ENABLE,
-	/* 2*/ 0,
-	/* 3*/ RDA5807_BAND_EASTEUROPE | RDA5807_SPACE_50,
-	/* 4*/ 0,
-	/* 5*/ 0,
-	/* 6*/ 0b1000 & RDA5807_SEEKTH,
-	/* 7*/ RDA5807_LNA_PORT_SEL | RDA5807_VOLUME,
-	/* 8*/ 0,
-	/* 9*/ 0,
-	/*10*/ (0x80 & RDA5807_TH_SOFRBLEND),
-	/*11*/ 0,
-	/*12*/ 0,
-	/*13*/ 0,
+static uint8_t wrBuf[14] = {
+	RDA5807_DHIZ | RDA5807_DMUTE,
+	RDA5807_CLK_MODE_32768 | RDA5807_NEW_METHOD | RDA5807_ENABLE,
+	0,
+	RDA5807_BAND_EASTEUROPE | RDA5807_SPACE_50,
+	0,
+	0,
+	0b1000 & RDA5807_SEEKTH,
+	RDA5807_LNA_PORT_SEL | RDA5807_VOLUME,
+	0,
+	0,
+	(0x80 & RDA5807_TH_SOFRBLEND),
+	0,
+	0,
+	0,
 };
+static uint8_t rdBuf[12];
 
 static void rda580xWriteI2C(uint8_t bytes)
 {
@@ -45,13 +43,6 @@ static void rda580xWriteI2C(uint8_t bytes)
 
 void rda580xInit(void)
 {
-	// TODO: RDS enable/disable by software
-
-	uint8_t i;
-
-	for (i = 0; i < sizeof(wrBuf); i++)
-		wrBuf[i] = pgm_read_byte(&initData[i]);
-
 #ifdef _RDS
 	wrBuf[1] |= RDA5807_RDS_EN;
 #endif
