@@ -4,18 +4,6 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-static void tda7439SetBMT(uint8_t param)
-{
-	int8_t val = sndPar[MODE_SND_BASS + param - TDA7439_BASS].value;
-
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(param);
-	I2CWriteByte(val > 0 ? 15 - val : 7 + val);
-	I2CStop();
-
-	return;
-}
-
 void tda7439SetSpeakers(void)
 {
 	int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
@@ -41,23 +29,18 @@ void tda7439SetSpeakers(void)
 	return;
 }
 
-void tda7439SetBass(void)
+void tda7439SetBMT(void)
 {
-	tda7439SetBMT(TDA7439_BASS);
+	int8_t val;
+	uint8_t mode;
 
-	return;
-}
-
-void tda7439SetMiddle(void)
-{
-	tda7439SetBMT(TDA7439_MIDDLE);
-
-	return;
-}
-
-void tda7439SetTreble(void)
-{
-	tda7439SetBMT(TDA7439_TREBLE);
+	I2CStart(TDA7439_I2C_ADDR);
+	I2CWriteByte(TDA7439_BASS | TDA7439_AUTO_INC);
+	for (mode = MODE_SND_BASS; mode <= MODE_SND_TREBLE; mode++) {
+		val = sndPar[mode].value;
+		I2CWriteByte(val > 0 ? 15 - val : 7 + val);
+	}
+	I2CStop();
 
 	return;
 }
@@ -72,24 +55,13 @@ void tda7439SetPreamp(void)
 	return;
 }
 
-void tda7439SetGain(void)
-{
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_INPUT_GAIN);
-	I2CWriteByte(sndPar[MODE_SND_GAIN0 + aproc.input].value);
-	I2CStop();
-
-	return;
-}
-
 void tda7439SetInput(void)
 {
 	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_INPUT_SELECT);
+	I2CWriteByte(TDA7439_INPUT_SELECT | TDA7439_AUTO_INC);
+	I2CWriteByte(TDA7439_INPUT_GAIN);
 	I2CWriteByte(TDA7439_IN_CNT - 1 - aproc.input);
 	I2CStop();
-
-	tda7439SetGain();
 
 	return;
 }

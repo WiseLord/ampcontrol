@@ -24,10 +24,8 @@
 #define TEA6330_IN_CNT				1
 
 void tea6330SetVolume(void);
-void tea6330SetBass(void);
-void tea6330SetTreble(void);
+void tea6330SetBT(void);
 void tea6330SetFrontRear(void);
-
 void tea6330SetMute(void);
 
 #endif // TEA6330_H

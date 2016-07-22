@@ -26,7 +26,6 @@ enum {
 #define TDA7448_IN_CNT				1
 
 void tda7448SetSpeakers(void);
-
 void tda7448SetMute(void);
 
 #endif /* TDA7448_H */
