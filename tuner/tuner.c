@@ -217,7 +217,7 @@ uint8_t tunerLevel(void)
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		ret = (bufFM[2] & RDA5807_RSSI) >> 1;
+		ret = (bufFM[2] & RDA580X_RSSI) >> 1;
 		if (ret < 24)
 			ret = 0;
 		else
