@@ -159,13 +159,13 @@ void showRadio(uint8_t mode)
 	tunerReadStatus();
 
 	/* Frequency value */
-	ks0066WriteString("FM ");
-	writeNum(tuner.freq / 100, 3, ' ');
+	ks0066WriteString("FM");
+	writeNum(tuner.freq / 100, 4, ' ');
 	ks0066WriteData('.');
-	writeNum(tuner.freq / 10 % 10, 1, ' ');
+	writeNum(tuner.freq % 100, 2, '0');
 
 	/* Stereo indicator */
-	ks0066SetXY(9, 0);
+	ks0066SetXY(10, 0);
 	if (tunerStereo())
 		ks0066WriteData('S');
 	else
