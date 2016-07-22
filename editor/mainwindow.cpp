@@ -6,9 +6,9 @@
 #include "aboutdialog.h"
 
 #include "../audio/audio.h"
-#include "../audio/audioproc.h"
 #include "../eeprom.h"
 #include "../tuner/tuner.h"
+#include "../tuner/tea5767.h"
 #include "../display.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -235,6 +235,7 @@ void MainWindow::setAudioproc(int proc)
     wgtEffect3d->hide();
     wgtToneDefeat->hide();
     wgtInput->hide();
+    wgtInputIcon->hide();
     cbxInput->clear();
 
     /* Handle loudness/surround/effect3d/tone_defeat*/
@@ -262,6 +263,8 @@ void MainWindow::setAudioproc(int proc)
 
     /* Handle maximum inputs */
     switch (proc) {
+    case AUDIOPROC_NO:
+        break;
     case AUDIOPROC_PT232X:
         cbxInput->insertItem(0, "Input 5");
     case AUDIOPROC_TDA7439:
@@ -565,6 +568,36 @@ void MainWindow::setFreq(double value, int pos)
     updateHexTable(pos + 1);
 }
 
+int MainWindow::fmStepEep2Index(uint8_t value)
+{
+    if (value < 2)
+        return 0;
+    else if (value < 5)
+        return 1;
+    else if (value < 10)
+        return 2;
+    else if (value < 20)
+        return 3;
+    else
+        return 4;
+}
+
+uint8_t MainWindow::fmStepIndex2Step(uint8_t index)
+{
+    switch (index) {
+    case 1:
+        return 2;
+    case 2:
+        return 5;
+    case 3:
+        return 10;
+    case 4:
+        return 20;
+    default:
+        return 1;
+    }
+}
+
 void MainWindow::about()
 {
     AboutDialog dlg;
@@ -579,14 +612,14 @@ void MainWindow::aboutQt()
 
 void MainWindow::setTuner(int tuner)
 {
-    double fmStep1 = (double)eep[EEPROM_FM_STEP1] / 100;
-    double fmStep2 = (double)eep[EEPROM_FM_STEP2] / 100;
-
     cbxTuner->setCurrentIndex(tuner);
     wgtFmfreq->hide();
+    wgtFmMin->hide();
+    wgtFmMax->hide();
     wgtFmstep1->hide();
     wgtFmstep2->hide();
     wgtFmmono->hide();
+    wgtFmRDS->hide();
     wgtFmctrl->hide();
 
     switch (tuner) {
@@ -600,18 +633,29 @@ void MainWindow::setTuner(int tuner)
         cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_PLLREF);
         cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_XTAL);
     case TUNER_RDA5807:
+    case TUNER_RDA5807_DF:
+        if (tuner != TUNER_TEA5767)
+            wgtFmRDS->show();
+        setFmRds(eep[EEPROM_FM_RDS]);
+        cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
+    case TUNER_RDA5802:
         wgtFmmono->show();
         setFmmono(eep[EEPROM_FM_MONO]);
         cbxFmmono->setCurrentIndex(eep[EEPROM_FM_MONO]);
     case TUNER_TUX032:
     case TUNER_LM7001:
         wgtFmfreq->show();
-        dsbFmfreq->setSingleStep(fmStep1);
+        wgtFmMin->show();
+        wgtFmMax->show();
         dsbFmfreq->setValue(getFreq(EEPROM_FM_FREQ));
+        if (dsbFmfreq->value() < 76)
+            dsbFmfreq->setSingleStep((double)eep[EEPROM_FM_STEP1] / 100);
+        else
+            dsbFmfreq->setSingleStep((double)eep[EEPROM_FM_STEP2] / 100);
         wgtFmstep1->show();
         wgtFmstep2->show();
-        dsbFmstep1->setValue(fmStep1);
-        dsbFmstep2->setValue(fmStep2);
+        cbxFmstep1->setCurrentIndex(fmStepEep2Index(eep[EEPROM_FM_STEP1]));
+        cbxFmstep2->setCurrentIndex(fmStepEep2Index(eep[EEPROM_FM_STEP2]));
         break;
     }
 
@@ -621,19 +665,40 @@ void MainWindow::setTuner(int tuner)
 
 void MainWindow::setFmfreq(double value)
 {
+    if (value < 76)
+        dsbFmfreq->setSingleStep((double)fmStepIndex2Step(cbxFmstep1->currentIndex()) / 100);
+    else
+        dsbFmfreq->setSingleStep((double)fmStepIndex2Step(cbxFmstep2->currentIndex()) / 100);
     setFreq(value, EEPROM_FM_FREQ);
 }
 
-void MainWindow::setFmstep1(double value)
+void MainWindow::setFmMin(double value)
 {
-    dsbFmfreq->setSingleStep(value);
-    eep[EEPROM_FM_STEP1] = value * 100;
+    if (value < 76)
+        dsbFmMin->setSingleStep((double)fmStepIndex2Step(cbxFmstep1->currentIndex()) / 100);
+    else
+        dsbFmMin->setSingleStep((double)fmStepIndex2Step(cbxFmstep2->currentIndex()) / 100);
+    setFreq(value, EEPROM_FM_FREQ_MIN);
+}
+
+void MainWindow::setFmMax(double value)
+{
+    if (value < 76)
+        dsbFmMax->setSingleStep((double)fmStepIndex2Step(cbxFmstep1->currentIndex()) / 100);
+    else
+        dsbFmMax->setSingleStep((double)fmStepIndex2Step(cbxFmstep2->currentIndex()) / 100);
+    setFreq(value, EEPROM_FM_FREQ_MAX);
+}
+
+void MainWindow::setFmstep1(int value)
+{
+    eep[EEPROM_FM_STEP1] = fmStepIndex2Step(value);
     updateHexTable(EEPROM_FM_STEP1);
 }
 
-void MainWindow::setFmstep2(double value)
+void MainWindow::setFmstep2(int value)
 {
-    eep[EEPROM_FM_STEP2] = value * 100;
+    eep[EEPROM_FM_STEP2] = fmStepIndex2Step(value);
     updateHexTable(EEPROM_FM_STEP2);
 }
 
@@ -644,6 +709,15 @@ void MainWindow::setFmmono(int value)
     else
         eep[EEPROM_FM_MONO] = 0x00;
     updateHexTable(EEPROM_FM_MONO);
+}
+
+void MainWindow::setFmRds(int value)
+{
+    if (value)
+        eep[EEPROM_FM_RDS] = 0x01;
+    else
+        eep[EEPROM_FM_RDS] = 0x00;
+    updateHexTable(EEPROM_FM_RDS);
 }
 
 void MainWindow::setFmctrl()

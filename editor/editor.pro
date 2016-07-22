@@ -17,8 +17,8 @@ DEFINES += _TEA5767 _RDA580X _TUX032 _LM7001 _RDS
 DEFINES += _TDA7439 _TDA731X _TDA7448 _PT232X _TEA6330 _PGA2310
 
 SOURCES += main.cpp\
-		mainwindow.cpp \
-	lcdconverter.cpp \
+    mainwindow.cpp \
+    lcdconverter.cpp \
     aboutdialog.cpp
 
 HEADERS  += mainwindow.h \

@@ -1897,10 +1897,110 @@
               <string> MHz</string>
              </property>
              <property name="minimum">
-              <double>87.000000000000000</double>
+              <double>50.000000000000000</double>
              </property>
              <property name="maximum">
-              <double>108.000000000000000</double>
+              <double>152.530000000000001</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmMin" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_37" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmMin">
+             <property name="text">
+              <string>Minimal frequency</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFmMin">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>50.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>87.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmMax" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_38" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmMax">
+             <property name="text">
+              <string>Maximum frequency</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFmMax">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>76.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>152.530000000000001</double>
              </property>
             </widget>
            </item>
@@ -1928,33 +2028,43 @@
            <item>
             <widget class="QLabel" name="lblFmstep1">
              <property name="text">
-              <string>Step1</string>
+              <string>Step on freq &lt; 76 MHz</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="dsbFmstep1">
+            <widget class="QComboBox" name="cbxFmstep1">
              <property name="minimumSize">
               <size>
                <width>120</width>
                <height>0</height>
               </size>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> MHz</string>
-             </property>
-             <property name="minimum">
-              <double>0.010000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>0.500000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.010000000000000</double>
-             </property>
+             <item>
+              <property name="text">
+               <string>10 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>20 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>50 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>100 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>200 kHz</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
@@ -1981,33 +2091,43 @@
            <item>
             <widget class="QLabel" name="lblFmstep2">
              <property name="text">
-              <string>Step2</string>
+              <string>Step on freq &gt; 76 MHz</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QDoubleSpinBox" name="dsbFmstep2">
+            <widget class="QComboBox" name="cbxFmstep2">
              <property name="minimumSize">
               <size>
                <width>120</width>
                <height>0</height>
               </size>
              </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> MHz</string>
-             </property>
-             <property name="minimum">
-              <double>0.010000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>0.500000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>0.010000000000000</double>
-             </property>
+             <item>
+              <property name="text">
+               <string>10 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>20 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>50 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>100 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>200 kHz</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
@@ -2054,6 +2174,54 @@
              <item>
               <property name="text">
                <string>Mono</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmRDS" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_40" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmRDS">
+             <property name="text">
+              <string>RDS</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFmRDS">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>On</string>
               </property>
              </item>
             </widget>
@@ -2899,11 +3067,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>785</x>
-     <y>358</y>
+     <y>426</y>
     </hint>
     <hint type="destinationlabel">
-     <x>415</x>
-     <y>351</y>
+     <x>419</x>
+     <y>420</y>
     </hint>
    </hints>
   </connection>
@@ -2915,11 +3083,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>728</x>
-     <y>156</y>
+     <y>200</y>
     </hint>
     <hint type="destinationlabel">
-     <x>665</x>
-     <y>152</y>
+     <x>664</x>
+     <y>198</y>
     </hint>
    </hints>
   </connection>
@@ -2934,8 +3102,8 @@
      <y>86</y>
     </hint>
     <hint type="destinationlabel">
-     <x>660</x>
-     <y>82</y>
+     <x>658</x>
+     <y>85</y>
     </hint>
    </hints>
   </connection>
@@ -2947,11 +3115,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>785</x>
-     <y>333</y>
+     <y>401</y>
     </hint>
     <hint type="destinationlabel">
-     <x>414</x>
-     <y>325</y>
+     <x>418</x>
+     <y>392</y>
     </hint>
    </hints>
   </connection>
@@ -2963,11 +3131,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>720</x>
-     <y>190</y>
+     <y>262</y>
     </hint>
     <hint type="destinationlabel">
-     <x>410</x>
-     <y>197</y>
+     <x>415</x>
+     <y>267</y>
     </hint>
    </hints>
   </connection>
@@ -2979,11 +3147,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>775</x>
-     <y>266</y>
+     <y>338</y>
     </hint>
     <hint type="destinationlabel">
-     <x>414</x>
-     <y>272</y>
+     <x>415</x>
+     <y>343</y>
     </hint>
    </hints>
   </connection>
@@ -2995,11 +3163,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>785</x>
-     <y>258</y>
+     <y>326</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>247</y>
+     <x>416</x>
+     <y>318</y>
     </hint>
    </hints>
   </connection>
@@ -3084,22 +3252,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>dsbFmstep1</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setFmstep1(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>709</x>
-     <y>98</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>660</x>
-     <y>106</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>cbxFmctrlBl</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
@@ -3107,11 +3259,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>785</x>
-     <y>308</y>
+     <y>376</y>
     </hint>
     <hint type="destinationlabel">
-     <x>414</x>
-     <y>302</y>
+     <x>418</x>
+     <y>369</y>
     </hint>
    </hints>
   </connection>
@@ -3142,8 +3294,8 @@
      <y>61</y>
     </hint>
     <hint type="destinationlabel">
-     <x>623</x>
-     <y>60</y>
+     <x>630</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>
@@ -3155,11 +3307,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>785</x>
-     <y>233</y>
+     <y>301</y>
     </hint>
     <hint type="destinationlabel">
      <x>414</x>
-     <y>223</y>
+     <y>288</y>
     </hint>
    </hints>
   </connection>
@@ -3436,18 +3588,82 @@
    </hints>
   </connection>
   <connection>
-   <sender>dsbFmstep2</sender>
+   <sender>dsbFmMin</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
-   <slot>setFmstep2(double)</slot>
+   <slot>setFmMin(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>686</x>
-     <y>132</y>
+     <x>691</x>
+     <y>112</y>
     </hint>
     <hint type="destinationlabel">
      <x>661</x>
-     <y>132</y>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbFmMax</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmMax(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>690</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>659</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmRDS</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmRds(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>703</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>659</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmstep1</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmstep1(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>695</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmstep2</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmstep2(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>694</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>662</x>
+     <y>174</y>
     </hint>
    </hints>
   </connection>
@@ -3476,7 +3692,7 @@
   <slot>loadDefaultEeprom()</slot>
   <slot>setTuner(int)</slot>
   <slot>setFmfreq(double)</slot>
-  <slot>setFmstep1(double)</slot>
+  <slot>setFmstep1(int)</slot>
   <slot>setFmmono(int)</slot>
   <slot>setFmctrl()</slot>
   <slot>setSpmode(int)</slot>
@@ -3495,6 +3711,9 @@
   <slot>setEffect3d(int)</slot>
   <slot>setToneDefeat(int)</slot>
   <slot>setGain4(double)</slot>
-  <slot>setFmstep2(double)</slot>
+  <slot>setFmstep2(int)</slot>
+  <slot>setFmMin(double)</slot>
+  <slot>setFmMax(double)</slot>
+  <slot>setFmRds(int)</slot>
  </slots>
 </ui>
