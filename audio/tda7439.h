@@ -25,11 +25,8 @@
 #define TDA7439_IN_CNT				4
 
 void tda7439SetSpeakers(void);
-void tda7439SetBass(void);
-void tda7439SetMiddle(void);
-void tda7439SetTreble(void);
+void tda7439SetBMT(void);
 void tda7439SetPreamp(void);
-void tda7439SetGain(void);
 void tda7439SetInput(void);
 void tda7439SetMute(void);
 

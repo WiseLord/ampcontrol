@@ -40,7 +40,7 @@ void pt2322SetBMT(void)
 	uint8_t param = PT2322_BASS;
 
 	I2CStart(PT2322_I2C_ADDR);
-	while (mode <= MODE_SND_MIDDLE) {
+	while (mode <= MODE_SND_TREBLE) {
 		val = sndPar[mode++].value;
 		I2CWriteByte(param++ | (val > 0 ? 15 - val : 7 + val));
 	}
@@ -83,27 +83,17 @@ void pt2322SetSpeakers(void)
 	return;
 }
 
-void pt2323SetGain(void)
+void pt2323SetInput(void)
 {
 	I2CStart(PT2323_I2C_ADDR);
+	I2CWriteByte(PT2323_INPUT_SWITCH | (PT2323_INPUT_ST1 - aproc.input));
 	I2CWriteByte(PT2323_MIX | sndPar[MODE_SND_GAIN0 + aproc.input].value);
 	I2CStop();
 
 	return;
 }
 
-void pt2323SetInput(void)
-{
-	I2CStart(PT2323_I2C_ADDR);
-	I2CWriteByte(PT2323_INPUT_SWITCH | (PT2323_INPUT_ST1 - aproc.input));
-	I2CStop();
-
-	pt2323SetGain();
-
-	return;
-}
-
-void pt2322SetSndFunc(void)
+void pt232xSetSndFunc(void)
 {
 	uint8_t sndFunc = PT2322_FUNCTION;
 
@@ -118,11 +108,6 @@ void pt2322SetSndFunc(void)
 	I2CWriteByte(sndFunc);
 	I2CStop();
 
-	return;
-}
-
-void pt2323SetSurround(void)
-{
 	I2CStart(PT2323_I2C_ADDR);
 	I2CWriteByte(PT2323_ENH_SURR | !aproc.surround);
 	I2CStop();

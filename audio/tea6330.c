@@ -22,30 +22,22 @@ void tea6330SetVolume()
 
 	I2CStart(TEA6330_I2C_ADDR);
 	I2CWriteByte(TEA6330_VOLUME_LEFT);
-	I2CWriteByte(spRight + 53); // -66dB..20dB => -33..10 grid => 20..53 raw
+	I2CWriteByte(spRight + 53);							// -66dB..20dB => -33..10 grid => 20..53 raw
 	I2CWriteByte(spLeft + 53);
 	I2CStop();
 
 	return;
 }
 
-void tea6330SetBass()
+void tea6330SetBT()
 {
 	I2CStart(TEA6330_I2C_ADDR);
 	I2CWriteByte(TEA6330_BASS);
-	I2CWriteByte(sndPar[MODE_SND_BASS].value + 7); // -4..5 grid => 3..12 raw
+	I2CWriteByte(sndPar[MODE_SND_BASS].value + 7);		// -4..5 grid => 3..12 raw
+	I2CWriteByte(sndPar[MODE_SND_TREBLE].value + 7);	// -4..4 grid => 3..11 raw
 	I2CStop();
 
 	return;
-}
-
-void tea6330SetTreble()
-{
-	I2CStart(TEA6330_I2C_ADDR);
-	I2CWriteByte(TEA6330_TREBLE);
-	I2CWriteByte(sndPar[MODE_SND_TREBLE].value + 7); // -4..4 grid => 3..11 raw
-	I2CStop();
-
 }
 
 void tea6330SetFrontRear()

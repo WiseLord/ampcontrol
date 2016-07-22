@@ -70,9 +70,7 @@ void pt232xReset(void);
 void pt2322SetVolume(void);
 void pt2322SetBMT(void);
 void pt2322SetSpeakers(void);
-void pt2323SetGain(void);
 void pt2323SetInput(void);
-void pt2322SetSndFunc(void);
-void pt2323SetSurround(void);
+void pt232xSetSndFunc(void);
 
 #endif /* PT232X_H */
