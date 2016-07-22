@@ -47,7 +47,7 @@ void tunerSetFreq();
 void tunerChangeFreq(int8_t mult);
 
 void tunerReadStatus(void);
-void tunerSwitchMono(void);
+void tunerSetMono(uint8_t value);
 uint8_t tunerStereo(void);
 uint8_t tunerLevel(void);
 
@@ -62,7 +62,7 @@ void tunerStoreFavStation(uint8_t num);
 
 void tunerSetVolume(int8_t value);
 void tunerSetMute(uint8_t value);
-void tunerSetBass(int8_t value);
+void tunerSetBass(uint8_t value);
 
 void tunerPowerOn(void);
 void tunerPowerOff(void);

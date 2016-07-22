@@ -427,7 +427,7 @@ void handleAction(uint8_t action)
 				}
 				break;
 			case CMD_RC_FM_MONO:
-				tunerSwitchMono();
+				tunerSetMono(!tuner.mono);
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				break;

@@ -142,10 +142,7 @@ void rda580xSetFreq(void);
 
 uint8_t *rda580xReadStatus(void);
 
-void rda580xSetMute(void);
-void rda580xSetVolume(void);
-
-void rda580xSetBass(void);
+void rda580xSetAudio(void);
 
 void rda580xPowerOn(void);
 void rda580xPowerOff(void);
