@@ -240,7 +240,7 @@ int main(void)
 					tunerStoreStation();
 					break;
 				case CMD_RC_FM_MONO:
-					tunerSwitchMono();
+					tunerSetMono(!tuner.mono);
 					break;
 				default:
 					if (action >= CMD_RC_FM_0 && action <= CMD_RC_FM_9) {

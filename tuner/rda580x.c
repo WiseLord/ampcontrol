@@ -124,44 +124,28 @@ uint8_t *rda580xReadStatus(void)
 	return rdBuf;
 }
 
-void rda580xSetMute(void)
-{
-	if (tuner.mute || !tuner.volume)
-		wrBuf[0] &= ~RDA5807_DMUTE;
-	else
-		wrBuf[0] |= RDA5807_DMUTE;
-	wrBuf[3] &= ~RDA5807_TUNE;
-
-	rda580xWriteI2C(RDA5802_WR_BYTES);
-
-	return;
-}
-
-void rda580xSetVolume(void)
+void rda580xSetAudio(void)
 {
 	if (tuner.volume > RDA5807_VOL_MAX)
 		tuner.volume = RDA5807_VOL_MAX;
 
-	if (tuner.volume)
-		wrBuf[7] = RDA5807_LNA_PORT_SEL | (tuner.volume - 1);
-	rda580xSetMute();
+	if (tuner.mute || !tuner.volume)
+		wrBuf[0] &= ~RDA5807_DMUTE;
+	else
+		wrBuf[0] |= RDA5807_DMUTE;
 
-	return;
-}
-
-void rda580xSetBass(void)
-{
 	if (tuner.bass)
 		wrBuf[0] |= RDA5807_BASS;
 	else
 		wrBuf[0] &= ~RDA5807_BASS;
+
 	wrBuf[3] &= ~RDA5807_TUNE;
 
+	if (tuner.volume)
+		wrBuf[7] = RDA5807_LNA_PORT_SEL | (tuner.volume - 1);
+
 	rda580xWriteI2C(RDA5802_WR_BYTES);
-
-	return;
 }
-
 
 void rda580xPowerOn(void)
 {

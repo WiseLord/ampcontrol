@@ -8,7 +8,7 @@
 void rda580xAudioSetVolume(void)
 {
 	tuner.volume = sndPar[MODE_SND_VOLUME].value;
-	rda580xSetVolume();
+	rda580xSetAudio();
 
 	return;
 }
@@ -16,7 +16,7 @@ void rda580xAudioSetVolume(void)
 void rda580xAudioSetMute()
 {
 	tuner.mute = aproc.mute;
-	rda580xSetMute();
+	rda580xSetAudio();
 
 	return;
 }
@@ -24,5 +24,5 @@ void rda580xAudioSetMute()
 void rda580xAudioBass()
 {
 	tuner.bass = aproc.loudness;
-	rda580xSetBass();
+	rda580xSetAudio();
 }
