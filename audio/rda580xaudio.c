@@ -1,4 +1,4 @@
-#include "pga2310.h"
+#include "rda580xaudio.h"
 #include "audio.h"
 
 #include "../pins.h"
