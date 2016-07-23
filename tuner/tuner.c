@@ -176,19 +176,22 @@ void tunerSetMono(uint8_t value)
 
 uint8_t tunerStereo(void)
 {
-	uint8_t ret = 1;
+	uint8_t ret = tuner.mono;
+
+	if (ret)
+		return 0;
 
 	switch (tuner.ic) {
 #ifdef _TEA5767
 	case TUNER_TEA5767:
-		ret = TEA5767_BUF_STEREO(bufFM) && !tuner.mono;
+		ret = TEA5767_BUF_STEREO(bufFM);
 		break;
 #endif
 #ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
-		ret = RDA5807_BUF_STEREO(bufFM) && !tuner.mono;
+		ret = RDA5807_BUF_STEREO(bufFM);
 		break;
 #endif
 #ifdef _TUX032
