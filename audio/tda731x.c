@@ -20,7 +20,7 @@ void tda731xSetBT(void)
 	val = sndPar[MODE_SND_BASS].value;
 	I2CWriteByte(TDA731X_BASS | (val > 0 ? 15 - val : 7 + val));
 	val = sndPar[MODE_SND_TREBLE].value;
-	I2CWriteByte(TDA731X_BASS | (val > 0 ? 15 - val : 7 + val));
+	I2CWriteByte(TDA731X_TREBLE | (val > 0 ? 15 - val : 7 + val));
 	I2CStop();
 
 	return;
@@ -50,10 +50,10 @@ void tda731xSetSpeakers(void)
 	}
 
 	I2CStart(TDA731X_I2C_ADDR);
-	I2CWriteByte(TDA731X_SP_FRONT_LEFT | -spFrontLeft);
-	I2CWriteByte(TDA731X_SP_FRONT_RIGHT | -spFrontRight);
 	I2CWriteByte(TDA731X_SP_REAR_LEFT | -spRearLeft);
 	I2CWriteByte(TDA731X_SP_REAR_RIGHT | -spRearRight);
+	I2CWriteByte(TDA731X_SP_FRONT_LEFT | -spFrontLeft);
+	I2CWriteByte(TDA731X_SP_FRONT_RIGHT | -spFrontRight);
 	I2CStop();
 
 	return;
@@ -72,10 +72,10 @@ void tda731xSetMute(void)
 {
 	I2CStart(TDA731X_I2C_ADDR);
 	if (aproc.mute) {
-		I2CWriteByte(TDA731X_SP_FRONT_LEFT | TDA731X_MUTE);
-		I2CWriteByte(TDA731X_SP_FRONT_RIGHT | TDA731X_MUTE);
 		I2CWriteByte(TDA731X_SP_REAR_LEFT | TDA731X_MUTE);
 		I2CWriteByte(TDA731X_SP_REAR_RIGHT | TDA731X_MUTE);
+		I2CWriteByte(TDA731X_SP_FRONT_LEFT | TDA731X_MUTE);
+		I2CWriteByte(TDA731X_SP_FRONT_RIGHT | TDA731X_MUTE);
 	} else {
 		tda731xSetSpeakers();
 	}
