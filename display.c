@@ -148,6 +148,7 @@ const char STR_SPMINUS2[]		PROGMEM = " --";
 
 const char STR_FM[]				PROGMEM = "FM ";
 const char STR_STEREO[]			PROGMEM = "ST";
+const char STR_MONO[]			PROGMEM = "MO";
 const char STR_TUNE[]			PROGMEM = "\xDB\xDB\xD0\xDC\xDC";
 const char STR_RDS[]			PROGMEM = "RDS";
 
@@ -250,6 +251,16 @@ static void lcdGenBar(uint8_t sym)
 		0b00000,
 		0b00000,
 	};
+	static const uint8_t monoIcon[] PROGMEM = {
+		0b00000,
+		0b00111,
+		0b01001,
+		0b01001,
+		0b01001,
+		0b00111,
+		0b00000,
+		0b00000,
+	};
 	static const uint8_t crossIcon[] PROGMEM = {
 		0b00000,
 		0b10001,
@@ -319,6 +330,11 @@ static void lcdGenBar(uint8_t sym)
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&crossIcon[i]));
 			break;
+		case SYM_STEREO_MONO:
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&stereoIcon[i]));
+			for (i = 0; i < 8; i++)
+				ks0066WriteData(pgm_read_byte(&monoIcon[i]));
 		default:
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&stereoIcon[i]));
@@ -1116,7 +1132,7 @@ void showRadio(uint8_t tune)
 	uint8_t favNum = tunerFavStationNum();
 
 #ifdef KS0066
-	lcdGenBar(SYM_STEREO_DEGREE);
+	lcdGenBar(SYM_STEREO_MONO);
 
 	/* Frequency value */
 	ks0066SetXY(0, 0);
@@ -1138,7 +1154,9 @@ void showRadio(uint8_t tune)
 
 	/* Stereo indicator */
 	ks0066SetXY(10, 0);
-	if (tunerStereo())
+	if (tuner.mono)
+		writeString("\x07");
+	else if (tunerStereo())
 		writeString("\x06");
 	else
 		writeString(" ");
@@ -1211,7 +1229,9 @@ void showRadio(uint8_t tune)
 	/* Stereo indicator */
 	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
 	ls020SetXY(162, 15);
-	if (tunerStereo())
+	if (tuner.mono)
+		writeStringPgm(STR_MONO);
+	else if (tunerStereo())
 		writeStringPgm(STR_STEREO);
 	else
 		writeStringPgm(STR_SPACE2);
@@ -1255,7 +1275,7 @@ void showRadio(uint8_t tune)
 		writeStringPgm(STR_TUNE);
 	} else {
 		ls020SetXY(80, 80);
-		if (rdsGetFlag())
+		if (tuner.rds)
 			writeStringPgm(STR_RDS);
 		else
 			writeStringPgm(STR_SPACE3);
@@ -1283,7 +1303,9 @@ void showRadio(uint8_t tune)
 	/* Stereo indicator */
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(116, 12);
-	if (tunerStereo())
+	if (tuner.mono)
+		writeStringPgm(STR_MONO);
+	else if (tunerStereo())
 		writeStringPgm(STR_STEREO);
 	else
 		writeStringPgm(STR_SPACE2);
@@ -1329,7 +1351,7 @@ void showRadio(uint8_t tune)
 	} else {
 		gdSetXY(110, 56);
 #ifdef _RDS
-		if (rdsGetFlag())
+		if (tuner.rds)
 			writeStringPgm(STR_RDS);
 		else
 			writeStringPgm(STR_SPACE3);
