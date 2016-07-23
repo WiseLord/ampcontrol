@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/">
-        <file>res/eeprom.bin</file>
         <file>res/ampcontrol.png</file>
         <file>icons/balance.bmp</file>
         <file>icons/bass.bmp</file>
@@ -27,5 +26,6 @@
         <file>icons/cassette.bmp</file>
         <file>icons/mixer.bmp</file>
         <file>icons/satellite.bmp</file>
+        <file>res/eeprom_en.bin</file>
     </qresource>
 </RCC>

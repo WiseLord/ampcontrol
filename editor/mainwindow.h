@@ -5,7 +5,7 @@
 
 #include "lcdconverter.h"
 
-#define EEPROM_RESOURCE ":/res/eeprom.bin"
+#define EEPROM_RESOURCE ":/res/eeprom_en.bin"
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
 {

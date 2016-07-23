@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     wgtHexTable->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
     wgtHexTable->verticalHeader()->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
     wgtHexTable->horizontalHeader()->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
-    for (int y = 0; y < 64; y++) {
+    for (int y = 0; y < wgtHexTable->rowCount(); y++) {
         wgtHexTable->setVerticalHeaderItem(y, new QTableWidgetItem(QString("%1").arg(y * 16, 4, 16, QChar('0')).toUpper()));
         for (int x = 0; x < 16; x++)
             wgtHexTable->setItem(y, x, new QTableWidgetItem());
@@ -55,7 +55,7 @@ void MainWindow::updateHexTable(int pos)
 
 void MainWindow::updateHexTable()
 {
-    for (int pos = 0; pos < 1024; pos++)
+    for (int pos = 0; pos < wgtHexTable->rowCount() * 16; pos++)
         updateHexTable(pos);
 }
 
