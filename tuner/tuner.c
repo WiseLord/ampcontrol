@@ -174,6 +174,20 @@ void tunerSetMono(uint8_t value)
 	return;
 }
 
+void tunerSetRDS(uint8_t value)
+{
+	switch (tuner.ic) {
+	case TUNER_RDA5807:
+	case TUNER_RDA5807_DF:
+		tuner.rds = value;
+		tunerSetFreq();
+		break;
+	default:
+		tuner.rds = 0;
+		break;
+	}
+}
+
 uint8_t tunerStereo(void)
 {
 	uint8_t ret = tuner.mono;

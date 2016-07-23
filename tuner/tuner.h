@@ -48,6 +48,7 @@ void tunerChangeFreq(int8_t mult);
 
 void tunerReadStatus(void);
 void tunerSetMono(uint8_t value);
+void tunerSetRDS(uint8_t value);
 uint8_t tunerStereo(void);
 uint8_t tunerLevel(void);
 

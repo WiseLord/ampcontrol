@@ -43,9 +43,6 @@ static void rda580xWriteI2C(uint8_t bytes)
 
 void rda580xInit(void)
 {
-#ifdef _RDS
-	wrBuf[1] |= RDA5807_RDS_EN;
-#endif
 	if (tuner.ic == TUNER_RDA5807_DF)
 		wrBuf[11] |= RDA5807_FREQ_MODE;
 
@@ -62,6 +59,13 @@ void rda580xSetFreq(void)
 		wrBuf[0] |= RDA580X_MONO;
 	else
 		wrBuf[0] &= ~RDA580X_MONO;
+
+#ifdef _RDS
+	if (tuner.rds)
+		wrBuf[1] |= RDA5807_RDS_EN;
+	else
+		wrBuf[0] &= ~RDA5807_RDS_EN;
+#endif
 
 	if (tuner.ic == TUNER_RDA5802)
 		fMin = RDA5802_MIN_FREQ;
@@ -97,7 +101,7 @@ uint8_t *rda580xReadStatus(void)
 
 	// Get RDS data
 #ifdef _RDS
-	if (tuner.ic == TUNER_RDA5807 || tuner.ic == TUNER_RDA5807_DF) {
+	if (tuner.rds) {
 		/* If seek/tune is complete and current channel is a station */
 		if ((rdBuf[0] & RDA580X_STC) && (rdBuf[2] & RDA580X_FM_TRUE)) {
 			/* If RDS ready and sync flag are set */
