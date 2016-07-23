@@ -18,8 +18,8 @@
 #ifdef _PT232X
 #include "pt232x.h"
 #endif
-#ifdef _TEA6330
-#include "tea6330.h"
+#ifdef _TEA63X0
+#include "tea63x0.h"
 #endif
 #ifdef _PGA2310
 #include "pga2310.h"
@@ -69,22 +69,23 @@ void sndInit(void)
 
 	eeprom_read_block(&aproc, (void*)EEPROM_AUDIOPROC, sizeof(Audioproc_type) - 1);
 
-#if   !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
+#if   !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
 	aproc.ic = AUDIOPROC_NO;
-#elif  defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
+#elif  defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
 	aproc.ic = AUDIOPROC_TDA7439;
-#elif !defined(_TDA7439) &&  defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
+#elif !defined(_TDA7439) &&  defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
 	if (aproc.ic < AUDIOPROC_TDA7312 || aproc.ic >= AUDIOPROC_PT2314)
 		aproc.ic = AUDIOPROC_TDA7313;
-#elif !defined(_TDA7439) && !defined(_TDA731X) &&  defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
+#elif !defined(_TDA7439) && !defined(_TDA731X) &&  defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
 	aproc.ic = AUDIOPROC_TDA7448;
-#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) &&  defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
+#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) &&  defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
 	aproc.ic = AUDIOPROC_PT232X;
-#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) &&  defined(_TEA6330) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
-	aproc.ic = AUDIOPROC_TEA6330;
-#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && defined(_PGA2310) && !defined(_RDA580X_AUDIO)
+#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) &&  defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
+	if (aproc.ic != AUDIOPROC_TEA6330)
+		aproc.ic = AUDIOPROC_TEA6300;
+#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && defined(_PGA2310) && !defined(_RDA580X_AUDIO)
 	aproc.ic = AUDIOPROC_PGA2310;
-#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA6330) && !defined(_PGA2310) && defined(_RDA580X_AUDIO)
+#elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && defined(_RDA580X_AUDIO)
 	aproc.ic = AUDIOPROC_RDA580X;
 #else
 	if (aproc.ic >= AUDIOPROC_END)
@@ -154,7 +155,10 @@ void sndInit(void)
 		inCnt = PT2323_IN_CNT;
 		break;
 #endif
-#ifdef _TEA6330
+#ifdef _TEA63X0
+	case AUDIOPROC_TEA6300:
+		inCnt = TEA6300_IN_CNT;
+		break;
 	case AUDIOPROC_TEA6330:
 		inCnt = TEA6330_IN_CNT;
 		break;
@@ -295,18 +299,19 @@ void sndInit(void)
 		sndPar[MODE_SND_SUBWOOFER].set = pt2322SetSpeakers;
 		break;
 #endif
-#ifdef _TEA6330
+#ifdef _TEA63X0
+	case AUDIOPROC_TEA6300:
 	case AUDIOPROC_TEA6330:
 		sndPar[MODE_SND_VOLUME].grid = &grid_n66_20_2;
-		sndPar[MODE_SND_VOLUME].set = tea6330SetVolume;
+		sndPar[MODE_SND_VOLUME].set = tea63x0SetVolume;
 		sndPar[MODE_SND_BASS].grid = &grid_n12_15_3;
-		sndPar[MODE_SND_BASS].set = tea6330SetBT;
+		sndPar[MODE_SND_BASS].set = tea63x0SetBT;
 		sndPar[MODE_SND_TREBLE].grid = &grid_n12_12_3;
-		sndPar[MODE_SND_TREBLE].set = tea6330SetBT;
+		sndPar[MODE_SND_TREBLE].set = tea63x0SetBT;
 		sndPar[MODE_SND_FRONTREAR].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_FRONTREAR].set = tea6330SetFrontRear;
+		sndPar[MODE_SND_FRONTREAR].set = tea63x0SetSpeakers;
 		sndPar[MODE_SND_BALANCE].grid = &grid_n14_14_2;
-		sndPar[MODE_SND_BALANCE].set = tea6330SetVolume;
+		sndPar[MODE_SND_BALANCE].set = tea63x0SetVolume;
 		break;
 #endif
 #ifdef _PGA2310
@@ -357,6 +362,11 @@ void sndSetInput(uint8_t input)
 		pt2323SetInput();
 		break;
 #endif
+#ifdef _TEA63X0
+	case AUDIOPROC_TEA6300:
+		tea63x0SetInputMute();
+		break;
+#endif
 	default:
 		break;
 	}
@@ -399,9 +409,10 @@ void sndSetMute(uint8_t value)
 		pt232xSetSndFunc();
 		break;
 #endif
-#ifdef _TEA6330
+#ifdef _TEA63X0
+	case AUDIOPROC_TEA6300:
 	case AUDIOPROC_TEA6330:
-		tea6330SetMute();
+		tea63x0SetInputMute();
 		break;
 #endif
 #ifdef _PGA2310

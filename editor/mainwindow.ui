@@ -458,6 +458,11 @@
              </item>
              <item>
               <property name="text">
+               <string>TEA6300</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
                <string>TEA6330</string>
               </property>
              </item>

@@ -14,8 +14,8 @@ audio/tda7439.c
 audio/tda7439.h
 audio/tda7448.c
 audio/tda7448.h
-audio/tea6330.c
-audio/tea6330.h
+audio/tea63x0.c
+audio/tea63x0.h
 
 display/font-digits-32.c
 display/font-ks0066-ru-08.c
