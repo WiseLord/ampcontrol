@@ -59,8 +59,8 @@ void tda7439SetInput(void)
 {
 	I2CStart(TDA7439_I2C_ADDR);
 	I2CWriteByte(TDA7439_INPUT_SELECT | TDA7439_AUTO_INC);
-	I2CWriteByte(TDA7439_INPUT_GAIN);
 	I2CWriteByte(TDA7439_IN_CNT - 1 - aproc.input);
+	I2CWriteByte(sndPar[MODE_SND_GAIN0 + aproc.input].value);
 	I2CStop();
 
 	return;
