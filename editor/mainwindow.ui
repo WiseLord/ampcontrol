@@ -1,0 +1,2867 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>580</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>800</width>
+    <height>580</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>Ampcontrol ATmega8 EEPROM editor</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
+    <item>
+     <widget class="QTableWidget" name="wgtHexTable">
+      <property name="minimumSize">
+       <size>
+        <width>410</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="gridStyle">
+       <enum>Qt::NoPen</enum>
+      </property>
+      <property name="rowCount">
+       <number>32</number>
+      </property>
+      <property name="columnCount">
+       <number>16</number>
+      </property>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>22</number>
+      </attribute>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>22</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>18</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>18</number>
+      </attribute>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+     </widget>
+    </item>
+    <item>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tabTranslations">
+       <attribute name="title">
+        <string>Translations</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <property name="spacing">
+         <number>2</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QTableWidget" name="wgtTranslations">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="gridStyle">
+           <enum>Qt::DotLine</enum>
+          </property>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderDefaultSectionSize">
+           <number>21</number>
+          </attribute>
+          <row>
+           <property name="text">
+            <string>Volume</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Bass</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Middle</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Treble</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Preamp</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Front/Rear</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Balance</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Center</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Subwoofer</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Input 0</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Input 1</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Input 2</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Input 3</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Input 4</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Mute</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Loudness</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Surround</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>3D effect</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Tone defeat</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>On</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Off</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>dB</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Sunday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Monday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Tuesday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Wednesday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Thursday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Friday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Saturday</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>Brightness</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>Translation</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabAudio">
+       <attribute name="title">
+        <string>Audio</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="wgtAudioproc" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblAudioproc">
+             <property name="text">
+              <string>Audioprocessor</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxAudioproc">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>No audioproc</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TDA7439</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TDA7312</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TDA7313</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TDA7314</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TDA7315</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TDA7318</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PT2314</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TDA7448</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PT2322/2323</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TEA6330</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>PGA2310 (m32 only)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>RDA580x volume</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+          <zorder>cbxAudioproc</zorder>
+          <zorder>lblAudioproc</zorder>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtInput" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblInput">
+             <property name="text">
+              <string>Input</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxInput">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="editable">
+              <bool>false</bool>
+             </property>
+             <item>
+              <property name="text">
+               <string>Input 1</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Input 2</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Input 3</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Input 4</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Input 5</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtLoudness" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblLoudness">
+             <property name="text">
+              <string>Loudness</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxLoudness">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>On</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtSurround" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_33" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblSurround">
+             <property name="text">
+              <string>Surround</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxSurround">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>On</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtEffect3d" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_34" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblEffect3d">
+             <property name="text">
+              <string>3D effect</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxEffect3d">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>On</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtToneDefeat" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblToneDefeat">
+             <property name="text">
+              <string>Tone defeat</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxToneDefeat">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>On</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtVolume" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblVolume">
+             <property name="text">
+              <string>Volume</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbVolume">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="decimals">
+              <number>2</number>
+             </property>
+             <property name="minimum">
+              <double>-79.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>-36.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtBass" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblBass">
+             <property name="text">
+              <string>Bass</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbBass">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>-14.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>14.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+          <zorder>dsbBass</zorder>
+          <zorder>lblBass</zorder>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtMiddle" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblMiddle">
+             <property name="text">
+              <string>Middle</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbMiddle">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>-14.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>14.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtTreble" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblTreble">
+             <property name="text">
+              <string>Treble</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbTreble">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>-14.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>14.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtPreamp" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblPreamp">
+             <property name="text">
+              <string>Preamp</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbPreamp">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>-47.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFrontrear" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFrontrear">
+             <property name="text">
+              <string>Front/Rear</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFrontrear">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtBalance" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblBalance">
+             <property name="text">
+              <string>Balance</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbBalance">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtCenter" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblCenter">
+             <property name="text">
+              <string>Center</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbCenter">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtSubwoofer" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblSubwoofer">
+             <property name="text">
+              <string>Subwoofer</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbSubwoofer">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="minimum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>0.000000000000000</double>
+             </property>
+             <property name="value">
+              <double>0.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtGain0" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblGain0">
+             <property name="text">
+              <string>Input 0 gain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbGain0">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="maximum">
+              <double>30.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtGain1" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblGain1">
+             <property name="text">
+              <string>Input 1 gain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbGain1">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="maximum">
+              <double>30.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtGain2" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblGain2">
+             <property name="text">
+              <string>Input 2 gain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbGain2">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="maximum">
+              <double>30.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtGain3" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblGain3">
+             <property name="text">
+              <string>Input 3 gain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbGain3">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="maximum">
+              <double>30.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtGain4" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_31" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblGain4">
+             <property name="text">
+              <string>Input 4 gain</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbGain4">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> dB</string>
+             </property>
+             <property name="maximum">
+              <double>30.000000000000000</double>
+             </property>
+             <property name="singleStep">
+              <double>2.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="vspAudio">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabTuner">
+       <attribute name="title">
+        <string>Tuner</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="wgtTuner" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblTuner">
+             <property name="text">
+              <string>Tuner</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxTuner">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>No tuner</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TEA5767</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>RDA5807</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>TUX032</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>LM7001 (m32 only)</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>RDA5802</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>RDA5807 direct freq</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmfreq" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmfreq">
+             <property name="text">
+              <string>Frequency</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFmfreq">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>50.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>152.530000000000001</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmMin" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_37" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmMin">
+             <property name="text">
+              <string>Minimal frequency</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFmMin">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>50.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>87.000000000000000</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmMax" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_38" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmMax">
+             <property name="text">
+              <string>Maximum frequency</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbFmMax">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>76.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>152.530000000000001</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmstep1" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmstep1">
+             <property name="text">
+              <string>Step on freq &lt; 76 MHz</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFmstep1">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>10 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>20 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>50 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>100 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>200 kHz</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmstep2" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_36" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmstep2">
+             <property name="text">
+              <string>Step on freq &gt; 76 MHz</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFmstep2">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>10 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>20 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>50 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>100 kHz</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>200 kHz</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmmono" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmmono">
+             <property name="text">
+              <string>Audio</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFmmono">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Stereo</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Mono</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmRDS" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_40" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmRDS">
+             <property name="text">
+              <string>RDS</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFmRDS">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>On</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtFmctrl" native="true">
+          <layout class="QVBoxLayout" name="verticalLayout_4">
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>3</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmctrl">
+             <property name="text">
+              <string>TEA5767 control byte</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlHcc">
+             <property name="text">
+              <string>High Cut Control</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlSnc">
+             <property name="text">
+              <string>Stereo Noise Cancelling</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlSm">
+             <property name="text">
+              <string>Soft MUTE</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlDtc">
+             <property name="text">
+              <string>De-emphasis 75us (1) or 50us (0)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlBl">
+             <property name="text">
+              <string>Band Limit Japanes (1) or US/Europe (0)</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlPllref">
+             <property name="text">
+              <string>PLL Reference 6.5MHz</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlXtal">
+             <property name="text">
+              <string>Freq XTAL 32.768 kHz (1) or 13 MHz (0)</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="vspTuner">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>327</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabOther">
+       <attribute name="title">
+        <string>Other</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_5">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="wgtBrstby" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_22" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblBrstby">
+             <property name="text">
+              <string>Standby brightness</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sbxBrstby">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="maximum">
+              <number>32</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer name="vspOther">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>231</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+   <zorder>tabWidget</zorder>
+   <zorder>wgtHexTable</zorder>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpenEeprom"/>
+    <addaction name="actionSaveEeprom"/>
+    <addaction name="actionSaveEepromAs"/>
+    <addaction name="actionLoadDefaultEeprom"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAboutQt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionOpenEeprom">
+   <property name="text">
+    <string>&amp;Open eeprom binary …</string>
+   </property>
+  </action>
+  <action name="actionSaveEeprom">
+   <property name="text">
+    <string>&amp;Save eeprom binary</string>
+   </property>
+  </action>
+  <action name="actionSaveEepromAs">
+   <property name="text">
+    <string>Save &amp;eeprom binary as …</string>
+   </property>
+  </action>
+  <action name="actionLoadDefaultEeprom">
+   <property name="text">
+    <string>&amp;Load default eeprom</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>A&amp;boutQt</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionOpenEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>openEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>386</x>
+     <y>221</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSaveEepromAs</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveEepromAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLoadDefaultEeprom</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>loadDefaultEeprom()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>380</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wgtTranslations</sender>
+   <signal>cellChanged(int,int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>updateTranslation(int,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>75</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>761</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbGain3</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setGain3(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>517</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxInput</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setInput(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>700</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>262</x>
+     <y>22</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbGain1</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setGain1(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>473</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxLoudness</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLoudness(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>759</x>
+     <y>149</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>355</x>
+     <y>26</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxAudioproc</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setAudioproc(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>675</x>
+     <y>64</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>437</x>
+     <y>475</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbCenter</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setCenter(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>407</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbGain0</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setGain0(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>451</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbSubwoofer</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSubwoofer(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>429</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlXtal</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>785</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>419</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmmono</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmmono(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>728</x>
+     <y>200</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>664</x>
+     <y>198</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbFmfreq</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmfreq(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>683</x>
+     <y>86</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>658</x>
+     <y>85</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlPllref</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>785</x>
+     <y>401</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>392</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlHcc</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>720</x>
+     <y>262</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>415</x>
+     <y>267</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlDtc</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>775</x>
+     <y>338</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>415</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlSm</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>785</x>
+     <y>326</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbBalance</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setBalance(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>385</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbPreamp</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setPreamp(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>341</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbVolume</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setVolume(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>253</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>696</x>
+     <y>22</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbMiddle</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setMiddle(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbGain2</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setGain2(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>495</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlBl</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>785</x>
+     <y>376</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbTreble</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTreble(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>319</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxTuner</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setTuner(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>680</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>630</x>
+     <y>61</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlSnc</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>785</x>
+     <y>301</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>414</x>
+     <y>288</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbFrontrear</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFrontrear(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>363</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbBass</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setBass(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>275</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbxBrstby</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setBrstby(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>765</x>
+     <y>118</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAboutQt</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>aboutQt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAbout</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>about()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>383</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxSurround</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setSurround(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>183</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxEffect3d</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setEffect3d(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>154</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxToneDefeat</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setToneDefeat(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>693</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>421</x>
+     <y>127</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbGain4</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setGain4(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>791</x>
+     <y>539</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>671</x>
+     <y>567</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbFmMin</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmMin(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>691</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>661</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbFmMax</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmMax(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>690</x>
+     <y>130</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>659</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmRDS</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmRds(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>703</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>659</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmstep1</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmstep1(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>695</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>656</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmstep2</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmstep2(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>694</x>
+     <y>179</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>662</x>
+     <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>openEeprom()</slot>
+  <slot>setAudioproc(int)</slot>
+  <slot>updateTranslation(int,int)</slot>
+  <slot>setVolume(double)</slot>
+  <slot>setBass(double)</slot>
+  <slot>setMiddle(double)</slot>
+  <slot>setTreble(double)</slot>
+  <slot>setPreamp(double)</slot>
+  <slot>setFrontrear(double)</slot>
+  <slot>setBalance(double)</slot>
+  <slot>setCenter(double)</slot>
+  <slot>setSubwoofer(double)</slot>
+  <slot>setGain0(double)</slot>
+  <slot>setGain1(double)</slot>
+  <slot>setGain2(double)</slot>
+  <slot>setGain3(double)</slot>
+  <slot>setLoudness(int)</slot>
+  <slot>setInput(int)</slot>
+  <slot>saveEeprom()</slot>
+  <slot>saveEepromAs()</slot>
+  <slot>loadDefaultEeprom()</slot>
+  <slot>setTuner(int)</slot>
+  <slot>setFmfreq(double)</slot>
+  <slot>setFmstep1(int)</slot>
+  <slot>setFmmono(int)</slot>
+  <slot>setFmctrl()</slot>
+  <slot>setSpmode(int)</slot>
+  <slot>setSpspeed(int)</slot>
+  <slot>setBrstby(int)</slot>
+  <slot>setEncres(int)</slot>
+  <slot>setAdcleft(int)</slot>
+  <slot>setAdcright(int)</slot>
+  <slot>setExtfunc(int)</slot>
+  <slot>setThreshold(int)</slot>
+  <slot>about()</slot>
+  <slot>aboutQt()</slot>
+  <slot>setSilence(int)</slot>
+  <slot>setInputIcon(int)</slot>
+  <slot>setSurround(int)</slot>
+  <slot>setEffect3d(int)</slot>
+  <slot>setToneDefeat(int)</slot>
+  <slot>setGain4(double)</slot>
+  <slot>setFmstep2(int)</slot>
+  <slot>setFmMin(double)</slot>
+  <slot>setFmMax(double)</slot>
+  <slot>setFmRds(int)</slot>
+ </slots>
+</ui>
