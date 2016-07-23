@@ -431,6 +431,10 @@ void handleAction(uint8_t action)
 				dispMode = MODE_FM_RADIO;
 				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 				break;
+			case CMD_RC_FM_RDS:
+				tunerSetRDS(!tuner.rds);
+				dispMode = MODE_FM_RADIO;
+				setDisplayTime(DISPLAY_TIME_FM_RADIO);
 			default:
 				break;
 			}

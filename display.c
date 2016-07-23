@@ -44,7 +44,7 @@ const char STR_RC_SURROUND[]	PROGMEM = "Surround";
 const char STR_RC_EFFECT_3D[]	PROGMEM = "3D effect";
 const char STR_RC_TONE_DEFEAT[]	PROGMEM = "Tone defeat";
 
-const char STR_RC_DEF_DISPLAY[]	PROGMEM = "Display mode";
+const char STR_RC_FM_RDS[]		PROGMEM = "RDS enable";
 const char STR_RC_FM_INC[]		PROGMEM = "Channel +";
 const char STR_RC_FM_DEC[]		PROGMEM = "Channel -";
 const char STR_RC_FM_MODE[]		PROGMEM = "FM tune";
@@ -65,6 +65,7 @@ const char STR_RC_TIME[]		PROGMEM = "Time";
 const char STR_RC_ALARM[]		PROGMEM = "Alarm";
 const char STR_RC_TIMER[]		PROGMEM = "Timer";
 const char STR_RC_BRIGHTNESS[]	PROGMEM = "Brightness";
+const char STR_RC_DEF_DISPLAY[]	PROGMEM = "Display mode";
 const char STR_RC_NEXT_SPMODE[]	PROGMEM = "Spectrum mode";
 const char STR_RC_FALLSPEED[]	PROGMEM = "Fall speed";
 
@@ -86,7 +87,7 @@ PGM_P const rcLabels[] PROGMEM = {
 	STR_RC_EFFECT_3D,
 	STR_RC_TONE_DEFEAT,
 
-	STR_RC_DEF_DISPLAY,
+	STR_RC_FM_RDS,
 	STR_RC_FM_INC,
 	STR_RC_FM_DEC,
 	STR_RC_FM_MODE,
@@ -107,6 +108,7 @@ PGM_P const rcLabels[] PROGMEM = {
 	STR_RC_ALARM,
 	STR_RC_TIMER,
 	STR_RC_BRIGHTNESS,
+	STR_RC_DEF_DISPLAY,
 	STR_RC_NEXT_SPMODE,
 	STR_RC_FALLSPEED,
 };
