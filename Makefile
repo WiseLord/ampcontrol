@@ -21,8 +21,8 @@ else ifeq ($(AUDIOPROC), TDA7448)
   AUDIO_SRC += audio/tda7448.c
 else ifeq ($(AUDIOPROC), PT232X)
   AUDIO_SRC += audio/pt232x.c
-else ifeq ($(AUDIOPROC), TEA6330)
-  AUDIO_SRC += audio/tea6330.c
+else ifeq ($(AUDIOPROC), TEA63X0)
+  AUDIO_SRC += audio/tea63x0.c
 else ifeq ($(AUDIOPROC), PGA2310)
   AUDIO_SRC += audio/pga2310.c
 else ifeq ($(AUDIOPROC), RDA580X_AUDIO)
