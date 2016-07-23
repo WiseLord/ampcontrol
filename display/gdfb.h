@@ -18,7 +18,13 @@ enum {
 	FONT_OFTA,
 	FONT_OFTNA,
 	FONT_COLOR,
-	FONT_DIRECTION,
+
+	FONT_END
+};
+
+enum {
+	FONT_DIRECTION = FONT_END,
+	FONT_FIXED,
 
 	FONT_PARAM_END
 };
@@ -64,6 +70,7 @@ void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color);
 void gdSetXY(uint8_t x, uint8_t y);
 uint8_t gdGetX(void);
 void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction);
+void gdSetFontFixed(uint8_t width);
 
 void gdWriteChar(uint8_t code);
 void gdWriteString(char *string);

@@ -159,10 +159,20 @@ void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction)
 	uint8_t i;
 
 	_font = font + 5;
-	for (i = 0; i < FONT_PARAM_END - 1; i++)
+	for (i = 0; i < FONT_END - 1; i++)
 		fp[i] = pgm_read_byte(font + i);
 	fp[FONT_COLOR] = color;
 	fp[FONT_DIRECTION] = direction;
+	fp[FONT_FIXED] = 0;
+
+	return;
+}
+
+void gdSetFontFixed(uint8_t width)
+{
+	fp[FONT_FIXED] = width;
+
+	return;
 }
 
 void gdWriteChar(uint8_t code)
@@ -175,21 +185,27 @@ void gdWriteChar(uint8_t code)
 
 	uint8_t spos = code - ((code >= 128) ? fp[FONT_OFTNA] : fp[FONT_OFTA]);
 
-	uint16_t oft = 0;	/* Current symbol offset in array*/
-	uint8_t swd = 0;	/* Current symbol width */
+	uint16_t oft = 0;				// Current symbol offset in array
+	uint8_t swd = 0;				// Current symbol width
+	uint8_t fwd = fp[FONT_FIXED];	// Fixed width
 
 	for (i = 0; i < spos; i++) {
 		swd = pgm_read_byte(_font + i);
 		oft += swd;
 	}
 	swd = pgm_read_byte(_font + spos);
+	if (!fwd)
+		fwd = swd;
 
 	oft *= fp[FONT_HEIGHT];
 	oft += fp[FONT_CCNT];
 
 	for (j = 0; j < fp[FONT_HEIGHT]; j++) {
-		for (i = 0; i < swd; i++) {
-			pgmData = pgm_read_byte(_font + oft + (swd * j) + i);
+		for (i = 0; i < fwd; i++) {
+			if (i >= swd)
+				pgmData = 0x00;
+			else
+				pgmData = pgm_read_byte(_font + oft + (swd * j) + i);
 			if (!fp[FONT_COLOR])
 				pgmData = ~pgmData;
 			for (k = 0; k < 8; k++) {
@@ -212,16 +228,16 @@ void gdWriteChar(uint8_t code)
 	}
 	switch (fp[FONT_DIRECTION]) {
 	case FONT_DIR_0:
-		gdSetXY(_x + swd, _y);
+		gdSetXY(_x + fwd, _y);
 		break;
 	case FONT_DIR_90:
-		gdSetXY(_x, _y - swd);
+		gdSetXY(_x, _y - fwd);
 		break;
 	case FONT_DIR_180:
-		gdSetXY(_x - swd, _y);
+		gdSetXY(_x - fwd, _y);
 		break;
 	case FONT_DIR_270:
-		gdSetXY(_x, _y + swd);
+		gdSetXY(_x, _y + fwd);
 		break;
 	}
 
@@ -233,7 +249,8 @@ void gdWriteString(char *string)
 	if (*string)
 		gdWriteChar(*string++);
 	while(*string) {
-		gdWriteChar(fp[FONT_LTSPPOS]);
+		if (!fp[FONT_FIXED])
+			gdWriteChar(fp[FONT_LTSPPOS]);
 		gdWriteChar(*string++);
 	}
 

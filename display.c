@@ -1321,11 +1321,11 @@ void showRadio(uint8_t tune)
 
 	/* Station number */
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-	gdSetXY(94, 30);
+	gdSetXY(106, 30);
 	if (num)
-		writeNum(num, 3, ' ', 10);
+		writeNum(num, 2, ' ', 10);
 	else
-		writeStringPgm(STR_SPMINUS2);
+		writeStringPgm(STR_MINUS2);
 
 	/* Frequency scale */
 	showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.freq >> 4);
@@ -1334,6 +1334,7 @@ void showRadio(uint8_t tune)
 #ifdef _RDS
 	if (rdsGetFlag()) {
 		gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
+		gdSetFontFixed(12);
 		gdSetXY(0, 40);
 		writeString(rdsGetText());
 		gdDrawFilledRect(gdGetX(), 40, 103 - gdGetX(), 24, 0);
