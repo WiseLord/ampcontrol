@@ -3,7 +3,13 @@
 
 #include "../i2c.h"
 
-static uint8_t wrBuf[5];
+static uint8_t wrBuf[5] = {
+	0,
+	0,
+	TEA5767_HLSI,
+	TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE |TEA5767_XTAL,
+	TEA5767_DTC,
+} ;
 static uint8_t rdBuf[5];
 
 static void tea5767WriteI2C(void)
@@ -20,14 +26,7 @@ static void tea5767WriteI2C(void)
 
 void tea5767Init(void)
 {
-	wrBuf[0] = 0;
-
-	wrBuf[1] = 0;
-
-	wrBuf[2] = TEA5767_HLSI;
-
 	wrBuf[3] = tuner.ctrl & (TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE | TEA5767_BL | TEA5767_XTAL);
-
 	wrBuf[4] = tuner.ctrl & (TEA5767_DTC | TEA5767_PLLREF);
 
 	return;
