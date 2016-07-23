@@ -242,6 +242,10 @@ int main(void)
 				case CMD_RC_FM_MONO:
 					tunerSetMono(!tuner.mono);
 					break;
+#ifdef _RDS
+				case CMD_RC_FM_RDS:
+					tunerSetRDS(!tuner.rds);
+#endif
 				default:
 					if (action >= CMD_RC_FM_0 && action <= CMD_RC_FM_9) {
 						sndSetInput(0);
