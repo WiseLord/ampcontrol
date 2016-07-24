@@ -190,10 +190,7 @@ void tunerSetRDS(uint8_t value)
 
 uint8_t tunerStereo(void)
 {
-	uint8_t ret = tuner.mono;
-
-	if (ret)
-		return 0;
+	uint8_t ret = !tuner.mono;
 
 	switch (tuner.ic) {
 #ifdef _TEA5767
