@@ -286,6 +286,7 @@ void MainWindow::setAudioproc(int proc)
     default:
         cbxInput->insertItem(0, "Input 1");
         wgtInput->show();
+        wgtInputIcon->show();
         setInput(eep[EEPROM_INPUT]);
         cbxInput->setCurrentIndex(eep[EEPROM_INPUT]);
         break;
