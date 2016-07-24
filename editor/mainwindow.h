@@ -75,6 +75,11 @@ private slots:
     void setFmRds(int value);
     void setFmctrl();
 
+    void setRemoteType(int type);
+    void setRemoteAddr(int addr);
+    void setRemoteCmd(int cmd);
+    void setRemoteIndex(int index);
+
     void setOther();
     void setBrstby(int value);
 };
