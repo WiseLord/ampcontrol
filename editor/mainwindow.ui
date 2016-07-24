@@ -3519,7 +3519,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>720</x>
-     <y>262</y>
+     <y>272</y>
     </hint>
     <hint type="destinationlabel">
      <x>415</x>
@@ -3535,7 +3535,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>775</x>
-     <y>338</y>
+     <y>348</y>
     </hint>
     <hint type="destinationlabel">
      <x>415</x>
@@ -3679,7 +3679,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>680</x>
-     <y>61</y>
+     <y>71</y>
     </hint>
     <hint type="destinationlabel">
      <x>630</x>
@@ -4015,7 +4015,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>703</x>
-     <y>223</y>
+     <y>233</y>
     </hint>
     <hint type="destinationlabel">
      <x>659</x>
@@ -4052,6 +4052,70 @@
     <hint type="destinationlabel">
      <x>662</x>
      <y>174</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxRemoteType</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setRemoteType(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>692</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>74</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbxRemoteAddr</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setRemoteAddr(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>692</x>
+     <y>99</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>663</x>
+     <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbxRemoteCmd</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setRemoteCmd(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>685</x>
+     <y>117</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>666</x>
+     <y>116</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lwCommands</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setRemoteIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>447</x>
+     <y>137</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>416</x>
+     <y>135</y>
     </hint>
    </hints>
   </connection>
@@ -4103,5 +4167,9 @@
   <slot>setFmMin(double)</slot>
   <slot>setFmMax(double)</slot>
   <slot>setFmRds(int)</slot>
+  <slot>setRemoteType(int)</slot>
+  <slot>setRemoteAddr(int)</slot>
+  <slot>setRemoteCmd(int)</slot>
+  <slot>setRemoteIndex(int)</slot>
  </slots>
 </ui>
