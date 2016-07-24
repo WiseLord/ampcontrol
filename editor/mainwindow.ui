@@ -2317,6 +2317,389 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tabRemote">
+       <attribute name="title">
+        <string>Remote</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_6">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QWidget" name="wgtRemoteType" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_39" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblRemoteType">
+             <property name="text">
+              <string>Remote type</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxRemoteType">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="currentIndex">
+              <number>0</number>
+             </property>
+             <item>
+              <property name="text">
+               <string>RC5</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>NEC</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>RC6</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Samsung</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtRemoteAddr" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_41" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblRemoteAddr">
+             <property name="text">
+              <string>Remote address</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sbxRemoteAddr">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="prefix">
+              <string>0x</string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="displayIntegerBase">
+              <number>16</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtRemoteCmd" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_42" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblRemoteCmd">
+             <property name="text">
+              <string>Remote command</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sbxRemoteCmd">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="prefix">
+              <string>0x</string>
+             </property>
+             <property name="minimum">
+              <number>0</number>
+             </property>
+             <property name="maximum">
+              <number>255</number>
+             </property>
+             <property name="displayIntegerBase">
+              <number>16</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="lwCommands">
+          <item>
+           <property name="text">
+            <string>Standby mode</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Mute sound</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Sound menu</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Volume +</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Volume -</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Input 1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Input 2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Input 3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Input 4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Input 5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Prev input</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Next input</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Loudness</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Surround</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>3D effect</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Tone defeat</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>RDS enable</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Channel +</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Channel -</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>FM tune</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>FM mono</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Store freq</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 0</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 1</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 2</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 3</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 4</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 5</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 8</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Button 9</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Time</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Alarm</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Timer</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Brightness</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Display mode</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Fall speed</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tabOther">
        <attribute name="title">
         <string>Other</string>
@@ -2344,7 +2727,7 @@
             <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>0</number>
+            <number>3</number>
            </property>
            <property name="topMargin">
             <number>0</number>
