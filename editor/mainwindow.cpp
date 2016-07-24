@@ -646,6 +646,8 @@ void MainWindow::setTuner(int tuner)
         wgtFmMin->show();
         wgtFmMax->show();
         dsbFmfreq->setValue(getFreq(EEPROM_FM_FREQ));
+        dsbFmMin->setValue(getFreq(EEPROM_FM_FREQ_MIN));
+        dsbFmMax->setValue(getFreq(EEPROM_FM_FREQ_MAX));
         if (dsbFmfreq->value() < 76)
             dsbFmfreq->setSingleStep((double)eep[EEPROM_FM_STEP1] / 100);
         else
