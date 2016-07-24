@@ -164,9 +164,9 @@ void MainWindow::setAudioParam(QDoubleSpinBox *spb, double min, double max, doub
 void MainWindow::openEeprom()
 {
     QString name = QFileDialog::getOpenFileName(this,
-        tr("Open eeprom binary"),
-        "../eeprom/",
-        tr("EEPROM files (*.bin);;All files (*.*)"));
+                                                tr("Open eeprom binary"),
+                                                "../eeprom/",
+                                                tr("EEPROM files (*.bin);;All files (*.*)"));
 
     readEepromFile(name);
 }
@@ -179,9 +179,9 @@ void MainWindow::saveEeprom()
 void MainWindow::saveEepromAs()
 {
     QString name = QFileDialog::getSaveFileName(this,
-        tr("Save eeprom binary"),
-        "../eeprom/" + fileName,
-        tr("EEPROM files (*.bin)"));
+                                                tr("Save eeprom binary"),
+                                                "../eeprom/" + fileName,
+                                                tr("EEPROM files (*.bin)"));
 
     if (name.isEmpty())
         return;
@@ -746,20 +746,20 @@ void MainWindow::setFmctrl()
 
 void MainWindow::setRemoteType(int type)
 {
-  eep[EEPROM_RC_TYPE] = type;
-  updateHexTable(EEPROM_RC_TYPE);
+    eep[EEPROM_RC_TYPE] = type;
+    updateHexTable(EEPROM_RC_TYPE);
 }
 
 void MainWindow::setRemoteAddr(int addr)
 {
-  eep[EEPROM_RC_ADDR] = addr;
-  updateHexTable(EEPROM_RC_ADDR);
+    eep[EEPROM_RC_ADDR] = addr;
+    updateHexTable(EEPROM_RC_ADDR);
 }
 
 void MainWindow::setRemoteCmd(int cmd)
 {
-  eep[EEPROM_RC_CMD + lwCommands->currentRow()] = cmd;
-  updateHexTable(EEPROM_RC_CMD + lwCommands->currentRow());
+    eep[EEPROM_RC_CMD + lwCommands->currentRow()] = cmd;
+    updateHexTable(EEPROM_RC_CMD + lwCommands->currentRow());
 }
 
 void MainWindow::setRemoteIndex(int index)
