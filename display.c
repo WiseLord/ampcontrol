@@ -1337,8 +1337,8 @@ void showRadio(uint8_t tune)
 		gdSetFontFixed(12);
 		gdSetXY(0, 40);
 		writeString(rdsGetText());
-		gdDrawFilledRect(gdGetX(), 40, 103 - gdGetX(), 24, 0);
 	} else {
+		gdDrawFilledRect(93, 40, 3, 24, 0);
 		drawBarSpectrum();
 	}
 #else
