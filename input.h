@@ -82,13 +82,16 @@ typedef enum {
 
 } cmdID;
 
-/* Handling long press actions */
+// Handling long press actions
 #define SHORT_PRESS				100
 #define LONG_PRESS				600
 #define AUTOREPEAT				150
 
 #define STBY_TIMER_OFF			-1
 #define SILENCE_TIMER			180
+
+#define INIT_TIMER_OFF			-1
+#define INIT_TIMER_START		700
 
 #define TEMP_MEASURE_TIME		2
 #define SENSOR_POLL_INTERVAL	5
@@ -121,4 +124,7 @@ void enableSilenceTimer(void);
 void disableSilenceTimer(void);
 int16_t getSilenceTimer(void);
 
-#endif /* INPUT_H */
+void setInitTimer(int16_t value);
+int16_t getInitTimer(void);
+
+#endif // INPUT_H

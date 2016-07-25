@@ -187,18 +187,21 @@ void handleAction(uint8_t action)
 		PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
 		setWorkBrightness();
 
-		_delay_ms(500);						/* Wait while power is being set up */
+		setInitTimer(INIT_TIMER_START);
 
+		dispMode = MODE_SND_GAIN0 + aproc.input;
+		setDisplayTime(DISPLAY_TIME_GAIN_START);
+		enableSilenceTimer();
+
+		break;
+	case ACTION_INIT_HARDWARE:
 		tunerPowerOn();
 		sndPowerOn();
 
 		tunerSetMute(aproc.input);
 		tunerSetFreq();
 
-		dispMode = MODE_SND_GAIN0 + aproc.input;
-		setDisplayTime(DISPLAY_TIME_GAIN_START);
-		enableSilenceTimer();
-
+		setInitTimer(INIT_TIMER_OFF);
 		break;
 	case CMD_RC_STBY:
 		sndSetMute(1);
@@ -212,7 +215,7 @@ void handleAction(uint8_t action)
 		rtc.etm = RTC_NOEDIT;
 		setStbyTimer(STBY_TIMER_OFF);
 		disableSilenceTimer();
-
+		setInitTimer(INIT_TIMER_OFF);
 		dispMode = MODE_STANDBY;
 		break;
 	case CMD_RC_TIMER:
