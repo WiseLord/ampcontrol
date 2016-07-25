@@ -29,14 +29,14 @@ void rdsSetBlocks(uint8_t *rdsBlock)
 				if (rdsChar >= 0x20 && rdsChar < 0x80)
 					rdsText[rdsIndex * 2 + i] = rdsChar;
 			}
-			rdsFlag = 1;
+			rdsFlag = RDS_FLAG_INIT;
 		}
 	}
 
 	return;
 }
 
-void rdsDisable(void)
+void rdsDisable()
 {
 	uint8_t i;
 
@@ -50,5 +50,8 @@ void rdsDisable(void)
 
 uint8_t rdsGetFlag(void)
 {
+	if (rdsFlag)
+		rdsFlag--;
+
 	return rdsFlag;
 }
