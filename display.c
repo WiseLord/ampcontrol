@@ -1130,6 +1130,7 @@ void showRadio(uint8_t tune)
 	uint8_t level = tunerLevel();
 	uint8_t num = tunerStationNum();
 	uint8_t favNum = tunerFavStationNum();
+	uint8_t rdsFlag = rdsGetFlag();
 
 #ifdef KS0066
 	lcdGenBar(SYM_STEREO_MONO);
@@ -1178,7 +1179,7 @@ void showRadio(uint8_t tune)
 	}
 
 	/* Select between RDS and spectrum mode */
-	if (rdsGetFlag()) {
+	if (rdsFlag) {
 		/* RDS data */
 		ks0066SetXY(0, 1);
 		writeString("RDS:");
@@ -1260,7 +1261,7 @@ void showRadio(uint8_t tune)
 	showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.freq >> 4);
 
 	/* Select between RDS and spectrum mode */
-	if (rdsGetFlag()) {
+	if (rdsFlag) {
 		ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
 		ls020SetXY(4, 104);
 		writeString(rdsGetText());
@@ -1332,7 +1333,7 @@ void showRadio(uint8_t tune)
 
 	/* Select between RDS and spectrum mode */
 #ifdef _RDS
-	if (rdsGetFlag()) {
+	if (rdsFlag) {
 		gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 		gdSetFontFixed(12);
 		gdSetXY(0, 40);
