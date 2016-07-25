@@ -281,6 +281,7 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_PT2314:
         cbxInput->insertItem(0, "Input 4");
     case AUDIOPROC_TDA7313:
+    case AUDIOPROC_TEA6300:
         cbxInput->insertItem(0, "Input 3");
         cbxInput->insertItem(0, "Input 2");
     default:
