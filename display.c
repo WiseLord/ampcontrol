@@ -335,6 +335,7 @@ static void lcdGenBar(uint8_t sym)
 				ks0066WriteData(pgm_read_byte(&stereoIcon[i]));
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&monoIcon[i]));
+			break;
 		default:
 			for (i = 0; i < 8; i++)
 				ks0066WriteData(pgm_read_byte(&stereoIcon[i]));
