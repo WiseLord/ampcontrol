@@ -59,6 +59,7 @@ void sndInit(void)
 {
 	uint8_t i;
 
+#ifndef _NO_TXT_LABELS
 	uint8_t **txtLabels = getTxtLabels();
 
 	/* Load audio parameters stored in eeprom */
@@ -66,6 +67,7 @@ void sndInit(void)
 		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
 		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
 	}
+#endif
 
 	eeprom_read_block(&aproc, (void*)EEPROM_AUDIOPROC, sizeof(Audioproc_type) - 1);
 
@@ -378,10 +380,12 @@ void sndSetMute(uint8_t value)
 {
 	aproc.mute = value;
 
+#ifndef _NO_MUTE_PORT
 	if (aproc.mute)
 		PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
 	else
 		PORT(STMU_MUTE) |= STMU_MUTE_LINE;
+#endif
 
 	switch (aproc.ic) {
 #ifdef _TDA7439
