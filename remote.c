@@ -55,11 +55,75 @@ ISR(INT1_vect)
 	uint8_t rc6TogBit = 0;
 
 	if (rcPin) {
+		// Try to decode as RC6 sequence
+		if (RC6_NEAR(delay, RC6_2T)) {
+			if (rc5State == STATE_RC5_START1) {
+				rc5State = STATE_RC5_MID1;
+				rc5Cnt--;
+				rc5Cmd <<= 1;
+				rc5Cmd |= 0x01;
+			} else if (rc5State == STATE_RC5_MID0) {
+				rc5State = STATE_RC5_START0;
+			}
+			if (rc6State == STATE_RC5_MID1) {
+				if (rc6Cnt == 21 || rc6Cnt == 16) {
+					rc6State = STATE_RC5_START1;
+				} else {
+					rc6State = STATE_RC5_MID0;
+					if (--rc6Cnt < 16)
+						rc6Cmd <<= 1;
+				}
+			} else if (rc6State == STATE_RC5_START0) {
+				if (rc6Cnt == 17) {
+					rc6State = STATE_RC5_MID0;
+					--rc6Cnt;
+					rc6TogBit = 0;
+				}
+			}
+		} else if (RC6_NEAR(delay, RC6_4T)) {
+			if (rc5State == STATE_RC5_MID0) {
+				rc5State = STATE_RC5_MID1;
+				rc5Cnt--;
+				rc5Cmd <<= 1;
+				rc5Cmd |= 0x01;
+			}
+		} else if (RC6_NEAR(delay, RC6_1T)) {
+			rc5Cnt = 13;								// Reset
+			rc5State = STATE_RC5_MID1;
+			if (rc6State == STATE_RC5_START0) {
+				rc6State = STATE_RC5_MID0;
+				if (--rc6Cnt < 16)
+					rc6Cmd <<= 1;
+			} else if (rc6State == STATE_RC5_MID1) {
+				rc6State = STATE_RC5_START1;
+			}
+		} else if (RC6_NEAR(delay, RC6_3T)) {
+			rc5Cnt = 13;								// Reset
+			rc5State = STATE_RC5_MID1;
+			if (rc6State == STATE_RC5_MID1) {
+				if (rc6Cnt == 17) {
+					rc6State = STATE_RC5_MID0;
+					--rc6Cnt;
+					rc6TogBit = 0;
+				} else if (rc6Cnt == 21 || rc6Cnt == 16) {
+					rc6State = STATE_RC5_MID0;
+					if (--rc6Cnt < 16) {
+						rc6Cmd <<= 1;
+					}
+				}
+			}
+		} else {
+			rc5Cnt = 13;								// Reset
+			rc5State = STATE_RC5_MID1;
+			rc6Cnt = 22;								// Reset
+			rc6State = STATE_RC5_START1;
+		}
+
 		// Try to decode as NEC sequence
 		if (necState == STATE_NEC_INIT) {
-			if (RC_NEAR(delay, NEC_START)) {
+			if (NEC_NEAR(delay, NEC_START)) {
 				necState = STATE_NEC_RECEIVE;
-			} else if (RC_NEAR(delay, NEC_REPEAT) && ovfCnt < 2) {
+			} else if (NEC_NEAR(delay, NEC_REPEAT) && ovfCnt < 2) {
 				irData.repeat = 1;
 				irData.ready = 1;
 				ovfCnt = 0;
@@ -68,9 +132,9 @@ ISR(INT1_vect)
 		} else if (necState == STATE_NEC_RECEIVE) {
 			necCnt++;
 			necCmd.raw >>= 1;
-			if (RC_NEAR(delay, NEC_ZERO))
+			if (NEC_NEAR(delay, NEC_ZERO))
 				necCmd.raw &= ~0x80000000;
-			else if (RC_NEAR(delay, NEC_ONE))
+			else if (NEC_NEAR(delay, NEC_ONE))
 				necCmd.raw |= 0x80000000;
 			else
 				necCnt = 0;
@@ -87,94 +151,9 @@ ISR(INT1_vect)
 				}
 			}
 		}
-		// Try to decode as RC6 sequence
-		if (RC_NEAR(delay, RC6_1T)) {
-			if (rc6State == STATE_RC5_START0) {
-				rc6State = STATE_RC5_MID0;
-				if (--rc6Cnt < 16)
-					rc6Cmd <<= 1;
-			} else if (rc6State == STATE_RC5_MID1) {
-				rc6State = STATE_RC5_START1;
-			}
-			rc5Cnt = 13;								// Reset
-			rc5State = STATE_RC5_MID1;
-		} else if (RC_NEAR(delay, RC6_2T)) {
-			if (rc6State == STATE_RC5_MID1) {
-				if (rc6Cnt == 21 || rc6Cnt == 16) {
-					rc6State = STATE_RC5_START1;
-				} else {
-					rc6State = STATE_RC5_MID0;
-					if (--rc6Cnt < 16)
-						rc6Cmd <<= 1;
-				}
-			} else if (rc6State == STATE_RC5_START0) {
-				if (rc6Cnt == 17) {
-					rc6State = STATE_RC5_MID0;
-					--rc6Cnt;
-					rc6TogBit = 0;
-				}
-			}
-			if (rc5State == STATE_RC5_START1) {
-				rc5State = STATE_RC5_MID1;
-				rc5Cnt--;
-				rc5Cmd <<= 1;
-				rc5Cmd |= 0x01;
-			} else if (rc5State == STATE_RC5_MID0) {
-				rc5State = STATE_RC5_START0;
-			}
-		} else if (RC_NEAR(delay, RC6_3T)) {
-			if (rc6State == STATE_RC5_MID1) {
-				if (rc6Cnt == 17) {
-					rc6State = STATE_RC5_MID0;
-					--rc6Cnt;
-					rc6TogBit = 0;
-				} else if (rc6Cnt == 21 || rc6Cnt == 16) {
-					rc6State = STATE_RC5_MID0;
-					if (--rc6Cnt < 16) {
-						rc6Cmd <<= 1;
-					}
-				}
-			}
-			rc5Cnt = 13;								// Reset
-			rc5State = STATE_RC5_MID1;
-		} else if (RC_NEAR(delay, RC6_4T)) {
-			if (rc5State == STATE_RC5_MID0) {
-				rc5State = STATE_RC5_MID1;
-				rc5Cnt--;
-				rc5Cmd <<= 1;
-				rc5Cmd |= 0x01;
-			}
-		} else {
-			rc6Cnt = 22;								// Reset
-			rc6State = STATE_RC5_START1;
-			rc5Cnt = 13;								// Reset
-			rc5State = STATE_RC5_MID1;
-		}
 	} else {
-		// Try to decode as NEC sequence
-		if (RC_NEAR(delay, NEC_PULSE) && necState != STATE_NEC_REPEAT) {
-			necState = STATE_NEC_RECEIVE;
-		} else if (RC_NEAR(delay, NEC_INIT)) {
-			necState = STATE_NEC_INIT;
-			irData.type = IR_TYPE_NEC;
-		} else if (RC_NEAR(delay, SAM_INIT)) {
-			necState = STATE_NEC_INIT;
-			irData.type = IR_TYPE_SAM;
-		} else {
-			necState = STATE_NEC_IDLE;
-		}
 		// Try to decode as RC6 sequence
-		if (RC_NEAR(delay, RC6_1T)) {
-			if (rc6State == STATE_RC5_START1) {
-				rc6State = STATE_RC5_MID1;
-				if (--rc6Cnt < 16) {
-					rc6Cmd <<= 1;
-					rc6Cmd |= 0x01;
-				}
-			} else if (rc6State == STATE_RC5_MID0) {
-				rc6State = STATE_RC5_START0;
-			}
-		} else if (RC_NEAR(delay, RC6_2T)) {
+		if (RC6_NEAR(delay, RC6_2T)) {
 			if (rc6State == STATE_RC5_MID0) {
 				if (rc6Cnt == 16) {
 					rc6State = STATE_RC5_START0;
@@ -199,7 +178,23 @@ ISR(INT1_vect)
 				rc5Cnt--;
 				rc5Cmd <<= 1;
 			}
-		} else if (RC_NEAR(delay, RC6_3T)) {
+		} else if (RC6_NEAR(delay, RC6_4T)) {
+			if (rc5State == STATE_RC5_MID1) {
+				rc5State = STATE_RC5_MID0;
+				rc5Cnt--;
+				rc5Cmd <<= 1;
+			}
+		} else if (RC6_NEAR(delay, RC6_1T)) {
+			if (rc6State == STATE_RC5_START1) {
+				rc6State = STATE_RC5_MID1;
+				if (--rc6Cnt < 16) {
+					rc6Cmd <<= 1;
+					rc6Cmd |= 0x01;
+				}
+			} else if (rc6State == STATE_RC5_MID0) {
+				rc6State = STATE_RC5_START0;
+			}
+		} else if (RC6_NEAR(delay, RC6_3T)) {
 			if (rc6State == STATE_RC5_MID0) {
 				if (rc6Cnt == 17) {
 					rc6State = STATE_RC5_MID1;
@@ -211,18 +206,25 @@ ISR(INT1_vect)
 					rc6Cmd |= 0x01;
 				}
 			}
-		} else if (RC_NEAR(delay, RC6_4T)) {
-			if (rc5State == STATE_RC5_MID1) {
-				rc5State = STATE_RC5_MID0;
-				rc5Cnt--;
-				rc5Cmd <<= 1;
-			}
-		} else if  (RC_NEAR(delay, RC6_6T)) {
+		} else if (RC6_NEAR(delay, RC6_6T)) {
 			rc6State = STATE_RC5_MID1;
 			rc6Cnt = 21;
 		} else {
 			rc6Cnt = 22;								// Reset
 			rc6State = STATE_RC5_START1;
+		}
+
+		// Try to decode as NEC sequence
+		if (NEC_NEAR(delay, NEC_PULSE) && necState != STATE_NEC_REPEAT) {
+			necState = STATE_NEC_RECEIVE;
+		} else if (NEC_NEAR(delay, NEC_INIT)) {
+			necState = STATE_NEC_INIT;
+			irData.type = IR_TYPE_NEC;
+		} else if (NEC_NEAR(delay, SAM_INIT)) {
+			necState = STATE_NEC_INIT;
+			irData.type = IR_TYPE_SAM;
+		} else {
+			necState = STATE_NEC_IDLE;
 		}
 	}
 

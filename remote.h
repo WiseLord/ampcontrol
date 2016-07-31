@@ -6,11 +6,18 @@
 
 // Time scale definitions and macroses
 #define RC_TIMER_DIV				4	// 1MHz / 250kHz of Timer 1 => delays in us
-#define RC_DEV_MIN					0.75
-#define RC_DEV_MAX					1.25
-#define RC_MIN(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC_DEV_MIN))
-#define RC_MAX(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC_DEV_MAX))
-#define RC_NEAR(value, delay)		(value > RC_MIN(delay) && value < RC_MAX(delay))
+
+#define NEC_DEV_MIN					0.7
+#define NEC_DEV_MAX					1.3
+#define NEC_MIN(delay)				((uint16_t)(delay / RC_TIMER_DIV * NEC_DEV_MIN))
+#define NEC_MAX(delay)				((uint16_t)(delay / RC_TIMER_DIV * NEC_DEV_MAX))
+#define NEC_NEAR(value, delay)		(value > NEC_MIN(delay) && value < NEC_MAX(delay))
+
+#define RC6_DEV_MIN					0.8
+#define RC6_DEV_MAX					1.2
+#define RC6_MIN(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC6_DEV_MIN))
+#define RC6_MAX(delay)				((uint16_t)(delay / RC_TIMER_DIV * RC6_DEV_MAX))
+#define RC6_NEAR(value, delay)		(value > RC6_MIN(delay) && value < RC6_MAX(delay))
 
 // Remote control types
 enum {
