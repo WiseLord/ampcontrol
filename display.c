@@ -616,19 +616,19 @@ static void showParValue(int8_t value)
 	return;
 }
 
-static void showParLabel(const uint8_t *parLabel)
+static void showParLabel(uint8_t label)
 {
 #ifdef KS0066
 	ks0066SetXY (0, 0);
-	writeStringEeprom(parLabel);
+	writeStringEeprom(txtLabels[label]);
 #elif defined(LS020)
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
 	ls020SetXY(2, 4);
-	writeStringEeprom(parLabel);
+	writeStringEeprom(txtLabels[label]);
 #else
 	gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
 	gdSetXY(0, 0);
-	writeStringEeprom(parLabel);
+	writeStringEeprom(txtLabels[label]);
 #endif
 
 	return;
@@ -1371,7 +1371,7 @@ void showRadio(uint8_t tune)
 
 void showMute(void)
 {
-	showParLabel(txtLabels[LABEL_MUTE]);
+	showParLabel(LABEL_MUTE);
 	drawMiniSpectrum();
 
 #ifdef KS0066
@@ -1401,7 +1401,7 @@ void showMute(void)
 
 void showLoudness(void)
 {
-	showParLabel(txtLabels[LABEL_LOUDNESS]);
+	showParLabel(LABEL_LOUDNESS);
 	drawMiniSpectrum();
 #ifdef KS0066
 	lcdGenBar(SYM_LOUDNESS_CROSS);
@@ -1430,7 +1430,7 @@ void showLoudness(void)
 
 void showSurround()
 {
-	showParLabel(txtLabels[LABEL_SURROUND]);
+	showParLabel(LABEL_SURROUND);
 	drawMiniSpectrum();
 #ifdef KS0066
 	lcdGenBar(SYM_SURROUND_CROSS);
@@ -1458,7 +1458,7 @@ void showSurround()
 
 void showEffect3d()
 {
-	showParLabel(txtLabels[LABEL_EFFECT_3D]);
+	showParLabel(LABEL_EFFECT_3D);
 	drawMiniSpectrum();
 #ifdef KS0066
 	lcdGenBar(SYM_EFFECT_3D_CROSS);
@@ -1486,7 +1486,7 @@ void showEffect3d()
 
 void showToneDefeat()
 {
-	showParLabel(txtLabels[LABEL_TONE_DEFEAT]);
+	showParLabel(LABEL_TONE_DEFEAT);
 	drawMiniSpectrum();
 #ifdef KS0066
 	lcdGenBar(SYM_TONE_DEFEAT_CROSS);
@@ -1515,7 +1515,7 @@ void showToneDefeat()
 
 void showBrWork(void)
 {
-	showParLabel(txtLabels[LABEL_BR_WORK]);
+	showParLabel(LABEL_BR_WORK);
 	showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
 #ifdef KS0066
 	ks0066SetXY(13, 0);
@@ -1548,7 +1548,7 @@ void showSndParam(sndMode mode)
 {
 	sndParam *param = &sndPar[mode];
 
-	showParLabel(param->label);
+	showParLabel(mode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
 	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
 #ifdef KS0066

@@ -1,9 +1,8 @@
 #include "audio.h"
 
-#include <avr/eeprom.h>
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 #include "../eeprom.h"
-#include "../display.h"
 #include "../pins.h"
 
 #ifdef _TDA7439
@@ -58,16 +57,6 @@ static void setNothing(void)
 void sndInit(void)
 {
 	uint8_t i;
-
-#ifndef _NO_TXT_LABELS
-	uint8_t **txtLabels = getTxtLabels();
-
-	/* Load audio parameters stored in eeprom */
-	for (i = 0; i < MODE_SND_END; i++) {
-		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
-		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
-	}
-#endif
 
 	eeprom_read_block(&aproc, (void*)EEPROM_AUDIOPROC, sizeof(Audioproc_type) - 1);
 

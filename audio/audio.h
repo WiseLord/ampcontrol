@@ -12,7 +12,6 @@ typedef struct {
 typedef struct {
 	int8_t value;
 	const sndGrid *grid;
-	uint8_t *label;
 	void (*set)(void);
 } sndParam;
 
