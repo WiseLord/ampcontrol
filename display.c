@@ -1703,11 +1703,11 @@ void showAlarm(void)
 		ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_BLACK);
 	}
 
-	ls020SetXY(100 + 48, 4);
 	/* Check that input number less than CHAN_CNT */
 	i = getAlarm(RTC_A0_INPUT);
 	if (i >= aproc.inCnt)
 		i = 0;
+	ls020SetXY(100 + 48, 4);
 	ls020WriteIcon24(sndPar[MODE_SND_GAIN0 + i].icon);
 
 	/* Draw weekdays selection rectangle */
@@ -1749,11 +1749,11 @@ void showAlarm(void)
 		gdDrawRect(97, 1, 30, 30, 0);
 	}
 
-	gdSetXY(100, 4);
 	/* Check that input number less than CHAN_CNT */
 	i = getAlarm(RTC_A0_INPUT);
 	if (i >= aproc.inCnt)
 		i = 0;
+	gdSetXY(100, 4);
 	gdWriteIcon24(sndPar[MODE_SND_GAIN0 + i].icon);
 
 	/* Draw weekdays selection rectangle */

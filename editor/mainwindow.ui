@@ -687,24 +687,6 @@
               </property>
               <property name="icon">
                <iconset resource="res.qrc">
-                <normaloff>:/icons/brightness.bmp</normaloff>:/icons/brightness.bmp</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="res.qrc">
-                <normaloff>:/icons/threshold.bmp</normaloff>:/icons/threshold.bmp</iconset>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string/>
-              </property>
-              <property name="icon">
-               <iconset resource="res.qrc">
                 <normaloff>:/icons/tuner.bmp</normaloff>:/icons/tuner.bmp</iconset>
               </property>
              </item>
@@ -823,6 +805,24 @@
               <property name="icon">
                <iconset resource="res.qrc">
                 <normaloff>:/icons/satellite.bmp</normaloff>:/icons/satellite.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/brightness.bmp</normaloff>:/icons/brightness.bmp</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="res.qrc">
+                <normaloff>:/icons/threshold.bmp</normaloff>:/icons/threshold.bmp</iconset>
               </property>
              </item>
             </widget>
