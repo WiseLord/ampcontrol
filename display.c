@@ -1407,13 +1407,13 @@ void showLoudness(void)
 	lcdGenBar(SYM_LOUDNESS_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (aproc.loudness)
+	if (aproc.extra & APROC_EXTRA_LOUDNESS)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (aproc.loudness)
+	if (aproc.extra & APROC_EXTRA_LOUDNESS)
 		ls020WriteIcon32(ICON32_LOUDNESS_ON);
 	else
 		ls020WriteIcon32(ICON32_LOUDNESS_OFF);
@@ -1436,13 +1436,13 @@ void showSurround()
 	lcdGenBar(SYM_SURROUND_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (aproc.surround)
+	if (aproc.extra & APROC_EXTRA_SURROUND)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (aproc.surround)
+	if (aproc.extra & APROC_EXTRA_SURROUND)
 		ls020WriteIcon32(ICON32_SURROUND_ON);
 	else
 		ls020WriteIcon32(ICON32_SURROUND_OFF);
@@ -1464,13 +1464,13 @@ void showEffect3d()
 	lcdGenBar(SYM_EFFECT_3D_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (aproc.effect3d)
+	if (aproc.extra & APROC_EXTRA_EFFECT3D)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (aproc.effect3d)
+	if (aproc.extra & APROC_EXTRA_EFFECT3D)
 		ls020WriteIcon32(ICON32_EFFECT_3D_ON);
 	else
 		ls020WriteIcon32(ICON32_EFFECT_3D_OFF);
@@ -1492,13 +1492,13 @@ void showToneDefeat()
 	lcdGenBar(SYM_TONE_DEFEAT_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
-	if (aproc.toneDefeat)
+	if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
 #elif defined(LS020)
 	ls020SetXY(96, 32);
-	if (aproc.toneDefeat)
+	if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
 		ls020WriteIcon32(ICON32_TONE_DEFEAT_ON);
 	else
 		ls020WriteIcon32(ICON32_TONE_DEFEAT_OFF);
@@ -1659,9 +1659,8 @@ void showAlarm(void)
 
 	/* Draw selected input */
 	ks0066SetXY(6, 0);
-	if (getEam() != RTC_A0_INPUT || (getSecTimer() % 512) < 200) {
-		writeStringEeprom(sndPar[MODE_SND_GAIN0 + i].label);
-	}
+	if (getEam() != RTC_A0_INPUT || (getSecTimer() % 512) < 200)
+		writeStringEeprom(txtLabels[MODE_SND_GAIN0 + i]);
 	/* Clear string tail */
 	ks0066WriteTail (' ', 15);
 
