@@ -133,11 +133,6 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	return;
 }
 
-uint8_t **getTxtLabels(void)
-{
-	return txtLabels;
-}
-
 void showRC5Info(void)
 {
 	IRData irData = takeIrData();
@@ -231,7 +226,7 @@ void showSndParam(uint8_t mode)
 {
 	sndParam *param = &sndPar[mode];
 
-	writeStringEeprom(param->label);
+	writeStringEeprom(txtLabels[mode]);
 
 	//	(((int16_t)(param->value) * param->step + 4) >> 3);
 	ks0066SetXY(11, 0);

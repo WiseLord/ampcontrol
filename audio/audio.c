@@ -1,9 +1,8 @@
 #include "audio.h"
 
-#include <avr/eeprom.h>
 #include <avr/pgmspace.h>
+#include <avr/eeprom.h>
 #include "../eeprom.h"
-#include "../display.h"
 #include "../pins.h"
 
 #ifdef _TDA7439
@@ -59,16 +58,6 @@ void sndInit(void)
 {
 	uint8_t i;
 
-#ifndef _NO_TXT_LABELS
-	uint8_t **txtLabels = getTxtLabels();
-
-	/* Load audio parameters stored in eeprom */
-	for (i = 0; i < MODE_SND_END; i++) {
-		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
-		sndPar[i].label = txtLabels[MODE_SND_VOLUME + i];
-	}
-#endif
-
 	eeprom_read_block(&aproc, (void*)EEPROM_AUDIOPROC, sizeof(Audioproc_type) - 1);
 
 #if   !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
@@ -104,20 +93,6 @@ void sndInit(void)
 		sndPar[i].grid = &grid_0_0_0;
 		sndPar[i].set = setNothing;
 	}
-
-#ifndef KS0066
-	uint8_t ic;
-
-	/* Setup icons */
-	for (i = 0; i < MODE_SND_END; i++)
-		sndPar[i].icon = i;
-	/* Update input icons */
-	for (i = 0; i < MODE_SND_END - MODE_SND_GAIN0; i++) {
-		ic = eeprom_read_byte((uint8_t*)(EEPROM_INPUT_ICONS + i));
-		if (ic < ICON24_END)
-			sndPar[MODE_SND_GAIN0 + i].icon = ic;
-	}
-#endif
 
 	// Setup inputs
 	static uint8_t inCnt;
