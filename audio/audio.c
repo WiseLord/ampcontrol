@@ -411,27 +411,18 @@ void sndSetMute(uint8_t value)
 	return;
 }
 
-void sndSetLoudness(uint8_t value)
+void sndSetExtra(void)
 {
 #ifdef _TDA731X
-	aproc.loudness = value;
 	if (aproc.ic == AUDIOPROC_TDA7313 || aproc.ic == AUDIOPROC_TDA7314 ||
 			aproc.ic == AUDIOPROC_TDA7315 || aproc.ic == AUDIOPROC_PT2314)
 		tda731xSetInput();
 #endif
 #ifdef _RDA580X_AUDIO
-	aproc.loudness = value;
 	if (aproc.ic == AUDIOPROC_RDA580X)
 		rda580xAudioBass();
 #endif
-
-	return;
-}
-
-void sndSetSurround(uint8_t value)
-{
 #ifdef _PT232X
-	aproc.surround = value;
 	if (aproc.ic == AUDIOPROC_PT232X)
 		pt232xSetSndFunc();
 #endif
@@ -439,24 +430,11 @@ void sndSetSurround(uint8_t value)
 	return;
 }
 
-void sndSetEffect3d(uint8_t value)
+void sndSwitchExtra(uint8_t extra)
 {
-#ifdef _PT232X
-	aproc.effect3d = value;
-	if (aproc.ic == AUDIOPROC_PT232X)
-		pt232xSetSndFunc();
-#endif
+	aproc.extra ^= extra;
 
-	return;
-}
-
-void sndSetToneDefeat(uint8_t value)
-{
-#ifdef _PT232X
-	aproc.toneDefeat = value;
-	if (aproc.ic == AUDIOPROC_PT232X)
-		pt232xSetSndFunc();
-#endif
+	sndSetExtra();
 
 	return;
 }
@@ -498,10 +476,7 @@ void sndPowerOn(void)
 	sndSetMute(1);
 	sndSetInput(aproc.input);
 
-	sndSetLoudness(aproc.loudness);
-	sndSetSurround(aproc.surround);
-	sndSetEffect3d(aproc.effect3d);
-	sndSetToneDefeat(aproc.toneDefeat);
+	sndSetExtra();
 
 	for (i = MODE_SND_GAIN0 - 1; i >= MODE_SND_VOLUME; i--)
 		sndPar[i].set();
@@ -518,10 +493,7 @@ void sndPowerOff(void)
 	for (i = 0; i < MODE_SND_END; i++)
 		eeprom_update_byte((uint8_t*)EEPROM_VOLUME + i, sndPar[i].value);
 
-	eeprom_update_byte((uint8_t*)EEPROM_LOUDNESS, aproc.loudness);
-	eeprom_update_byte((uint8_t*)EEPROM_SURROUND, aproc.surround);
-	eeprom_update_byte((uint8_t*)EEPROM_EFFECT3D, aproc.effect3d);
-	eeprom_update_byte((uint8_t*)EEPROM_TONE_DEFEAT, aproc.toneDefeat);
+	eeprom_update_byte((uint8_t*)EEPROM_APROC_EXTRA, aproc.extra);
 	eeprom_update_byte((uint8_t*)EEPROM_INPUT, aproc.input);
 
 	return;

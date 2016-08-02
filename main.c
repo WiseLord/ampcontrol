@@ -204,9 +204,12 @@ int main(void)
 			setDispTimer(DISPLAY_TIME_TEST);
 			break;
 		case CMD_RC_LOUDNESS:
+		case CMD_RC_SURROUND:
+		case CMD_RC_EFFECT_3D:
+		case CMD_RC_TONE_DEFEAT:
 			ks0066Clear();
-			sndSetLoudness(!aproc.loudness);
-			dispMode = MODE_LOUDNESS;
+			sndSwitchExtra(1 << (action - CMD_RC_LOUDNESS));
+			dispMode = MODE_LOUDNESS + (action - CMD_RC_LOUDNESS);
 			setDispTimer(DISPLAY_TIME_AUDIO);
 			break;
 		case CMD_RC_IN_0:
@@ -346,7 +349,10 @@ int main(void)
 			showBoolParam(aproc.mute, LABEL_MUTE);
 			break;
 		case MODE_LOUDNESS:
-			showBoolParam(!aproc.loudness, LABEL_LOUDNESS);
+		case MODE_SURROUND:
+		case MODE_EFFECT_3D:
+		case MODE_TONE_DEFEAT:
+			showBoolParam(aproc.extra & (1 << (dispMode - MODE_LOUDNESS)), LABEL_LOUDNESS + (dispMode - MODE_LOUDNESS));
 			break;
 		case MODE_BR:
 			showBrWork();

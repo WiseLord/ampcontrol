@@ -60,12 +60,14 @@ typedef struct {
 	aprocIC ic;
 	uint8_t inCnt;
 	uint8_t input;
-	uint8_t loudness;
-	uint8_t surround;
-	uint8_t effect3d;
-	uint8_t toneDefeat;
+	uint8_t extra;
 	uint8_t mute;
 } Audioproc_type;
+
+#define APROC_EXTRA_LOUDNESS		(1<<0)
+#define APROC_EXTRA_SURROUND		(1<<1)
+#define APROC_EXTRA_EFFECT3D		(1<<2)
+#define APROC_EXTRA_TONEDEFEAT		(1<<3)
 
 extern Audioproc_type aproc;
 
@@ -75,10 +77,8 @@ void sndSetInput(uint8_t input);
 
 void sndSetMute(uint8_t value);
 
-void sndSetLoudness(uint8_t value);
-void sndSetSurround(uint8_t value);
-void sndSetEffect3d(uint8_t value);
-void sndSetToneDefeat(uint8_t value);
+void sndSetExtra(void);
+void sndSwitchExtra(uint8_t extra);
 
 void sndNextParam(uint8_t *mode);
 void sndChangeParam(uint8_t mode, int8_t diff);
