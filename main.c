@@ -213,6 +213,7 @@ int main(void)
 		case CMD_RC_IN_1:
 		case CMD_RC_IN_2:
 		case CMD_RC_IN_3:
+		case CMD_RC_IN_4:
 			ks0066Clear();
 			sndSetInput(action - CMD_RC_IN_0);
 			dispMode = MODE_SND_GAIN0 + aproc.input;
