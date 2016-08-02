@@ -1419,7 +1419,7 @@ void showLoudness(void)
 		ls020WriteIcon32(ICON32_LOUDNESS_OFF);
 #else
 	gdSetXY(96, 32);
-	if (aproc.loudness)
+	if (aproc.extra & APROC_EXTRA_LOUDNESS)
 		gdWriteIcon32(ICON32_LOUDNESS_ON);
 	else
 		gdWriteIcon32(ICON32_LOUDNESS_OFF);
@@ -1448,7 +1448,7 @@ void showSurround()
 		ls020WriteIcon32(ICON32_SURROUND_OFF);
 #else
 	gdSetXY(96, 32);
-	if (aproc.surround)
+	if (aproc.extra & APROC_EXTRA_SURROUND)
 		gdWriteIcon32(ICON32_SURROUND_ON);
 	else
 		gdWriteIcon32(ICON32_SURROUND_OFF);
@@ -1476,7 +1476,7 @@ void showEffect3d()
 		ls020WriteIcon32(ICON32_EFFECT_3D_OFF);
 #else
 	gdSetXY(96, 32);
-	if (aproc.effect3d)
+	if (aproc.extra & APROC_EXTRA_EFFECT3D)
 		gdWriteIcon32(ICON32_EFFECT_3D_ON);
 	else
 		gdWriteIcon32(ICON32_EFFECT_3D_OFF);
@@ -1504,7 +1504,7 @@ void showToneDefeat()
 		ls020WriteIcon32(ICON32_TONE_DEFEAT_OFF);
 #else
 	gdSetXY(96, 32);
-	if (aproc.toneDefeat)
+	if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
 		gdWriteIcon32(ICON32_TONE_DEFEAT_ON);
 	else
 		gdWriteIcon32(ICON32_TONE_DEFEAT_OFF);

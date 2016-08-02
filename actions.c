@@ -341,22 +341,22 @@ void handleAction(uint8_t action)
 		tunerSetMute(aproc.mute || aproc.input);
 		break;
 	case CMD_RC_LOUDNESS:
-		sndSetLoudness(!aproc.loudness);
+		sndSwitchExtra(APROC_EXTRA_LOUDNESS);
 		dispMode = MODE_LOUDNESS;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_SURROUND:
-		sndSetSurround(!aproc.surround);
+		sndSwitchExtra(APROC_EXTRA_SURROUND);
 		dispMode = MODE_SURROUND;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_EFFECT_3D:
-		sndSetEffect3d(!aproc.effect3d);
+		sndSwitchExtra(APROC_EXTRA_EFFECT3D);
 		dispMode = MODE_EFFECT_3D;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_TONE_DEFEAT:
-		sndSetToneDefeat(!aproc.toneDefeat);
+		sndSwitchExtra(APROC_EXTRA_TONEDEFEAT);
 		dispMode = MODE_TONE_DEFEAT;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;

@@ -23,6 +23,6 @@ void rda580xAudioSetMute()
 
 void rda580xAudioBass()
 {
-	tuner.bass = aproc.loudness;
+	tuner.bass = aproc.extra & APROC_EXTRA_LOUDNESS;
 	rda580xSetAudio();
 }
