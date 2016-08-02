@@ -106,6 +106,7 @@ void inputInit();
 
 int8_t getEncoder(void);
 uint8_t getBtnCmd(void);
+uint8_t getRcCmd(void);
 
 void setDispTimer(uint16_t value);
 

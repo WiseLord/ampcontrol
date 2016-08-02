@@ -16,6 +16,7 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 
 uint16_t dispTimer = 0;
 uint16_t rtcTimer = 0;
+static volatile uint16_t rcTimer;
 
 //static uint8_t rcType;
 static uint8_t rcAddr;
@@ -74,7 +75,6 @@ static CmdID rcCmdIndex(uint8_t rcCmd)
 ISR (TIMER2_COMP_vect)
 {
 	static int16_t btnCnt = 0;		/* Buttons press duration value */
-	static uint16_t rcTimer;
 
 	/* Current state */
 	uint8_t encNow = ENC_0;
@@ -177,28 +177,6 @@ ISR (TIMER2_COMP_vect)
 		btnCnt = 0;
 	}
 
-	/* Place RC5 event to command buffer if enough RC5 timer ticks */
-	IRData ir = takeIrData();
-
-	CmdID rcCmdBuf = CMD_RC_END;
-
-	if (ir.ready && (/*ir.type == rcType && */ir.address == rcAddr)) {
-		if (!ir.repeat || (rcTimer > RC_LONG_PRESS)) {
-			rcTimer = 0;
-			rcCmdBuf = rcCmdIndex(ir.command);
-		}
-		if (ir.command == rcCode[CMD_RC_VOL_UP] || ir.command == rcCode[CMD_RC_VOL_DOWN]) {
-			if (rcTimer > RC_VOL_REPEAT) {
-				rcTimer = RC_VOL_DELAY;
-				rcCmdBuf = rcCmdIndex(ir.command);
-			}
-		}
-	}
-
-	if (cmdBuf == CMD_RC_END)
-		cmdBuf = rcCmdBuf;
-
-
 	/* Time from last IR command */
 	if (rcTimer < RC_PRESS_LIMIT)
 		rcTimer++;
@@ -229,10 +207,33 @@ uint8_t getBtnCmd(void)
 	return ret;
 }
 
+uint8_t getRcCmd()
+{
+
+	/* Place RC5 event to command buffer if enough RC5 timer ticks */
+	IRData ir = takeIrData();
+
+	CmdID rcCmdBuf = CMD_RC_END;
+
+	if (ir.ready && (/*ir.type == rcType && */ir.address == rcAddr)) {
+		if (!ir.repeat || (rcTimer > RC_LONG_PRESS)) {
+			rcTimer = 0;
+			rcCmdBuf = rcCmdIndex(ir.command);
+		}
+		if (ir.command == rcCode[CMD_RC_VOL_UP] || ir.command == rcCode[CMD_RC_VOL_DOWN]) {
+			if (rcTimer > RC_VOL_REPEAT) {
+				rcTimer = RC_VOL_DELAY;
+				rcCmdBuf = rcCmdIndex(ir.command);
+			}
+		}
+	}
+
+	return rcCmdBuf;
+}
+
 void setDispTimer(uint16_t value)
 {
 	dispTimer = value;
 
 	return;
 }
-

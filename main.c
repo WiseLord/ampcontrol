@@ -80,6 +80,10 @@ int main(void)
 		/* Get command */
 		cmd = getBtnCmd();
 
+		/* If no command from buttons, get it from remote */
+		if (cmd == CMD_RC_END)
+			cmd = getRcCmd();
+
 		/* Handle commands from remote control */
 		if (cmd < CMD_RC_END)
 			action = cmd;
