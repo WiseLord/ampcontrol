@@ -101,6 +101,7 @@ void inputInit(void);
 
 int8_t getEncoder(void);
 cmdID getBtnCmd(void);
+cmdID getRcCmd(void);
 
 uint16_t getBtnBuf(void);
 uint16_t getEncBuf(void);

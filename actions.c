@@ -36,6 +36,10 @@ uint8_t getAction(void)
 	/* Get command */
 	cmd = getBtnCmd();
 
+	// If nothing from buttons, check remote control
+	if (cmd == CMD_RC_END)
+		cmd = getRcCmd();
+
 	/* Handle commands from remote control */
 	if (cmd < CMD_RC_END)
 		action = cmd;
