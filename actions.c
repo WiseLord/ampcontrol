@@ -346,17 +346,17 @@ void handleAction(uint8_t action)
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_SURROUND:
-		sndSetSurround(aproc.surround);
+		sndSetSurround(!aproc.surround);
 		dispMode = MODE_SURROUND;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_EFFECT_3D:
-		sndSetEffect3d(aproc.effect3d);
+		sndSetEffect3d(!aproc.effect3d);
 		dispMode = MODE_EFFECT_3D;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
 	case CMD_RC_TONE_DEFEAT:
-		sndSetToneDefeat(aproc.toneDefeat);
+		sndSetToneDefeat(!aproc.toneDefeat);
 		dispMode = MODE_TONE_DEFEAT;
 		setDisplayTime(DISPLAY_TIME_AUDIO);
 		break;
