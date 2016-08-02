@@ -251,20 +251,17 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_TDA7314:
     case AUDIOPROC_TDA7315:
     case AUDIOPROC_PT2314:
+    case AUDIOPROC_RDA580X:
         wgtLoudness->show();
-        cbxLoudness->setCurrentIndex(eep[EEPROM_LOUDNESS]);
+        cbxLoudness->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_LOUDNESS));
         break;
     case AUDIOPROC_PT232X:
         wgtSurround->show();
-        cbxSurround->setCurrentIndex(eep[EEPROM_SURROUND]);
+        cbxSurround->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_SURROUND));
         wgtEffect3d->show();
-        cbxEffect3d->setCurrentIndex(eep[EEPROM_EFFECT3D]);
+        cbxEffect3d->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_EFFECT3D));
         wgtToneDefeat->show();
-        cbxToneDefeat->setCurrentIndex(eep[EEPROM_TONE_DEFEAT]);
-        break;
-    case AUDIOPROC_RDA580X:
-        wgtLoudness->show();
-        cbxLoudness->setCurrentIndex(eep[EEPROM_LOUDNESS]);
+        cbxToneDefeat->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_TONEDEFEAT));
         break;
     }
 
@@ -523,26 +520,38 @@ void MainWindow::setInput(int value)
 
 void MainWindow::setLoudness(int value)
 {
-    eep[EEPROM_LOUDNESS] = value;
-    updateHexTable(EEPROM_LOUDNESS);
+    if (value)
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_LOUDNESS;
+    else
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_LOUDNESS;
+    updateHexTable(EEPROM_APROC_EXTRA);
 }
 
 void MainWindow::setSurround(int value)
 {
-    eep[EEPROM_SURROUND] = value;
-    updateHexTable(EEPROM_SURROUND);
+    if (value)
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_SURROUND;
+    else
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_SURROUND;
+    updateHexTable(EEPROM_APROC_EXTRA);
 }
 
 void MainWindow::setEffect3d(int value)
 {
-    eep[EEPROM_EFFECT3D] = value;
-    updateHexTable(EEPROM_EFFECT3D);
+    if (value)
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_EFFECT3D;
+    else
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_EFFECT3D;
+    updateHexTable(EEPROM_APROC_EXTRA);
 }
 
 void MainWindow::setToneDefeat(int value)
 {
-    eep[EEPROM_TONE_DEFEAT] = value;
-    updateHexTable(EEPROM_TONE_DEFEAT);
+    if (value)
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_TONEDEFEAT;
+    else
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_TONEDEFEAT;
+    updateHexTable(EEPROM_APROC_EXTRA);
 }
 
 double MainWindow::getFreq(int pos)
