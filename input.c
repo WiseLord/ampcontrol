@@ -19,7 +19,7 @@ static volatile uint16_t displayTime;
 
 static volatile uint16_t sensTimer;					// Timer of temperature measuring process
 static volatile int16_t stbyTimer = STBY_TIMER_OFF;	// Standby timer
-static volatile int16_t initTimer = STBY_TIMER_OFF;	// Init timer
+static volatile int16_t initTimer = INIT_TIMER_OFF;	// Init timer
 static volatile uint16_t secTimer;					// 1 second timer
 static volatile uint8_t clockTimer;
 static volatile int16_t silenceTimer;				// Timer to check silence
@@ -263,7 +263,7 @@ ISR (TIMER2_COMP_vect)
 		clockTimer--;
 
 	// Init timer
-	if (initTimer)
+	if (initTimer > 0)
 		initTimer--;
 
 
