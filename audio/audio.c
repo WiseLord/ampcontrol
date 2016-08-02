@@ -58,6 +58,9 @@ void sndInit(void)
 {
 	uint8_t i;
 
+	/* Load audio parameters stored in eeprom */
+	for (i = 0; i < MODE_SND_END; i++)
+		sndPar[i].value = eeprom_read_byte((uint8_t*)EEPROM_VOLUME + i);
 	eeprom_read_block(&aproc, (void*)EEPROM_AUDIOPROC, sizeof(Audioproc_type) - 1);
 
 #if   !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_RDA580X_AUDIO)
