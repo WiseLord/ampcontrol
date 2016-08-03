@@ -5,6 +5,7 @@
 #include "adc.h"
 #include "input.h"
 #include "remote.h"
+#include "uart.h"
 #include "i2c.h"
 #include "display.h"
 #include "tuner/tuner.h"
@@ -28,6 +29,7 @@ static void hwInit(void)
 	displayInit();							// Load params and text labels before fb scan started
 	rcInit();								// IR Remote control
 	inputInit();							// Buttons/encoder polling
+	uartInit();								// USART
 	adcInit();								// Analog-to-digital converter
 	rtc.etm = RTC_NOEDIT;
 
