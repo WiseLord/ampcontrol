@@ -23,8 +23,8 @@ void uartInit(void)
 	// Enable RX complete interrupt and receiver but not transmitter
 	UCSRB = (1<<RXCIE) | (1<<RXEN) | (0<<TXEN);
 
-	// Set frame format (8data, 2stop)
-	UCSRC = (1<<URSEL) | (1<<USBS) | (1<<UCSZ1) | (1<<UCSZ0);
+	// Set frame format (8 data bits, 1 stop bit)
+	UCSRC = (1<<URSEL) | (1<<UCSZ1) | (1<<UCSZ0);
 
 	uRaw.pos = 0;
 	uRaw.ready = 0;
@@ -58,8 +58,9 @@ ISR (USART_RXC_vect)
 {
 	char ch = UDR;
 
-	if (ch == '\r') {
-		uRaw.buf[uRaw.pos] = '\0';
+	if (ch == '\r' || ch == '\n') {
+		if (uRaw.pos)
+			uRaw.buf[uRaw.pos] = '\0';
 		uRaw.pos = 0;
 		uRaw.ready = 1;
 	} else {
