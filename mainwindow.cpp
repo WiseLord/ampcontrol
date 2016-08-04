@@ -20,6 +20,11 @@ MainWindow::MainWindow(QWidget *parent) :
             this, &MainWindow::openPort);
     connect(pbtnDisconnect, &QPushButton::clicked,
             this, &MainWindow::closePort);
+
+    foreach (QPushButton *rcBtn, frmButtons->findChildren<QPushButton*>()) {
+        connect(rcBtn, &QPushButton::clicked,
+                this, &MainWindow::sendRC);
+    }
 }
 
 MainWindow::~MainWindow()
@@ -41,7 +46,6 @@ void MainWindow::openPort()
     sPort->setFlowControl(cs.flowControl);
 
     if (sPort->open(QIODevice::ReadWrite)) {
-
         pbtnConnect->setEnabled(false);
         pbtnDisconnect->setEnabled(true);
         frmButtons->setEnabled(true);
@@ -59,17 +63,12 @@ void MainWindow::closePort()
     frmButtons->setEnabled(false);
 }
 
-void MainWindow::on_pbtnSTBY_clicked()
+void MainWindow::sendRC()
 {
-    sPort->write(QString("RC 00\r\n").toLocal8Bit());
-}
+    QString cmd = sender()->property("RC").toString();
 
-void MainWindow::on_pbtnVOLDEC_clicked()
-{
-    sPort->write(QString("RC 04\r\n").toLocal8Bit());
-}
-
-void MainWindow::on_pbtnVOLINC_clicked()
-{
-    sPort->write(QString("RC 03\r\n").toLocal8Bit());
+    if (!cmd.isEmpty() && sPort->isOpen()) {
+        cmd.prepend("RC ").append("\r\n");
+        sPort->write(cmd.toLocal8Bit());
+    }
 }

@@ -23,9 +23,7 @@ private:
 private slots:
     void openPort();
     void closePort();
-    void on_pbtnSTBY_clicked();
-    void on_pbtnVOLDEC_clicked();
-    void on_pbtnVOLINC_clicked();
+    void sendRC();
 };
 
 #endif // MAINWINDOW_H
