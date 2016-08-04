@@ -6,12 +6,18 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>558</width>
-    <height>358</height>
+    <width>560</width>
+    <height>360</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>560</width>
+    <height>360</height>
+   </size>
+  </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Serial port settings</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0" columnstretch="1,0">
    <item row="3" column="0" colspan="2">
