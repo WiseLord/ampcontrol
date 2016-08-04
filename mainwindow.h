@@ -13,8 +13,7 @@ public:
     ~MainWindow();
 
 private:
-    SetupDialog *setupDialog;
-
+    SetupDialog *dlgSetup;
 };
 
 #endif // MAINWINDOW_H

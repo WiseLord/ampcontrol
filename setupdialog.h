@@ -9,6 +9,12 @@ class SetupDialog : public QDialog, private Ui::SetupDialog
 
 public:
     explicit SetupDialog(QWidget *parent = 0);
+
+private:
+    void readPortInfo();
+
+private slots:
+    void showPortInfo(int index);
 };
 
 #endif // SETUPDIALOG_H

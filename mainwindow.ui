@@ -6,14 +6,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>299</width>
-    <height>543</height>
+    <width>297</width>
+    <height>541</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
-  <widget class="QPushButton" name="pushButtonSetup">
+  <widget class="QPushButton" name="pbtnSetup">
    <property name="geometry">
     <rect>
      <x>70</x>

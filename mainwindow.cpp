@@ -1,18 +1,18 @@
 #include "mainwindow.h"
 
-#include <QDebug>
+#include <QtDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent)
 {
     setupUi(this);
 
-    setupDialog = new SetupDialog();
+    dlgSetup = new SetupDialog();
 
-    connect(pushButtonSetup, &QPushButton::clicked, setupDialog, &SetupDialog::show);
+    connect(pbtnSetup, &QPushButton::clicked, dlgSetup, &SetupDialog::exec);
 }
 
 MainWindow::~MainWindow()
 {
-    delete setupDialog;
+    delete dlgSetup;
 }
