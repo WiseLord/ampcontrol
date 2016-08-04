@@ -1,0 +1,462 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QWidget" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>293</width>
+    <height>537</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="pbtnDisconnect">
+       <property name="text">
+        <string>Disconnect</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbtnConnect">
+       <property name="text">
+        <string>Connect</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbtnSetup">
+       <property name="text">
+        <string>Setup</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QFrame" name="frmButtons">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QPushButton" name="pbtnStandby">
+        <property name="text">
+         <string>Standby</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">00</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QPushButton" name="pbtnIn0">
+        <property name="text">
+         <string>In 0</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">05</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="pbtnNextParam">
+        <property name="text">
+         <string>Next param</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">02</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QPushButton" name="pbtnLoudness">
+        <property name="text">
+         <string>Loudness</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">0C</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="pbtnIn1">
+        <property name="text">
+         <string>In 1</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">06</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QPushButton" name="pbtnMute">
+        <property name="text">
+         <string>Mute</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">01</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QPushButton" name="pbtnSurround">
+        <property name="text">
+         <string>Surround</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">0D</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QPushButton" name="pbtnIn2">
+        <property name="text">
+         <string>In 2</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">07</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QPushButton" name="pbtnVolUp">
+        <property name="text">
+         <string>Vol +</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">03</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QPushButton" name="pbtnEffect3d">
+        <property name="text">
+         <string>Effect 3D</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">0E</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="pbtnIn3">
+        <property name="text">
+         <string>In 3</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">08</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QPushButton" name="pbtnVolDown">
+        <property name="text">
+         <string>Vol –</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">04</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QPushButton" name="pbtnToneDefeat">
+        <property name="text">
+         <string>Tone defeat</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">0F</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QPushButton" name="pbtnIn4">
+        <property name="text">
+         <string>In 4</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">09</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QPushButton" name="pbtnInPrev">
+        <property name="text">
+         <string>Prev input</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">0A</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="2">
+       <widget class="QPushButton" name="pbtnInNext">
+        <property name="text">
+         <string>Next input</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">0B</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
+       <widget class="QPushButton" name="pbtnFmUp">
+        <property name="text">
+         <string>FM up</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">11</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QPushButton" name="pbtnFmMode">
+        <property name="text">
+         <string>FM mode</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">13</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QPushButton" name="pbtnFmRds">
+        <property name="text">
+         <string>FM RDS</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">10</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="0">
+       <widget class="QPushButton" name="pbtnFmDown">
+        <property name="text">
+         <string>FM down</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">12</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="1">
+       <widget class="QPushButton" name="pbtnFmStore">
+        <property name="text">
+         <string>FM store</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">15</string>
+        </property>
+       </widget>
+      </item>
+      <item row="7" column="2">
+       <widget class="QPushButton" name="pbtnFmMono">
+        <property name="text">
+         <string>FM mono</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">14</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="0">
+       <widget class="QPushButton" name="pbtnFmFav1">
+        <property name="text">
+         <string>FM FAV 1</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">17</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="1">
+       <widget class="QPushButton" name="pbtnFmFav2">
+        <property name="text">
+         <string>FM FAV 2</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">18</string>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QPushButton" name="pbtnFmFav3">
+        <property name="text">
+         <string>FM FAV 3</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">19</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="QPushButton" name="pbtnFmFav4">
+        <property name="text">
+         <string>FM FAV 4</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">1A</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="1">
+       <widget class="QPushButton" name="pbtnFmFav5">
+        <property name="text">
+         <string>FM FAV 5</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">1B</string>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2">
+       <widget class="QPushButton" name="pbtnFmFav6">
+        <property name="text">
+         <string>FM FAV 6</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">1C</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QPushButton" name="pbtnFmFav7">
+        <property name="text">
+         <string>FM FAV 7</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">1D</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="1">
+       <widget class="QPushButton" name="pbtnFmFav8">
+        <property name="text">
+         <string>FM FAV 8</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">1E</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="2">
+       <widget class="QPushButton" name="pbtnFmFav9">
+        <property name="text">
+         <string>FM FAV 9</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">1F</string>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="1">
+       <widget class="QPushButton" name="pbtnFmFav0">
+        <property name="text">
+         <string>FM FAV 0</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">16</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="0">
+       <widget class="QPushButton" name="pbtnTime">
+        <property name="text">
+         <string>Time</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">20</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="1">
+       <widget class="QPushButton" name="pbtnBrightness">
+        <property name="text">
+         <string>Brightness</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">23</string>
+        </property>
+       </widget>
+      </item>
+      <item row="12" column="2">
+       <widget class="QPushButton" name="pbtnSpectrum">
+        <property name="text">
+         <string>Spectrum</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">25</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="0">
+       <widget class="QPushButton" name="pbtnAlarm">
+        <property name="text">
+         <string>Alarm</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">21</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="1">
+       <widget class="QPushButton" name="pbtnDefDisplay">
+        <property name="text">
+         <string>Display</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">24</string>
+        </property>
+       </widget>
+      </item>
+      <item row="13" column="2">
+       <widget class="QPushButton" name="pbtnFallSpeed">
+        <property name="text">
+         <string>Fall speed</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">26</string>
+        </property>
+       </widget>
+      </item>
+      <item row="14" column="0">
+       <widget class="QPushButton" name="pbtnTimer">
+        <property name="text">
+         <string>Timer</string>
+        </property>
+        <property name="RC" stdset="0">
+         <string notr="true">22</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
