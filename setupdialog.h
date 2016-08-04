@@ -11,9 +11,10 @@ public:
     explicit SetupDialog(QWidget *parent = 0);
 
 private:
-    void readPortInfo();
+    void fillSerialParam();
 
 private slots:
+    void readSerialPorts();
     void showPortInfo(int index);
 };
 
