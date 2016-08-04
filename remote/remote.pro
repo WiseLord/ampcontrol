@@ -8,7 +8,7 @@ QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = remote
+TARGET = ampcontrol-m32-remote
 TEMPLATE = app
 
 
