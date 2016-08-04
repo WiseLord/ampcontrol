@@ -1,7 +1,6 @@
 #include "setupdialog.h"
 #include <QDebug>
 
-#include <QSerialPort>
 #include <QSerialPortInfo>
 
 SetupDialog::SetupDialog(QWidget *parent) :
@@ -11,11 +10,19 @@ SetupDialog::SetupDialog(QWidget *parent) :
 
     connect(cmbxSerialPort, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
             this,  &SetupDialog::showPortInfo);
-    connect(pbUpdate, &QPushButton::clicked,
+    connect(pbtnUpdate, &QPushButton::clicked,
             this, &SetupDialog::readSerialPorts);
+    connect(pbtnApply, &QPushButton::clicked,
+            this, &SetupDialog::applySettings);
 
     fillSerialParam();
     readSerialPorts();
+    saveSettings();
+}
+
+SetupDialog::Settings SetupDialog::settings() const
+{
+    return m_settings;
 }
 
 void SetupDialog::fillSerialParam()
@@ -53,6 +60,16 @@ void SetupDialog::fillSerialParam()
     cmbxFlow->setCurrentIndex(0);
 }
 
+void SetupDialog::saveSettings()
+{
+    m_settings.portName = cmbxSerialPort->currentText();
+    m_settings.baudRate = static_cast<QSerialPort::BaudRate>(cmbxBaudRate->currentData().toInt());
+    m_settings.dataBits = static_cast<QSerialPort::DataBits>(cmbxDataBits->currentData().toInt());
+    m_settings.parity = static_cast<QSerialPort::Parity>(cmbxParity->currentData().toInt());
+    m_settings.stopBits = static_cast<QSerialPort::StopBits>(cmbxStopBits->currentData().toInt());
+    m_settings.flowControl = static_cast<QSerialPort::FlowControl>(cmbxFlow->currentData().toInt());
+}
+
 void SetupDialog::readSerialPorts()
 {
     cmbxSerialPort->clear();
@@ -86,4 +103,10 @@ void SetupDialog::showPortInfo(int index)
     lblSerialNumber->setText(list.at(4));
     lblVendorID->setText(list.at(5));
     lblProductID->setText(list.at(6));
+}
+
+void SetupDialog::applySettings()
+{
+    saveSettings();
+    hide();
 }
