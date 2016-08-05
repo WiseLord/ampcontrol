@@ -42,7 +42,8 @@ void pt2322SetBMT(void)
 	I2CStart(PT2322_I2C_ADDR);
 	while (mode <= MODE_SND_TREBLE) {
 		val = sndPar[mode++].value;
-		I2CWriteByte(param++ | (val > 0 ? 15 - val : 7 + val));
+		I2CWriteByte(param | (val > 0 ? 15 - val : 7 + val));
+		param += 0b00010000;
 	}
 	I2CStop();
 
