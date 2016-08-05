@@ -152,6 +152,15 @@
         <property name="text">
          <string>Vol +</string>
         </property>
+        <property name="autoRepeat">
+         <bool>true</bool>
+        </property>
+        <property name="autoRepeatDelay">
+         <number>400</number>
+        </property>
+        <property name="autoRepeatInterval">
+         <number>200</number>
+        </property>
         <property name="RC" stdset="0">
          <string notr="true">03</string>
         </property>
@@ -181,6 +190,15 @@
        <widget class="QPushButton" name="pbtnVolDown">
         <property name="text">
          <string>Vol –</string>
+        </property>
+        <property name="autoRepeat">
+         <bool>true</bool>
+        </property>
+        <property name="autoRepeatDelay">
+         <number>400</number>
+        </property>
+        <property name="autoRepeatInterval">
+         <number>200</number>
         </property>
         <property name="RC" stdset="0">
          <string notr="true">04</string>
