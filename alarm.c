@@ -1,11 +1,14 @@
 #include "alarm.h"
 
-#include "i2c.h"
-#include "audio/audio.h"
+#include <avr/pgmspace.h>
 #include <avr/eeprom.h>
+#include "audio/audio.h"
 #include "eeprom.h"
 
 ALARM_type alarm0;
+
+const static ALARM_type alarmMin PROGMEM = {0, 0, 0, 0, ALARM_NOEDIT};
+const static ALARM_type alarmMax PROGMEM = {23, 59, 6, 0x7F, ALARM_NOEDIT};
 
 void alarmInit(void)
 {
@@ -40,38 +43,21 @@ void alarmNextEditParam(void)
 
 void alarmChangeTime(int diff)
 {
-	switch (alarm0.eam) {
-	case ALARM_HOUR:
-		alarm0.hour += diff;
-		if (alarm0.hour > 23)
-			alarm0.hour = 0;
-		if (alarm0.hour < 0)
-			alarm0.hour = 23;
-		break;
-	case ALARM_MIN:
-		alarm0.min += diff;
-		if (alarm0.min > 59)
-			alarm0.min = 0;
-		if (alarm0.min < 0)
-			alarm0.min = 59;
-		break;
-	case ALARM_INPUT:
-		alarm0.input += diff;
-		if (alarm0.input >= aproc.inCnt)
-			alarm0.input = 0;
-		if (alarm0.input < 0)
-			alarm0.input = aproc.inCnt - 1;
-		break;
-	case ALARM_WDAY:
-		alarm0.wday += diff;
-		if (alarm0.wday < -64)
-			alarm0.wday = 0;
-		if (alarm0.wday < 0)
-			alarm0.wday = 127;
-		break;
-	default:
-		break;
-	}
+	int8_t *alarm = (int8_t*)&alarm0 + alarm0.eam;
+	int8_t aMax = pgm_read_byte((int8_t*)&alarmMax + alarm0.eam);
+	int8_t aMin = pgm_read_byte((int8_t*)&alarmMin + alarm0.eam);
+
+	if (alarm0.eam == ALARM_INPUT)
+		aMax = aproc.inCnt - 1;
+
+	*alarm += diff;
+	if (alarm0.eam == ALARM_WDAY)
+		*alarm &= 0x7F;
+
+	if (*alarm > aMax)
+		*alarm = aMin;
+	if (*alarm < aMin)
+		*alarm = aMax;
 
 	return;
 }
