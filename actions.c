@@ -225,6 +225,7 @@ void handleAction(uint8_t action)
 
 		setStbyBrightness();
 		rtc.etm = RTC_NOEDIT;
+		alarmSave();
 		setStbyTimer(STBY_TIMER_OFF);
 		disableSilenceTimer();
 		setInitTimer(INIT_TIMER_OFF);
@@ -266,10 +267,6 @@ void handleAction(uint8_t action)
 			rtcNextEditParam();
 			dispMode = MODE_TIME_EDIT;
 			setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-			if (rtc.etm == RTC_NOEDIT) {
-				dispMode = MODE_TIME;
-				setDisplayTime(DISPLAY_TIME_TIME);
-			}
 		} else {
 			rtc.etm = RTC_NOEDIT;
 			dispMode = MODE_TIME;
@@ -277,16 +274,12 @@ void handleAction(uint8_t action)
 		}
 		break;
 	case CMD_RC_ALARM:
-		if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) {
-			editAlarm();
+		if ((dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) && alarm0.eam != ALARM_WDAY) {
+			alarmNextEditParam();
 			dispMode = MODE_ALARM_EDIT;
 			setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
-			if (!isEAM()) {
-				dispMode = MODE_ALARM;
-				setDisplayTime(DISPLAY_TIME_ALARM);
-			}
 		} else {
-			stopEditAlarm();
+			alarmSave();
 			dispMode = MODE_ALARM;
 			setDisplayTime(DISPLAY_TIME_ALARM);
 		}
@@ -477,7 +470,7 @@ void handleEncoder(int8_t encCnt)
 			setDisplayTime(DISPLAY_TIME_TIME_EDIT);
 			break;
 		case MODE_ALARM_EDIT:
-			changeAlarm(encCnt);
+			alarmChangeTime(encCnt);
 			setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
 			break;
 		case MODE_BR:
@@ -531,15 +524,14 @@ uint8_t checkAlarmAndTime(void)
 
 	if (getClockTimer() == 0) {
 		rtcReadTime();
-		readAlarm();
 
 		if (dispMode == MODE_STANDBY) {
 			if ((rtc.sec == 0) &&
-				(rtc.min == getAlarm(RTC_A0_MIN)) &&
-				(rtc.hour == getAlarm(RTC_A0_HOUR)) &&
-				(getAlarm(RTC_A0_WDAY) & (0x40 >> ((rtc.wday + 5) % 7)))
+				(rtc.min == alarm0.min) &&
+				(rtc.hour == alarm0.hour) &&
+				(alarm0.wday & (0x40 >> ((rtc.wday + 5) % 7)))
 				) {
-				sndSetInput(getAlarm(RTC_A0_INPUT));
+				sndSetInput(alarm0.input);
 				ret = ACTION_EXIT_STANDBY;
 			}
 		}

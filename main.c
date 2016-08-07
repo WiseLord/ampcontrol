@@ -32,7 +32,8 @@ static void hwInit(void)
 	uartInit();								// USART
 	adcInit();								// Analog-to-digital converter
 	rtc.etm = RTC_NOEDIT;
-
+	alarmInit();
+	alarm0.eam = ALARM_NOEDIT;
 	sei();									// Gloabl interrupt enable
 
 	tunerInit();							// Tuner

@@ -3,17 +3,30 @@
 
 #include <inttypes.h>
 
-#define RTC_A0_HOUR			0x08
-#define RTC_A0_MIN			0x09
-#define RTC_A0_INPUT		0x0A
-#define RTC_A0_WDAY			0x0B
+enum {
+	ALARM_HOUR = 0,
+	ALARM_MIN,
+	ALARM_INPUT,
+	ALARM_WDAY,
+	ALARM_EAM,
+};
 
-int8_t getAlarm(uint8_t am);
-uint8_t getEam(void);
-int8_t *readAlarm(void);
-void stopEditAlarm(void);
-uint8_t isEAM(void);
-void editAlarm(void);
-void changeAlarm(int diff);
+typedef struct {
+	int8_t hour;
+	int8_t min;
+	int8_t input;
+	int8_t wday;
+	uint8_t eam;
+} ALARM_type;
+
+extern ALARM_type alarm0;
+
+#define ALARM_NOEDIT		0xFF
+
+void alarmInit(void);
+void alarmSave(void);
+
+void alarmNextEditParam(void);
+void alarmChangeTime(int diff);
 
 #endif // ALARM_H

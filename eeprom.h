@@ -8,9 +8,10 @@
 #define EEPROM_VOLUME				0x00
 
 /* Alarm */
-#define EEPROM_ALARM_HOUR			0x10
-#define EEPROM_ALARM_MIN			0x11
-#define EEPROM_ALARM_MON			0x12
+#define EEPROM_A0_HOUR				0x10
+#define EEPROM_A0_MIN				0x11
+#define EEPROM_A0_WDAY				0x12
+#define EEPROM_A0_INPUT				0x13
 
 /* Audio parameters values */
 #define EEPROM_AUDIOPROC			0x20

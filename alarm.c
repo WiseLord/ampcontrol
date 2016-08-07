@@ -2,128 +2,76 @@
 
 #include "i2c.h"
 #include "audio/audio.h"
+#include <avr/eeprom.h>
+#include "eeprom.h"
 
-#define DS1307_ADDR			0b11010000
-#define NOEDIT				0xFF
+ALARM_type alarm0;
 
-static int8_t alarm[4];
-
-static uint8_t _eam = NOEDIT;	/* Edit alarm mode */
-
-int8_t getAlarm(uint8_t am)
+void alarmInit(void)
 {
-	return alarm[am - RTC_A0_HOUR];
-}
-
-uint8_t getEam(void)
-{
-	return _eam;
-}
-
-int8_t *readAlarm(void)
-{
-	uint8_t temp;
-	uint8_t i;
-
-	I2CStart(DS1307_ADDR);
-	I2CWriteByte(RTC_A0_HOUR);
-	I2CStart(DS1307_ADDR | I2C_READ);
-	for (i = RTC_A0_HOUR; i < RTC_A0_WDAY; i++) {
-		temp = I2CReadByte(I2C_ACK);
-		alarm[i - RTC_A0_HOUR] = temp;
-	}
-	temp = I2CReadByte(I2C_NOACK);
-	alarm[RTC_A0_WDAY - RTC_A0_HOUR] = temp;
-	I2CStop();
-
-	return alarm;
-}
-
-static void writeAlarm(void)
-{
-	uint8_t i;
-
-	I2CStart(DS1307_ADDR);
-	I2CWriteByte(RTC_A0_HOUR);
-	for (i = RTC_A0_HOUR; i <= RTC_A0_WDAY; i++)
-		I2CWriteByte(alarm[i - RTC_A0_HOUR]);
-	I2CStop();
+	eeprom_read_block(&alarm0, (void*)EEPROM_A0_HOUR, sizeof(ALARM_type) - 1);
 
 	return;
 }
 
-void stopEditAlarm(void)
+void alarmSave(void)
 {
-	_eam = NOEDIT;
+	eeprom_update_block(&alarm0, (void*)EEPROM_A0_HOUR, sizeof(ALARM_type) - 1);
+	alarm0.eam = ALARM_NOEDIT;
 
 	return;
 }
 
-uint8_t isEAM(void)
+void alarmNextEditParam(void)
 {
-	if (_eam == NOEDIT)
-		return 0;
-	return 1;
-}
-
-void editAlarm(void)
-{
-	switch (_eam) {
-	case NOEDIT:
-		_eam = RTC_A0_HOUR;
-		break;
-	case RTC_A0_HOUR:
-		_eam = RTC_A0_MIN;
-		break;
-	case RTC_A0_MIN:
-		_eam = RTC_A0_INPUT;
-		break;
-	case RTC_A0_INPUT:
-		_eam = RTC_A0_WDAY;
+	switch (alarm0.eam) {
+	case ALARM_HOUR:
+	case ALARM_MIN:
+	case ALARM_INPUT:
+		alarm0.eam++;
 		break;
 	default:
-		_eam = NOEDIT;
+		alarm0.eam = ALARM_HOUR;
 		break;
 	}
 
 	return;
 }
 
-void changeAlarm(int diff)
+void alarmChangeTime(int diff)
 {
-	switch (_eam) {
-	case RTC_A0_HOUR:
-		alarm[RTC_A0_HOUR - RTC_A0_HOUR] += diff;
-		if (alarm[RTC_A0_HOUR - RTC_A0_HOUR] > 23)
-			alarm[RTC_A0_HOUR - RTC_A0_HOUR] = 0;
-		if (alarm[RTC_A0_HOUR - RTC_A0_HOUR] < 0)
-			alarm[RTC_A0_HOUR - RTC_A0_HOUR] = 23;
+	switch (alarm0.eam) {
+	case ALARM_HOUR:
+		alarm0.hour += diff;
+		if (alarm0.hour > 23)
+			alarm0.hour = 0;
+		if (alarm0.hour < 0)
+			alarm0.hour = 23;
 		break;
-	case RTC_A0_MIN:
-		alarm[RTC_A0_MIN - RTC_A0_HOUR] += diff;
-		if (alarm[RTC_A0_MIN - RTC_A0_HOUR] > 59)
-			alarm[RTC_A0_MIN - RTC_A0_HOUR] = 0;
-		if (alarm[RTC_A0_MIN - RTC_A0_HOUR] < 0)
-			alarm[RTC_A0_MIN - RTC_A0_HOUR] = 59;
+	case ALARM_MIN:
+		alarm0.min += diff;
+		if (alarm0.min > 59)
+			alarm0.min = 0;
+		if (alarm0.min < 0)
+			alarm0.min = 59;
 		break;
-	case RTC_A0_INPUT:
-		alarm[RTC_A0_INPUT - RTC_A0_HOUR] += diff;
-		if (alarm[RTC_A0_INPUT - RTC_A0_HOUR] >= aproc.inCnt)
-			alarm[RTC_A0_INPUT - RTC_A0_HOUR] = 0;
-		if (alarm[RTC_A0_INPUT - RTC_A0_HOUR] < 0)
-			alarm[RTC_A0_INPUT - RTC_A0_HOUR] = aproc.inCnt - 1;
+	case ALARM_INPUT:
+		alarm0.input += diff;
+		if (alarm0.input >= aproc.inCnt)
+			alarm0.input = 0;
+		if (alarm0.input < 0)
+			alarm0.input = aproc.inCnt - 1;
 		break;
-	case RTC_A0_WDAY:
-		alarm[RTC_A0_WDAY - RTC_A0_HOUR] += diff;
-		if (alarm[RTC_A0_WDAY - RTC_A0_HOUR] < -64)
-			alarm[RTC_A0_WDAY - RTC_A0_HOUR] = 0;
-		if (alarm[RTC_A0_WDAY - RTC_A0_HOUR] < 0)
-			alarm[RTC_A0_WDAY - RTC_A0_HOUR] = 127;
+	case ALARM_WDAY:
+		alarm0.wday += diff;
+		if (alarm0.wday < -64)
+			alarm0.wday = 0;
+		if (alarm0.wday < 0)
+			alarm0.wday = 127;
 		break;
 	default:
 		break;
 	}
-	writeAlarm();
 
 	return;
 }

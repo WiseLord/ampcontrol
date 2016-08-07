@@ -3,6 +3,7 @@
 
 #include <inttypes.h>
 #include "rtc.h"
+#include "alarm.h"
 #include "audio/audio.h"
 
 #ifdef KS0066_16X2_PCF8574
