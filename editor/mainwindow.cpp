@@ -131,9 +131,7 @@ void MainWindow::readEepromFile(QString name)
     int rcType = eep[EEPROM_RC_TYPE];
     if (rcType + 1 >= cbxRemoteType->count())
         rcType = 0;
-    setRemoteType(rcType);
-    setRemoteAddr(eep[EEPROM_RC_ADDR]);
-    lwCommands->setCurrentRow(0);
+    setRemote(rcType);
 
     // Processing other functions
     setOther();
@@ -755,6 +753,18 @@ void MainWindow::setFmctrl()
 
     eep[EEPROM_FM_CTRL] = ctrl;
     updateHexTable(EEPROM_FM_CTRL);
+}
+
+void MainWindow::setRemote(int rcType)
+{
+    setRemoteType(rcType);
+    cbxRemoteType->setCurrentIndex(rcType);
+
+    setRemoteAddr(eep[EEPROM_RC_ADDR]);
+    sbxRemoteAddr->setValue(eep[EEPROM_RC_ADDR]);
+
+    lwCommands->setCurrentRow(0);
+    sbxRemoteCmd->setValue(eep[EEPROM_RC_CMD]);
 }
 
 void MainWindow::setRemoteType(int type)

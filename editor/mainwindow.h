@@ -76,6 +76,7 @@ private slots:
     void setFmRds(int value);
     void setFmctrl();
 
+    void setRemote(int rcType);
     void setRemoteType(int type);
     void setRemoteAddr(int addr);
     void setRemoteCmd(int cmd);
