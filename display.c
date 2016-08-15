@@ -2029,9 +2029,9 @@ void showSpectrum(void)
 			ls020DrawRect(3 * x + 1, 30, 3 * x + 2, 30, COLOR_YELLOW);
 			ls020DrawRect(3 * x + 1, 31, 3 * x + 2, 40, x < left ? COLOR_YELLOW : COLOR_BLACK);
 
-			ls020DrawRect(3 * x + 1, 96, 3 * x + 2, 105, x < left ? COLOR_YELLOW : COLOR_BLACK);
+			ls020DrawRect(3 * x + 1, 96, 3 * x + 2, 105, x < right ? COLOR_YELLOW : COLOR_BLACK);
 			ls020DrawRect(3 * x + 1, 106, 3 * x + 2, 106, COLOR_YELLOW);
-			ls020DrawRect(3 * x + 1, 107, 3 * x + 2, 116, x < left ? COLOR_YELLOW : COLOR_BLACK);
+			ls020DrawRect(3 * x + 1, 107, 3 * x + 2, 116, x < right ? COLOR_YELLOW : COLOR_BLACK);
 		}
 		break;
 	}
