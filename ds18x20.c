@@ -10,12 +10,12 @@ static uint8_t ds18x20IsOnBus(void)
 {
 	uint8_t ret;
 
-	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
-	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(480);										/* Reset */
-	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
-	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(70);										/* Wait for response */
+	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						// Pin as output (0)
+	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					// Set active 0
+	_delay_us(480);										// Reset
+	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					// Pin as input (1)
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					// Enable pull-up resitor
+	_delay_us(70);										// Wait for response
 
 	ret = !(PIN(ONE_WIRE) & ONE_WIRE_LINE);
 
@@ -26,16 +26,16 @@ static uint8_t ds18x20IsOnBus(void)
 
 static void ds18x20SendBit(uint8_t bit)
 {
-	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
-	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(6);
+	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						// Pin as output (0)
+	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					// Set active 0
+	_delay_us(5);
 	if (!bit)
-		_delay_us(54);
-	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
-	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(10);
+		_delay_us(50);
+	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					// Pin as input (1)
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					// Enable pull-up resitor
+	_delay_us(5);
 	if (bit)
-		_delay_us(54);
+		_delay_us(50);
 
 	return;
 }
@@ -44,16 +44,16 @@ static uint8_t ds18x20GetBit(void)
 {
 	uint8_t ret;
 
-	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						/* Pin as output (0) */
-	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Set active 0 */
-	_delay_us(6);										/* Strob */
-	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					/* Pin as input (1) */
-	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					/* Enable pull-up resitor */
-	_delay_us(9);
+	DDR(ONE_WIRE) |= ONE_WIRE_LINE;						// Pin as output (0)
+	PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;					// Set active 0
+	_delay_us(5);										// Strob
+	DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;					// Pin as input (1)
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;					// Enable pull-up resitor
+	_delay_us(5);
 
 	ret = PIN(ONE_WIRE) & ONE_WIRE_LINE;
 
-	_delay_us(55);
+	_delay_us(50);
 
 	return ret;
 }
@@ -96,6 +96,50 @@ static void ds18x20Select(ds18x20Dev *dev)
 	return;
 }
 
+static void ds18x20GetAllTemps()
+{
+	uint8_t i, j;
+	uint8_t crc;
+
+	uint8_t arr[DS18X20_SCRATCH_LEN];
+
+	for (i = 0; i < devCount; i++) {
+		if (ds18x20IsOnBus()) {
+			ds18x20Select(&devs[i]);
+			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
+
+			// Control scratchpad checksum
+			crc = 0;
+			for (j = 0; j < DS18X20_SCRATCH_LEN; j++) {
+				arr[j] = ds18x20GetByte();
+				crc = _crc_ibutton_update(crc, arr[j]);
+			}
+
+			if (crc == 0) {
+				// Save first 2 bytes (temperature) of scratchpad
+				for (j = 0; j < DS18X20_SCRATCH_TEMP_LEN; j++)
+					devs[i].sp[j] = arr[j];
+			}
+		}
+	}
+
+	return;
+}
+
+static void ds18x20ConvertTemp(void)
+{
+	ds18x20SendByte(DS18X20_CMD_SKIP_ROM);
+	ds18x20SendByte(DS18X20_CMD_CONVERT);
+
+#ifdef DS18X20_PARASITE_POWER
+	// Set active 1 on port for at least 750ms as parasitic power
+	PORT(ONE_WIRE) |= ONE_WIRE_LINE;
+	DDR(ONE_WIRE) |= ONE_WIRE_LINE;
+#endif
+
+	return;
+}
+
 static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 {
 	uint8_t currBit;
@@ -104,38 +148,38 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 	uint8_t bitA;
 	uint8_t bitB;
 
-	/* Send SEARCH ROM command on the bus */
+	// Send SEARCH ROM command on the bus
 	ds18x20SendByte(DS18X20_CMD_SEARCH_ROM);
 
-	/* Walk through all 64 bits */
+	// Walk through all 64 bits
 	for (currBit = 0; currBit < DS18X20_ID_LEN * 8; currBit++)
 	{
-		/* Read bit from bus twice. */
+		// Read bit from bus twice.
 		bitA = ds18x20GetBit();
 		bitB = ds18x20GetBit();
 
-		if (bitA && bitB) {								/* Both bits 1 = ERROR */
+		if (bitA && bitB) {								// Both bits 1 = ERROR
 			return 0xFF;
-		} else if (!(bitA || bitB)) {					/* Both bits 0 */
-			if (currBit == lastDeviation) {				/* Select 1 if device has been selected */
+		} else if (!(bitA || bitB)) {					// Both bits 0
+			if (currBit == lastDeviation) {				// Select 1 if device has been selected
 				*bitPattern |= bitMask;
-			} else if (currBit > lastDeviation) {		/* Select 0 if no, and remember device */
+			} else if (currBit > lastDeviation) {		// Select 0 if no, and remember device
 				(*bitPattern) &= ~bitMask;
 				newDeviation = currBit;
-			} else if (!(*bitPattern & bitMask)) {		 /* Otherwise just remember device */
+			} else if (!(*bitPattern & bitMask)) {		 // Otherwise just remember device
 				newDeviation = currBit;
 			}
-		} else { /* Bits differ */
+		} else { // Bits differ
 			if (bitA)
 				*bitPattern |= bitMask;
 			else
 				*bitPattern &= ~bitMask;
 		}
 
-		/* Send the selected bit to the bus. */
+		// Send the selected bit to the bus.
 		ds18x20SendBit(*bitPattern & bitMask);
 
-		/* Adjust bitMask and bitPattern pointer. */
+		// Adjust bitMask and bitPattern pointer.
 		bitMask <<= 1;
 		if (!bitMask)
 		{
@@ -147,51 +191,6 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
 	return newDeviation;
 }
 
-void ds18x20ConvertTemp(void)
-{
-	if (ds18x20IsOnBus()) {
-		ds18x20SendByte(DS18X20_CMD_SKIP_ROM);
-		ds18x20SendByte(DS18X20_CMD_CONVERT);
-
-#ifdef DS18X20_PARASITE_POWER
-	/* Set active 1 on port for at least 750ms as parasitic power */
-		PORT(ONE_WIRE) |= ONE_WIRE_LINE;
-		DDR(ONE_WIRE) |= ONE_WIRE_LINE;
-#endif
-	}
-
-	return;
-}
-
-void ds18x20GetAllTemps(void)
-{
-	uint8_t i, j;
-	uint8_t crc;
-	static uint8_t arr[DS18X20_SCRATCH_LEN];
-
-	for (i = 0; i < devCount; i++) {
-		if (ds18x20IsOnBus()) {
-			ds18x20Select(&devs[i]);
-			ds18x20SendByte(DS18X20_CMD_READ_SCRATCH);
-
-			/* Control scratchpad checksum */
-			crc = 0;
-			for (j = 0; j < DS18X20_SCRATCH_LEN; j++) {
-				arr[j] = ds18x20GetByte();
-				crc = _crc_ibutton_update(crc, arr[j]);
-			}
-
-			if (crc == 0) {
-				/* Save first 2 bytes (temperature) of scratchpad */
-				for (j = 0; j < DS18X20_SCRATCH_TEMP_LEN; j++)
-					devs[i].sp[j] = arr[j];
-			}
-		}
-	}
-
-	return;
-}
-
 void ds18x20SearchDevices(void)
 {
 	uint8_t i, j;
@@ -200,12 +199,12 @@ void ds18x20SearchDevices(void)
 	uint8_t lastDeviation;
 	uint8_t count = 0;
 
-	/* Reset addresses */
+	// Reset addresses
 	for (i = 0; i < DS18X20_MAX_DEV; i++)
 		for (j = 0; j < DS18X20_ID_LEN; j++)
 			devs[i].id[j] = 0x00;
 
-	/* Search all sensors */
+	// Search all sensors
 	newID = devs[0].id;
 	lastDeviation = 0;
 	currentID = newID;
@@ -233,16 +232,25 @@ void ds18x20SearchDevices(void)
 	return;
 }
 
+uint8_t ds18x20Process(void)
+{
+	ds18x20GetAllTemps();
+
+	// Convert temperature
+	if (ds18x20IsOnBus())
+		ds18x20ConvertTemp();
+
+	return devCount;
+}
+
 int16_t ds18x20GetTemp(uint8_t num)
 {
-	int16_t ret = devs[num].temp;
+	int16_t ret = devs[num].temp * 5;
 
-	if (devs[num].id[0] == 0x28) /* DS18B20 */
-		ret = ret * 5 / 8;
-	else if (devs[num].id[0] == 0x10) /* DS18S20 */
-		ret = ret * 5;
+	if (devs[num].id[0] == 0x28) // DS18B20 has 8X better resolution
+		ret /= 8;
 
-	/* Return value is in 0.1°C units */
+	// Return value is in 0.1°C units
 	return ret;
 }
 

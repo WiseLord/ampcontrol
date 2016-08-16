@@ -23,6 +23,7 @@ static void hwInit(void)
 	if (extFunc == USE_DS18B20) {
 		ds18x20SearchDevices();
 		tempInit();							// Init temperature control
+		setSensTimer(TEMP_MEASURE_TIME);
 	}
 
 	I2CInit();								// I2C bus
@@ -55,17 +56,11 @@ int main(void)
 	// Init hardware
 	hwInit();
 
-	if (extFunc == USE_DS18B20) {
-		ds18x20ConvertTemp();
-		setSensTimer(TEMP_MEASURE_TIME);
-	}
-
 	while (1) {
 		// Control temperature
 		if (extFunc == USE_DS18B20) {
 			if (getSensTimer() == 0) {
-				ds18x20GetAllTemps();
-				ds18x20ConvertTemp();
+				ds18x20Process();
 				setSensTimer(SENSOR_POLL_INTERVAL);
 			}
 			tempControlProcess();

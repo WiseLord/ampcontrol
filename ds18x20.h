@@ -6,7 +6,7 @@
 
 #define DS18X20_PARASITE_POWER
 
-/* DS18X20 commands */
+// DS18X20 commands
 #define DS18X20_CMD_SEARCH_ROM		0xF0
 #define DS18X20_CMD_READ_ROM		0x33
 #define DS18X20_CMD_MATCH_ROM		0x55
@@ -35,10 +35,9 @@ typedef union {
 	};
 } ds18x20Dev;
 
-void ds18x20ConvertTemp(void);
-void ds18x20GetAllTemps(void);
 void ds18x20SearchDevices(void);
+uint8_t ds18x20Process(void);
 int16_t ds18x20GetTemp(uint8_t num);
 uint8_t ds18x20GetDevCount(void);
 
-#endif /* DS18X20_H */
+#endif // DS18X20_H
