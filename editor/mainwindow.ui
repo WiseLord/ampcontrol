@@ -103,7 +103,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -2094,7 +2094,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="sbxRemoteAddr">
+            <widget class="Hex2SpinBox" name="sbxRemoteAddr">
              <property name="minimumSize">
               <size>
                <width>120</width>
@@ -2147,7 +2147,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QSpinBox" name="sbxRemoteCmd">
+            <widget class="Hex2SpinBox" name="sbxRemoteCmd">
              <property name="minimumSize">
               <size>
                <width>120</width>
@@ -2516,6 +2516,13 @@
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>Hex2SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>hex2spinbox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
