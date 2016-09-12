@@ -2147,3 +2147,13 @@ void displayPowerOff(void)
 
 	return;
 }
+
+void displayUpdate()
+{
+
+#if defined(SSD1306)
+	ssd1306UpdateFb();
+#endif
+
+	return;
+}

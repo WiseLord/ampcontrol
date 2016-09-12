@@ -32,6 +32,8 @@ display/ks0108.c
 display/ks0108.h
 display/ls020.c
 display/ls020.h
+display/ssd1306.c
+display/ssd1306.h
 display/st7920.c
 display/st7920.h
 

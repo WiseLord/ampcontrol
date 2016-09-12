@@ -210,4 +210,10 @@ enum {
 #define PGA2310_CS			C
 #define PGA2310_CS_LINE		(1<<4)
 
+/* ST7920 port*/
+#define SSD1306_SCK			DISP_STROB
+#define SSD1306_SCK_LINE	DISP_STROB_LINE
+#define SSD1306_SDA			DISP_DATA
+#define SSD1306_SDA_LINE	DISP_DATA_LINE
+
 #endif /* PINS_H */

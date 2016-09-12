@@ -3,11 +3,12 @@
 
 #include "st7920.h"
 #include "ks0108.h"
+#include "ssd1306.h"
 #include "fonts.h"
 #include "icons.h"
 
 /* Display selection  */
-#if !defined(ST7920) && !defined(KS0108A) && !defined(KS0108B)
+#if !defined(ST7920) && !defined(SSD1306) && !defined(KS0108A) && !defined(KS0108B)
 #define KS0108A
 #endif
 
@@ -41,21 +42,31 @@ enum {
 #define GD_MAX_BRIGHTNESS			ST7920_MAX_BRIGHTNESS
 #define GD_SIZE_X					ST7920_SIZE_X
 #define GD_SIZE_Y					ST7920_SIZE_Y
-#define	gdInit() st7920Init()
-#define	gdClear() st7920Clear()
-#define gdSetBrightness(br) st7920SetBrightness(br)
-#define gdDrawPixel(x, y, color) st7920DrawPixel(x, y, color)
-#define gdGetPins() st7920GetPins()
+#define	gdInit()					st7920Init()
+#define	gdClear()					st7920Clear()
+#define gdSetBrightness(br)			st7920SetBrightness(br)
+#define gdDrawPixel(x, y, color)	st7920DrawPixel(x, y, color)
+#define gdGetPins()					st7920GetPins()
+#elif defined(SSD1306)
+#define GD_MIN_BRIGHTNESS			SSD1306_MIN_BRIGHTNESS
+#define GD_MAX_BRIGHTNESS			SSD1306_MAX_BRIGHTNESS
+#define GD_SIZE_X					SSD1306_WIDTH
+#define GD_SIZE_Y					SSD1306_HEIGHT
+#define	gdInit()					ssd1306Init()
+#define	gdClear()					ssd1306Clear()
+#define gdSetBrightness(br)			ssd1306SetBrightness(br)
+#define gdDrawPixel(x, y, color)	ssd1306DrawPixel(x, y, color)
+#define gdGetPins()					ssd1306GetPins()
 #else
 #define GD_MIN_BRIGHTNESS			KS0108_MIN_BRIGHTNESS
 #define GD_MAX_BRIGHTNESS			KS0108_MAX_BRIGHTNESS
 #define GD_SIZE_X					KS0108_COLS * KS0108_CHIPS
 #define GD_SIZE_Y					KS0108_ROWS * 8
-#define gdInit() ks0108Init()
-#define gdClear() ks0108Clear()
-#define gdSetBrightness(br) ks0108SetBrightness(br)
-#define gdDrawPixel(x, y, color) ks0108DrawPixel(x, y, color)
-#define gdGetPins() ks0108GetPins()
+#define gdInit()					ks0108Init()
+#define gdClear()					ks0108Clear()
+#define gdSetBrightness(br)			ks0108SetBrightness(br)
+#define gdDrawPixel(x, y, color)	ks0108DrawPixel(x, y, color)
+#define gdGetPins()					ks0108GetPins()
 #endif
 
 void gdDrawHorizLine(uint8_t x1, uint8_t x2, uint8_t y, uint8_t color);
