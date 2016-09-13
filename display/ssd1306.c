@@ -1,40 +1,55 @@
 #include "ssd1306.h"
 
+#include "../pins.h"
+
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include <util/delay.h>
-#include "../pins.h"
 
 static uint8_t fb[SSD1306_BUFFERSIZE];
 
-static void ssd1306Start(void)
-{
-	DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;			// Pullup SCL = 1
-	DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;			// Pullup SDA = 1
-	_delay_us(1);
-	DDR(SSD1306_SDA) |= SSD1306_SDA_LINE;			// Active SDA = 0
-	_delay_us(1);
-	DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;			// Active SCL = 0
+static const uint8_t initSeq[] PROGMEM = {
+	SSD1306_DISPLAY_OFF,
+	SSD1306_SETDISPLAYCLOCKDIV,
+	0xF0,
+	SSD1306_SETMULTIPLEX,
+	0x3F,
+	SSD1306_SETDISPLAYOFFSET,
+	0x00,
+	SSD1306_SETSTARTLINE | 0x00,
+	SSD1306_MEMORYMODE,
+	SSD1306_MEMORYMODE_HORISONTAL,
+	SSD1306_SEGREMAP_ON,
+	SSD1306_COMSCANDEC,
+	SSD1306_SETCOMPINS,
+	0x12,
+	SSD1306_SETCONTRAST,
+	0xFF,
+	SSD1306_SETPRECHARGE,
+	0x1F,
+	SSD1306_SETVCOMDETECT,
+	0x40,
+	SSD1306_ENTDISPLAY_RAM,
+	SSD1306_NORMALDISPLAY,
+	SSD1306_CHARGEPUMP,
+	0x14,
+	SSD1306_DISPLAY_ON,
+};
 
-	return;
-}
+static const uint8_t dispAreaSeq[] PROGMEM = {
+	SSD1306_COLUMNADDR,
+	0x00,
+	0x7F,
+	SSD1306_PAGEADDR,
+	0x00,
+	0x07,
+};
 
-static void ssd1306Stop(void)
-{
-	DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;			// Active SCL = 0
-	DDR(SSD1306_SDA) |= SSD1306_SDA_LINE;			// Active SDA = 0
-	_delay_us(1);
-	DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;			// Pullup SCL = 1
-	_delay_us(1);
-	DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;			// Pullup SDA = 1
-
-	return;
-}
-
-static void ssd1306Write(uint8_t data)
+static void _I2CWriteByte(uint8_t data)
 {
 	uint8_t i = 0;
 
+	// Data bits
 	for (i = 0; i < 8; i++) {
 		if (data & 0x80)
 			DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;	// Pullup SDA = 1
@@ -46,6 +61,7 @@ static void ssd1306Write(uint8_t data)
 		DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;		// Active SCL = 0
 		data <<= 1;
 	}
+	// ACK bit
 	DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;			// Pullup SDA = 1
 	_delay_us(1);
 	DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;			// Pullup SCL = 1
@@ -55,13 +71,37 @@ static void ssd1306Write(uint8_t data)
 	return;
 }
 
-static void ssd1306Cmd(uint8_t cmd)
+static void _I2CStart(uint8_t addr)
 {
-	ssd1306Start();
-	ssd1306Write(SSD1306_DEFAULT_ADDRESS);
-	ssd1306Write(0x00);
-	ssd1306Write(cmd);
-	ssd1306Stop();
+	DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;			// Pullup SCL = 1
+	DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;			// Pullup SDA = 1
+	_delay_us(1);
+	DDR(SSD1306_SDA) |= SSD1306_SDA_LINE;			// Active SDA = 0
+	_delay_us(1);
+	DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;			// Active SCL = 0
+
+	_I2CWriteByte(addr);
+
+	return;
+}
+
+static void _I2CStop(void)
+{
+	DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;			// Active SCL = 0
+	DDR(SSD1306_SDA) |= SSD1306_SDA_LINE;			// Active SDA = 0
+	_delay_us(1);
+	DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;			// Pullup SCL = 1
+	_delay_us(1);
+	DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;			// Pullup SDA = 1
+
+	return;
+}
+
+static void ssd1306SendCmd(uint8_t cmd)
+{
+	_I2CWriteByte(cmd);
+
+	return;
 }
 
 static void ssd1306SetDdrIn(void)
@@ -88,83 +128,36 @@ static void ssd1306SetDdrIn(void)
 	return;
 }
 
+uint8_t ssd1306GetPins(void)
+{
+	uint8_t ret = 0x00;
+
+	if (PIN(DISP_D0) & DISP_D0_LINE) ret |= (1<<0);
+	if (PIN(DISP_D1) & DISP_D1_LINE) ret |= (1<<1);
+	if (PIN(DISP_D2) & DISP_D2_LINE) ret |= (1<<2);
+	if (PIN(DISP_D3) & DISP_D3_LINE) ret |= (1<<3);
+	if (PIN(DISP_D4) & DISP_D4_LINE) ret |= (1<<4);
+	if (PIN(DISP_D5) & DISP_D5_LINE) ret |= (1<<5);
+	if (PIN(DISP_D6) & DISP_D6_LINE) ret |= (1<<6);
+	if (PIN(DISP_D7) & DISP_D7_LINE) ret |= (1<<7);
+
+	return ~ret;
+}
+
 void ssd1306Init(void)
 {
-	// Turn display off
-	ssd1306Cmd(SSD1306_DISPLAYOFF);
+	uint8_t i;
 
-	ssd1306Cmd(SSD1306_SETDISPLAYCLOCKDIV);
-	ssd1306Cmd(0x80);
+	_I2CStart(SSD1306_I2C_ADDR);
+	_I2CWriteByte(SSD1306_I2C_COMMAND);
 
-	ssd1306Cmd(SSD1306_SETMULTIPLEX);
-	ssd1306Cmd(0x3F);
+	for (i = 0; i < sizeof(initSeq); i++)
+		ssd1306SendCmd(pgm_read_byte(&initSeq[i]));
 
-	ssd1306Cmd(SSD1306_SETDISPLAYOFFSET);
-	ssd1306Cmd(0x00);
-
-	ssd1306Cmd(SSD1306_SETSTARTLINE | 0x00);
-
-	// We use internal charge pump
-	ssd1306Cmd(SSD1306_CHARGEPUMP);
-	ssd1306Cmd(0x14);
-
-	// Horizontal memory mode
-	ssd1306Cmd(SSD1306_MEMORYMODE);
-	ssd1306Cmd(0x00);
-
-	ssd1306Cmd(SSD1306_SEGREMAP | 0x1);
-
-	ssd1306Cmd(SSD1306_COMSCANDEC);
-
-	ssd1306Cmd(SSD1306_SETCOMPINS);
-	ssd1306Cmd(0x12);
-
-	// Max contrast
-	ssd1306Cmd(SSD1306_SETCONTRAST);
-	ssd1306Cmd(0xFF);
-
-	ssd1306Cmd(SSD1306_SETPRECHARGE);
-	ssd1306Cmd(0x1F);
-
-	ssd1306Cmd(SSD1306_SETVCOMDETECT);
-	ssd1306Cmd(0x40);
-
-	ssd1306Cmd(SSD1306_DISPLAYALLON_RESUME);
-
-	// Non-inverted display
-	ssd1306Cmd(SSD1306_NORMALDISPLAY);
-
-	// Turn display back on
-	ssd1306Cmd(SSD1306_DISPLAYON);
+	_I2CStop();
 
 	// Set display D0..D7 ports as inputs with pull-up
 	ssd1306SetDdrIn();
-
-	return;
-}
-
-void ssd1306UpdateFb(void)
-{
-	uint16_t i;
-	uint8_t *fbP = fb;
-
-	ssd1306Start();								// 1025
-	ssd1306Write(SSD1306_DEFAULT_ADDRESS);		// 1026
-	ssd1306Write(0x00);							// 1027
-	ssd1306Write(SSD1306_COLUMNADDR);			// 1028
-	ssd1306Write(0x00);							// 1029
-	ssd1306Write(0x7F);							// 1030
-	ssd1306Write(SSD1306_PAGEADDR);				// 1031
-	ssd1306Write(0x00);							// 1032
-	ssd1306Write(0x07);							// 1033
-	ssd1306Stop();								// 1034
-
-	ssd1306Start();								// 1035
-	ssd1306Write(SSD1306_DEFAULT_ADDRESS);		// 1036
-	ssd1306Write(0x40);							// 1037
-	for (i = 0; i < SSD1306_BUFFERSIZE; i++)	// 0..1023
-		ssd1306Write(*fbP++);
-	ssd1306Stop();								// 1024
 
 	return;
 }
@@ -179,6 +172,29 @@ ISR (TIMER0_OVF_vect)
 	return;
 }
 
+void ssd1306UpdateFb(void)
+{
+	uint16_t i;
+	uint8_t *fbP = fb;
+
+	_I2CStart(SSD1306_I2C_ADDR);
+	_I2CWriteByte(SSD1306_I2C_COMMAND);
+
+	for (i = 0; i < sizeof(dispAreaSeq); i++)
+		ssd1306SendCmd(pgm_read_byte(&dispAreaSeq[i]));
+
+	_I2CStop();
+
+	_I2CStart(SSD1306_I2C_ADDR);
+	_I2CWriteByte(SSD1306_I2C_DATA_SEQ);
+
+	for (i = 0; i < SSD1306_BUFFERSIZE; i++)
+		_I2CWriteByte(*fbP++);
+
+	_I2CStop();
+
+	return;
+}
 
 void ssd1306DrawPixel(uint8_t x, uint8_t y, uint8_t color)
 {
@@ -220,24 +236,13 @@ void ssd1306SetBrightness(uint8_t br)
 	if (br < SSD1306_MAX_BRIGHTNESS)
 		rawBr = br * 8;
 
-	ssd1306Cmd(SSD1306_SETCONTRAST);
-	ssd1306Cmd(rawBr);
+	_I2CStart(SSD1306_I2C_ADDR);
+	_I2CWriteByte(SSD1306_I2C_COMMAND);
+
+	ssd1306SendCmd(SSD1306_SETCONTRAST);
+	ssd1306SendCmd(rawBr);
+
+	_I2CStop();
 
 	return;
-}
-
-uint8_t ssd1306GetPins(void)
-{
-	uint8_t ret = 0x00;
-
-	if (PIN(DISP_D0) & DISP_D0_LINE) ret |= (1<<0);
-	if (PIN(DISP_D1) & DISP_D1_LINE) ret |= (1<<1);
-	if (PIN(DISP_D2) & DISP_D2_LINE) ret |= (1<<2);
-	if (PIN(DISP_D3) & DISP_D3_LINE) ret |= (1<<3);
-	if (PIN(DISP_D4) & DISP_D4_LINE) ret |= (1<<4);
-	if (PIN(DISP_D5) & DISP_D5_LINE) ret |= (1<<5);
-	if (PIN(DISP_D6) & DISP_D6_LINE) ret |= (1<<6);
-	if (PIN(DISP_D7) & DISP_D7_LINE) ret |= (1<<7);
-
-	return ~ret;
 }
