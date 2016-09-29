@@ -52,7 +52,7 @@ CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
 
 # Main definitions
-DEFINES  += -DKS0066_WIRE_$(WIRE) -DKS0066
+DEFINES  += -DKS0066_WIRE_$(WIRE) -DKS0066 -D_NO_MUTE_PORT
 # Supported tuners
 DEFINES += -D_$(TUNER)
 # Supported audioprocessors

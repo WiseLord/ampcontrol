@@ -82,6 +82,7 @@ typedef enum {
 
 enum {
 	ACTION_EXIT_STANDBY = CMD_END,
+	ACTION_INIT_HARDWARE,
 	ACTION_TESTMODE,
 
 	ACTION_NOACTION = 0xEF
@@ -99,8 +100,12 @@ enum {
 #define RC_VOL_REPEAT			400
 #define RC_PRESS_LIMIT			1000
 
+#define INIT_TIMER_OFF			-1
+#define INIT_TIMER_START		700
+
 extern uint16_t dispTimer;
 extern uint16_t rtcTimer;
+extern int16_t initTimer;
 
 void inputInit();
 
@@ -108,6 +113,6 @@ int8_t getEncoder(void);
 uint8_t getBtnCmd(void);
 uint8_t getRcCmd(void);
 
-void setDispTimer(uint16_t value);
+void setDispTimer(uint8_t value);
 
 #endif // INPUT_H

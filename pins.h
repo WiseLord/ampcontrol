@@ -57,8 +57,8 @@
 #define PGA2310_SCLK_LINE	ISP_SCK_LINE
 
 /* Standby/Mute port definitions */
-#define STMU_MUTE			B
-#define STMU_MUTE_LINE		(1<<7)
+#define STMU_STBY			B
+#define STMU_STBY_LINE		(1<<7)
 
 /* Encoder definitions */
 #define ENCODER_A			C

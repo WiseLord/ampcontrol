@@ -13,53 +13,30 @@
 #include "remote.h"
 #include "rtc.h"
 
-static void powerOn(void)
-{
-	tunerPowerOn();
-	sndPowerOn();
-	setWorkBrightness();
-	tunerSetFreq();
-
-	return;
-}
-
-static void powerOff(void)
-{
-	rtc.etm = RTC_NOEDIT;
-
-	sndSetMute(1);
-	sndPowerOff();
-	tunerPowerOff();
-	displayPowerOff();
-
-	return;
-}
-
+// Hardware initialization
 static void hwInit(void)
 {
 	I2CInit();							// I2C bus
 	displayInit();						// Display
-
 	rcInit();							// RC5 IR remote control
-	adcInit();							// Analog-to-digital converter
 	inputInit();						// Buttons/encoder polling and timers
-	tunerInit();						// Tuner
-
-	DDR(STMU_MUTE) |= STMU_MUTE_LINE;	// Mute port
-	DDR(BCKL) |= BCKL_LINE;				// Backlight port
+	adcInit();							// Analog-to-digital converter
+	rtc.etm = RTC_NOEDIT;
 
 	sei();								// Gloabl interrupt enable
 
-	sndInit();							// Audio params, labels
+	DDR(STMU_STBY) |= STMU_STBY_LINE;	// Standby port
+	DDR(BCKL) |= BCKL_LINE;				// Backlight port
 
-	powerOff();
+	tunerInit();						// Tuner
+	sndInit();							// Audio params, labels
 
 	return;
 }
 
 int main(void)
 {
-	uint8_t dispMode = MODE_STANDBY;
+	uint8_t dispMode = MODE_SPECTRUM;
 	uint8_t dispModePrev = dispMode;
 	uint8_t fmMode = MODE_FM_RADIO;
 
@@ -75,7 +52,6 @@ int main(void)
 			rtcReadTime();
 			rtcTimer = RTC_POLL_TIME;
 		}
-
 
 		/* Get command */
 		cmd = getBtnCmd();
@@ -134,6 +110,10 @@ int main(void)
 		}
 
 
+		// Init hardware if init timer expired
+		if (initTimer == 0)
+			action = ACTION_INIT_HARDWARE;
+
 		/* Remap GO_STANDBY command to EXIT_STANDBY if in standby mode */
 		if (action == CMD_RC_STBY && dispMode == MODE_STANDBY)
 			action = ACTION_EXIT_STANDBY;
@@ -161,15 +141,29 @@ int main(void)
 				action = ACTION_NOACTION;
 		}
 
-
 		/* Handle command */
 		switch (action) {
 		case ACTION_EXIT_STANDBY:
-			powerOn();
+			PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
+			setWorkBrightness();
+			initTimer = INIT_TIMER_START;
 			dispMode = MODE_SPECTRUM;
 			break;
+		case ACTION_INIT_HARDWARE:
+			tunerPowerOn();
+			tunerSetFreq();
+			sndPowerOn();
+			initTimer = INIT_TIMER_OFF;
+			break;
 		case CMD_RC_STBY:
-			powerOff();
+			sndSetMute(1);
+			sndPowerOff();
+			tunerPowerOff();
+			displayPowerOff();
+			PORT(STMU_STBY) &= ~STMU_STBY_LINE;
+			setStbyBrightness();
+			rtc.etm = RTC_NOEDIT;
+			initTimer = INIT_TIMER_OFF;
 			dispMode = MODE_STANDBY;
 			break;
 		case CMD_RC_TIME:
@@ -200,6 +194,7 @@ int main(void)
 		case CMD_RC_DEF_DISPLAY:
 			if (aproc.input == 0) {
 				setDispTimer(DISPLAY_TIME_FM_RADIO);
+				fmMode = MODE_FM_RADIO;
 				dispMode = MODE_FM_RADIO;
 			}
 			break;
@@ -334,7 +329,6 @@ int main(void)
 		ks0066SetXY(0, 0);
 		switch (dispMode) {
 		case MODE_STANDBY:
-			setStbyBrightness();
 		case MODE_TIME:
 		case MODE_TIME_EDIT:
 			showTime();

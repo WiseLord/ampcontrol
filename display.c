@@ -269,7 +269,7 @@ void showTime(void)
 
 	ks0066SetXY(0, 1);
 
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtc.wday - 1) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + rtc.wday - 1]);
 
 	return;
 }

@@ -8,7 +8,7 @@
 #include "eeprom.h"
 
 static volatile int8_t encCnt = 0;
-static volatile uint8_t cmdBuf = CMD_RC_END;
+static volatile uint8_t cmdBuf = CMD_RC_STBY;
 
 /* Previous state */
 static volatile uint8_t encPrev = ENC_0;
@@ -16,6 +16,8 @@ static volatile uint8_t btnPrev = BTN_STATE_0;
 
 uint16_t dispTimer = 0;
 uint16_t rtcTimer = 0;
+int16_t initTimer = INIT_TIMER_OFF;
+
 static volatile uint16_t rcTimer;
 
 //static uint8_t rcType;
@@ -177,6 +179,10 @@ ISR (TIMER2_COMP_vect)
 		btnCnt = 0;
 	}
 
+	// Init timer
+	if (initTimer > 0)
+		initTimer--;
+
 	/* Time from last IR command */
 	if (rcTimer < RC_PRESS_LIMIT)
 		rcTimer++;
@@ -231,9 +237,9 @@ uint8_t getRcCmd()
 	return rcCmdBuf;
 }
 
-void setDispTimer(uint16_t value)
+void setDispTimer(uint8_t value)
 {
-	dispTimer = value;
+	dispTimer = 1000U * value;
 
 	return;
 }
