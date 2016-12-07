@@ -517,7 +517,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 	uint8_t color;
 
 	if (min + max) {
-		value = (int16_t)91 * (value - min) / (max - min);
+		value = (uint16_t)91 * (value - min) / (max - min);
 	} else {
 		value = (int16_t)45 * value / max;
 	}
