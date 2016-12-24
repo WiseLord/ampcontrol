@@ -117,7 +117,7 @@ void getSpData(uint8_t fallSpeed)
 	uint8_t *p;
 	uint8_t mux;
 
-	for (mux = MUX_LEFT; mux <=MUX_RIGHT; mux++) {
+	for (mux = MUX_LEFT; mux <= MUX_RIGHT; mux++) {
 		getValues(mux);
 		fftRad4(fr, fi);
 		cplx2dB(fr, fi);

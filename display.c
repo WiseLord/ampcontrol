@@ -2044,7 +2044,7 @@ void showSpectrum(void)
 			for (y = 0; y < GD_SIZE_Y; y += 32) {
 				ybase = buf[x + y];
 				drawSpCol(xbase, 2, 31 + y, ybase, 31);
-				ybase += buf[x + 1];
+				ybase += buf[x + y + 1];
 				ybase /= 2;
 				drawSpCol(xbase + 3, 2, 31 + y, ybase, 31);
 			}
