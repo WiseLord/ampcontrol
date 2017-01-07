@@ -37,6 +37,8 @@ display/ssd1306.h
 display/st7920.c
 display/st7920.h
 
+tuner/lc72131.c
+tuner/lc72131.h
 tuner/lm7001.c
 tuner/lm7001.h
 tuner/rda580x.c

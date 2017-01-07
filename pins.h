@@ -202,6 +202,14 @@ enum {
 #define LM7001_CE			C
 #define LM7001_CE_LINE		(1<<4)
 
+/* LM7001 definitions */
+#define LC72131_DI			C
+#define LC72131_DI_LINE		(1<<2)
+#define LC72131_CL			C
+#define LC72131_CL_LINE		(1<<3)
+#define LC72131_CE			C
+#define LC72131_CE_LINE		(1<<4)
+
 /* PGA2310 definitions */
 #define PGA2310_SDI			C
 #define PGA2310_SDI_LINE	(1<<2)

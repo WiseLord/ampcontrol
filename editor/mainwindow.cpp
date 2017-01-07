@@ -661,6 +661,7 @@ void MainWindow::setTuner(int tuner)
         cbxFmmono->setCurrentIndex(eep[EEPROM_FM_MONO]);
     case TUNER_TUX032:
     case TUNER_LM7001:
+    case TUNER_LC72131:
         wgtFmfreq->show();
         wgtFmMin->show();
         wgtFmMax->show();
