@@ -20,6 +20,8 @@ audio/tea63x0.h
 display/ks0066.c
 display/ks0066.h
 
+tuner/lc72131.c
+tuner/lc72131.h
 tuner/lm7001.c
 tuner/lm7001.h
 tuner/rda580x.c

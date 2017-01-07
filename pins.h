@@ -78,4 +78,12 @@
 #define BUTTON_5			D
 #define BUTTON_5_LINE		(1<<0)
 
+/* LM7001 definitions */
+#define LC72131_DI			ISP_MOSI
+#define LC72131_DI_LINE		ISP_MOSI_LINE
+#define LC72131_CL			ISP_SCK
+#define LC72131_CL_LINE		ISP_SCK_LINE
+#define LC72131_CE			ISP_MISO
+#define LC72131_CE_LINE		ISP_MISO_LINE
+
 #endif /* PINS_H */

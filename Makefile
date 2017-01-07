@@ -34,6 +34,8 @@ ifeq ($(TUNER), TEA5767)
   TUNER_SRC += tuner/tea5767.c
 else ifeq ($(TUNER), TUX032)
   TUNER_SRC += tuner/tux032.c
+else ifeq ($(TUNER), LC72131)
+  TUNER_SRC += tuner/lc72131.c
 else ifeq ($(TUNER), LM7001)
   TUNER_SRC += tuner/lm7001.c
 else ifeq ($(TUNER), RDA580X)

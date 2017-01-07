@@ -1524,6 +1524,11 @@
                <string>RDA5807 direct freq</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>LC72131 (m32 only)</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
