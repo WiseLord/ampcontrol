@@ -194,29 +194,13 @@ enum {
 #define FAN2				C
 #define FAN2_WIRE			(1<<4)
 
-/* LM7001 definitions */
-#define LM7001_DATA			C
-#define LM7001_DATA_LINE	(1<<2)
-#define LM7001_CL			C
-#define LM7001_CL_LINE		(1<<3)
-#define LM7001_CE			C
-#define LM7001_CE_LINE		(1<<4)
-
-/* LM7001 definitions */
-#define LC72131_DI			C
-#define LC72131_DI_LINE		(1<<2)
-#define LC72131_CL			C
-#define LC72131_CL_LINE		(1<<3)
-#define LC72131_CE			C
-#define LC72131_CE_LINE		(1<<4)
-
-/* PGA2310 definitions */
-#define PGA2310_SDI			C
-#define PGA2310_SDI_LINE	(1<<2)
-#define PGA2310_SCLK		C
-#define PGA2310_SCLK_LINE	(1<<3)
-#define PGA2310_CS			C
-#define PGA2310_CS_LINE		(1<<4)
+/* Software SPI definitions */
+#define SPISW_DI			C
+#define SPISW_DI_LINE		(1<<2)
+#define SPISW_CLK			C
+#define SPISW_CLK_LINE		(1<<3)
+#define SPISW_CE			C
+#define SPISW_CE_LINE		(1<<4)
 
 /* ST7920 port*/
 #define SSD1306_SCK			DISP_STROB
