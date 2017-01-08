@@ -1,52 +1,25 @@
 #include "pga2310.h"
-#include "audio.h"
 
 #include <avr/pgmspace.h>
+#include "audio.h"
+#include "../spisw.h"
 #include "../pins.h"
 
-static void pga2310Strob(void)
+static void pga2310SendGainLevels(uint8_t right, uint8_t left)
 {
-	PORT(PGA2310_SCLK) |= PGA2310_SCLK_LINE;
-	asm("nop");
-	PORT(PGA2310_SCLK) &= ~PGA2310_SCLK_LINE;
-
-	return;
-}
-
-static void pga2310SendByte(uint8_t data)
-{
-	int8_t i;
-
-	for (i = 7; i >= 0; i--) {
-		if (data & (1<<i))
-			PORT(PGA2310_SDI) |= PGA2310_SDI_LINE;
-		else
-			PORT(PGA2310_SDI) &= ~PGA2310_SDI_LINE;
-		pga2310Strob();
-	}
-
-	return;
-}
-
-void pga2310SendGainLevels(uint8_t right, uint8_t left)
-{
-	PORT(PGA2310_CS) &= ~PGA2310_CS_LINE;
-	pga2310SendByte(right << 1);
-	pga2310SendByte(left << 1);
-	PORT(PGA2310_CS) |= PGA2310_CS_LINE;
+	PORT(SPISW_CE) &= ~SPISW_CE_LINE;
+	SPIswSendByte(right << 1);
+	SPIswSendByte(left << 1);
+	PORT(SPISW_CE) |= SPISW_CE_LINE;
 
 	return;
 }
 
 void pga2310Init(void)
 {
-	DDR(PGA2310_SDI) |= PGA2310_SDI_LINE;
-	DDR(PGA2310_SCLK) |= PGA2310_SCLK_LINE;
-	DDR(PGA2310_CS) |= PGA2310_CS_LINE;
+	SPIswInit(SPISW_DORD_MSB_FIRST);
 
-	PORT(PGA2310_SDI) |= PGA2310_SDI_LINE;
-	PORT(PGA2310_SCLK) &= ~PGA2310_SCLK_LINE;
-	PORT(PGA2310_CS) |= PGA2310_CS_LINE;
+	PORT(SPISW_CE) |= SPISW_CE_LINE;
 
 	return;
 }

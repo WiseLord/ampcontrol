@@ -40,21 +40,13 @@
 #define ISP_SCK				B
 #define ISP_SCK_LINE		(1<<5)
 
-/* LM7001 definitions */
-#define LM7001_DATA			ISP_MOSI
-#define LM7001_DATA_LINE	ISP_MOSI_LINE
-#define LM7001_CE			ISP_MISO
-#define LM7001_CE_LINE		ISP_MISO_LINE
-#define LM7001_CL			ISP_SCK
-#define LM7001_CL_LINE		ISP_SCK_LINE
-
-/* PGA2310 definitions */
-#define PGA2310_SDI			ISP_MOSI
-#define PGA2310_SDI_LINE	ISP_MOSI_LINE
-#define PGA2310_CS			ISP_MISO
-#define PGA2310_CS_LINE		ISP_MISO_LINE
-#define PGA2310_SCLK		ISP_SCK
-#define PGA2310_SCLK_LINE	ISP_SCK_LINE
+/* Software SPI definitions */
+#define SPISW_DI			ISP_MOSI
+#define SPISW_DI_LINE		ISP_MOSI_LINE
+#define SPISW_CLK			ISP_SCK
+#define SPISW_CLK_LINE		ISP_SCK_LINE
+#define SPISW_CE			ISP_MISO
+#define SPISW_CE_LINE		ISP_MISO_LINE
 
 /* Standby/Mute port definitions */
 #define STMU_STBY			B
@@ -77,13 +69,5 @@
 #define BUTTON_4_LINE		(1<<1)
 #define BUTTON_5			D
 #define BUTTON_5_LINE		(1<<0)
-
-/* LM7001 definitions */
-#define LC72131_DI			ISP_MOSI
-#define LC72131_DI_LINE		ISP_MOSI_LINE
-#define LC72131_CL			ISP_SCK
-#define LC72131_CL_LINE		ISP_SCK_LINE
-#define LC72131_CE			ISP_MISO
-#define LC72131_CE_LINE		ISP_MISO_LINE
 
 #endif /* PINS_H */

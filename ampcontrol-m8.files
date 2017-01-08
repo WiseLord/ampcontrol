@@ -52,3 +52,5 @@ remote.c
 remote.h
 rtc.c
 rtc.h
+spisw.c
+spisw.h
