@@ -103,7 +103,7 @@
     <item>
      <widget class="QTabWidget" name="tabWidget">
       <property name="currentIndex">
-       <number>3</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -1511,7 +1511,7 @@
              </item>
              <item>
               <property name="text">
-               <string>LM7001 (m32 only)</string>
+               <string>LM7001</string>
               </property>
              </item>
              <item>
@@ -1526,7 +1526,7 @@
              </item>
              <item>
               <property name="text">
-               <string>LC72131 (m32 only)</string>
+               <string>LC72131</string>
               </property>
              </item>
             </widget>

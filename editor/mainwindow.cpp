@@ -128,9 +128,9 @@ void MainWindow::readEepromFile(QString name)
     setTuner(tuner);
 
     // Processing remote
-    int rcType = eep[EEPROM_RC_TYPE];
+    // int rcType = eep[EEPROM_RC_TYPE];
     // Hardcode RC5 if (rcType + 1 >= cbxRemoteType->count())
-        rcType = 0;
+    //    rcType = 0;
     sbxRemoteAddr->setValue(eep[EEPROM_RC_ADDR]);
     lwCommands->setCurrentRow(0);
 
