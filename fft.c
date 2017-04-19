@@ -29,8 +29,8 @@ static const uint8_t sinTable[] PROGMEM = {
 	prod;                     \
 	})
 
-inline int16_t sinTbl(uint8_t phi) __attribute__((always_inline));
-inline int16_t sinTbl(uint8_t phi)
+static inline int16_t sinTbl(uint8_t phi) __attribute__((always_inline));
+static inline int16_t sinTbl(uint8_t phi)
 {
 	int16_t ret;
 	uint8_t neg = (phi >= N_WAVE / 2);
