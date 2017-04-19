@@ -30,11 +30,11 @@ SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC) $(DISP_SRC)
 # Build directory
 BUILDDIR = build
 
-OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections
+OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding
 DEBUG = -g -Wall -Werror
 CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
-LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,-gc-sections
+LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
 
 # Main definitions
 DEFINES  += -D$(DISPLAY)
