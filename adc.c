@@ -6,22 +6,15 @@
 #include <avr/eeprom.h>
 #include "eeprom.h"
 
-static int16_t fr[FFT_SIZE];							/* Real values */
-static int16_t fi[FFT_SIZE];							/* Imaginary values */
-uint8_t buf[FFT_SIZE];							/* Previous results: left and right */
-
-static uint8_t adcCorrLeft = DC_CORR;					/* Correction for left channel */
-static uint8_t adcCorrRight = DC_CORR;					/* Correction for right channel */
+static int16_t fr[FFT_SIZE];					// Real values
+static int16_t fi[FFT_SIZE];					// Imaginary values
+uint8_t buf[FFT_SIZE];							// Previous results: left and right
 
 static const uint8_t hannTable[] PROGMEM = {
 	  0,   1,   3,   6,  10,  16,  22,  30,
 	 38,  48,  58,  69,  81,  93, 105, 118,
 	131, 143, 156, 168, 180, 191, 202, 212,
 	221, 229, 236, 242, 247, 251, 254, 255,
-	255, 254, 251, 247, 242, 236, 229, 221,
-	212, 202, 191, 180, 168, 156, 143, 131,
-	118, 105,  93,  81,  69,  58,  48,  38,
-	 30,  22,  16,  10,   6,   3,   1,   0,
 };
 
 static const int16_t dbTable[N_DB - 1] PROGMEM = {
@@ -35,61 +28,57 @@ void adcInit(void)
 {
 	/* Enable ADC with prescaler 16 */
 	ADCSRA = (1<<ADEN) | (1<<ADPS2) | (0<<ADPS1) | (0<<ADPS0);
-	ADMUX |= (1<<ADLAR);								/* Adjust result to left (8bit ADC) */
+	ADMUX |= (1<<ADLAR);						// Adjust result to left (8bit ADC)
 
-	TIMSK |= (1<<TOIE0);								/* Enable Timer0 overflow interrupt */
-	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);			/* Set timer prescaller to 8 (2MHz) */
-
-	adcCorrLeft = eeprom_read_byte((uint8_t*)EEPROM_ADC_CORR_L);
-	adcCorrRight = eeprom_read_byte((uint8_t*)EEPROM_ADC_CORR_R);
+	TIMSK |= (1<<TOIE0);						// Enable Timer0 overflow interrupt
+	TCCR0 |= (0<<CS02) | (1<<CS01) | (0<<CS00);	// Set timer prescaller to 8 (2MHz)
 
 	return;
 }
 
 static uint8_t revBits(uint8_t x)
 {
-	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);			/* 00abcdef => 00badcfe */
-	x = (x & 0x0C) | swap(x & 0x33);					/* 00badcfe => 00fedcba */
+	x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);	// 00abcdef => 00badcfe
+	x = (x & 0x0C) | swap(x & 0x33);			// 00badcfe => 00fedcba
 
 	return x;
 }
 
 static void getValues(uint8_t mux)
 {
-	uint8_t i = 0, j;
-	uint8_t hv;
-	uint8_t dcCorr = DC_CORR;
-	int16_t real;
+	uint8_t i = 0;
 
 	ADMUX &= ~((1<<MUX2) | (1<<MUX1) | (1<<MUX0));
-	ADMUX |= mux;										/* Mux ADC to required audio channel */
+	ADMUX |= mux;
 
-	switch (mux) {										/* Set channel correction */
-	case MUX_LEFT:
-		dcCorr = adcCorrLeft;
-		break;
-	case MUX_RIGHT:
-		dcCorr = adcCorrRight;
-		break;
+	for (i = 0; i < FFT_SIZE; i++) {
+		while (!(ADCSRA & (1<<ADSC)));			// Wait for start measure
+		while (ADCSRA & (1<<ADSC));				// Wait for finish measure
+
+		fi[i] = ADCH;							// Store in FI for futher handling
 	}
 
-	do {
-		while (!(ADCSRA & (1<<ADSC)));					/* Wait for start measure */
+	return;
+}
 
+static void prepareData(void)
+{
+	uint8_t i, j;
+	int16_t dcOft = 0;
+	uint8_t hw;
+
+	// Calculate average DC offset
+	for (i = 0; i < FFT_SIZE; i++)
+		dcOft += fi[i];
+	dcOft /= FFT_SIZE;
+
+	// Move FI => FR with reversing bit order in index
+	for (i = 0; i < FFT_SIZE; i++) {
 		j = revBits(i);
-
-		hv = pgm_read_byte(&hannTable[i]);
-
-		while (ADCSRA & (1<<ADSC));						/* Wait for finish measure */
-
-		real = ADCH - dcCorr;							/* Read channel value */
-		real *= hv;										/* Apply Hann window */
-		real >>= 6;
-
-		fr[j] = real;
+		hw = pgm_read_byte(&hannTable[i < 32 ? i : 63 - i]);
+		fr[j] = ((fi[i] - dcOft) * hw) >> 6;
 		fi[i] = 0;
-
-	} while (++i < FFT_SIZE);
+	}
 
 	return;
 }
@@ -119,6 +108,7 @@ void getSpData(uint8_t fallSpeed)
 
 	for (mux = MUX_LEFT; mux <= MUX_RIGHT; mux++) {
 		getValues(mux);
+		prepareData();
 		fftRad4(fr, fi);
 		cplx2dB(fr, fi);
 
