@@ -1639,7 +1639,7 @@ void showTime(void)
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	gdSetXY(32, 56);
 #endif
-	writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtc.wday - 1) % 7]);
+	writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtcWeekDay() - 1) % 7]);
 
 	return;
 }

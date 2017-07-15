@@ -529,7 +529,7 @@ uint8_t checkAlarmAndTime(void)
 			if ((rtc.sec == 0) &&
 				(rtc.min == alarm0.min) &&
 				(rtc.hour == alarm0.hour) &&
-				(alarm0.wday & (0x40 >> ((rtc.wday + 5) % 7)))
+				(alarm0.wday & (0x40 >> ((rtcWeekDay() + 5) % 7)))
 				) {
 				sndSetInput(alarm0.input);
 				ret = ACTION_EXIT_STANDBY;
