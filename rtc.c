@@ -51,18 +51,18 @@ void rtcReadTime(void)
 
 	I2CStart(RTC_I2C_ADDR | I2C_READ);
 
-	rtc.sec = rtcBinDecToDec(I2CReadByte(I2C_ACK));
-	rtc.min = rtcBinDecToDec(I2CReadByte(I2C_ACK));
-	rtc.hour = rtcBinDecToDec(I2CReadByte(I2C_ACK));
+	rtc.sec = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x7F);
+	rtc.min = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x7F);
+	rtc.hour = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
 #ifdef RTC_PCF8563
-	rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK));
+	rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
 	/* weekday */ I2CReadByte(I2C_ACK);
 #else
 	/* weekday */ I2CReadByte(I2C_ACK);
-	rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK));
+	rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
 #endif
-	rtc.month = rtcBinDecToDec(I2CReadByte(I2C_ACK));
-	rtc.year = rtcBinDecToDec(I2CReadByte(I2C_NOACK));
+	rtc.month = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x1F);
+	rtc.year = rtcBinDecToDec(I2CReadByte(I2C_NOACK) & 0xFF);
 
 	I2CStop();
 
