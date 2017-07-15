@@ -30,12 +30,12 @@
 #define LC72131_IN2_IO1		(1<<2)
 #define LC72131_IN2_IO2		(1<<3)
 #define LC72131_IN2_BO1		(1<<4)
-#define LC72131_IN2_B2		(1<<5)
+#define LC72131_IN2_BO2		(1<<5)
 #define LC72131_IN2_BO3		(1<<6)
 #define LC72131_IN2_BO4		(1<<7)
 // IN2 control word1 bytes	 BO4 high
+//#define LC72131_CTRL_IN2_1	(LC72131_IN2_BO4 | LC72131_IN2_IO2 | LC72131_IN2_IOC2)
 #define LC72131_CTRL_IN2_1	(LC72131_IN2_BO4)
-
 // IN2 mode control word2 bytes
 #define LC72131_IN2_DNC		(1<<0)
 #define LC72131_IN2_DOC0	(1<<1)
