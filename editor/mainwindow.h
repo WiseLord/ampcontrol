@@ -81,6 +81,7 @@ private slots:
     void setRemoteAddr(int addr);
     void setRemoteCmd(int cmd);
     void setRemoteIndex(int index);
+    void calcRemoteSeq();
 
     void setOther();
     void setSpmode(int value);

@@ -5,6 +5,8 @@
 
 #include "aboutdialog.h"
 
+#include "irseq.h"
+
 #include "../audio/audio.h"
 #include "../eeprom.h"
 #include "../tuner/tuner.h"
@@ -772,23 +774,35 @@ void MainWindow::setRemoteType(int type)
 {
     eep[EEPROM_RC_TYPE] = type;
     updateHexTable(EEPROM_RC_TYPE);
+    calcRemoteSeq();
 }
 
 void MainWindow::setRemoteAddr(int addr)
 {
     eep[EEPROM_RC_ADDR] = addr;
     updateHexTable(EEPROM_RC_ADDR);
+    calcRemoteSeq();
 }
 
 void MainWindow::setRemoteCmd(int cmd)
 {
     eep[EEPROM_RC_CMD + lwCommands->currentRow()] = cmd;
     updateHexTable(EEPROM_RC_CMD + lwCommands->currentRow());
+    calcRemoteSeq();
 }
 
 void MainWindow::setRemoteIndex(int index)
 {
     sbxRemoteCmd->setValue(eep[EEPROM_RC_CMD + index]);
+}
+
+void MainWindow::calcRemoteSeq()
+{
+    IrSeq irseq(sbxIrFreq->value(), cbxRemoteType->currentIndex());
+
+    QString out = irseq.getSequence(sbxRemoteAddr->value(), sbxRemoteCmd->value());
+
+    teIrSeq->setText(out);
 }
 
 void MainWindow::setOther()

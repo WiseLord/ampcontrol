@@ -19,11 +19,13 @@ DEFINES += _TDA7439 _TDA731X _TDA7448 _PT232X _TEA63X0 _PGA2310 _RDA580X_AUDIO
 SOURCES += main.cpp\
     mainwindow.cpp \
     lcdconverter.cpp \
-    aboutdialog.cpp
+    aboutdialog.cpp \
+    irseq.cpp
 
 HEADERS  += mainwindow.h \
 	lcdconverter.h \
-    aboutdialog.h
+    aboutdialog.h \
+    irseq.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui
