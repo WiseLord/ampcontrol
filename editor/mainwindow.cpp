@@ -154,6 +154,45 @@ void MainWindow::saveEepromFile(QString name)
 
 }
 
+void MainWindow::saveAmsrFile(QString name)
+{
+    QFile file(name);
+    if (!file.open(QIODevice::WriteOnly)) {
+        Ui_MainWindow::statusBar->showMessage(tr("Can't save") + " " + name);
+        return;
+    }
+    this->fillAmsr();
+    file.write(this->amsr.toLocal8Bit());
+    file.close();
+    Ui_MainWindow::statusBar->showMessage(tr("AMSR saved as") + " " + name);
+}
+
+void MainWindow::fillAmsr()
+{
+    this->amsr.clear();
+
+    this->amsr.append("{\n");
+    this->amsr.append("  \"name\":\"AmpControl\",\n");
+    this->amsr.append("  \"all_codes\":\n");
+    this->amsr.append("  [\n");
+    for (int i = 0; i < lwCommands->count(); i++) {
+        QString itemName = lwCommands->item(i)->text();
+
+        IrSeq irseq(sbxIrFreq->value(), eep[EEPROM_RC_TYPE]);
+        QString itemValue = irseq.getSequence(eep[EEPROM_RC_ADDR], eep[EEPROM_RC_CMD + i]);
+
+        this->amsr.append("    {\n");
+        this->amsr.append("      \"function\":\"" + itemName + "\",\n");
+        this->amsr.append("      \"code1\":\"" + itemValue + "\"\n");
+        if (i == lwCommands->count() - 1)
+            this->amsr.append("    }\n");
+        else
+            this->amsr.append("    },\n");
+    }
+    this->amsr.append("  ]\n");
+    this->amsr.append("}\n");
+}
+
 void MainWindow::setAudioParam(QDoubleSpinBox *spb, double min, double max, double step, int param)
 {
     spb->setRange(min, max);
@@ -192,6 +231,18 @@ void MainWindow::saveEepromAs()
 void MainWindow::loadDefaultEeprom()
 {
     readEepromFile(EEPROM_RESOURCE);
+}
+
+void MainWindow::saveAmsr()
+{
+    QString name = QFileDialog::getSaveFileName(this,
+                                                tr("Save AMSR file"),
+                                                "./AmpControl.amsr",
+                                                tr("AMSR files (*.amsr)"));
+    if (name.isEmpty())
+        return;
+
+    saveAmsrFile(name);
 }
 
 void MainWindow::updateTranslation(int row, int column)

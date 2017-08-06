@@ -21,9 +21,13 @@ private:
     LcdConverter *lc;
     QString fileName;
     QByteArray eep;
+    QString amsr;
 
     void readEepromFile(QString name);
     void saveEepromFile(QString name);
+
+    void saveAmsrFile(QString name);
+    void fillAmsr();
 
     void setAudioParam(QDoubleSpinBox *spb, double min, double max, double step, int param);
 
@@ -41,6 +45,7 @@ private slots:
     void saveEeprom();
     void saveEepromAs();
     void loadDefaultEeprom();
+    void saveAmsr();
 
     void updateTranslation(int row, int column);
 

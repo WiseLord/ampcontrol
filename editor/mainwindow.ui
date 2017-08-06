@@ -2738,7 +2738,7 @@
            <item>
             <widget class="QLabel" name="lblIrSeq">
              <property name="text">
-              <string>IR sequence for TwinOne TV Remote</string>
+              <string>IR sequence</string>
              </property>
             </widget>
            </item>
@@ -3279,6 +3279,7 @@
     <addaction name="actionSaveEeprom"/>
     <addaction name="actionSaveEepromAs"/>
     <addaction name="actionLoadDefaultEeprom"/>
+    <addaction name="actionSaveAmsr"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -3319,6 +3320,11 @@
   <action name="actionAboutQt">
    <property name="text">
     <string>A&amp;boutQt</string>
+   </property>
+  </action>
+  <action name="actionSaveAmsr">
+   <property name="text">
+    <string>Save &amp;AMSR file as ...</string>
    </property>
   </action>
  </widget>
@@ -4239,6 +4245,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSaveAmsr</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>saveAmsr()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>430</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -4292,5 +4314,6 @@
   <slot>setRemoteCmd(int)</slot>
   <slot>setRemoteIndex(int)</slot>
   <slot>calcRemoteSeq()</slot>
+  <slot>saveAmsr()</slot>
  </slots>
 </ui>
