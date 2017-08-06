@@ -2701,6 +2701,11 @@
           </item>
           <item>
            <property name="text">
+            <string>Spectrum mode</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
             <string>Fall speed</string>
            </property>
           </item>
