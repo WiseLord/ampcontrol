@@ -179,11 +179,13 @@ void MainWindow::fillAmsr()
         QString itemName = lwCommands->item(i)->text();
 
         IrSeq irseq(sbxIrFreq->value(), eep[EEPROM_RC_TYPE]);
-        QString itemValue = irseq.getSequence(eep[EEPROM_RC_ADDR], eep[EEPROM_RC_CMD + i]);
+        QString code1 = irseq.getSequence(eep[EEPROM_RC_ADDR], eep[EEPROM_RC_CMD + i], 1);
+        QString code2 = irseq.getSequence(eep[EEPROM_RC_ADDR], eep[EEPROM_RC_CMD + i], 2);
 
         this->amsr.append("    {\n");
         this->amsr.append("      \"function\":\"" + itemName + "\",\n");
-        this->amsr.append("      \"code1\":\"" + itemValue + "\"\n");
+        this->amsr.append("      \"code1\":\"" + code1 + "\",\n");
+        this->amsr.append("      \"code2\":\"" + code2 + "\"\n");
         if (i == lwCommands->count() - 1)
             this->amsr.append("    }\n");
         else
@@ -851,7 +853,9 @@ void MainWindow::calcRemoteSeq()
 {
     IrSeq irseq(sbxIrFreq->value(), cbxRemoteType->currentIndex());
 
-    QString out = irseq.getSequence(sbxRemoteAddr->value(), sbxRemoteCmd->value());
+    QString out = irseq.getSequence(sbxRemoteAddr->value(), sbxRemoteCmd->value(), 1);
+    out.append("\n");
+    out.append(irseq.getSequence(sbxRemoteAddr->value(), sbxRemoteCmd->value(), 2));
 
     teIrSeq->setText(out);
 }

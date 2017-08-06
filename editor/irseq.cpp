@@ -7,13 +7,13 @@ IrSeq::IrSeq(int freq, int type)
 }
 
 
-QString IrSeq::getSequence(int addr, int cmd)
+QString IrSeq::getSequence(int addr, int cmd, int num)
 {
     QString out;
 
     switch (this->type) {
     case IR_TYPE_RC5:
-        out = getRC5Sequence(addr, cmd);
+        out = getRC5Sequence(addr, cmd, num);
         break;
     default:
         out = QString("Not implemented yet");
@@ -23,16 +23,21 @@ QString IrSeq::getSequence(int addr, int cmd)
     return out;
 }
 
-QString IrSeq::getRC5Sequence(int addr, int cmd)
+QString IrSeq::getRC5Sequence(int addr, int cmd, int num)
 {
     int Tus = 889;
     int Ems = 89;
     int P = this->freq * Tus / 1000000;
     int E = this->freq * Ems / 1000;
 
+    QString out;
+    out.clear();
+
     int bitSeq = 0x3000 | ((addr & 0x1F) << 6) | (cmd & 0x3F);
 
-    QString out;
+    if (num == 2)
+        bitSeq |= 0x0800; // toggle bit
+
     out.append(QString::number(this->freq, 10)).append(",");
 
     // Start bit 1:

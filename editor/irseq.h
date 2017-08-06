@@ -18,13 +18,13 @@ public:
         IR_TYPE_NONE = 0x0F
     };
 
-    QString getSequence(int addr, int cmd);
+    QString getSequence(int addr, int cmd, int num);
 
 private:
     int freq;
     int type;
 
-    QString getRC5Sequence(int addr, int cmd);
+    QString getRC5Sequence(int addr, int cmd, int num);
 };
 
 #endif // IRSEQ_H
