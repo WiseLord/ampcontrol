@@ -12,6 +12,7 @@
 #include "../tuner/tuner.h"
 #include "../tuner/tea5767.h"
 #include "../display.h"
+#include "../remote.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -185,7 +186,9 @@ void MainWindow::fillAmsr()
         this->amsr.append("    {\n");
         this->amsr.append("      \"function\":\"" + itemName + "\",\n");
         this->amsr.append("      \"code1\":\"" + code1 + "\",\n");
-        this->amsr.append("      \"code2\":\"" + code2 + "\"\n");
+        if ((int)eep[EEPROM_RC_TYPE] == IR_TYPE_RC5) {
+            this->amsr.append("      \"code2\":\"" + code2 + "\"\n");
+        }
         if (i == lwCommands->count() - 1)
             this->amsr.append("    }\n");
         else
@@ -855,7 +858,9 @@ void MainWindow::calcRemoteSeq()
 
     QString out = irseq.getSequence(sbxRemoteAddr->value(), sbxRemoteCmd->value(), 1);
     out.append("\n");
-    out.append(irseq.getSequence(sbxRemoteAddr->value(), sbxRemoteCmd->value(), 2));
+    if ((int)eep[EEPROM_RC_TYPE] == IR_TYPE_RC5) {
+        out.append(irseq.getSequence(sbxRemoteAddr->value(), sbxRemoteCmd->value(), 2));
+    }
 
     teIrSeq->setText(out);
 }

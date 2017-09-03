@@ -2,7 +2,6 @@
 #define REMOTE_H
 
 #include <inttypes.h>
-#include "pins.h"
 
 // Time scale definitions and macroses
 #define RC_TIMER_DIV				4	// 1MHz / 250kHz of Timer 1 => delays in us

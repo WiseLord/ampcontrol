@@ -1,4 +1,5 @@
 #include "irseq.h"
+#include <QDebug>
 
 IrSeq::IrSeq(int freq, int type)
 {
@@ -15,6 +16,9 @@ QString IrSeq::getSequence(int addr, int cmd, int num)
     case IR_TYPE_RC5:
         out = getRC5Sequence(addr, cmd, num);
         break;
+    case IR_TYPE_NEC:
+        out = getNECSequence(addr, cmd, num);
+        break;
     default:
         out = QString("Not implemented yet");
         break;
@@ -25,10 +29,10 @@ QString IrSeq::getSequence(int addr, int cmd, int num)
 
 QString IrSeq::getRC5Sequence(int addr, int cmd, int num)
 {
-    int Tus = 889;
-    int Ems = 89;
-    int P = this->freq * Tus / 1000000;
-    int E = this->freq * Ems / 1000;
+    int T_us = 889;     // base pulse/pause
+    int E_ms = 89;      // pause between packets
+    int P = this->freq * T_us / 1000000;
+    int E = this->freq * E_ms / 1000;
 
     QString out;
     out.clear();
@@ -71,6 +75,72 @@ QString IrSeq::getRC5Sequence(int addr, int cmd, int num)
     } else {
         out.append(QString::number(P + E, 10)); // old 0 and final pause
     }
+
+    return out;
+}
+
+QString IrSeq::getNECSequence(int addr, int cmd, int num)
+{
+    int startPulse_us = 9000;
+    int startPause_us = 4500;
+    int pulse_us = 560;
+    int pause0_us = 560;
+    int pause1_us = 1680;
+    int E_ms = 110;      // pause between packets
+
+    int StartPulse = this->freq * startPulse_us / 1000000;
+    int StartPause = this->freq * startPause_us / 1000000;
+    int pulse = this->freq * pulse_us / 1000000;
+    int pause0 = this->freq * pause0_us / 1000000;
+    int pause1 = this->freq * pause1_us / 1000000;
+    int E = this->freq * E_ms / 1000;
+
+    qDebug() << StartPulse << " " << StartPause;
+
+    QString out;
+    out.clear();
+
+    out.append(QString::number(this->freq, 10)).append(",");
+
+    // Start sequence
+    out.append(QString::number(StartPulse, 10)).append(",");
+    out.append(QString::number(StartPause, 10)).append(",");
+    // Address
+    for (int bit = 0; bit < 8; bit++) {
+        out.append(QString::number(pulse, 10)).append(",");
+        if (addr & (1 << bit))
+            out.append(QString::number(pause1, 10)).append(",");
+        else
+            out.append(QString::number(pause0, 10)).append(",");
+    }
+    // Not address
+    for (int bit = 0; bit < 8; bit++) {
+        out.append(QString::number(pulse, 10)).append(",");
+        if (~addr & (1 << bit))
+            out.append(QString::number(pause1, 10)).append(",");
+        else
+            out.append(QString::number(pause0, 10)).append(",");
+    }
+    // Command
+    for (int bit = 0; bit < 8; bit++) {
+        out.append(QString::number(pulse, 10)).append(",");
+        if (cmd & (1 << bit))
+            out.append(QString::number(pause1, 10)).append(",");
+        else
+            out.append(QString::number(pause0, 10)).append(",");
+    }
+    // Not command
+    for (int bit = 0; bit < 8; bit++) {
+        out.append(QString::number(pulse, 10)).append(",");
+        if (~cmd & (1 << bit))
+            out.append(QString::number(pause1, 10)).append(",");
+        else
+            out.append(QString::number(pause0, 10)).append(",");
+    }
+
+    // Final bit
+    out.append(QString::number(pause1, 10)).append(",");
+    out.append(QString::number(E, 10)).append(",");
 
     return out;
 }

@@ -3,6 +3,7 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include "pins.h"
 
 static volatile IRData irData;						// Last decoded IR command
 static volatile uint8_t ovfCnt = 250;				// Overflow counter
