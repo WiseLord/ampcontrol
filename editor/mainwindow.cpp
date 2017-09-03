@@ -185,9 +185,12 @@ void MainWindow::fillAmsr()
 
         this->amsr.append("    {\n");
         this->amsr.append("      \"function\":\"" + itemName + "\",\n");
-        this->amsr.append("      \"code1\":\"" + code1 + "\",\n");
+        this->amsr.append("      \"code1\":\"" + code1 + "\"");
         if ((int)eep[EEPROM_RC_TYPE] == IR_TYPE_RC5) {
+            this->amsr.append(",\n");
             this->amsr.append("      \"code2\":\"" + code2 + "\"\n");
+        } else {
+            this->amsr.append("\n");
         }
         if (i == lwCommands->count() - 1)
             this->amsr.append("    }\n");

@@ -25,7 +25,7 @@ private:
     int type;
 
     QString getRC5Sequence(int addr, int cmd, int num);
-    QString getNECSequence(int addr, int cmd, int num);
+    QString getNecSamSequence(int addr, int cmd, int type);
 };
 
 #endif // IRSEQ_H

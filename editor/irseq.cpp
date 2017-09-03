@@ -17,7 +17,10 @@ QString IrSeq::getSequence(int addr, int cmd, int num)
         out = getRC5Sequence(addr, cmd, num);
         break;
     case IR_TYPE_NEC:
-        out = getNECSequence(addr, cmd, num);
+        out = getNecSamSequence(addr, cmd, IR_TYPE_NEC);
+        break;
+    case IR_TYPE_SAM:
+        out = getNecSamSequence(addr, cmd, IR_TYPE_SAM);
         break;
     default:
         out = QString("Not implemented yet");
@@ -79,9 +82,9 @@ QString IrSeq::getRC5Sequence(int addr, int cmd, int num)
     return out;
 }
 
-QString IrSeq::getNECSequence(int addr, int cmd, int num)
+QString IrSeq::getNecSamSequence(int addr, int cmd, int type)
 {
-    int startPulse_us = 9000;
+    int startPulse_us = (type == IR_TYPE_NEC ? 9000 : 4500);
     int startPause_us = 4500;
     int pulse_us = 560;
     int pause0_us = 560;
@@ -140,7 +143,7 @@ QString IrSeq::getNECSequence(int addr, int cmd, int num)
 
     // Final bit
     out.append(QString::number(pause1, 10)).append(",");
-    out.append(QString::number(E, 10)).append(",");
+    out.append(QString::number(E, 10));
 
     return out;
 }
