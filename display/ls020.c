@@ -73,7 +73,7 @@ static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	ls020WriteCommand(0x0504); /* Set Direction */
 #ifdef LS020_ROTATE_180
 	ls020WriteCommand(0x0800 + LS020_WIDTH - 1 - y1);
-	ls020WriteCommand(0x0900 + LS020_HEIGHT - 1 - y0);
+	ls020WriteCommand(0x0900 + LS020_WIDTH - 1 - y0);
 	ls020WriteCommand(0x0A00 + x0);
 	ls020WriteCommand(0x0B00 + x1);
 #else
