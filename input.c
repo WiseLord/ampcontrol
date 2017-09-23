@@ -1,10 +1,10 @@
 #include "input.h"
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
 #include "eeprom.h"
+#include "pins.h"
 
 static volatile int8_t encCnt;
 static volatile cmdID cmdBuf;
