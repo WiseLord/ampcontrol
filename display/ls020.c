@@ -279,6 +279,7 @@ void ls020WriteChar(uint8_t code)
 
 	uint16_t oft = 0;	/* Current symbol offset in array*/
 	uint8_t swd = 0;	/* Current symbol width */
+	uint8_t pgmData;
 
 	for (i = 0; i < spos; i++) {
 		swd = pgm_read_byte(_font + i);
@@ -291,8 +292,6 @@ void ls020WriteChar(uint8_t code)
 
 	ls020SetWindow(x, y, x + swd * fp[FONT_MULT] - 1, y + fp[FONT_HEIGHT] * fp[FONT_MULT] * 8 - 1);
 
-	uint8_t pgmData[swd];
-
 	// Set data mode
 	PORT(LS020_DPORT) &= ~LS020_RS_LINE;
 
@@ -300,20 +299,15 @@ void ls020WriteChar(uint8_t code)
 	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
 
 	for (k = 0; k < fp[FONT_HEIGHT]; k++) {
-		for (j = 0; j < swd; j++) {
-#ifdef LS020_ROTATE_180
-			pgmData[j] = pgm_read_word(_font + oft + ((fp[FONT_HEIGHT] - k - 1)) * swd + j);
-#else
-			pgmData[j] = pgm_read_word(_font + oft + (k + 1) * swd - j - 1);
-#endif
-		}
 		for(i = 0; i < 8; i++) {
 			for (my = 0; my < fp[FONT_MULT]; my++) {
 				for (j = 0; j < swd; j++) {
 #ifdef LS020_ROTATE_180
-					if (pgmData[j] & (128>>i)) {
+					pgmData = pgm_read_word(_font + oft + ((fp[FONT_HEIGHT] - k - 1)) * swd + j);
+					if (pgmData & (128>>i)) {
 #else
-					if (pgmData[j] & (1<<i)) {
+					pgmData = pgm_read_word(_font + oft + (k + 1) * swd - j - 1);
+					if (pgmData & (1<<i)) {
 #endif
 						for (mx = 0; mx < fp[FONT_MULT]; mx++)
 							ls020WriteData(fp[FONT_COLOR]);
