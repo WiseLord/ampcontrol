@@ -70,17 +70,17 @@ static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 	// Start command sequence
 	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
 
-	ls020WriteCommand(0x0504); /* Set Direction */
+	ls020WriteCommand(0x0500); /* Set Direction */
 #ifdef LS020_ROTATE_180
 	ls020WriteCommand(0x0800 + LS020_WIDTH - 1 - y1);
 	ls020WriteCommand(0x0900 + LS020_WIDTH - 1 - y0);
-	ls020WriteCommand(0x0A00 + x0);
-	ls020WriteCommand(0x0B00 + x1);
+	ls020WriteCommand(0x0A00 + LS020_HEIGHT - 1 - x1);
+	ls020WriteCommand(0x0B00 + LS020_HEIGHT - 1 - x0);
 #else
 	ls020WriteCommand(0x0800 + y0);
 	ls020WriteCommand(0x0900 + y1);
-	ls020WriteCommand(0x0A00 + LS020_HEIGHT - 1 - x1);
-	ls020WriteCommand(0x0B00 + LS020_HEIGHT - 1 - x0);
+	ls020WriteCommand(0x0A00 + x0);
+	ls020WriteCommand(0x0B00 + x1);
 #endif
 
 	// Stop command sequence
@@ -298,15 +298,15 @@ void ls020WriteChar(uint8_t code)
 	// Start data sequence
 	PORT(LS020_DPORT) &= ~LS020_CS_LINE;
 
-	for (k = 0; k < fp[FONT_HEIGHT]; k++) {
-		for(i = 0; i < 8; i++) {
-			for (my = 0; my < fp[FONT_MULT]; my++) {
-				for (j = 0; j < swd; j++) {
+	for (j = 0; j < swd; j++) {
+		for (my = 0; my < fp[FONT_MULT]; my++) {
+			for (k = 0; k < fp[FONT_HEIGHT]; k++) {
+				for(i = 0; i < 8; i++) {
 #ifdef LS020_ROTATE_180
-					pgmData = pgm_read_word(_font + oft + ((fp[FONT_HEIGHT] - k - 1)) * swd + j);
+					pgmData = pgm_read_word(_font + oft + (fp[FONT_HEIGHT] - k) * swd - 1 - j);
 					if (pgmData & (128>>i)) {
 #else
-					pgmData = pgm_read_word(_font + oft + (k + 1) * swd - j - 1);
+					pgmData = pgm_read_word(_font + oft + k * swd + j);
 					if (pgmData & (1<<i)) {
 #endif
 						for (mx = 0; mx < fp[FONT_MULT]; mx++)
@@ -356,14 +356,14 @@ void ls020WriteIcon24(uint8_t iconNum)
 		// Start data sequence
 		PORT(LS020_DPORT) &= ~LS020_CS_LINE;
 
-		for (k = 0; k < 24 / 8; k++) {
-			for (i = 0; i < 8; i++) {
-				for (j = 0; j < 24; j++) {
+		for (j = 0; j < 24; j++) {
+			for (k = 0; k < 24 / 8; k++) {
+				for (i = 0; i < 8; i++) {
 #ifdef LS020_ROTATE_180
-					pgmData = pgm_read_byte(icon + 24 * (24 / 8 - 1 - k) + j);
+					pgmData = pgm_read_byte(icon + 24 * (24 / 8 - k) - j - 1);
 					ls020WriteData(pgmData & (128>>i) ? COLOR_WHITE : COLOR_BLACK);
 #else
-					pgmData = pgm_read_byte(icon + 24 * (k + 1) - j - 1);
+					pgmData = pgm_read_byte(icon + 24 * k + j);
 					ls020WriteData(pgmData & (1<<i) ? COLOR_WHITE : COLOR_BLACK);
 #endif
 				}
@@ -393,14 +393,14 @@ void ls020WriteIcon32(uint8_t iconNum)
 		// Start data sequence
 		PORT(LS020_DPORT) &= ~LS020_CS_LINE;
 
-		for (k = 0; k < 32 / 8; k++) {
-			for (i = 0; i < 8; i++) {
-				for (j = 0; j < 32; j++) {
+		for (j = 0; j < 32; j++) {
+			for (k = 0; k < 32 / 8; k++) {
+				for (i = 0; i < 8; i++) {
 #ifdef LS020_ROTATE_180
-					pgmData = pgm_read_byte(icon + 32 * (32 / 8 - 1 - k) + j);
+					pgmData = pgm_read_byte(icon + 32 * (32 / 8 - 1) - j - 1);
 					ls020WriteData(pgmData & (128>>i) ? COLOR_WHITE : COLOR_BLACK);
 #else
-					pgmData = pgm_read_byte(icon + 32 * (k + 1) - j - 1);
+					pgmData = pgm_read_byte(icon + 32 * k + j);
 					ls020WriteData(pgmData & (1<<i) ? COLOR_WHITE : COLOR_BLACK);
 #endif
 				}
