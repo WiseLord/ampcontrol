@@ -349,22 +349,36 @@ void ls020WriteString(char *string)
 
 void ls020WriteIcon24(uint8_t iconNum)
 {
-	uint8_t i, j, k;
-	uint8_t pgmData;
-
+	uint8_t j, k, i;
 	const uint8_t *icon;
+	uint8_t pgmData;
 
 	icon = &icons_24[24 * 24 / 8 * iconNum];
 
 	if (icon) {
-		for (j = 0; j < 3; j++) {
-			for (i = 0; i < 24; i++) {
-				pgmData = pgm_read_byte(icon + 24 * j + i);
-				for (k = 0; k < 8; k++) {
-					ls020DrawRect(_x + i, _y + 8 * j + k, _x + i, _y + 8 * j + k, pgmData & (1<<k) ? COLOR_WHITE : COLOR_BLACK);
+		ls020SetWindow(_x, _y, _x + 24 - 1, _y + 24 - 1);
+		// Set data mode
+		PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+		// Start data sequence
+		PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+
+		for (k = 0; k < 24 / 8; k++) {
+			for (i = 0; i < 8; i++) {
+				for (j = 0; j < 24; j++) {
+#ifdef LS020_ROTATE_180
+					pgmData = pgm_read_byte(icon + 24 * (24 / 8 - 1 - k) + j);
+					ls020WriteData(pgmData & (128>>i) ? COLOR_WHITE : COLOR_BLACK);
+#else
+					pgmData = pgm_read_byte(icon + 24 * (k + 1) - j - 1);
+					ls020WriteData(pgmData & (1<<i) ? COLOR_WHITE : COLOR_BLACK);
+#endif
 				}
 			}
 		}
+
+		// Stop data sequence
+		while(!(SPSR & (1<<SPIF)));
+		PORT(LS020_DPORT) |= LS020_CS_LINE;
 	}
 
 	return;
@@ -372,22 +386,36 @@ void ls020WriteIcon24(uint8_t iconNum)
 
 void ls020WriteIcon32(uint8_t iconNum)
 {
-	uint8_t i, j, k;
-	uint8_t pgmData;
-
+	uint8_t j, k, i;
 	const uint8_t *icon;
+	uint8_t pgmData;
 
 	icon = &icons_32[32 * 32 / 8 * iconNum];
 
 	if (icon) {
-		for (j = 0; j < 4; j++) {
-			for (i = 0; i < 32; i++) {
-				pgmData = pgm_read_byte(icon + 32 * j + i);
-				for (k = 0; k < 8; k++) {
-					ls020DrawRect(_x + i, _y + 8 * j + k, _x + i, _y + 8 * j + k, pgmData & (1<<k) ? COLOR_YELLOW : COLOR_BLACK);
+		ls020SetWindow(_x, _y, _x + 32 - 1, _y + 32 - 1);
+		// Set data mode
+		PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+		// Start data sequence
+		PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+
+		for (k = 0; k < 32 / 8; k++) {
+			for (i = 0; i < 8; i++) {
+				for (j = 0; j < 32; j++) {
+#ifdef LS020_ROTATE_180
+					pgmData = pgm_read_byte(icon + 32 * (32 / 8 - 1 - k) + j);
+					ls020WriteData(pgmData & (128>>i) ? COLOR_WHITE : COLOR_BLACK);
+#else
+					pgmData = pgm_read_byte(icon + 32 * (k + 1) - j - 1);
+					ls020WriteData(pgmData & (1<<i) ? COLOR_WHITE : COLOR_BLACK);
+#endif
 				}
 			}
 		}
+
+		// Stop data sequence
+		while(!(SPSR & (1<<SPIF)));
+		PORT(LS020_DPORT) |= LS020_CS_LINE;
 	}
 
 	return;
