@@ -5,7 +5,7 @@
 #include "ls020.h"
 #include "../pins.h"
 
-#define LS020_ROTATE_180
+//#define LS020_ROTATE_180
 
 const uint8_t *_font;
 static uint8_t fp[FONT_PARAM_COUNT];
@@ -301,12 +301,13 @@ void ls020WriteChar(uint8_t code)
 	for (j = 0; j < swd; j++) {
 		for (my = 0; my < fp[FONT_MULT]; my++) {
 			for (k = 0; k < fp[FONT_HEIGHT]; k++) {
-				for(i = 0; i < 8; i++) {
 #ifdef LS020_ROTATE_180
-					pgmData = pgm_read_word(_font + oft + (fp[FONT_HEIGHT] - k) * swd - 1 - j);
+				pgmData = pgm_read_word(_font + oft + (fp[FONT_HEIGHT] - k) * swd - 1 - j);
+				for(i = 0; i < 8; i++) {
 					if (pgmData & (128>>i)) {
 #else
-					pgmData = pgm_read_word(_font + oft + k * swd + j);
+				pgmData = pgm_read_word(_font + oft + k * swd + j);
+				for(i = 0; i < 8; i++) {
 					if (pgmData & (1<<i)) {
 #endif
 						for (mx = 0; mx < fp[FONT_MULT]; mx++)
@@ -358,15 +359,15 @@ void ls020WriteIcon24(uint8_t iconNum)
 
 		for (j = 0; j < 24; j++) {
 			for (k = 0; k < 24 / 8; k++) {
-				for (i = 0; i < 8; i++) {
 #ifdef LS020_ROTATE_180
-					pgmData = pgm_read_byte(icon + 24 * (24 / 8 - k) - j - 1);
+				pgmData = pgm_read_byte(icon + 24 * (24 / 8 - k) - j - 1);
+				for (i = 0; i < 8; i++)
 					ls020WriteData(pgmData & (128>>i) ? COLOR_WHITE : COLOR_BLACK);
 #else
-					pgmData = pgm_read_byte(icon + 24 * k + j);
+				pgmData = pgm_read_byte(icon + 24 * k + j);
+				for (i = 0; i < 8; i++)
 					ls020WriteData(pgmData & (1<<i) ? COLOR_WHITE : COLOR_BLACK);
 #endif
-				}
 			}
 		}
 
@@ -395,15 +396,15 @@ void ls020WriteIcon32(uint8_t iconNum)
 
 		for (j = 0; j < 32; j++) {
 			for (k = 0; k < 32 / 8; k++) {
-				for (i = 0; i < 8; i++) {
 #ifdef LS020_ROTATE_180
-					pgmData = pgm_read_byte(icon + 32 * (32 / 8 - 1) - j - 1);
+				pgmData = pgm_read_byte(icon + 32 * (32 / 8 - 1) - j - 1);
+				for (i = 0; i < 8; i++)
 					ls020WriteData(pgmData & (128>>i) ? COLOR_WHITE : COLOR_BLACK);
 #else
-					pgmData = pgm_read_byte(icon + 32 * k + j);
+				pgmData = pgm_read_byte(icon + 32 * k + j);
+				for (i = 0; i < 8; i++)
 					ls020WriteData(pgmData & (1<<i) ? COLOR_WHITE : COLOR_BLACK);
 #endif
-				}
 			}
 		}
 
