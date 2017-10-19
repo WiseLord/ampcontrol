@@ -142,7 +142,7 @@ QString IrSeq::getNecSamSequence(int addr, int cmd, int type)
     }
 
     // Final bit
-    out.append(QString::number(pause1, 10)).append(",");
+    out.append(QString::number(pause0, 10)).append(",");
     out.append(QString::number(E, 10));
 
     return out;
