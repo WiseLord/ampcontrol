@@ -3,6 +3,7 @@
 #include <avr/eeprom.h>
 #include "eeprom.h"
 #include "input.h"
+#include "pins.h"
 
 static int8_t tempTH;
 

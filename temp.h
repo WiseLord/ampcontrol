@@ -4,7 +4,6 @@
 #include "ds18x20.h"
 
 #include <inttypes.h>
-#include "pins.h"
 
 #define MAX_TEMP 120
 #define MIN_TEMP 20

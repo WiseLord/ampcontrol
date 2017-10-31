@@ -7,6 +7,7 @@
 #include "adc.h"
 #include "alarm.h"
 #include "uart.h"
+#include "pins.h"
 
 static uint8_t dispMode = MODE_STANDBY;
 static uint8_t dispModePrev = MODE_STANDBY;

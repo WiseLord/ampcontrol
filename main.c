@@ -11,6 +11,7 @@
 #include "tuner/tuner.h"
 #include "temp.h"
 #include "actions.h"
+#include "pins.h"
 
 static uint8_t extFunc;
 

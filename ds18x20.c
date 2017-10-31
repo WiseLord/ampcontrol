@@ -2,6 +2,7 @@
 
 #include <util/delay.h>
 #include <util/crc16.h>
+#include "pins.h"
 
 static ds18x20Dev devs[DS18X20_MAX_DEV];
 static uint8_t devCount = 0;

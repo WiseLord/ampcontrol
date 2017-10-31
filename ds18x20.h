@@ -2,7 +2,6 @@
 #define DS18X20_H
 
 #include <inttypes.h>
-#include "pins.h"
 
 #define DS18X20_PARASITE_POWER
 
