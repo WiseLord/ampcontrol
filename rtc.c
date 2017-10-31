@@ -29,7 +29,7 @@ static uint8_t rtcDaysInMonth(void)
 
 	if (ret == 2) {
 		ret = rtc.year & 0x03;
-		ret = (ret ? 29 : 28);
+		ret = (ret ? 28 : 29);
 	} else {
 		if (ret > 7)
 			ret++;
