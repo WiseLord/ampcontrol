@@ -517,3 +517,18 @@ void tunerPowerOff(void)
 
 	return;
 }
+
+void tunerSeek(int8_t direction)
+{
+	switch (tuner.ic) {
+#ifdef _RDA580X
+	case TUNER_RDA5807:
+	case TUNER_RDA5802:
+		rda580xSeek(direction);
+		break;
+#endif
+	default:
+		tunerChangeFreq(direction * 10);
+		break;
+	}
+}

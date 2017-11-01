@@ -69,4 +69,6 @@ void tunerSetBass(uint8_t value);
 void tunerPowerOn(void);
 void tunerPowerOff(void);
 
+void tunerSeek(int8_t direction);
+
 #endif /* TUNER_H */

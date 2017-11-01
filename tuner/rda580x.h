@@ -3,7 +3,8 @@
 
 #include <inttypes.h>
 
-#define RDA5807M_I2C_ADDR			0b00100000
+#define RDA5807M_I2C_SEQ_ADDR		0x20
+#define RDA5807M_I2C_RAND_ADDR		0x22
 
 // Write mode register values
 
@@ -195,7 +196,7 @@
 #define RDA5802_MIN_FREQ			6500
 #define RDA5807_MIN_FREQ			5000
 
-#define RDA5807_BAND_CHANGE_FREQ	8700
+#define RDA5807_BAND_CHANGE_FREQ	7600
 
 void rda580xInit(void);
 
@@ -207,5 +208,7 @@ void rda580xSetAudio(void);
 
 void rda580xPowerOn(void);
 void rda580xPowerOff(void);
+
+void rda580xSeek(int8_t direction);
 
 #endif // RDA5807X_H

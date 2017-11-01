@@ -508,7 +508,7 @@ void handleEncoder(int8_t encCnt)
 void handleChangeFM(uint8_t step)
 {
 	if (dispMode == MODE_FM_TUNE) {
-		tunerChangeFreq(step * 10);
+		tunerSeek(step);
 		setDisplayTime(DISPLAY_TIME_FM_TUNE);
 	} else {
 		tunerNextStation(step);
