@@ -1,3 +1,4 @@
+.astylerc
 Makefile
 
 audio/audio.c
