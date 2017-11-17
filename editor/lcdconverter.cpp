@@ -86,7 +86,7 @@ LcdConverter::LcdConverter()
         map_ks0066ru[0x0446] = 0xe5; // ц
         map_ks0066ru[0x0449] = 0xe6; // щ
 
-        // Belarussian and Ukrainian symbols
+        // Belarussian and Ukrainian special symbols
         map_ks0066ru[0x0490] = 0xe7; // Ґ
         map_ks0066ru[0x0407] = 0xe8; // Ї
         map_ks0066ru[0x0404] = 0xe9; // Є
@@ -95,6 +95,36 @@ LcdConverter::LcdConverter()
         map_ks0066ru[0x0457] = 0xec; // ї
         map_ks0066ru[0x0454] = 0xed; // є
         map_ks0066ru[0x045e] = 0xee; // ў
+
+        // French special symbols
+        map_ks0066ru[0x00C2] = 0xC8; // Â
+        map_ks0066ru[0x00E2] = 0xC9; // â
+        map_ks0066ru[0x00C0] = 0xCA; // À
+        map_ks0066ru[0x00E0] = 0xCB; // à
+        map_ks0066ru[0x00C9] = 0xD0; // É
+        map_ks0066ru[0x00E9] = 0xD1; // é
+        map_ks0066ru[0x00CA] = 0xD2; // Ê
+        map_ks0066ru[0x00EA] = 0xD3; // ê
+        map_ks0066ru[0x00C8] = 0xD4; // È
+        map_ks0066ru[0x00E8] = 0xD5; // è
+        map_ks0066ru[0x00CB] = 0xA2; // Ë
+        map_ks0066ru[0x00EB] = 0xB5; // ë
+        map_ks0066ru[0x00CE] = 0xD6; // Î
+        map_ks0066ru[0x00EE] = 0xD7; // î
+        map_ks0066ru[0x00CF] = 0xE8; // Ï
+        map_ks0066ru[0x00EF] = 0xEC; // ï
+        map_ks0066ru[0x00D4] = 0xD8; // Ô
+        map_ks0066ru[0x00F4] = 0xD9; // ô
+        map_ks0066ru[0x00DB] = 0xDA; // Û
+        map_ks0066ru[0x00FB] = 0xDB; // û
+        map_ks0066ru[0x00D9] = 0xDC; // Ù
+        map_ks0066ru[0x00F9] = 0xDD; // ù
+        map_ks0066ru[0x00DC] = 0xDE; // Ü
+        map_ks0066ru[0x00FC] = 0xDF; // ü
+        map_ks0066ru[0x0178] = 0xCE; // Ÿ
+        map_ks0066ru[0x00FF] = 0xCF; // ÿ
+        map_ks0066ru[0x00C7] = 0xF0; // Ç
+        map_ks0066ru[0x00E7] = 0xF1; // ç
 
         // Some other symbols
         map_ks0066ru[0x00bf] = 0xcd; // ¿
