@@ -12,19 +12,20 @@
 #include "temp.h"
 #include "actions.h"
 #include "pins.h"
-
-static uint8_t extFunc;
+#include "spisw.h"
 
 // Hardware initialization
 static void hwInit(void)
 {
-	extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
+	uint8_t extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
 
 	loadTempParams();
 	if (extFunc == USE_DS18B20) {
 		ds18x20SearchDevices();
 		tempInit();							// Init temperature control
 		setSensTimer(TEMP_MEASURE_TIME);
+	} else {
+		SPIswInitLines(extFunc);
 	}
 
 	I2CInit();								// I2C bus
@@ -53,6 +54,7 @@ int main(void)
 {
 	int8_t encCnt = 0;
 	uint8_t action = ACTION_NOACTION;
+	uint8_t extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
 
 	// Init hardware
 	hwInit();

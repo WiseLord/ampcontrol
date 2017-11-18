@@ -8,6 +8,7 @@
 #include "alarm.h"
 #include "uart.h"
 #include "pins.h"
+#include "spisw.h"
 
 static uint8_t dispMode = MODE_STANDBY;
 static uint8_t dispModePrev = MODE_STANDBY;
@@ -200,6 +201,7 @@ void handleAction(uint8_t action)
 		PORT(STMU_STBY) |= STMU_STBY_LINE;	/* Power up audio and tuner */
 		setWorkBrightness();
 
+		SPIswSet(aproc.input);
 		setInitTimer(INIT_TIMER_START);
 
 		dispMode = MODE_SND_GAIN0 + aproc.input;
@@ -222,6 +224,7 @@ void handleAction(uint8_t action)
 		tunerPowerOff();
 		displayPowerOff();
 
+		SPIswSet(-1);
 		PORT(STMU_STBY) &= ~STMU_STBY_LINE;
 
 		setStbyBrightness();
@@ -342,6 +345,7 @@ void handleAction(uint8_t action)
 	case CMD_RC_IN_3:
 	case CMD_RC_IN_4:
 		sndSetInput(action - CMD_RC_IN_0);
+		SPIswSet(aproc.input);
 		dispMode = MODE_SND_GAIN0 + aproc.input;
 		setDisplayTime(DISPLAY_TIME_GAIN);
 		tunerSetMute(aproc.mute || aproc.input);
