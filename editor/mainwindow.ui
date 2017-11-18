@@ -3142,6 +3142,11 @@
                <string>Software SPI</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>Input status</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>

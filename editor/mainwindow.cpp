@@ -954,7 +954,7 @@ void MainWindow::setAdcright(int value)
 
 void MainWindow::setExtfunc(int value)
 {
-    if (value >= 2)
+    if (value >= cbxExtfunc->count())
         value = 0;
     eep[EEPROM_EXT_FUNC] = (char)value;
     updateHexTable(EEPROM_EXT_FUNC);
