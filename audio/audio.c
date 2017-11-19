@@ -24,7 +24,7 @@
 #include "pga2310.h"
 #endif
 #ifdef _RDA580X_AUDIO
-#include "rda580xaudio.h"
+#include "../tuner/rda580x.h"
 #endif
 
 static const sndGrid grid_0_0_0             PROGMEM = {  0,  0, 0.00 * 8};	/* Not implemented */
@@ -53,6 +53,13 @@ static void setNothing(void)
 {
 	return;
 }
+
+#ifdef _RDA580X_AUDIO
+static void rda580xAudioSetVolume(void)
+{
+	rda580xSetVolume(sndPar[MODE_SND_VOLUME].value);
+}
+#endif
 
 void sndInit(void)
 {
@@ -146,11 +153,6 @@ void sndInit(void)
 #ifdef _PGA2310
 	case AUDIOPROC_PGA2310:
 		inCnt = PGA2310_IN_CNT;
-		break;
-#endif
-#ifdef _RDA580X_AUDIO
-	case AUDIOPROC_RDA580X:
-		inCnt = RDA580X_IN_CNT;
 		break;
 #endif
 	default:
@@ -404,7 +406,7 @@ void sndSetMute(uint8_t value)
 #endif
 #ifdef _RDA580X_AUDIO
 	case AUDIOPROC_RDA580X:
-		rda580xAudioSetMute();
+		rda580xSetMute(value);
 		break;
 #endif
 	default:
@@ -423,7 +425,7 @@ void sndSetExtra(void)
 #endif
 #ifdef _RDA580X_AUDIO
 	if (aproc.ic == AUDIOPROC_RDA580X)
-		rda580xAudioBass();
+		rda580xSetBass(aproc.extra & APROC_EXTRA_LOUDNESS);
 #endif
 #ifdef _PT232X
 	if (aproc.ic == AUDIOPROC_PT232X)
