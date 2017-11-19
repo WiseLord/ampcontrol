@@ -127,7 +127,7 @@ const char STR_RC_SAM[]			PROGMEM = "SAM";
 const char STR_RC_NONE[]		PROGMEM = "---";
 
 const char STR_THRESHOLD[]		PROGMEM = "Threshold";
-const char STR_DEGREE[]			PROGMEM = "\x7F\xDF""C";
+const char STR_DEGREE[]			PROGMEM = "\x7F\xEF""C";
 #if defined(LS020)
 const char STR_SENSOR1[]		PROGMEM = "S 1: ";
 const char STR_SENSOR2[]		PROGMEM = "S 2: ";
@@ -149,7 +149,7 @@ const char STR_SPMINUS2[]		PROGMEM = " --";
 const char STR_FM[]				PROGMEM = "FM ";
 const char STR_STEREO[]			PROGMEM = "ST";
 const char STR_MONO[]			PROGMEM = "MO";
-const char STR_TUNE[]			PROGMEM = "\xDB\xDB\xD0\xDC\xDC";
+const char STR_TUNE[]			PROGMEM = "<<>>";
 const char STR_RDS[]			PROGMEM = "RDS";
 
 const char STR_YEAR20[]			PROGMEM = "20";
@@ -1282,7 +1282,7 @@ void showRadio(uint8_t tune)
 		writeStringPgm(STR_TUNE);
 	} else {
 		ls020SetXY(80, 80);
-		if (tuner.rds)
+		if (rdsFlag)
 			writeStringPgm(STR_RDS);
 		else
 			writeStringPgm(STR_SPACE3);
@@ -1354,12 +1354,12 @@ void showRadio(uint8_t tune)
 
 	gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
 	if (tune == MODE_RADIO_TUNE) {
-		gdSetXY(103, 56);
+		gdSetXY(108, 56);
 		writeStringPgm(STR_TUNE);
 	} else {
 		gdSetXY(110, 56);
 #ifdef _RDS
-		if (tuner.rds)
+		if (rdsFlag)
 			writeStringPgm(STR_RDS);
 		else
 			writeStringPgm(STR_SPACE3);
