@@ -119,7 +119,7 @@
 
 // 10 register (07H)
 #define RDA5807_TH_SOFRBLEND        0b01111100 // 5 bits for noise soft blend, default 10000
-#define RDA5807_65M_50M_MODE        0b00000010 // For BAND=11, 50..76MHz (0)
+#define RDA5807_65M_50M_MODE        0b00000010 // For BAND=11, 50..76MHz (0), default 1
 
 // 11 register (07L)
 #define RDA5807_SEEK_TH_OLD         0b11111100 // 6 bits seek treshold in old seek mode, valid for SKMODE=1
@@ -189,11 +189,6 @@
 
 #define RDA5807_VOL_MIN             0
 #define RDA5807_VOL_MAX             16
-
-#define RDA5802_MIN_FREQ            6500
-#define RDA5807_MIN_FREQ            5000
-
-#define RDA5807_BAND_CHANGE_FREQ    7600
 
 void rda580xInit(void);
 

@@ -19,7 +19,7 @@ static uint8_t wrBuf[14] = {
     RDA580X_LNA_PORT_SEL_LNAP | RDA580X_VOLUME,
     0,
     0,
-    (0x80 & RDA5807_TH_SOFRBLEND),
+    (0x80 & RDA5807_TH_SOFRBLEND) | RDA5807_65M_50M_MODE,
     0,
     0,
     0,
@@ -54,14 +54,15 @@ void rda580xSetFreq(void)
     uint16_t chan;
     uint8_t band = RDA580X_BAND_EASTEUROPE;
 
-    fMin = RDA5807_MIN_FREQ;
+    fMin = 6500;
 
-    if (tuner.ic == TUNER_RDA5802)
-        fMin = RDA5802_MIN_FREQ;
-
-    if (tuner.freq >= RDA5807_BAND_CHANGE_FREQ) {
-        fMin = RDA5807_BAND_CHANGE_FREQ;
+    if (tuner.freq >= 7600) {
+        fMin = 7600;
         band = RDA580X_BAND_WORLDWIDE;
+    }
+    if (tuner.fMin >= 8700) {
+        fMin = 8700;
+        band = RDA580X_BAND_US_EUROPE;
     }
 
     // Freq in grid
