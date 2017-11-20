@@ -179,11 +179,13 @@ void tunerSetMono(uint8_t value)
 	case TUNER_TEA5767:
 		tunerSetFreq();
 		break;
+#ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5802:
 	case TUNER_RDA5807_DF:
 		rda580xSetMono(value);
 		break;
+#endif
 	default:
 		tuner.mono = 0;
 		break;
@@ -197,10 +199,12 @@ void tunerSetRDS(uint8_t value)
 	tuner.rds = value;
 
 	switch (tuner.ic) {
+#ifdef _RDA580X
 	case TUNER_RDA5807:
 	case TUNER_RDA5807_DF:
 		rda580xSetRds(value);
 		break;
+#endif
 	default:
 		tuner.rds = 0;
 		break;

@@ -28,23 +28,43 @@
 #endif
 
 static const sndGrid grid_0_0_0             PROGMEM = {  0,  0, 0.00 * 8};	/* Not implemented */
+#if defined(_TDA7439) || defined(_TDA7448) || defined(_PT232X)
 static const sndGrid grid_n79_0_1           PROGMEM = {-79,  0, 1.00 * 8};	/* -79..0dB with 1dB step */
+#endif
+#if defined(_TDA7439) || defined(_TDA731X) || defined(_PT232X) || defined(_TEA63X0)
 static const sndGrid grid_n14_14_2          PROGMEM = { -7,  7, 2.00 * 8};	/* -14..14dB with 2dB step */
-static const sndGrid grid_n47_0_1           PROGMEM = {-47,  0, 1.00 * 8};	/* -47..0dB with 1dB step */
+#endif
+#if defined(_TDA7439) || defined(_PGA2310)
 static const sndGrid grid_n15_15_1          PROGMEM = {-15, 15, 1.00 * 8};	/* -15..15dB with 1dB step */
+#endif
+#ifdef _TDA7439
+static const sndGrid grid_n47_0_1           PROGMEM = {-47,  0, 1.00 * 8};	/* -47..0dB with 1dB step */
 static const sndGrid grid_0_30_2            PROGMEM = {  0, 15, 2.00 * 8};	/* 0..30dB with 2dB step */
+#endif
+#ifdef _TDA731X
 static const sndGrid grid_n78d75_0_1d25     PROGMEM = {-63,  0, 1.25 * 8};	/* -78.75..0dB with 1.25dB step*/
 static const sndGrid grid_n18d75_18d75_1d25 PROGMEM = {-15, 15, 1.25 * 8};	/* -18.75..18.75dB with 1.25dB step */
 static const sndGrid grid_0_11d25_3d75      PROGMEM = {  0,  3, 3.75 * 8};	/* 0..11.25dB with 3.75dB step */
 static const sndGrid grid_0_18d75_6d25      PROGMEM = {  0,  3, 6.25 * 8};	/* 0..18.75dB with 6.25dB step */
+#endif
+#if defined(_TDA7448) || defined(_PT232X)
 static const sndGrid grid_n15_0_1           PROGMEM = {-15,  0, 1.00 * 8};	/* -15..0dB with 1dB step */
-static const sndGrid grid_n96_31_1          PROGMEM = {-96, 31, 1.00 * 8};	/* -96..31dB with 1dB step */
 static const sndGrid grid_n7_7_1            PROGMEM = { -7,  7, 1.00 * 8};	/* -7..7dB with 1dB step */
+#endif
+#ifdef _PGA2310
+static const sndGrid grid_n96_31_1          PROGMEM = {-96, 31, 1.00 * 8};	/* -96..31dB with 1dB step */
+#endif
+#ifdef _PT232X
 static const sndGrid grid_0_6_6             PROGMEM = {  0,  1, 6.00 * 8};	/* 0..6dB with 6dB step */
+#endif
+#ifdef _TEA63X0
 static const sndGrid grid_n66_20_2          PROGMEM = {-33, 10, 2.00 * 8};	/* -66..20dB with 2dB step */
 static const sndGrid grid_n12_15_3          PROGMEM = { -4,  5, 3.00 * 8};	/* -12..15dB with 3dB step */
 static const sndGrid grid_n12_12_3          PROGMEM = { -4,  4, 3.00 * 8};	/* -12..12dB with 3dB step */
+#endif
+#ifdef _RDA580X_AUDIO
 static const sndGrid grid_0_15_1            PROGMEM = {  0, 15, 1.00 * 8};	/* 0..15dB with 1dB step */
+#endif
 
 sndParam sndPar[MODE_SND_END];
 Audioproc_type aproc;
