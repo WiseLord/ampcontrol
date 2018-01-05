@@ -6,8 +6,9 @@
 #include "eeprom.h"
 #include "input.h"
 #include "tuner/tuner.h"
-#include "ds18x20.h"
+#ifdef _TEMPCONTROL
 #include "temp.h"
+#endif
 #include "adc.h"
 #include "alarm.h"
 #ifdef _RDS
@@ -1057,6 +1058,7 @@ void showRcInfo(void)
 	return;
 }
 
+#ifdef _TEMPCONTROL
 void showTemp(void)
 {
 	int8_t tempTH = getTempTH();
@@ -1117,6 +1119,7 @@ void showTemp(void)
 
 	return;
 }
+#endif
 
 void showRadio(uint8_t tune)
 {

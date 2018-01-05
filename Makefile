@@ -42,6 +42,8 @@ DEFINES  += -D$(DISPLAY)
 DEFINES += -D_TEA5767 -D_RDA580X -D_TUX032 -D_LM7001 -D_LC72131 -D_RDS
 # Supported audioprocessors
 DEFINES += -D_TDA7439 -D_TDA731X -D_TDA7448 -D_PT232X -D_TEA63X0 -D_PGA2310 -D_RDA580X_AUDIO
+# Temperature control support
+DEFINES += -D_TEMPCONTROL
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy

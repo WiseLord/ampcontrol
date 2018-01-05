@@ -3,7 +3,9 @@
 #include <util/delay.h>
 #include "display.h"
 #include "tuner/tuner.h"
+#ifdef _TEMPCONTROL
 #include "temp.h"
+#endif
 #include "adc.h"
 #include "alarm.h"
 #include "uart.h"
@@ -467,8 +469,10 @@ void handleEncoder(int8_t encCnt)
 			setDisplayTime(DISPLAY_TIME_TEST);
 			break;
 		case MODE_TEMP:
+#ifdef _TEMPCONTROL
 			changeTempTH(encCnt);
 			setDisplayTime(DISPLAY_TIME_TEMP);
+#endif
 			break;
 		case MODE_TIME_EDIT:
 			rtcChangeTime(encCnt);
@@ -555,7 +559,9 @@ void handleExitDefaultMode(void)
 			setStbyBrightness();
 			break;
 		case MODE_TEMP:
+#ifdef _TEMPCONTROL
 			saveTempParams();
+#endif
 		case MODE_TEST:
 			dispMode = MODE_STANDBY;
 			break;
@@ -615,7 +621,9 @@ void showScreen(void)
 		showRcInfo();
 		break;
 	case MODE_TEMP:
+#ifdef _TEMPCONTROL
 		showTemp();
+#endif
 		break;
 	case MODE_SPECTRUM:
 		showSpectrum();

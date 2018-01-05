@@ -9,21 +9,25 @@
 #include "i2c.h"
 #include "display.h"
 #include "tuner/tuner.h"
+#ifdef _TEMPCONTROL
 #include "temp.h"
+#endif
 #include "actions.h"
 #include "pins.h"
 #include "spisw.h"
 
 // Hardware initialization
-static void hwInit(void)
+static void hwInit(uint8_t extFunc)
 {
-	uint8_t extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
-
+#ifdef _TEMPCONTROL
 	loadTempParams();
+#endif
 	if (extFunc == USE_DS18B20) {
+#ifdef _TEMPCONTROL
 		ds18x20SearchDevices();
 		tempInit();							// Init temperature control
 		setSensTimer(TEMP_MEASURE_TIME);
+#endif
 	} else {
 		SPIswInitLines(extFunc);
 	}
@@ -57,9 +61,10 @@ int main(void)
 	uint8_t extFunc = eeprom_read_byte((uint8_t*)EEPROM_EXT_FUNC);
 
 	// Init hardware
-	hwInit();
+	hwInit(extFunc);
 
 	while (1) {
+#ifdef _TEMPCONTROL
 		// Control temperature
 		if (extFunc == USE_DS18B20) {
 			if (getSensTimer() == 0) {
@@ -68,7 +73,7 @@ int main(void)
 			}
 			tempControlProcess();
 		}
-
+#endif
 		// Emulate poweroff if any of timers expired
 		if (getStbyTimer() == 0 || getSilenceTimer() == 0)
 			action = CMD_RC_STBY;

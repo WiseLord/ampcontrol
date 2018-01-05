@@ -109,8 +109,10 @@ uint16_t getEncBuf(void);
 void setDisplayTime(uint16_t value);
 uint16_t getDisplayTime(void);
 
+#ifdef _TEMPCONTROL
 uint8_t getSensTimer(void);
 void setSensTimer(uint8_t val);
+#endif
 
 int16_t getStbyTimer(void);
 void setStbyTimer(int16_t val);

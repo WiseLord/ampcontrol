@@ -93,8 +93,9 @@ void nextRcCmd(void);
 void switchTestMode(uint8_t index);
 void showRcInfo(void);
 
+#ifdef _TEMPCONTROL
 void showTemp(void);
-
+#endif
 void showRadio(uint8_t tune);
 
 void showMute(void);

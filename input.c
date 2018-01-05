@@ -334,6 +334,7 @@ uint16_t getDisplayTime(void)
 	return displayTime;
 }
 
+#ifdef _TEMPCONTROL
 uint8_t getSensTimer(void)
 {
 	return sensTimer;
@@ -345,6 +346,7 @@ void setSensTimer(uint8_t val)
 
 	return;
 }
+#endif
 
 int16_t getStbyTimer(void)
 {
