@@ -8,7 +8,9 @@
 #endif
 #include "adc.h"
 #include "alarm.h"
+#ifdef _UARTCONTROL
 #include "uart.h"
+#endif
 #include "pins.h"
 #include "spisw.h"
 
@@ -49,12 +51,14 @@ uint8_t getAction(void)
 	if (cmd < CMD_RC_END)
 		action = cmd;
 
+#ifdef _UARTCONTROL
 	/* Handle commands from UART */
 	UARTData uartData = getUartData();
 	if (uartData.type == UART_CMD_RC) {
 		if (uartData.command < CMD_RC_END)
 			action = uartData.command;
 	}
+#endif
 
 	/* Handle commands from buttons*/
 	switch (cmd) {
