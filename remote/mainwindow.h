@@ -4,6 +4,9 @@
 #include "ui_mainwindow.h"
 
 #include <QSerialPort>
+#include <QSystemTrayIcon>
+#include <QCloseEvent>
+#include <QMenu>
 
 class SetupDialog;
 
@@ -15,15 +18,22 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+protected:
+    void closeEvent(QCloseEvent * event);
+
 private:
     SetupDialog *dlgSetup;
     QSerialPort *sPort;
 
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayMenu;
 
 private slots:
     void openPort();
     void closePort();
     void sendRC();
+
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
 };
 
 #endif // MAINWINDOW_H

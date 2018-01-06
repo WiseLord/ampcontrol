@@ -9,6 +9,17 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setupUi(this);
 
+    trayIcon = new QSystemTrayIcon(this);
+    trayMenu = new QMenu(this);
+    QAction *quitAction = new QAction(tr("Quit app"), this);
+
+    trayIcon->setIcon(this->style()->standardIcon(QStyle::SP_MediaPlay));
+    trayIcon->setToolTip("Ampcontrol");
+
+    trayMenu->addAction(quitAction);
+    trayIcon->setContextMenu(trayMenu);
+    trayIcon->show();
+
     dlgSetup = new SetupDialog(this);
     sPort = new QSerialPort(this);
 
@@ -25,6 +36,10 @@ MainWindow::MainWindow(QWidget *parent) :
         connect(rcBtn, &QPushButton::clicked,
                 this, &MainWindow::sendRC);
     }
+
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 }
 
 MainWindow::~MainWindow()
@@ -70,5 +85,28 @@ void MainWindow::sendRC()
     if (!cmd.isEmpty() && sPort->isOpen()) {
         cmd.prepend("RC ").append("\r\n");
         sPort->write(cmd.toLocal8Bit());
+    }
+}
+
+void MainWindow::closeEvent(QCloseEvent *event)
+{
+    if(this->isVisible()){
+        event->ignore();
+        this->hide();
+    } else {
+        qApp->exit();
+    }
+}
+
+void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason){
+    case QSystemTrayIcon::Trigger:
+        this->setVisible(!this->isVisible());
+        break;
+    case QSystemTrayIcon::MiddleClick:
+        break;
+    default:
+        break;
     }
 }
