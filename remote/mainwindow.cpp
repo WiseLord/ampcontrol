@@ -93,7 +93,8 @@ void MainWindow::openPort()
         pbtnDisconnect->setEnabled(true);
         frmButtons->setEnabled(true);
 
-        trayIcon->setIcon(QIcon(":/icons/res/connected.png"));
+        trayIcon->setIcon(QIcon(":/icons/res/22_on.png"));
+        this->setWindowIcon(QIcon(":/icons/res/48_on.png"));
     } else {
         trayIcon->showMessage(APPLICATION_NAME,
                               QString("Can't connect to ampcontrol on port ").append(portName),
@@ -112,7 +113,8 @@ void MainWindow::closePort()
     pbtnDisconnect->setEnabled(false);
     frmButtons->setEnabled(false);
 
-    trayIcon->setIcon(QIcon(":/icons/res/disconnected.png"));
+    trayIcon->setIcon(QIcon(":/icons/res/22_off.png"));
+    this->setWindowIcon(QIcon(":/icons/res/48_off.png"));
 }
 
 void MainWindow::sendRC()

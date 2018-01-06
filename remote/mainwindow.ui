@@ -16,10 +16,6 @@
     <height>540</height>
    </size>
   </property>
-  <property name="windowIcon">
-   <iconset resource="res.qrc">
-    <normaloff>:/icons/res/ampcontrol.png</normaloff>:/icons/res/ampcontrol.png</iconset>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -482,8 +478,6 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources>
-  <include location="res.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>
