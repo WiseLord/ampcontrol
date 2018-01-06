@@ -17,24 +17,24 @@ MainWindow::MainWindow(QWidget *parent) :
 
     trayIcon = new QSystemTrayIcon(this);
     trayMenu = new QMenu(this);
+    QAction *settingsAction = new QAction(tr("Settings"), this);
     QAction *quitAction = new QAction(tr("Quit app"), this);
-
-    trayIcon->setIcon(this->style()->standardIcon(QStyle::SP_MediaPlay));
-    trayIcon->setToolTip(APPLICATION_NAME);
-
-    trayMenu->addAction(quitAction);
-    trayIcon->setContextMenu(trayMenu);
-    trayIcon->show();
 
     dlgSetup = new SetupDialog(this);
     sPort = new QSerialPort(this);
 
     closePort();
 
-    connect(pbtnSetup, &QPushButton::clicked,
-            dlgSetup, &SetupDialog::readSerialPorts);
-    connect(pbtnSetup, &QPushButton::clicked,
-            dlgSetup, &SetupDialog::exec);
+    trayIcon->setToolTip(APPLICATION_NAME);
+
+    trayMenu->addAction(settingsAction);
+    trayMenu->addAction(quitAction);
+    trayIcon->setContextMenu(trayMenu);
+    trayIcon->show();
+
+    connect(pbtnSetup, SIGNAL(clicked()),
+            this, SLOT(openSettings()));
+
     connect(pbtnConnect, &QPushButton::clicked,
             this, &MainWindow::openPort);
     connect(pbtnDisconnect, &QPushButton::clicked,
@@ -45,6 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
                 this, &MainWindow::sendRC);
     }
 
+    connect(settingsAction, SIGNAL(triggered()), this, SLOT(openSettings()));
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
@@ -91,6 +92,8 @@ void MainWindow::openPort()
         pbtnConnect->setEnabled(false);
         pbtnDisconnect->setEnabled(true);
         frmButtons->setEnabled(true);
+
+        trayIcon->setIcon(QIcon(":/icons/res/connected.png"));
     } else {
         trayIcon->showMessage(APPLICATION_NAME,
                               QString("Can't connect to ampcontrol on port ").append(portName),
@@ -108,6 +111,8 @@ void MainWindow::closePort()
     pbtnConnect->setEnabled(true);
     pbtnDisconnect->setEnabled(false);
     frmButtons->setEnabled(false);
+
+    trayIcon->setIcon(QIcon(":/icons/res/disconnected.png"));
 }
 
 void MainWindow::sendRC()
@@ -128,6 +133,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
     } else {
         qApp->exit();
     }
+}
+
+void MainWindow::openSettings()
+{
+    dlgSetup->readSerialPorts();
+    dlgSetup->exec();
 }
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)

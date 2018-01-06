@@ -21,3 +21,6 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui \
     setupdialog.ui
+
+RESOURCES += \
+    res.qrc

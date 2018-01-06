@@ -29,6 +29,7 @@ private:
     QMenu *trayMenu;
 
 private slots:
+    void openSettings();
     void openPort();
     void closePort();
     void sendRC();

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>res/ampcontrol.png</file>
+        <file>res/connected.png</file>
+        <file>res/disconnected.png</file>
+    </qresource>
+</RCC>
