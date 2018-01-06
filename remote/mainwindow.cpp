@@ -2,6 +2,8 @@
 #include "setupdialog.h"
 
 #include <QMessageBox>
+#include <QSettings>
+
 #include <QtDebug>
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -9,12 +11,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setupUi(this);
 
+    this->setWindowTitle(APPLICATION_NAME);
+
+    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
+
     trayIcon = new QSystemTrayIcon(this);
     trayMenu = new QMenu(this);
     QAction *quitAction = new QAction(tr("Quit app"), this);
 
     trayIcon->setIcon(this->style()->standardIcon(QStyle::SP_MediaPlay));
-    trayIcon->setToolTip("Ampcontrol");
+    trayIcon->setToolTip(APPLICATION_NAME);
 
     trayMenu->addAction(quitAction);
     trayIcon->setContextMenu(trayMenu);
@@ -25,6 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     closePort();
 
+    connect(pbtnSetup, &QPushButton::clicked,
+            dlgSetup, &SetupDialog::readSerialPorts);
     connect(pbtnSetup, &QPushButton::clicked,
             dlgSetup, &SetupDialog::exec);
     connect(pbtnConnect, &QPushButton::clicked,
@@ -51,14 +59,21 @@ MainWindow::~MainWindow()
 
 void MainWindow::openPort()
 {
-    SetupDialog::Settings cs = dlgSetup->settings();
+    QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
 
-    sPort->setPortName(cs.portName);
-    sPort->setBaudRate(cs.baudRate);
-    sPort->setDataBits(cs.dataBits);
-    sPort->setParity(cs.parity);
-    sPort->setStopBits(cs.stopBits);
-    sPort->setFlowControl(cs.flowControl);
+    QString portName = settings.value(SETTINGS_SERIAL_PORTNAME, "rfcomm0").toString();
+    int baudRate = settings.value(SETTINGS_SERIAL_BAUDRATE, QSerialPort::Baud9600).toInt();
+    int dataBits = settings.value(SETTINGS_SERIAL_DATABITS, QSerialPort::Data8).toInt();
+    int parity = settings.value(SETTINGS_SERIAL_PARITY, QSerialPort::NoParity).toInt();
+    int stopBits = settings.value(SETTINGS_SERIAL_STOPBITS, QSerialPort::OneStop).toInt();
+    int flowControl = settings.value(SETTINGS_SERIAL_FLOWCTRL, QSerialPort::NoFlowControl).toInt();
+
+    sPort->setPortName(portName);
+    sPort->setBaudRate(baudRate);
+    sPort->setDataBits(static_cast<QSerialPort::DataBits>(dataBits));
+    sPort->setParity(static_cast<QSerialPort::Parity>(parity));
+    sPort->setStopBits(static_cast<QSerialPort::StopBits>(stopBits));
+    sPort->setFlowControl(static_cast<QSerialPort::FlowControl>(flowControl));
 
     if (sPort->open(QIODevice::ReadWrite)) {
         pbtnConnect->setEnabled(false);

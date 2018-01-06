@@ -5,32 +5,33 @@
 
 #include <QSerialPort>
 
+#define ORGANIZATION_NAME           "WiseLord"
+#define ORGANIZATION_DOMAIN         "github.io"
+#define APPLICATION_NAME            "Ampcontrol"
+
+#define SETTINGS_SERIAL             "SerialPort"
+#define SETTINGS_SERIAL_PORTNAME    "SerialPort/PortName"
+#define SETTINGS_SERIAL_BAUDRATE    "SerialPort/BaudRate"
+#define SETTINGS_SERIAL_DATABITS    "SerialPort/DataBits"
+#define SETTINGS_SERIAL_PARITY      "SerialPort/Parity"
+#define SETTINGS_SERIAL_STOPBITS    "SerialPort/StopBits"
+#define SETTINGS_SERIAL_FLOWCTRL    "SerialPort/FlowCtrl"
+
 class SetupDialog : public QDialog, private Ui::SetupDialog
 {
     Q_OBJECT
 
 public:
-    struct Settings {
-        QString portName;
-        QSerialPort::BaudRate baudRate;
-        QSerialPort::DataBits dataBits;
-        QSerialPort::Parity parity;
-        QSerialPort::StopBits stopBits;
-        QSerialPort::FlowControl flowControl;
-    };
-
     explicit SetupDialog(QWidget *parent = 0);
 
-    Settings settings() const;
+public slots:
+    void readSerialPorts();
 
 private:
-    Settings m_settings;
-
     void fillSerialParam();
     void saveSettings();
 
 private slots:
-    void readSerialPorts();
     void showPortInfo(int index);
     void applySettings();
 };
