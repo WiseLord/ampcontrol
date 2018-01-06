@@ -16,13 +16,16 @@ SetupDialog::SetupDialog(QWidget *parent) :
             this, &SetupDialog::readSerialPorts);
     connect(pbtnApply, &QPushButton::clicked,
             this, &SetupDialog::applySettings);
+    connect(pbtnUndo, &QPushButton::clicked,
+            this, &SetupDialog::readSettings);
 
-    fillSerialParam();
-    readSerialPorts();
+    readSettings();
 }
 
-void SetupDialog::fillSerialParam()
+void SetupDialog::readSettings()
 {
+    readSerialPorts();
+
     QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
 
     int baudRate = settings.value(SETTINGS_SERIAL_BAUDRATE, QSerialPort::Baud9600).toInt();
@@ -30,6 +33,9 @@ void SetupDialog::fillSerialParam()
     int parity = settings.value(SETTINGS_SERIAL_PARITY, QSerialPort::NoParity).toInt();
     int stopBits = settings.value(SETTINGS_SERIAL_STOPBITS, QSerialPort::OneStop).toInt();
     int flowControl = settings.value(SETTINGS_SERIAL_FLOWCTRL, QSerialPort::NoFlowControl).toInt();
+
+    bool autoConnect = settings.value(SETTINGS_APP_AUTOCONNECT, false).toBool();
+    bool hideOnStart = settings.value(SETTINGS_APP_HIDEONSTART, false).toBool();
 
     cmbxBaudRate->addItem(QStringLiteral("1200"), QSerialPort::Baud1200);
     cmbxBaudRate->addItem(QStringLiteral("2400"), QSerialPort::Baud2400);
@@ -62,6 +68,9 @@ void SetupDialog::fillSerialParam()
     cmbxFlow->addItem(tr("RTS/CTS"), QSerialPort::HardwareControl);
     cmbxFlow->addItem(tr("XON/XOFF"), QSerialPort::SoftwareControl);
     cmbxFlow->setCurrentIndex(cmbxFlow->findData(flowControl));
+
+    cbxAutoconnect->setChecked(autoConnect);
+    cbxHideOnStart->setChecked(hideOnStart);
 }
 
 void SetupDialog::saveSettings()
@@ -74,6 +83,11 @@ void SetupDialog::saveSettings()
     settings.setValue(SETTINGS_SERIAL_PARITY,   cmbxParity->currentData().toInt());
     settings.setValue(SETTINGS_SERIAL_STOPBITS, cmbxStopBits->currentData().toInt());
     settings.setValue(SETTINGS_SERIAL_FLOWCTRL, cmbxFlow->currentData().toInt());
+
+    settings.setValue(SETTINGS_APP_AUTOCONNECT, cbxAutoconnect->isChecked());
+    settings.setValue(SETTINGS_APP_HIDEONSTART, cbxHideOnStart->isChecked());
+
+    settings.sync();
 }
 
 void SetupDialog::readSerialPorts()

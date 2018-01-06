@@ -17,6 +17,10 @@
 #define SETTINGS_SERIAL_STOPBITS    "SerialPort/StopBits"
 #define SETTINGS_SERIAL_FLOWCTRL    "SerialPort/FlowCtrl"
 
+#define SETTINGS_APP                "Application"
+#define SETTINGS_APP_AUTOCONNECT    "Application/Autoconnect"
+#define SETTINGS_APP_HIDEONSTART    "Application/HideOnStartup"
+
 class SetupDialog : public QDialog, private Ui::SetupDialog
 {
     Q_OBJECT
@@ -28,10 +32,10 @@ public slots:
     void readSerialPorts();
 
 private:
-    void fillSerialParam();
     void saveSettings();
 
 private slots:
+    void readSettings();
     void showPortInfo(int index);
     void applySettings();
 };

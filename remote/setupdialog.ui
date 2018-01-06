@@ -19,8 +19,21 @@
   <property name="windowTitle">
    <string>Serial port settings</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0" columnstretch="1,0">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0" columnstretch="1,0">
    <item row="3" column="0" colspan="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="4" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <spacer name="horizontalSpacer">
@@ -36,6 +49,13 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="pbtnUndo">
+       <property name="text">
+        <string>Undo</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="pbtnApply">
        <property name="text">
         <string>Apply</string>
@@ -44,18 +64,71 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
+   <item row="2" column="0">
+    <widget class="QCheckBox" name="cbxHideOnStart">
+     <property name="text">
+      <string>Minimize app to tray on startup</string>
      </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QGroupBox" name="grbxSerialParam">
+     <property name="title">
+      <string>Parameters</string>
      </property>
-    </spacer>
+     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
+      <item row="4" column="1">
+       <widget class="QComboBox" name="cmbxFlow"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="cmbxDataBits"/>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="cmbxParity"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QComboBox" name="cmbxBaudRate"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="cmbxStopBits"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="lblBaudRate">
+        <property name="text">
+         <string>Baudrate</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="lblDataBits">
+        <property name="text">
+         <string>Data bits</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="lblParity">
+        <property name="text">
+         <string>Parity</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="lblStopBits">
+        <property name="text">
+         <string>Stop bits</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="lblFlow">
+        <property name="text">
+         <string>Flow control</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item row="0" column="0">
     <widget class="QGroupBox" name="grbxSerialPort">
@@ -164,63 +237,11 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QGroupBox" name="grbxSerialParam">
-     <property name="title">
-      <string>Parameters</string>
+   <item row="1" column="0">
+    <widget class="QCheckBox" name="cbxAutoconnect">
+     <property name="text">
+      <string>Autoconnect to last used port</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2" columnstretch="0,1">
-      <item row="4" column="1">
-       <widget class="QComboBox" name="cmbxFlow"/>
-      </item>
-      <item row="1" column="1">
-       <widget class="QComboBox" name="cmbxDataBits"/>
-      </item>
-      <item row="2" column="1">
-       <widget class="QComboBox" name="cmbxParity"/>
-      </item>
-      <item row="0" column="1">
-       <widget class="QComboBox" name="cmbxBaudRate"/>
-      </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="cmbxStopBits"/>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="lblBaudRate">
-        <property name="text">
-         <string>Baudrate</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="lblDataBits">
-        <property name="text">
-         <string>Data bits</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QLabel" name="lblParity">
-        <property name="text">
-         <string>Parity</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="lblStopBits">
-        <property name="text">
-         <string>Stop bits</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="lblFlow">
-        <property name="text">
-         <string>Flow control</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
     </widget>
    </item>
   </layout>

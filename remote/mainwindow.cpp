@@ -48,6 +48,14 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+
+    if (settings.value(SETTINGS_APP_AUTOCONNECT, false).toBool() == true) {
+        openPort();
+    }
+
+    if (settings.value(SETTINGS_APP_HIDEONSTART, false).toBool() == false) {
+        this->show();
+    }
 }
 
 MainWindow::~MainWindow()
@@ -76,9 +84,18 @@ void MainWindow::openPort()
     sPort->setFlowControl(static_cast<QSerialPort::FlowControl>(flowControl));
 
     if (sPort->open(QIODevice::ReadWrite)) {
+        trayIcon->showMessage(APPLICATION_NAME,
+                              QString("Connected to ampcontrol on port ").append(portName),
+                              QSystemTrayIcon::MessageIcon::Information,
+                              2000);
         pbtnConnect->setEnabled(false);
         pbtnDisconnect->setEnabled(true);
         frmButtons->setEnabled(true);
+    } else {
+        trayIcon->showMessage(APPLICATION_NAME,
+                              QString("Can't connect to ampcontrol on port ").append(portName),
+                              QSystemTrayIcon::MessageIcon::Critical,
+                              3000);
     }
 
 }
