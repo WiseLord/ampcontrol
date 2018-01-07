@@ -89,127 +89,127 @@
         <translation>Вход 4</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="228"/>
+        <location filename="../mainwindow.ui" line="458"/>
         <source>Prev input</source>
         <translation>Пред. вход</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="238"/>
+        <location filename="../mainwindow.ui" line="468"/>
         <source>Next input</source>
         <translation>След. вход</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="248"/>
+        <location filename="../mainwindow.ui" line="228"/>
         <source>FM up</source>
         <translation>FM след.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="258"/>
+        <location filename="../mainwindow.ui" line="238"/>
         <source>FM mode</source>
         <translation>FM режим</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="268"/>
+        <location filename="../mainwindow.ui" line="248"/>
         <source>FM RDS</source>
         <translation>FM RDS</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="278"/>
+        <location filename="../mainwindow.ui" line="258"/>
         <source>FM down</source>
         <translation>FM пред.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="288"/>
+        <location filename="../mainwindow.ui" line="268"/>
         <source>FM store</source>
         <translation>FM сохр.</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="298"/>
+        <location filename="../mainwindow.ui" line="278"/>
         <source>FM mono</source>
         <translation>FM моно</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="308"/>
+        <location filename="../mainwindow.ui" line="288"/>
         <source>FM FAV 1</source>
         <translation>FM избр. 1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="318"/>
+        <location filename="../mainwindow.ui" line="298"/>
         <source>FM FAV 2</source>
         <translation>FM избр. 2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="328"/>
+        <location filename="../mainwindow.ui" line="308"/>
         <source>FM FAV 3</source>
         <translation>FM избр. 3</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="338"/>
+        <location filename="../mainwindow.ui" line="318"/>
         <source>FM FAV 4</source>
         <translation>FM избр. 4</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="348"/>
+        <location filename="../mainwindow.ui" line="328"/>
         <source>FM FAV 5</source>
         <translation>FM избр. 5</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="358"/>
+        <location filename="../mainwindow.ui" line="338"/>
         <source>FM FAV 6</source>
         <translation>FM избр. 6</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="368"/>
+        <location filename="../mainwindow.ui" line="348"/>
         <source>FM FAV 7</source>
         <translation>FM избр. 7</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="378"/>
+        <location filename="../mainwindow.ui" line="358"/>
         <source>FM FAV 8</source>
         <translation>FM избр. 8</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="388"/>
+        <location filename="../mainwindow.ui" line="368"/>
         <source>FM FAV 9</source>
         <translation>FM избр. 9</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="398"/>
+        <location filename="../mainwindow.ui" line="378"/>
         <source>FM FAV 0</source>
         <translation>FM избр. 0</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="408"/>
+        <location filename="../mainwindow.ui" line="388"/>
         <source>Time</source>
         <translation>Время</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="418"/>
+        <location filename="../mainwindow.ui" line="398"/>
         <source>Brightness</source>
         <translation>Яркость</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="428"/>
+        <location filename="../mainwindow.ui" line="408"/>
         <source>Spectrum</source>
         <translation>Спектр</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="438"/>
+        <location filename="../mainwindow.ui" line="418"/>
         <source>Alarm</source>
         <translation>Будильник</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="448"/>
+        <location filename="../mainwindow.ui" line="428"/>
         <source>Display</source>
         <translation>Экран</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="458"/>
+        <location filename="../mainwindow.ui" line="438"/>
         <source>Fall speed</source>
         <translation>Скорость</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="468"/>
+        <location filename="../mainwindow.ui" line="448"/>
         <source>Timer</source>
         <translation>Таймер</translation>
     </message>
@@ -224,12 +224,12 @@
         <translation>Выйти из приложения</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="89"/>
+        <location filename="../mainwindow.cpp" line="95"/>
         <source>Connected to port</source>
         <translation>Подключено к порту</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="100"/>
+        <location filename="../mainwindow.cpp" line="106"/>
         <source>Can&apos;t connect to port</source>
         <translation>Не удалось подключиться к порту</translation>
     </message>

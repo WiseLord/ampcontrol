@@ -50,6 +50,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
             this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
 
+    connect(dlVolume, &QDial::valueChanged,
+            this, &MainWindow::changeVolume);
+    connect(dlVolume, &QDial::sliderMoved,
+            this, &MainWindow::changeVolume);
+    this->dial = dlVolume->value();
+
     if (settings.value(SETTINGS_APP_AUTOCONNECT, false).toBool() == true) {
         openPort();
     }
@@ -125,6 +131,27 @@ void MainWindow::sendRC()
         cmd.prepend("RC ").append("\r\n");
         sPort->write(cmd.toLocal8Bit());
     }
+}
+
+void MainWindow::changeVolume(int value)
+{
+    // Some magic to find direction of dial
+    int diff =  (value + 63 - this->dial) % 63;
+    this->dial = value;
+
+    if (diff > 31)
+        diff -= 63;
+
+    QString cmd = "";
+
+    if (diff > 0) {
+        cmd = "03";
+    } else if (diff < 0) {
+        cmd = "04";
+    }
+
+    cmd.prepend("RC ").append("\r\n");
+    sPort->write(cmd.toLocal8Bit());
 }
 
 void MainWindow::closeEvent(QCloseEvent *event)

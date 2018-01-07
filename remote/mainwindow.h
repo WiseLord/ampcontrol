@@ -28,11 +28,14 @@ private:
     QSystemTrayIcon *trayIcon;
     QMenu *trayMenu;
 
+    int dial;
+
 private slots:
     void openSettings();
     void openPort();
     void closePort();
     void sendRC();
+    void changeVolume(int value);
 
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
 };
