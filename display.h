@@ -6,21 +6,21 @@
 #include "alarm.h"
 #include "audio/audio.h"
 
-#ifdef KS0066_16X2_PCF8574
-#define KS0066
+#ifdef _KS0066_16X2_PCF8574
+#define _KS0066
 #endif
 
-#ifdef KS0066_16X2
-#define KS0066
+#ifdef _KS0066_16X2
+#define _KS0066
 #endif
 
-#ifdef KS0066
+#if defined(_KS0066)
 #include "display/ks0066.h"
 #define MIN_BRIGHTNESS			KS0066_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			KS0066_MAX_BRIGHTNESS
 #define writeString(x)			ks0066WriteString(x)
 #define displayClear()			ks0066Clear()
-#elif defined(LS020)
+#elif defined(_LS020)
 #include "display/ls020.h"
 #define MIN_BRIGHTNESS			LS020_MIN_BRIGHTNESS
 #define MAX_BRIGHTNESS			LS020_MAX_BRIGHTNESS

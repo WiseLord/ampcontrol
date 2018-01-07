@@ -8,8 +8,8 @@
 #include "icons.h"
 
 /* Display selection  */
-#if !defined(ST7920) && !defined(SSD1306) && !defined(KS0108A) && !defined(KS0108B)
-#define KS0108A
+#if !defined(_ST7920) && !defined(_SSD1306) && !defined(_KS0108A) && !defined(_KS0108B)
+#define _KS0108A
 #endif
 
 enum {
@@ -37,7 +37,7 @@ enum {
 	FONT_DIR_270
 };
 
-#if defined(ST7920)
+#if defined(_ST7920)
 #define GD_MIN_BRIGHTNESS			ST7920_MIN_BRIGHTNESS
 #define GD_MAX_BRIGHTNESS			ST7920_MAX_BRIGHTNESS
 #define GD_SIZE_X					ST7920_SIZE_X
@@ -47,7 +47,7 @@ enum {
 #define gdSetBrightness(br)			st7920SetBrightness(br)
 #define gdDrawPixel(x, y, color)	st7920DrawPixel(x, y, color)
 #define gdGetPins()					st7920GetPins()
-#elif defined(SSD1306)
+#elif defined(_SSD1306)
 #define GD_MIN_BRIGHTNESS			SSD1306_MIN_BRIGHTNESS
 #define GD_MAX_BRIGHTNESS			SSD1306_MAX_BRIGHTNESS
 #define GD_SIZE_X					SSD1306_WIDTH

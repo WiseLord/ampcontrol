@@ -7,7 +7,7 @@
 
 static volatile uint8_t pins;
 
-#ifdef KS0108B
+#ifdef _KS0108B
 #define KS0108_SET_CS1(); \
 	PORT(KS0108_CS1) &= ~KS0108_CS1_LINE; \
 	PORT(KS0108_CS2) |= KS0108_CS2_LINE;

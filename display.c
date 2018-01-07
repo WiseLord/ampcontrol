@@ -129,7 +129,7 @@ const char STR_RC_NONE[]		PROGMEM = "---";
 
 const char STR_THRESHOLD[]		PROGMEM = "Threshold";
 const char STR_DEGREE[]			PROGMEM = "\x7F\xEF""C";
-#if defined(LS020)
+#if defined(_LS020)
 const char STR_SENSOR1[]		PROGMEM = "S 1: ";
 const char STR_SENSOR2[]		PROGMEM = "S 2: ";
 #else
@@ -158,12 +158,12 @@ const char STR_YEAR20[]			PROGMEM = "20";
 const char STR_PREFIX_BIN[]		PROGMEM = "0b\x7F";
 const char STR_PREFIX_HEX[]		PROGMEM = "0x\x7F";
 
-#ifdef KS0066
+#if defined(_KS0066)
 static uint8_t userSybmols = LCD_END;		/* Generated user symbols for ks0066 */
 static uint8_t userAddSym = SYM_END;		/* Additional user symbol */
 #endif
 
-#ifdef KS0066
+#if defined(_KS0066)
 static void lcdGenLevels(void)
 {
 	if (userSybmols != LCD_LEVELS) {		/* Generate 7 level symbols */
@@ -432,7 +432,7 @@ static void lcdGenAlarm(void)
 
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	uint8_t i;
 
 	lcdGenBar(userAddSym);
@@ -490,7 +490,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 			}
 		}
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 	uint8_t i;
 	uint8_t color;
 
@@ -601,10 +601,10 @@ static void writeNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 
 static void showParValue(int8_t value)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetXY(11, 0);
 	writeNum(value, 3, ' ', 10);
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
 	ls020SetXY(126, 88);
 	writeNum(value, 3, ' ', 10);
@@ -619,10 +619,10 @@ static void showParValue(int8_t value)
 
 static void showParLabel(uint8_t label)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetXY (0, 0);
 	writeStringEeprom(txtLabels[label]);
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
 	ls020SetXY(2, 4);
 	writeStringEeprom(txtLabels[label]);
@@ -635,7 +635,7 @@ static void showParLabel(uint8_t label)
 	return;
 }
 
-#ifndef KS0066
+#if !defined(_KS0066)
 static void showParIcon(uint8_t icon)
 {
 	uint8_t ic = icon;
@@ -645,7 +645,7 @@ static void showParIcon(uint8_t icon)
 	if (ic < ICON24_END)
 		icon = ic;
 
-#ifdef LS020
+#if defined(_LS020)
 	ls020SetXY(148, 4);
 	ls020WriteIcon24(icon);
 #else
@@ -656,8 +656,8 @@ static void showParIcon(uint8_t icon)
 }
 #endif
 
-#ifdef KS0066
-#elif defined(LS020)
+#if defined(_KS0066)
+#elif defined(_LS020)
 static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_t max)
 {
 	uint8_t i;
@@ -722,7 +722,7 @@ static void drawBarSpectrum(void)
 
 static void drawMiniSpectrum(void)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	uint16_t data;
 	uint8_t i;
 
@@ -746,7 +746,7 @@ static void drawMiniSpectrum(void)
 			}
 		}
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 #else
 	uint8_t x, xbase;
 	uint8_t ybase;
@@ -761,7 +761,7 @@ static void drawMiniSpectrum(void)
 #endif
 }
 
-#ifdef KS0066
+#if defined(_KS0066)
 static void drawTm(uint8_t tm)
 {
 	if (rtc.etm != tm || (getSecTimer() % 512) < 200) {
@@ -769,7 +769,7 @@ static void drawTm(uint8_t tm)
 	} else {
 		writeString("  ");
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 static void drawTm(uint8_t tm, const uint8_t *font, uint8_t mult)
 {
 	ls020LoadFont(font, rtc.etm == tm ? COLOR_YELLOW : COLOR_CYAN, mult);
@@ -785,7 +785,7 @@ static void drawTm(uint8_t tm, const uint8_t *font)
 	return;
 }
 
-#ifdef KS0066
+#if defined(_KS0066)
 static void drawAm(uint8_t am)
 {
 	if (alarm0.eam != am || (getSecTimer() % 512) < 200) {
@@ -793,7 +793,7 @@ static void drawAm(uint8_t am)
 	} else {
 		writeString("  ");
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 static void drawAm(uint8_t am, const uint8_t *font, uint8_t mult)
 {
 	ls020LoadFont(font, alarm0.eam == am ? COLOR_YELLOW : COLOR_CYAN, mult);
@@ -831,10 +831,10 @@ void displayInit(void)
 		}
 	}
 
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066Init();
 	lcdGenLevels();
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020Init();
 #else
 	gdInit();
@@ -903,7 +903,7 @@ void showRcInfo(void)
 	uint16_t btnBuf = getBtnBuf();
 	uint8_t encBuf = getEncBuf();
 
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetXY(0, 0);
 	writeString("I=");
 	writeNum(btnBuf + encBuf, 2, '0', 16);
@@ -933,7 +933,7 @@ void showRcInfo(void)
 		writeStringPgm(STR_RC_NONE);
 		break;
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
 	ls020SetXY(10, 4);
 	writeStringPgm(STR_IN_STATUS);
@@ -1062,7 +1062,7 @@ void showRcInfo(void)
 void showTemp(void)
 {
 	int8_t tempTH = getTempTH();
-#ifdef KS0066
+#if defined(_KS0066)
 	lcdGenBar (SYM_STEREO_DEGREE);
 	ks0066SetXY (0, 0);
 	writeStringPgm(STR_THRESHOLD);
@@ -1076,7 +1076,7 @@ void showTemp(void)
 	writeString("  2:");
 	writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
 	writeString("\x07""C");
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
 
 	ls020SetXY(2, 28 + 68);
@@ -1134,7 +1134,7 @@ void showRadio(uint8_t tune)
 	uint8_t rdsFlag = rdsGetFlag();
 #endif
 
-#ifdef KS0066
+#if defined(_KS0066)
 	lcdGenBar(SYM_STEREO_MONO);
 
 	/* Frequency value */
@@ -1214,7 +1214,7 @@ void showRadio(uint8_t tune)
 	} else {
 		writeString("  ");
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 	/* Frequency value */
 	ls020SetXY(8, 2);
 	ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 2);
@@ -1382,7 +1382,7 @@ void showMute(void)
 	showParLabel(LABEL_MUTE);
 	drawMiniSpectrum();
 
-#ifdef KS0066
+#if defined(_KS0066)
 	lcdGenBar(SYM_MUTE_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
@@ -1390,7 +1390,7 @@ void showMute(void)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetXY(96, 32);
 	if (aproc.mute)
 		ls020WriteIcon32(ICON32_MUTE_ON);
@@ -1411,7 +1411,7 @@ void showLoudness(void)
 {
 	showParLabel(LABEL_LOUDNESS);
 	drawMiniSpectrum();
-#ifdef KS0066
+#if defined(_KS0066)
 	lcdGenBar(SYM_LOUDNESS_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
@@ -1419,7 +1419,7 @@ void showLoudness(void)
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetXY(96, 32);
 	if (aproc.extra & APROC_EXTRA_LOUDNESS)
 		ls020WriteIcon32(ICON32_LOUDNESS_ON);
@@ -1440,7 +1440,7 @@ void showSurround()
 {
 	showParLabel(LABEL_SURROUND);
 	drawMiniSpectrum();
-#ifdef KS0066
+#if defined(_KS0066)
 	lcdGenBar(SYM_SURROUND_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
@@ -1448,7 +1448,7 @@ void showSurround()
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetXY(96, 32);
 	if (aproc.extra & APROC_EXTRA_SURROUND)
 		ls020WriteIcon32(ICON32_SURROUND_ON);
@@ -1468,7 +1468,7 @@ void showEffect3d()
 {
 	showParLabel(LABEL_EFFECT_3D);
 	drawMiniSpectrum();
-#ifdef KS0066
+#if defined(_KS0066)
 	lcdGenBar(SYM_EFFECT_3D_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
@@ -1476,7 +1476,7 @@ void showEffect3d()
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetXY(96, 32);
 	if (aproc.extra & APROC_EXTRA_EFFECT3D)
 		ls020WriteIcon32(ICON32_EFFECT_3D_ON);
@@ -1496,7 +1496,7 @@ void showToneDefeat()
 {
 	showParLabel(LABEL_TONE_DEFEAT);
 	drawMiniSpectrum();
-#ifdef KS0066
+#if defined(_KS0066)
 	lcdGenBar(SYM_TONE_DEFEAT_CROSS);
 	ks0066SetXY(14, 0);
 	ks0066WriteData(0x06);
@@ -1504,7 +1504,7 @@ void showToneDefeat()
 		ks0066WriteData(0x07);
 	else
 		ks0066WriteData(' ');
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetXY(96, 32);
 	if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
 		ls020WriteIcon32(ICON32_TONE_DEFEAT_ON);
@@ -1525,10 +1525,10 @@ void showBrWork(void)
 {
 	showParLabel(LABEL_BR_WORK);
 	showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetXY(13, 0);
 	writeNum(brWork, 3, ' ', 10);
-#elif defined(LS020)
+#elif defined(_LS020)
 	showParValue(brWork);
 	drawBarSpectrum();
 	showParIcon(ICON24_BRIGHTNESS);
@@ -1559,9 +1559,9 @@ void showSndParam(sndMode mode)
 	showParLabel(mode);
 	showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
 	showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max), param->value);
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetXY(14, 0);
-#elif defined(LS020)
+#elif defined(_LS020)
 	drawBarSpectrum();
 	showParIcon(mode);
 	ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
@@ -1579,7 +1579,7 @@ void showSndParam(sndMode mode)
 
 void showTime(void)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetXY(0, 0);
 	drawTm (RTC_HOUR);
 	ks0066WriteData (':');
@@ -1597,7 +1597,7 @@ void showTime(void)
 	drawTm(RTC_YEAR);
 
 	ks0066SetXY(0, 1);
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetXY(2, 4);
 
 	drawTm(RTC_HOUR, font_ks0066_ru_24, 2);
@@ -1653,7 +1653,7 @@ void showAlarm(void)
 {
 	uint8_t i;
 
-#ifdef KS0066
+#if defined(_KS0066)
 	/* Draw alarm value */
 	ks0066SetXY(0, 0);
 	drawAm(ALARM_HOUR);
@@ -1694,7 +1694,7 @@ void showAlarm(void)
 	} else {
 		ks0066WriteData (0x05);
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 	uint8_t *label;
 
 	ls020SetXY(20, 4);
@@ -1795,7 +1795,7 @@ void showAlarm(void)
 void showTimer(int16_t timer)
 {
 
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetXY(0, 0);
 	writeStringEeprom(txtLabels[LABEL_TIMER]);
 
@@ -1815,7 +1815,7 @@ void showTimer(int16_t timer)
 		writeString("--");
 	}
 	drawMiniSpectrum();
-#elif defined(LS020)
+#elif defined(_LS020)
 	uint8_t x, xbase;
 	uint8_t ybase;
 
@@ -1904,7 +1904,7 @@ void getSpectrum(void)
 
 void showSpectrum(void)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	uint8_t i, data;
 	uint16_t left, right;
 
@@ -1985,7 +1985,7 @@ void showSpectrum(void)
 		}
 		break;
 	}
-#elif defined(LS020)
+#elif defined(_LS020)
 	uint8_t x, xbase;
 	uint8_t ybase;
 	uint16_t left, right;
@@ -2119,12 +2119,12 @@ void showSpectrum(void)
 
 void setWorkBrightness(void)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetBrightness(brWork);
 #if defined(KS0066_WIRE_PCF8574)
 	pcf8574SetBacklight(brWork);
 #endif
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetBrightness(brWork);
 #else
 	gdSetBrightness(brWork);
@@ -2134,12 +2134,12 @@ void setWorkBrightness(void)
 
 void setStbyBrightness(void)
 {
-#ifdef KS0066
+#if defined(_KS0066)
 	ks0066SetBrightness(brStby);
 #if defined(KS0066_WIRE_PCF8574)
 	pcf8574SetBacklight(KS0066_BCKL_OFF);
 #endif
-#elif defined(LS020)
+#elif defined(_LS020)
 	ls020SetBrightness(brStby);
 #else
 	gdSetBrightness(brStby);
@@ -2161,7 +2161,7 @@ void displayPowerOff(void)
 void displayUpdate()
 {
 
-#if defined(SSD1306)
+#if defined(_SSD1306)
 	ssd1306UpdateFb();
 #endif
 

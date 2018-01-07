@@ -37,7 +37,7 @@ CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
 LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
 
 # Main definitions
-DEFINES  += -D$(DISPLAY)
+DEFINES  += -D_$(DISPLAY)
 # Supported tuners
 DEFINES += -D_TEA5767 -D_RDA580X -D_TUX032 -D_LM7001 -D_LC72131 -D_RDS
 # Supported audioprocessors

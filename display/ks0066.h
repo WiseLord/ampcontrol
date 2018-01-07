@@ -4,12 +4,12 @@
 #include <inttypes.h>
 
 /* Display size */
-#ifdef KS0066_16X2_PCF8574
+#ifdef _KS0066_16X2_PCF8574
 #define KS0066_SCREEN_WIDTH			16
 #define KS0066_SCREEN_HEIGHT		2
 #define KS0066_WIRE_PCF8574
 #endif
-#ifdef KS0066_16X2
+#ifdef _KS0066_16X2
 #define KS0066_SCREEN_WIDTH			16
 #define KS0066_SCREEN_HEIGHT		2
 #define KS0066_WIRE_8BIT
