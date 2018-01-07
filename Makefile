@@ -1,53 +1,109 @@
 DISPLAY = KS0108A
 
+APROC_LIST = TDA7439 TDA731X TDA7448 PT232X TEA63X0 PGA2310 RDA580X_AUDIO
+TUNER_LIST = TEA5767 RDA580X TUX032 LM7001 LC72131
+
+FEATURE_LIST = TEMPCONTROL UARTCONTROL RDS
+
 TARG = ampcontrol_m32_$(shell echo $(DISPLAY) | tr A-Z a-z)
 
 MCU = atmega32
 F_CPU = 16000000L
 
-AUDIO_SRC = $(wildcard audio/*.c)
-TUNER_SRC = $(wildcard tuner/*.c)
+SRCS = main.c
+SRCS += input.c actions.c i2c.c rtc.c alarm.c remote.c fft.c adc.c
 
+# Display source files
 FONTS_SRC = $(wildcard display/font*.c)
 ICONS_SRC = $(wildcard display/icon*.c)
-
 ifeq ($(DISPLAY), KS0066_16X2)
-  DISP_SRC = display/ks0066.c
+  SRCS += display/ks0066.c
 else ifeq ($(DISPLAY), KS0066_16X2_PCF8574)
-  DISP_SRC = display/ks0066.c
+  SRCS += display/ks0066.c
 else ifeq ($(DISPLAY), LS020)
-  DISP_SRC = display/ls020.c $(FONTS_SRC) $(ICONS_SRC)
+  SRCS += display/ls020.c $(FONTS_SRC) $(ICONS_SRC)
 else ifeq ($(DISPLAY), ST7920)
-  DISP_SRC = display/gdfb.c display/st7920.c $(FONTS_SRC) $(ICONS_SRC)
+  SRCS += display/gdfb.c display/st7920.c $(FONTS_SRC) $(ICONS_SRC)
 else ifeq ($(DISPLAY), SSD1306)
-  DISP_SRC = display/gdfb.c display/ssd1306.c $(FONTS_SRC) $(ICONS_SRC)
+  SRCS += display/gdfb.c display/ssd1306.c $(FONTS_SRC) $(ICONS_SRC)
 else
-  DISP_SRC = display/gdfb.c display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
+  SRCS += display/gdfb.c display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
 endif
+SRCS += display.c
+DEFINES = -D_$(DISPLAY)
 
-SRCS = $(wildcard *.c) $(AUDIO_SRC) $(TUNER_SRC) $(DISP_SRC)
+# Audio source files
+SRCS += audio/audio.c
+ifeq "$(findstring TDA7439, $(APROC_LIST))" "TDA7439"
+  SRCS += audio/tda7439.c
+endif
+ifeq "$(findstring TDA731X, $(APROC_LIST))" "TDA731X"
+  SRCS += audio/tda731x.c
+endif
+ifeq "$(findstring TDA7448, $(APROC_LIST))" "TDA7448"
+  SRCS += audio/tda7448.c
+endif
+ifeq "$(findstring PT232X, $(APROC_LIST))" "PT232X"
+  SRCS += audio/pt232x.c
+endif
+ifeq "$(findstring TEA63X0, $(APROC_LIST))" "TEA63X0"
+  SRCS += audio/tea63x0.c
+endif
+ifeq "$(findstring PGA2310, $(APROC_LIST))" "PGA2310"
+  SRCS += audio/pga2310.c
+  SOFTWARE_SPI = YES
+endif
+DEFINES += $(addprefix -D_, $(APROC_LIST))
+
+# Tuner source files
+SRCS += tuner/tuner.c
+ifeq "$(findstring TEA5767, $(TUNER_LIST))" "TEA5767"
+  SRCS += tuner/tea5767.c
+endif
+ifeq "$(findstring RDA580X, $(TUNER_LIST))" "RDA580X"
+  SRCS += tuner/rda580x.c
+endif
+ifeq "$(findstring TUX032, $(TUNER_LIST))" "TUX032"
+  SRCS += tuner/tux032.c
+endif
+ifeq "$(findstring LM7001, $(TUNER_LIST))" "LM7001"
+  SRCS += tuner/lm7001.c
+  SOFTWARE_SPI = YES
+endif
+ifeq "$(findstring LC72131, $(TUNER_LIST))" "LC72131"
+  SRCS += tuner/lc72131.c
+  SOFTWARE_SPI = YES
+endif
+DEFINES += $(addprefix -D_, $(TUNER_LIST))
+
+# Features
+ifeq "$(findstring TEMPCONTROL, $(FEATURE_LIST))" "TEMPCONTROL"
+  SRCS += temp.c ds18x20.c
+endif
+ifeq "$(findstring UARTCONTROL, $(FEATURE_LIST))" "UARTCONTROL"
+  SRCS += uart.c
+endif
+ifeq "$(findstring RDS, $(FEATURE_LIST))" "RDS"
+  SRCS += tuner/rds.c
+endif
+DEFINES += $(addprefix -D_, $(FEATURE_LIST))
+
+# Software SPI
+ifeq "$(findstring YES, $(SOFTWARE_SPI))" "YES"
+  SRCS += spisw.c
+  DEFINES += -D_SPISW
+endif
 
 # Build directory
 BUILDDIR = build
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding
-DEBUG = -g -Wall -Werror
-CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+WARNLEVEL = -Wall -Werror
+CFLAGS = $(WARNLEVEL) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
-LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
+LDFLAGS = $(WARNLEVEL) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
 
 # Main definitions
-DEFINES  += -D_$(DISPLAY)
-# Supported tuners
-DEFINES += -D_TEA5767 -D_RDA580X -D_TUX032 -D_LM7001 -D_LC72131 -D_RDS
-# Supported audioprocessors
-DEFINES += -D_TDA7439 -D_TDA731X -D_TDA7448 -D_PT232X -D_TEA63X0 -D_PGA2310 -D_RDA580X_AUDIO
-# Temperature control support
-DEFINES += -D_TEMPCONTROL
-# Control device via UART
-DEFINES += -D_UARTCONTROL
-# Software SPI support
-DEFINES += -D_SPISW
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
@@ -69,7 +125,7 @@ all: $(ELF) size
 
 $(ELF): $(OBJS)
 	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
-	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
+	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
 	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
 	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
