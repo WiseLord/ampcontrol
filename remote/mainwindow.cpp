@@ -86,7 +86,7 @@ void MainWindow::openPort()
 
     if (sPort->open(QIODevice::ReadWrite)) {
         trayIcon->showMessage(APPLICATION_NAME,
-                              QString("Connected to ampcontrol on port ").append(portName),
+                              QString(tr("Connected to port")).append(" ").append(portName),
                               QSystemTrayIcon::MessageIcon::Information,
                               2000);
         pbtnConnect->setEnabled(false);
@@ -97,7 +97,7 @@ void MainWindow::openPort()
         this->setWindowIcon(QIcon(":/icons/res/48_on.png"));
     } else {
         trayIcon->showMessage(APPLICATION_NAME,
-                              QString("Can't connect to ampcontrol on port ").append(portName),
+                              QString(tr("Can't connect to port")).append(" ").append(portName),
                               QSystemTrayIcon::MessageIcon::Critical,
                               3000);
     }

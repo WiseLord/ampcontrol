@@ -11,7 +11,6 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = ampcontrol-m32-remote
 TEMPLATE = app
 
-
 SOURCES += main.cpp\
         mainwindow.cpp \
     setupdialog.cpp
@@ -23,4 +22,13 @@ FORMS    += mainwindow.ui \
     setupdialog.ui
 
 RESOURCES += \
-    res.qrc
+    res.qrc \
+    ts.qrc
+
+TRANSLATIONS += \
+    ts/remote_ru.ts
+
+tr.commands = lupdate \"$$_PRO_FILE_\" && lrelease \"$$_PRO_FILE_\"
+
+PRE_TARGETDEPS += tr
+QMAKE_EXTRA_TARGETS += tr

@@ -65,8 +65,8 @@ void SetupDialog::readSettings()
     cmbxStopBits->setCurrentIndex(cmbxStopBits->findData(stopBits));
 
     cmbxFlow->addItem(tr("None"), QSerialPort::NoFlowControl);
-    cmbxFlow->addItem(tr("RTS/CTS"), QSerialPort::HardwareControl);
-    cmbxFlow->addItem(tr("XON/XOFF"), QSerialPort::SoftwareControl);
+    cmbxFlow->addItem(QStringLiteral("RTS/CTS"), QSerialPort::HardwareControl);
+    cmbxFlow->addItem(QStringLiteral("XON/XOFF"), QSerialPort::SoftwareControl);
     cmbxFlow->setCurrentIndex(cmbxFlow->findData(flowControl));
 
     cbxAutoconnect->setChecked(autoConnect);
@@ -107,7 +107,7 @@ void SetupDialog::readSerialPorts()
 
     if (savedIndex < 0) {
         // Not found, but will add it manually
-        cmbxSerialPort->addItem(portName, portName.append(" (NOT FOUND)"));
+        cmbxSerialPort->addItem(portName, portName.append(" ").append(tr("(NOT FOUND)")));
     }
 
     cmbxSerialPort->setCurrentIndex(cmbxSerialPort->findData(portName));

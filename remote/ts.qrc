@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ts">
+        <file>ts/remote_ru.qm</file>
+    </qresource>
+</RCC>
