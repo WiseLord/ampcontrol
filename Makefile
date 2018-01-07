@@ -46,6 +46,8 @@ DEFINES += -D_TDA7439 -D_TDA731X -D_TDA7448 -D_PT232X -D_TEA63X0 -D_PGA2310 -D_R
 DEFINES += -D_TEMPCONTROL
 # Control device via UART
 DEFINES += -D_UARTCONTROL
+# Software SPI support
+DEFINES += -D_SPISW
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy

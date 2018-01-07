@@ -16,7 +16,9 @@
 #endif
 #include "actions.h"
 #include "pins.h"
+#ifdef _SPISW
 #include "spisw.h"
+#endif
 
 // Hardware initialization
 static void hwInit(uint8_t extFunc)
@@ -31,7 +33,9 @@ static void hwInit(uint8_t extFunc)
 		setSensTimer(TEMP_MEASURE_TIME);
 #endif
 	} else {
+#ifdef _SPISW
 		SPIswInitLines(extFunc);
+#endif
 	}
 
 	I2CInit();								// I2C bus
