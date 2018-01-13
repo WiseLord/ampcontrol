@@ -224,12 +224,12 @@
         <translation>Выйти из приложения</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="95"/>
+        <location filename="../mainwindow.cpp" line="98"/>
         <source>Connected to port</source>
         <translation>Подключено к порту</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="106"/>
+        <location filename="../mainwindow.cpp" line="109"/>
         <source>Can&apos;t connect to port</source>
         <translation>Не удалось подключиться к порту</translation>
     </message>
@@ -242,123 +242,133 @@
         <translation>Настройки последовательного порта</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="54"/>
+        <location filename="../setupdialog.ui" line="218"/>
+        <source> sec</source>
+        <translation> сек</translation>
+    </message>
+    <message>
+        <location filename="../setupdialog.ui" line="221"/>
+        <source>after </source>
+        <translation>после </translation>
+    </message>
+    <message>
+        <location filename="../setupdialog.ui" line="271"/>
         <source>Undo</source>
         <translation>Отмена</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="61"/>
+        <location filename="../setupdialog.ui" line="278"/>
         <source>Apply</source>
         <translation>Применить</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="70"/>
+        <location filename="../setupdialog.ui" line="236"/>
         <source>Minimize app to tray on startup</source>
         <translation>Сворачивать приложение в трей при старте</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="77"/>
+        <location filename="../setupdialog.ui" line="135"/>
         <source>Parameters</source>
         <translation>Параметры</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="98"/>
+        <location filename="../setupdialog.ui" line="156"/>
         <source>Baudrate</source>
         <translation>Битовая скорость</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="105"/>
+        <location filename="../setupdialog.ui" line="163"/>
         <source>Data bits</source>
         <translation>Биты данных</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="112"/>
+        <location filename="../setupdialog.ui" line="170"/>
         <source>Parity</source>
         <translation>Чётность</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="119"/>
+        <location filename="../setupdialog.ui" line="177"/>
         <source>Stop bits</source>
         <translation>Стоп-биты</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="126"/>
+        <location filename="../setupdialog.ui" line="184"/>
         <source>Flow control</source>
         <translation>Контроль потока</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="136"/>
+        <location filename="../setupdialog.ui" line="28"/>
         <source>Serial port</source>
         <translation>Последовательный порт</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="142"/>
+        <location filename="../setupdialog.ui" line="34"/>
         <source>Location:</source>
         <translation>Путь:</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="156"/>
+        <location filename="../setupdialog.ui" line="48"/>
         <source>Manufacturer:</source>
         <translation>Производитель:</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="163"/>
+        <location filename="../setupdialog.ui" line="55"/>
         <source>Serial number:</source>
         <translation>Серийный номер:</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="191"/>
+        <location filename="../setupdialog.ui" line="83"/>
         <source>Description:</source>
         <translation>Описание:</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="212"/>
+        <location filename="../setupdialog.ui" line="104"/>
         <source>Vendor ID:</source>
         <translation>ID вендора:</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="219"/>
+        <location filename="../setupdialog.ui" line="111"/>
         <source>Product ID:</source>
         <translation>ID продукта:</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="231"/>
+        <location filename="../setupdialog.ui" line="123"/>
         <source>Update</source>
         <translation>Обновить</translation>
     </message>
     <message>
-        <location filename="../setupdialog.ui" line="243"/>
+        <location filename="../setupdialog.ui" line="198"/>
         <source>Autoconnect to last used port</source>
         <translation>Автоподключение к последнему использованному порту</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="56"/>
-        <location filename="../setupdialog.cpp" line="67"/>
+        <location filename="../setupdialog.cpp" line="57"/>
+        <location filename="../setupdialog.cpp" line="68"/>
         <source>None</source>
         <translation>Нет</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="57"/>
+        <location filename="../setupdialog.cpp" line="58"/>
         <source>Even</source>
         <translation>Чётный</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="58"/>
+        <location filename="../setupdialog.cpp" line="59"/>
         <source>Odd</source>
         <translation>Нечётный</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="59"/>
+        <location filename="../setupdialog.cpp" line="60"/>
         <source>Space</source>
         <translation>Ноль</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="60"/>
+        <location filename="../setupdialog.cpp" line="61"/>
         <source>Mark</source>
         <translation>Единица</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="110"/>
+        <location filename="../setupdialog.cpp" line="113"/>
         <source>(NOT FOUND)</source>
         <translation>(НЕ НАЙДЕН)</translation>
     </message>

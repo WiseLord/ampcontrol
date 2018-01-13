@@ -56,8 +56,11 @@ MainWindow::MainWindow(QWidget *parent) :
             this, &MainWindow::changeVolume);
     this->dial = dlVolume->value();
 
+    startupTimer = new QTimer(this);
     if (settings.value(SETTINGS_APP_AUTOCONNECT, false).toBool() == true) {
-        openPort();
+        startupTimer->setSingleShot(true);
+        connect(startupTimer, SIGNAL(timeout()), this, SLOT(openPort()));
+        startupTimer->start(settings.value(SETTINGS_APP_AUTOCONNTIME, 0).toInt() * 1000 + 1);
     }
 
     if (settings.value(SETTINGS_APP_HIDEONSTART, false).toBool() == false) {

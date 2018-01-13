@@ -7,6 +7,7 @@
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
 #include <QMenu>
+#include <QTimer>
 
 class SetupDialog;
 
@@ -27,6 +28,8 @@ private:
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayMenu;
+
+    QTimer *startupTimer;
 
     int dial;
 

@@ -19,6 +19,7 @@
 
 #define SETTINGS_APP                "Application"
 #define SETTINGS_APP_AUTOCONNECT    "Application/Autoconnect"
+#define SETTINGS_APP_AUTOCONNTIME   "Application/AutoconnectTimeout"
 #define SETTINGS_APP_HIDEONSTART    "Application/HideOnStartup"
 
 class SetupDialog : public QDialog, private Ui::SetupDialog

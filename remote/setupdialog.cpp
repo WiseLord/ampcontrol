@@ -35,6 +35,7 @@ void SetupDialog::readSettings()
     int flowControl = settings.value(SETTINGS_SERIAL_FLOWCTRL, QSerialPort::NoFlowControl).toInt();
 
     bool autoConnect = settings.value(SETTINGS_APP_AUTOCONNECT, false).toBool();
+    int autoConnectTime = settings.value(SETTINGS_APP_AUTOCONNTIME, 0).toInt();
     bool hideOnStart = settings.value(SETTINGS_APP_HIDEONSTART, false).toBool();
 
     cmbxBaudRate->addItem(QStringLiteral("1200"), QSerialPort::Baud1200);
@@ -70,6 +71,7 @@ void SetupDialog::readSettings()
     cmbxFlow->setCurrentIndex(cmbxFlow->findData(flowControl));
 
     cbxAutoconnect->setChecked(autoConnect);
+    sbAutoconnect->setValue(autoConnectTime);
     cbxHideOnStart->setChecked(hideOnStart);
 }
 
@@ -85,6 +87,7 @@ void SetupDialog::saveSettings()
     settings.setValue(SETTINGS_SERIAL_FLOWCTRL, cmbxFlow->currentData().toInt());
 
     settings.setValue(SETTINGS_APP_AUTOCONNECT, cbxAutoconnect->isChecked());
+    settings.setValue(SETTINGS_APP_AUTOCONNTIME, sbAutoconnect->value());
     settings.setValue(SETTINGS_APP_HIDEONSTART, cbxHideOnStart->isChecked());
 
     settings.sync();
