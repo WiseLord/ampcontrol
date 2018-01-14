@@ -214,11 +214,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::openSettings()
 {
-#ifndef BLUETOOTH
-    dlgSetup->readSerialPorts();
-#endif
+#ifdef BLUETOOTH
     dlgSetup->showFullScreen();
-//    dlgSetup->exec();
+#else
+    dlgSetup->readSerialPorts();
+    dlgSetup->exec();
+#endif
 }
 
 #ifdef BLUETOOTH

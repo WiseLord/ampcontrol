@@ -65,3 +65,10 @@ tr.commands = lupdate \"$$_PRO_FILE_\" && lrelease \"$$_PRO_FILE_\"
 
 PRE_TARGETDEPS += tr
 QMAKE_EXTRA_TARGETS += tr
+
+DISTFILES += \
+    android/AndroidManifest.xml \
+    android/res/values/libs.xml \
+    android/build.gradle
+
+ANDROID_PACKAGE_SOURCE_DIR = $$PWD/android
