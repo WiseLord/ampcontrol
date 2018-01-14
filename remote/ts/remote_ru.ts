@@ -2,6 +2,19 @@
 <!DOCTYPE TS>
 <TS version="2.1" language="ru_RU">
 <context>
+    <name>BtSetupDialog</name>
+    <message>
+        <location filename="../btsetupdialog.ui" line="14"/>
+        <source>Dialog</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../btsetupdialog.ui" line="29"/>
+        <source>OK</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>MainWindow</name>
     <message>
         <location filename="../mainwindow.ui" line="25"/>
@@ -214,22 +227,22 @@
         <translation>Таймер</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="20"/>
+        <location filename="../mainwindow.cpp" line="38"/>
         <source>Settings</source>
         <translation>Настройки</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="21"/>
+        <location filename="../mainwindow.cpp" line="39"/>
         <source>Quit app</source>
         <translation>Выйти из приложения</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="98"/>
+        <location filename="../mainwindow.cpp" line="136"/>
         <source>Connected to port</source>
         <translation>Подключено к порту</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="109"/>
+        <location filename="../mainwindow.cpp" line="147"/>
         <source>Can&apos;t connect to port</source>
         <translation>Не удалось подключиться к порту</translation>
     </message>
@@ -342,33 +355,33 @@
         <translation>Автоподключение к последнему использованному порту</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="57"/>
-        <location filename="../setupdialog.cpp" line="68"/>
+        <location filename="../setupdialog.cpp" line="56"/>
+        <location filename="../setupdialog.cpp" line="67"/>
         <source>None</source>
         <translation>Нет</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="58"/>
+        <location filename="../setupdialog.cpp" line="57"/>
         <source>Even</source>
         <translation>Чётный</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="59"/>
+        <location filename="../setupdialog.cpp" line="58"/>
         <source>Odd</source>
         <translation>Нечётный</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="60"/>
+        <location filename="../setupdialog.cpp" line="59"/>
         <source>Space</source>
         <translation>Ноль</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="61"/>
+        <location filename="../setupdialog.cpp" line="60"/>
         <source>Mark</source>
         <translation>Единица</translation>
     </message>
     <message>
-        <location filename="../setupdialog.cpp" line="113"/>
+        <location filename="../setupdialog.cpp" line="112"/>
         <source>(NOT FOUND)</source>
         <translation>(НЕ НАЙДЕН)</translation>
     </message>

@@ -3,13 +3,22 @@
 
 #include "ui_mainwindow.h"
 
-#include <QSerialPort>
+#ifdef BLUETOOTH
+#include<QBluetoothDeviceDiscoveryAgent>
+#include<QBluetoothSocket>
+#else
 #include <QSystemTrayIcon>
 #include <QCloseEvent>
 #include <QMenu>
 #include <QTimer>
+#include <QSerialPort>
+#endif
 
+#ifdef BLUETOOTH
+class BtSetupDialog;
+#else
 class SetupDialog;
+#endif
 
 class MainWindow : public QWidget, private Ui::MainWindow
 {
@@ -20,16 +29,26 @@ public:
     ~MainWindow();
 
 protected:
+#ifdef BLUETOOTH
+#else
     void closeEvent(QCloseEvent * event);
+#endif
 
 private:
+#ifdef BLUETOOTH
+    BtSetupDialog *dlgSetup;
+
+    QBluetoothDeviceDiscoveryAgent *agent;
+    QBluetoothSocket *port;
+#else
     SetupDialog *dlgSetup;
-    QSerialPort *sPort;
+    QSerialPort *port;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayMenu;
 
     QTimer *startupTimer;
+#endif
 
     int dial;
 
@@ -40,7 +59,11 @@ private slots:
     void sendRC();
     void changeVolume(int value);
 
+#ifdef BLUETOOTH
+    void deviceDiscovered(const QBluetoothDeviceInfo &device);
+#else
     void iconActivated(QSystemTrayIcon::ActivationReason reason);
+#endif
 };
 
 #endif // MAINWINDOW_H

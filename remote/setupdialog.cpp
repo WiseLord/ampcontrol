@@ -1,9 +1,8 @@
 #include "setupdialog.h"
+#include "defines.h"
 
 #include <QSerialPortInfo>
 #include <QSettings>
-
-#include <QDebug>
 
 SetupDialog::SetupDialog(QWidget *parent) :
     QDialog(parent)

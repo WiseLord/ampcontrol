@@ -1,5 +1,11 @@
 #include "mainwindow.h"
+#include "defines.h"
+
+#ifdef BLUETOOTH
+#include "btsetupdialog.h"
+#else
 #include "setupdialog.h"
+#endif
 
 #include <QMessageBox>
 #include <QSettings>
@@ -13,24 +19,42 @@ MainWindow::MainWindow(QWidget *parent) :
 
     this->setWindowTitle(APPLICATION_NAME);
 
+#ifdef BLUETOOTH
+    dlgSetup = new BtSetupDialog(this);
+    port = new QBluetoothSocket(QBluetoothServiceInfo::RfcommProtocol);
+
+    agent = new QBluetoothDeviceDiscoveryAgent;
+    connect(agent, SIGNAL(deviceDiscovered(QBluetoothDeviceInfo)),
+            this, SLOT(deviceDiscovered(QBluetoothDeviceInfo)));
+    agent->start();
+#else
+    dlgSetup = new SetupDialog(this);
+    port = new QSerialPort(this);
+
     QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
 
     trayIcon = new QSystemTrayIcon(this);
     trayMenu = new QMenu(this);
     QAction *settingsAction = new QAction(tr("Settings"), this);
     QAction *quitAction = new QAction(tr("Quit app"), this);
-
-    dlgSetup = new SetupDialog(this);
-    sPort = new QSerialPort(this);
+#endif
 
     closePort();
 
+#ifdef BLUETOOTH
+#else
     trayIcon->setToolTip(APPLICATION_NAME);
 
     trayMenu->addAction(settingsAction);
     trayMenu->addAction(quitAction);
     trayIcon->setContextMenu(trayMenu);
     trayIcon->show();
+
+    connect(settingsAction, SIGNAL(triggered()), this, SLOT(openSettings()));
+    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
+    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
+#endif
 
     connect(pbtnSetup, SIGNAL(clicked()),
             this, SLOT(openSettings()));
@@ -45,17 +69,15 @@ MainWindow::MainWindow(QWidget *parent) :
                 this, &MainWindow::sendRC);
     }
 
-    connect(settingsAction, SIGNAL(triggered()), this, SLOT(openSettings()));
-    connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-    connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
-            this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-
     connect(dlVolume, &QDial::valueChanged,
             this, &MainWindow::changeVolume);
     connect(dlVolume, &QDial::sliderMoved,
             this, &MainWindow::changeVolume);
     this->dial = dlVolume->value();
 
+#ifdef BLUETOOTH
+    this->showFullScreen();
+#else
     startupTimer = new QTimer(this);
     if (settings.value(SETTINGS_APP_AUTOCONNECT, false).toBool() == true) {
         startupTimer->setSingleShot(true);
@@ -66,19 +88,35 @@ MainWindow::MainWindow(QWidget *parent) :
     if (settings.value(SETTINGS_APP_HIDEONSTART, false).toBool() == false) {
         this->show();
     }
+#endif
 }
 
 MainWindow::~MainWindow()
 {
     closePort();
-
-    delete dlgSetup;
 }
 
 void MainWindow::openPort()
 {
     QSettings settings(ORGANIZATION_NAME, APPLICATION_NAME);
 
+#ifdef BLUETOOTH
+    QString device = settings.value(SETTINGS_BT_DEVICE, "00:01:02:03:04:05").toString();
+
+    static const QString serviceUuid(QStringLiteral("00001101-0000-1000-8000-00805F9B34FB"));
+
+    for (int i = 0; i < dlgSetup->devList.count(); i++) {
+        QBluetoothDeviceInfo dev = dlgSetup->devList[i];
+        if (device == dev.address().toString()) {
+            port->connectToService(QBluetoothAddress(device), QBluetoothUuid(serviceUuid),
+                                     QIODevice::ReadWrite);
+            pbtnConnect->setEnabled(false);
+            pbtnDisconnect->setEnabled(true);
+            frmButtons->setEnabled(true);
+        }
+    }
+
+#else
     QString portName = settings.value(SETTINGS_SERIAL_PORTNAME, "rfcomm0").toString();
     int baudRate = settings.value(SETTINGS_SERIAL_BAUDRATE, QSerialPort::Baud9600).toInt();
     int dataBits = settings.value(SETTINGS_SERIAL_DATABITS, QSerialPort::Data8).toInt();
@@ -86,14 +124,14 @@ void MainWindow::openPort()
     int stopBits = settings.value(SETTINGS_SERIAL_STOPBITS, QSerialPort::OneStop).toInt();
     int flowControl = settings.value(SETTINGS_SERIAL_FLOWCTRL, QSerialPort::NoFlowControl).toInt();
 
-    sPort->setPortName(portName);
-    sPort->setBaudRate(baudRate);
-    sPort->setDataBits(static_cast<QSerialPort::DataBits>(dataBits));
-    sPort->setParity(static_cast<QSerialPort::Parity>(parity));
-    sPort->setStopBits(static_cast<QSerialPort::StopBits>(stopBits));
-    sPort->setFlowControl(static_cast<QSerialPort::FlowControl>(flowControl));
+    port->setPortName(portName);
+    port->setBaudRate(baudRate);
+    port->setDataBits(static_cast<QSerialPort::DataBits>(dataBits));
+    port->setParity(static_cast<QSerialPort::Parity>(parity));
+    port->setStopBits(static_cast<QSerialPort::StopBits>(stopBits));
+    port->setFlowControl(static_cast<QSerialPort::FlowControl>(flowControl));
 
-    if (sPort->open(QIODevice::ReadWrite)) {
+    if (port->open(QIODevice::ReadWrite)) {
         trayIcon->showMessage(APPLICATION_NAME,
                               QString(tr("Connected to port")).append(" ").append(portName),
                               QSystemTrayIcon::MessageIcon::Information,
@@ -110,29 +148,33 @@ void MainWindow::openPort()
                               QSystemTrayIcon::MessageIcon::Critical,
                               3000);
     }
-
+#endif
 }
 
 void MainWindow::closePort()
 {
-    if (sPort->isOpen())
-        sPort->close();
-
     pbtnConnect->setEnabled(true);
     pbtnDisconnect->setEnabled(false);
     frmButtons->setEnabled(false);
 
+#ifdef BLUETOOTH
+    port->disconnectFromService();
+#else
+    if (port->isOpen())
+        port->close();
+
     trayIcon->setIcon(QIcon(":/icons/res/22_off.png"));
     this->setWindowIcon(QIcon(":/icons/res/48_off.png"));
+#endif
 }
 
 void MainWindow::sendRC()
 {
     QString cmd = sender()->property("RC").toString();
+    cmd.prepend("RC ").append("\r\n");
 
-    if (!cmd.isEmpty() && sPort->isOpen()) {
-        cmd.prepend("RC ").append("\r\n");
-        sPort->write(cmd.toLocal8Bit());
+    if (!cmd.isEmpty() && port->isOpen()) {
+        port->write(cmd.toLocal8Bit());
     }
 }
 
@@ -154,9 +196,11 @@ void MainWindow::changeVolume(int value)
     }
 
     cmd.prepend("RC ").append("\r\n");
-    sPort->write(cmd.toLocal8Bit());
+    port->write(cmd.toLocal8Bit());
 }
 
+#ifdef BLUETOOTH
+#else
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     if(this->isVisible()){
@@ -166,12 +210,24 @@ void MainWindow::closeEvent(QCloseEvent *event)
         qApp->exit();
     }
 }
+#endif
 
 void MainWindow::openSettings()
 {
+#ifndef BLUETOOTH
     dlgSetup->readSerialPorts();
-    dlgSetup->exec();
+#endif
+    dlgSetup->showFullScreen();
+//    dlgSetup->exec();
 }
+
+#ifdef BLUETOOTH
+void MainWindow::deviceDiscovered(const QBluetoothDeviceInfo &device)
+{
+    dlgSetup->addDevice(device);
+    openPort();
+}
+#else
 
 void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
 {
@@ -185,3 +241,4 @@ void MainWindow::iconActivated(QSystemTrayIcon::ActivationReason reason)
         break;
     }
 }
+#endif
