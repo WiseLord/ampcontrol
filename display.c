@@ -159,12 +159,9 @@ void showRadio(uint8_t mode)
     ks0066WriteData('.');
     writeNum(tuner.freq % 100, 2, '0');
 
-    // Stereo indicator
+    // Mono/stereo indicator ('M'/'S')
     ks0066SetXY(10, 0);
-    if (tunerStereo())
-        ks0066WriteData('S');
-    else
-        ks0066WriteData('M');
+    ks0066WriteData('M' + tunerStereo() ? 5 : 0);
 
     // Signal level
     // Temporary disabled
