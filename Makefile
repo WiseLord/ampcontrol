@@ -13,6 +13,8 @@ F_CPU = 16000000L
 SRCS = main.c
 SRCS += input.c actions.c i2c.c rtc.c alarm.c remote.c fft.c adc.c
 
+DEFINES = -D_$(MCU)
+
 # Display source files
 FONTS_SRC = $(wildcard display/font*.c)
 ICONS_SRC = $(wildcard display/icon*.c)
@@ -30,7 +32,7 @@ else
   SRCS += display/gdfb.c display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
 endif
 SRCS += display.c
-DEFINES = -D_$(DISPLAY)
+DEFINES += -D_$(DISPLAY)
 
 # Audio source files
 SRCS += audio/audio.c
