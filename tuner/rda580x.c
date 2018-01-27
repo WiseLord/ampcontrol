@@ -67,7 +67,7 @@ void rda580xSetFreq(void)
 
     // Freq in grid
     chan = (tuner.freq - fMin) / RDA5807_CHAN_SPACING;
-    wrBuf[2] = chan >> 2;                               /* 8 MSB */
+    wrBuf[2] = chan >> 2;                               // 8 MSB
     wrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | band | RDA580X_SPACE_50;
 
     rda580xWriteReg(3);
@@ -93,11 +93,11 @@ uint8_t *rda580xReadStatus(void)
     // Get RDS data
 #ifdef _RDS
     if (tuner.rds) {
-        /* If RDS ready and sync flag are set */
+        // If RDS ready and sync flag are set
         if ((rdBuf[0] & RDA5807_RDSR) && (rdBuf[0] & RDA5807_RDSS)) {
-            /* If there are no errors in blocks A and B */
+            // If there are no errors in blocks A and B
             if (!(rdBuf[3] & (RDA5807_BLERA | RDA5807_BLERB))) {
-                /* Send rdBuf[4..11] as 16-bit blocks A-D */
+                // Send rdBuf[4..11] as 16-bit blocks A-D
                 rdsSetBlocks(&rdBuf[4]);
             }
         }

@@ -31,7 +31,7 @@ public:
 protected:
 #ifdef BLUETOOTH
 #else
-    void closeEvent(QCloseEvent * event);
+    void closeEvent(QCloseEvent *event);
 #endif
 
 private:

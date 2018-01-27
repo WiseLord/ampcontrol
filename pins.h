@@ -44,7 +44,7 @@
 #define DISP_BCKL           C
 #define DISP_BCKL_LINE      (1<<7)
 #elif defined(_atmega328p)
-/* Display data port*/
+// Display data port
 #define DISP_D0             D
 #define DISP_D0_LINE        (1<<6)
 #define DISP_D1             D
@@ -61,7 +61,7 @@
 #define DISP_D6_LINE        (1<<4)
 #define DISP_D7             B
 #define DISP_D7_LINE        (1<<5)
-/* Display control port*/
+// Display control port
 #define DISP_DATA           C
 #define DISP_DATA_LINE      (1<<1)
 #define DISP_RW             C
@@ -74,7 +74,7 @@
 #define DISP_CTRL2_LINE     (1<<3)
 #define DISP_RESET          C
 #define DISP_RESET_LINE     (1<<1)
-/* Display backlight port */
+// Display backlight port
 #define DISP_BCKL           D
 #define DISP_BCKL_LINE      (1<<5)
 #endif

@@ -18,4 +18,4 @@ void setTempTH(int8_t temp);
 int8_t getTempTH(void);
 void changeTempTH(int8_t diff);
 
-#endif /* TEMP_H */
+#endif // TEMP_H

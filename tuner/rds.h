@@ -3,7 +3,7 @@
 
 #include <inttypes.h>
 
-#define RDS_FLAG_INIT	50
+#define RDS_FLAG_INIT   50
 
 char *rdsGetText(void);
 void rdsSetBlocks(uint8_t *rdsBlock);

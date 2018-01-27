@@ -10,165 +10,165 @@ const static RTC_type rtcMax PROGMEM = {23, 59, 0, 31, 12, 99, RTC_NOEDIT};
 
 static uint8_t rtcDaysInMonth(void)
 {
-	uint8_t ret = rtc.month;
+    uint8_t ret = rtc.month;
 
-	if (ret == 2) {
-		ret = rtc.year & 0x03;
-		ret = (ret ? 28 : 29);
-	} else {
-		if (ret > 7)
-			ret++;
-		ret |= 30;
-	}
+    if (ret == 2) {
+        ret = rtc.year & 0x03;
+        ret = (ret ? 28 : 29);
+    } else {
+        if (ret > 7)
+            ret++;
+        ret |= 30;
+    }
 
-	return ret;
+    return ret;
 }
 
 int8_t rtcWeekDay(void)
 {
-	uint8_t a, y, m;
-	int8_t ret;
+    uint8_t a, y, m;
+    int8_t ret;
 
-	a = (rtc.month > 2 ? 0 : 1);
-	y = 12 + rtc.year - a;
-	m = rtc.month + 12 * a - 2;
+    a = (rtc.month > 2 ? 0 : 1);
+    y = 12 + rtc.year - a;
+    m = rtc.month + 12 * a - 2;
 
-	ret = (rtc.date + y + (y / 4) + ((31 * m) / 12)) % 7;
-	if (ret == 0)
-		ret = 7;
+    ret = (rtc.date + y + (y / 4) + ((31 * m) / 12)) % 7;
+    if (ret == 0)
+        ret = 7;
 
-	return ret;
+    return ret;
 }
 
 void rtcReadTime(void)
 {
-	I2CStart(RTC_I2C_ADDR);
+    I2CStart(RTC_I2C_ADDR);
 #ifdef RTC_PCF8563
-	I2CWriteByte(PCF8563_SEC);
+    I2CWriteByte(PCF8563_SEC);
 #else
-	I2CWriteByte(DS1307_SEC);
+    I2CWriteByte(DS1307_SEC);
 #endif
 
-	I2CStart(RTC_I2C_ADDR | I2C_READ);
+    I2CStart(RTC_I2C_ADDR | I2C_READ);
 
-	rtc.sec = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x7F);
-	rtc.min = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x7F);
-	rtc.hour = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
+    rtc.sec = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x7F);
+    rtc.min = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x7F);
+    rtc.hour = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
 #ifdef RTC_PCF8563
-	rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
-	/* weekday */ I2CReadByte(I2C_ACK);
+    rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
+    // weekday  I2CReadByte(I2C_ACK);
 #else
-	/* weekday */ I2CReadByte(I2C_ACK);
-	rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
+    // weekday  I2CReadByte(I2C_ACK);
+    rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
 #endif
-	rtc.month = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x1F);
-	rtc.year = rtcBinDecToDec(I2CReadByte(I2C_NOACK) & 0xFF);
+    rtc.month = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x1F);
+    rtc.year = rtcBinDecToDec(I2CReadByte(I2C_NOACK) & 0xFF);
 
-	I2CStop();
+    I2CStop();
 
-	return;
+    return;
 }
 
 static void rtcSaveTime(void)
 {
-	uint8_t etm = rtc.etm;
+    uint8_t etm = rtc.etm;
 
-	if (etm >= RTC_DATE)
-		etm = RTC_DATE;
+    if (etm >= RTC_DATE)
+        etm = RTC_DATE;
 
-	I2CStart(RTC_I2C_ADDR);
+    I2CStart(RTC_I2C_ADDR);
 
-	switch (etm) {
-	case RTC_HOUR:
+    switch (etm) {
+    case RTC_HOUR:
 #ifdef RTC_PCF8563
-		I2CWriteByte(PCF8563_HOUR);
+        I2CWriteByte(PCF8563_HOUR);
 #else
-		I2CWriteByte(DS1307_HOUR);
+        I2CWriteByte(DS1307_HOUR);
 #endif
-		I2CWriteByte(rtcDecToBinDec(rtc.hour));
-		break;
-	case RTC_MIN:
+        I2CWriteByte(rtcDecToBinDec(rtc.hour));
+        break;
+    case RTC_MIN:
 #ifdef RTC_PCF8563
-		I2CWriteByte(PCF8563_MIN);
+        I2CWriteByte(PCF8563_MIN);
 #else
-		I2CWriteByte(DS1307_MIN);
+        I2CWriteByte(DS1307_MIN);
 #endif
-		I2CWriteByte(rtcDecToBinDec(rtc.min));
-		break;
-	case RTC_SEC:
+        I2CWriteByte(rtcDecToBinDec(rtc.min));
+        break;
+    case RTC_SEC:
 #ifdef RTC_PCF8563
-		I2CWriteByte(PCF8563_SEC);
+        I2CWriteByte(PCF8563_SEC);
 #else
-		I2CWriteByte(DS1307_SEC);
+        I2CWriteByte(DS1307_SEC);
 #endif
-		I2CWriteByte(rtcDecToBinDec(rtc.sec));
-		break;
-	case RTC_DATE:
-	case RTC_MONTH:
-	case RTC_YEAR:
+        I2CWriteByte(rtcDecToBinDec(rtc.sec));
+        break;
+    case RTC_DATE:
+    case RTC_MONTH:
+    case RTC_YEAR:
 #ifdef RTC_PCF8563
-		I2CWriteByte(PCF8563_DATE);
-		I2CWriteByte(rtcDecToBinDec(rtc.date));
-		I2CWriteByte(rtcDecToBinDec(rtcWeekDay()));
+        I2CWriteByte(PCF8563_DATE);
+        I2CWriteByte(rtcDecToBinDec(rtc.date));
+        I2CWriteByte(rtcDecToBinDec(rtcWeekDay()));
 #else
-		I2CWriteByte(DS1307_WDAY);
-		I2CWriteByte(rtcDecToBinDec(rtcWeekDay()));
-		I2CWriteByte(rtcDecToBinDec(rtc.date));
+        I2CWriteByte(DS1307_WDAY);
+        I2CWriteByte(rtcDecToBinDec(rtcWeekDay()));
+        I2CWriteByte(rtcDecToBinDec(rtc.date));
 #endif
-		I2CWriteByte(rtcDecToBinDec(rtc.month));
-		I2CWriteByte(rtcDecToBinDec(rtc.year));
-		break;
-	default:
-		break;
-	}
+        I2CWriteByte(rtcDecToBinDec(rtc.month));
+        I2CWriteByte(rtcDecToBinDec(rtc.year));
+        break;
+    default:
+        break;
+    }
 
-	I2CStop();
+    I2CStop();
 
-	return;
+    return;
 }
 
 void rtcNextEditParam(void)
 {
-	if (++rtc.etm >= RTC_NOEDIT)
-		rtc.etm = RTC_HOUR;
+    if (++rtc.etm >= RTC_NOEDIT)
+        rtc.etm = RTC_HOUR;
 
-	return;
+    return;
 }
 
 void rtcChangeTime(int8_t diff)
 {
-	uint8_t etm = rtc.etm;
+    uint8_t etm = rtc.etm;
 
-	if (etm >= RTC_NOEDIT)
-		return;
+    if (etm >= RTC_NOEDIT)
+        return;
 
-	int8_t *time = (int8_t*)&rtc + etm;
-	int8_t timeMax = pgm_read_byte((int8_t*)&rtcMax + etm);
-	int8_t timeMin = pgm_read_byte((int8_t*)&rtcMin + etm);
+    int8_t *time = (int8_t *)&rtc + etm;
+    int8_t timeMax = pgm_read_byte((int8_t *)&rtcMax + etm);
+    int8_t timeMin = pgm_read_byte((int8_t *)&rtcMin + etm);
 
-	if (etm == RTC_DATE)
-		timeMax = rtcDaysInMonth();
+    if (etm == RTC_DATE)
+        timeMax = rtcDaysInMonth();
 
-	*time += diff;
+    *time += diff;
 
-	if (*time > timeMax)
-		*time = timeMin;
-	if (*time < timeMin)
-		*time = timeMax;
+    if (*time > timeMax)
+        *time = timeMin;
+    if (*time < timeMin)
+        *time = timeMax;
 
-	rtcSaveTime();
+    rtcSaveTime();
 
-	return;
+    return;
 }
 
 
 uint8_t rtcBinDecToDec(uint8_t num)
 {
-	return (num >> 4) * 10 + (num & 0x0F);
+    return (num >> 4) * 10 + (num & 0x0F);
 }
 
 
 uint8_t rtcDecToBinDec(uint8_t num)
 {
-	return ((num / 10) << 4) + (num % 10);
+    return ((num / 10) << 4) + (num % 10);
 }
