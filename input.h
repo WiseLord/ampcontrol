@@ -4,19 +4,20 @@
 #include <inttypes.h>
 #include "pins.h"
 
-#define ENC_0                   0b00
-#define ENC_A                   0b01
-#define ENC_B                   0b10
-#define ENC_AB                  0b11
+#define BTN_NO                  0x00
+#define BTN_D0                  0x01
+#define BTN_D1                  0x02
+#define BTN_D2                  0x04
+#define BTN_D3                  0x08
+#define BTN_D4                  0x10
+#define BTN_D5                  0x20
+#define BTN_D6                  0x40
+#define BTN_D7                  0x80
 
-#define BTN_STATE_0             0b00000
-#define BTN_1                   0b10000
-#define BTN_2                   0b01000
-#define BTN_3                   0b00100
-#define BTN_4                   0b00010
-#define BTN_5                   0b00001
-#define BTN_12                  0b11000
-#define BTN_13                  0b10100
+#define ENC_NO                  0x00
+#define ENC_A                   BTN_D6
+#define ENC_B                   BTN_D7
+#define ENC_AB                  (ENC_A | ENC_B)
 
 typedef enum {
     CMD_RC_STBY,                // STBY

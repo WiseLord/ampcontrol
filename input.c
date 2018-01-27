@@ -11,8 +11,8 @@ static volatile int8_t encCnt = 0;
 static volatile uint8_t cmdBuf = CMD_RC_STBY;
 
 // Previous state
-static volatile uint8_t encPrev = ENC_0;
-static volatile uint8_t btnPrev = BTN_STATE_0;
+static volatile uint8_t encPrev = ENC_NO;
+static volatile uint8_t btnPrev = BTN_NO;
 
 uint16_t dispTimer = 0;
 uint16_t rtcTimer = 0;
@@ -74,57 +74,44 @@ static CmdID rcCmdIndex(uint8_t rcCmd)
     return CMD_RC_END;
 }
 
+static uint8_t getPins()
+{
+    uint8_t pins = BTN_NO;
+
+    if (~PIN(BUTTON_1) & BUTTON_1_LINE)
+        pins |= BTN_D0;
+    if (~PIN(BUTTON_2) & BUTTON_2_LINE)
+        pins |= BTN_D1;
+    if (~PIN(BUTTON_3) & BUTTON_3_LINE)
+        pins |= BTN_D2;
+    if (~PIN(BUTTON_4) & BUTTON_4_LINE)
+        pins |= BTN_D3;
+    if (~PIN(BUTTON_5) & BUTTON_5_LINE)
+        pins |= BTN_D4;
+
+    if (~PIN(ENCODER_A) & ENCODER_A_LINE)
+        pins |= ENC_A;
+    if (~PIN(ENCODER_B) & ENCODER_B_LINE)
+        pins |= ENC_B;
+
+    return pins;
+}
+
 ISR (TIMER2_COMP_vect)
 {
     static int16_t btnCnt = 0;      // Buttons press duration value
 
     // Current state
-    uint8_t encNow = ENC_0;
-    uint8_t btnNow = BTN_STATE_0;
-
-    if (~PIN(ENCODER_A) & ENCODER_A_LINE)
-        encNow |= ENC_A;
-    if (~PIN(ENCODER_B) & ENCODER_B_LINE)
-        encNow |= ENC_B;
-
-    if (~PIN(BUTTON_1) & BUTTON_1_LINE)
-        btnNow |= BTN_1;
-    if (~PIN(BUTTON_2) & BUTTON_2_LINE)
-        btnNow |= BTN_2;
-    if (~PIN(BUTTON_3) & BUTTON_3_LINE)
-        btnNow |= BTN_3;
-    if (~PIN(BUTTON_4) & BUTTON_4_LINE)
-        btnNow |= BTN_4;
-    if (~PIN(BUTTON_5) & BUTTON_5_LINE)
-        btnNow |= BTN_5;
+    uint8_t btnNow = getPins();
+    uint8_t encNow = btnNow & ENC_AB;
+    btnNow &= ~ENC_AB;
 
     // If encoder event has happened, inc/dec encoder counter
-    switch (encNow) {
-    case ENC_AB:
+    if (encNow == ENC_AB) {
         if (encPrev == ENC_B)
             encCnt++;
         if (encPrev == ENC_A)
             encCnt--;
-        break;
-        /*  case ENC_A:
-                if (encPrev == ENC_AB)
-                    encCnt++;
-                if (encPrev == ENC_0)
-                    encCnt--;
-                break;
-            case ENC_B:
-                if (encPrev == ENC_0)
-                    encCnt++;
-                if (encPrev == ENC_AB)
-                    encCnt++;
-                break;
-            case ENC_0:
-                if (encPrev == ENC_A)
-                    encCnt++;
-                if (encPrev == ENC_B)
-                    encCnt++;
-                break;
-        */
     }
     encPrev = encNow;               // Save current encoder state
 
@@ -134,22 +121,22 @@ ISR (TIMER2_COMP_vect)
             btnCnt++;
             if (btnCnt == LONG_PRESS) {
                 switch (btnPrev) {
-                case BTN_1:
+                case BTN_D0:
                     cmdBuf = CMD_BTN_1_LONG;
                     break;
-                case BTN_2:
+                case BTN_D1:
                     cmdBuf = CMD_BTN_2_LONG;
                     break;
-                case BTN_3:
+                case BTN_D2:
                     cmdBuf = CMD_BTN_3_LONG;
                     break;
-                case BTN_4:
+                case BTN_D3:
                     cmdBuf = CMD_BTN_4_LONG;
                     break;
-                case BTN_5:
+                case BTN_D4:
                     cmdBuf = CMD_BTN_5_LONG;
                     break;
-                case BTN_12:
+                case BTN_D0 | BTN_D1:
                     cmdBuf = CMD_BTN_12_LONG;
                     break;
                 }
@@ -160,19 +147,19 @@ ISR (TIMER2_COMP_vect)
     } else {
         if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS)) {
             switch (btnPrev) {
-            case BTN_1:
+            case BTN_D0:
                 cmdBuf = CMD_BTN_1;
                 break;
-            case BTN_2:
+            case BTN_D1:
                 cmdBuf = CMD_BTN_2;
                 break;
-            case BTN_3:
+            case BTN_D2:
                 cmdBuf = CMD_BTN_3;
                 break;
-            case BTN_4:
+            case BTN_D3:
                 cmdBuf = CMD_BTN_4;
                 break;
-            case BTN_5:
+            case BTN_D4:
                 cmdBuf = CMD_BTN_5;
                 break;
             }
