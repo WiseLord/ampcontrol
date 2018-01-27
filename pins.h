@@ -9,6 +9,7 @@
 #define PORT(x)             CONCAT(PORT,x)
 #define PIN(x)              CONCAT(PIN,x)
 
+#if defined(_atmega32)
 // Display data port
 #define DISP_D0             B
 #define DISP_D0_LINE        (1<<0)
@@ -42,7 +43,41 @@
 // Display backlight port
 #define DISP_BCKL           C
 #define DISP_BCKL_LINE      (1<<7)
-
+#elif defined(_atmega328p)
+/* Display data port*/
+#define DISP_D0             D
+#define DISP_D0_LINE        (1<<6)
+#define DISP_D1             D
+#define DISP_D1_LINE        (1<<7)
+#define DISP_D2             B
+#define DISP_D2_LINE        (1<<0)
+#define DISP_D3             B
+#define DISP_D3_LINE        (1<<1)
+#define DISP_D4             B
+#define DISP_D4_LINE        (1<<2)
+#define DISP_D5             B
+#define DISP_D5_LINE        (1<<3)
+#define DISP_D6             B
+#define DISP_D6_LINE        (1<<4)
+#define DISP_D7             B
+#define DISP_D7_LINE        (1<<5)
+/* Display control port*/
+#define DISP_DATA           C
+#define DISP_DATA_LINE      (1<<1)
+#define DISP_RW             C
+#define DISP_RW_LINE        (1<<1)
+#define DISP_STROB          C
+#define DISP_STROB_LINE     (1<<0)
+#define DISP_CTRL1          D
+#define DISP_CTRL1_LINE     (1<<4)
+#define DISP_CTRL2          D
+#define DISP_CTRL2_LINE     (1<<3)
+#define DISP_RESET          C
+#define DISP_RESET_LINE     (1<<1)
+/* Display backlight port */
+#define DISP_BCKL           D
+#define DISP_BCKL_LINE      (1<<5)
+#endif
 
 // KS0066 Data port
 #define KS0066_D0           DISP_D0
@@ -140,25 +175,37 @@
 #define ST7920_BCKL_LINE    DISP_BCKL_LINE
 
 // LS020 display
-#define LS020_DPORT         B
-#define LS020_RS_LINE       (1<<1)
-#define LS020_RES_LINE      (1<<0)
-#define LS020_CS_LINE       (1<<4) // Hardware !SS
-#define LS020_CLK_LINE      (1<<7) // Hardware SCK
-#define LS020_DAT_LINE      (1<<5) // Hardware MOSI
+#define LS020_DPORT         DISP_D0
+#define LS020_RS_LINE       DISP_D1_LINE
+#define LS020_RES_LINE      DISP_D0_LINE
+#define LS020_CS_LINE       DISP_D4_LINE // Hardware !SS
+#define LS020_CLK_LINE      DISP_D7_LINE // Hardware SCK
+#define LS020_DAT_LINE      DISP_D5_LINE // Hardware MOSI
 // LS020 Backlight port
-#define LS020_BCKL          C
-#define LS020_BCKL_LINE     (1<<7)
+#define LS020_BCKL          DISP_BCKL
+#define LS020_BCKL_LINE     DISP_BCKL_LINE
 
 // Remote control definitions
+#if defined(_atmega32)
 #define RC                  D
-#define RC_LINE         (1<<3)
+#define RC_LINE             (1<<3)
+#elif defined(_atmega328p)
+#define RC                  D
+#define RC_LINE             (1<<2)
+#endif
 
 // Standby/Mute port definitions
+#if defined(_atmega32)
 #define STMU_MUTE           C
 #define STMU_MUTE_LINE      (1<<5)
 #define STMU_STBY           C
 #define STMU_STBY_LINE      (1<<6)
+#elif defined(_atmega328p)
+#define STMU_MUTE           C
+#define STMU_MUTE_LINE      (1<<2)
+#define STMU_STBY           C
+#define STMU_STBY_LINE      (1<<3)
+#endif
 
 // Encoder definitions
 #define ENCODER_A           D
@@ -211,7 +258,7 @@ enum {
 #define SPISW_CE            EXT_2
 #define SPISW_CE_LINE       EXT_2_LINE
 
-// ST7920 port
+// SSD1306 port
 #define SSD1306_SCK         DISP_STROB
 #define SSD1306_SCK_LINE    DISP_STROB_LINE
 #define SSD1306_SDA         DISP_DATA
