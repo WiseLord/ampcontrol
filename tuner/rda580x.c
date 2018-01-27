@@ -42,7 +42,9 @@ static void rda580xWriteReg(uint8_t reg)
 void rda580xInit(void)
 {
     rda580xSetMono(tuner.mono);
+#ifdef _RDS
     rda580xSetRds(tuner.rds);
+#endif
     if (tuner.ic == TUNER_RDA5807_DF) {
         wrBuf[11] |= RDA5807_FREQ_MODE;
         rda580xWriteReg(7);
@@ -155,11 +157,10 @@ void rda580xSetMono(uint8_t value)
     rda580xWriteReg(2);
 }
 
+#ifdef _RDS
 void rda580xSetRds(uint8_t value)
 {
-#ifdef _RDS
     rdsDisable();
-#endif
 
     if (value)
         wrBuf[1] |= RDA5807_RDS_EN;
@@ -168,7 +169,7 @@ void rda580xSetRds(uint8_t value)
 
     rda580xWriteReg(2);
 }
-
+#endif
 
 void rda580xSetPower(uint8_t value)
 {

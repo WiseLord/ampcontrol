@@ -201,8 +201,9 @@ void rda580xSetMute(uint8_t value);
 void rda580xSetBass(uint8_t value);
 
 void rda580xSetMono(uint8_t value);
+#ifdef _RDS
 void rda580xSetRds(uint8_t value);
-
+#endif
 void rda580xSetPower(uint8_t value);
 
 void rda580xSeek(int8_t direction);

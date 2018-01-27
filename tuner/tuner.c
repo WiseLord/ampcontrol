@@ -194,6 +194,7 @@ void tunerSetMono(uint8_t value)
     return;
 }
 
+#ifdef _RDS
 void tunerSetRDS(uint8_t value)
 {
     tuner.rds = value;
@@ -210,6 +211,7 @@ void tunerSetRDS(uint8_t value)
         break;
     }
 }
+#endif
 
 uint8_t tunerStereo(void)
 {

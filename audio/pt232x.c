@@ -52,33 +52,34 @@ void pt2322SetBMT(void)
 
 void pt2322SetSpeakers(void)
 {
-    uint8_t i;
-    int8_t sp[PT2322_CH_END] = {0, 0, 0, 0, 0, 0};
+    int8_t spFrontLeft = 0;
+    int8_t spFrontRight = 0;
+    int8_t spRearLeft = 0;
+    int8_t spRearRight = 0;
 
     if (sndPar[MODE_SND_BALANCE].value > 0) {
-        sp[PT2322_CH_FL] += sndPar[MODE_SND_BALANCE].value;
-        sp[PT2322_CH_RL] += sndPar[MODE_SND_BALANCE].value;
+        spFrontLeft += sndPar[MODE_SND_BALANCE].value;
+        spRearLeft += sndPar[MODE_SND_BALANCE].value;
     } else {
-        sp[PT2322_CH_FR] -= sndPar[MODE_SND_BALANCE].value;
-        sp[PT2322_CH_RR] -= sndPar[MODE_SND_BALANCE].value;
+        spFrontRight -= sndPar[MODE_SND_BALANCE].value;
+        spRearRight -= sndPar[MODE_SND_BALANCE].value;
     }
 
     if (sndPar[MODE_SND_FRONTREAR].value > 0) {
-        sp[PT2322_CH_RL] += sndPar[MODE_SND_FRONTREAR].value;
-        sp[PT2322_CH_RR] += sndPar[MODE_SND_FRONTREAR].value;
+        spRearLeft += sndPar[MODE_SND_FRONTREAR].value;
+        spRearRight += sndPar[MODE_SND_FRONTREAR].value;
     } else {
-        sp[PT2322_CH_FL] -= sndPar[MODE_SND_FRONTREAR].value;
-        sp[PT2322_CH_FR] -= sndPar[MODE_SND_FRONTREAR].value;
+        spFrontLeft -= sndPar[MODE_SND_FRONTREAR].value;
+        spFrontRight -= sndPar[MODE_SND_FRONTREAR].value;
     }
-
-    sp[PT2322_CH_CT] = -sndPar[MODE_SND_CENTER].value;
-    sp[PT2322_CH_SB] = -sndPar[MODE_SND_SUBWOOFER].value;
 
     I2CStart(PT2322_I2C_ADDR);
-    for (i = 0; i < PT2322_CH_END; i++) {
-        // PT2322_TRIM_XX
-        I2CWriteByte(((i + 1) << 4) | sp[i]);
-    }
+    I2CWriteByte(PT2322_TRIM_FL | spFrontLeft);
+    I2CWriteByte(PT2322_TRIM_FR | spFrontRight);
+    I2CWriteByte(PT2322_TRIM_CT | -sndPar[MODE_SND_CENTER].value);
+    I2CWriteByte(PT2322_TRIM_RL | spRearLeft);
+    I2CWriteByte(PT2322_TRIM_RR | spRearRight);
+    I2CWriteByte(PT2322_TRIM_SB | -sndPar[MODE_SND_SUBWOOFER].value);
     I2CStop();
 
     return;
