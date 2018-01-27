@@ -4,42 +4,42 @@
 #include <inttypes.h>
 
 typedef enum {
-	TUNER_NO = 0,
-	TUNER_TEA5767,
-	TUNER_RDA5807,
-	TUNER_TUX032,
-	TUNER_LM7001,
-	TUNER_RDA5802,
-	TUNER_RDA5807_DF,
-	TUNER_LC72131,
+    TUNER_NO = 0,
+    TUNER_TEA5767,
+    TUNER_RDA5807,
+    TUNER_TUX032,
+    TUNER_LM7001,
+    TUNER_RDA5802,
+    TUNER_RDA5807_DF,
+    TUNER_LC72131,
 
-	TUNER_END
+    TUNER_END
 } tunerIC;
 
 typedef struct {
-	tunerIC ic;
-	uint8_t ctrl;
-	uint8_t step1;
-	uint8_t step2;
-	uint16_t fMin;
-	uint16_t fMax;
-	uint16_t freq;
-	uint8_t mono;
-	uint8_t rds;
-	int8_t volume;
-	uint8_t mute;
-	uint8_t bass;
+    tunerIC ic;
+    uint8_t ctrl;
+    uint8_t step1;
+    uint8_t step2;
+    uint16_t fMin;
+    uint16_t fMax;
+    uint16_t freq;
+    uint8_t mono;
+    uint8_t rds;
+    int8_t volume;
+    uint8_t mute;
+    uint8_t bass;
 } Tuner_type;
 
 extern Tuner_type tuner;
 
-#define FM_BAND_DIV_FREQ	7600
+#define FM_BAND_DIV_FREQ    7600
 
-#define FM_COUNT			62
-#define FM_FAV_COUNT		10
+#define FM_COUNT            62
+#define FM_FAV_COUNT        10
 
-#define SEARCH_UP			1
-#define SEARCH_DOWN			-1
+#define SEARCH_UP           1
+#define SEARCH_DOWN         -1
 
 void tunerInit(void);
 
@@ -69,4 +69,6 @@ void tunerSetBass(uint8_t value);
 void tunerPowerOn(void);
 void tunerPowerOff(void);
 
-#endif /* TUNER_H */
+void tunerSeek(int8_t direction);
+
+#endif // TUNER_H

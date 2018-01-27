@@ -3,9 +3,9 @@
 
 #include <inttypes.h>
 
-#define I2C_NOACK	0
-#define I2C_ACK		1
-#define I2C_READ	1
+#define I2C_NOACK   0
+#define I2C_ACK     1
+#define I2C_READ    1
 
 void I2CInit(void);
 

@@ -6,77 +6,77 @@
 
 void tda7439SetSpeakers(void)
 {
-	int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
-	int8_t spRight = sndPar[MODE_SND_VOLUME].value;
-	int8_t volMin = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
+    int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
+    int8_t spRight = sndPar[MODE_SND_VOLUME].value;
+    int8_t volMin = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
 
-	if (sndPar[MODE_SND_BALANCE].value > 0) {
-		spLeft -= sndPar[MODE_SND_BALANCE].value;
-		if (spLeft < volMin)
-			spLeft = volMin;
-	} else {
-		spRight += sndPar[MODE_SND_BALANCE].value;
-		if (spRight < volMin)
-			spRight = volMin;
-	}
+    if (sndPar[MODE_SND_BALANCE].value > 0) {
+        spLeft -= sndPar[MODE_SND_BALANCE].value;
+        if (spLeft < volMin)
+            spLeft = volMin;
+    } else {
+        spRight += sndPar[MODE_SND_BALANCE].value;
+        if (spRight < volMin)
+            spRight = volMin;
+    }
 
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
-	I2CWriteByte(-spRight);
-	I2CWriteByte(-spLeft);
-	I2CStop();
+    I2CStart(TDA7439_I2C_ADDR);
+    I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
+    I2CWriteByte(-spRight);
+    I2CWriteByte(-spLeft);
+    I2CStop();
 
-	return;
+    return;
 }
 
 void tda7439SetBMT(void)
 {
-	int8_t val;
-	uint8_t mode;
+    int8_t val;
+    uint8_t mode;
 
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_BASS | TDA7439_AUTO_INC);
-	for (mode = MODE_SND_BASS; mode <= MODE_SND_TREBLE; mode++) {
-		val = sndPar[mode].value;
-		I2CWriteByte(val > 0 ? 15 - val : 7 + val);
-	}
-	I2CStop();
+    I2CStart(TDA7439_I2C_ADDR);
+    I2CWriteByte(TDA7439_BASS | TDA7439_AUTO_INC);
+    for (mode = MODE_SND_BASS; mode <= MODE_SND_TREBLE; mode++) {
+        val = sndPar[mode].value;
+        I2CWriteByte(val > 0 ? 15 - val : 7 + val);
+    }
+    I2CStop();
 
-	return;
+    return;
 }
 
 void tda7439SetPreamp(void)
 {
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_PREAMP);
-	I2CWriteByte(-sndPar[MODE_SND_PREAMP].value);
-	I2CStop();
+    I2CStart(TDA7439_I2C_ADDR);
+    I2CWriteByte(TDA7439_PREAMP);
+    I2CWriteByte(-sndPar[MODE_SND_PREAMP].value);
+    I2CStop();
 
-	return;
+    return;
 }
 
 void tda7439SetInput(void)
 {
-	I2CStart(TDA7439_I2C_ADDR);
-	I2CWriteByte(TDA7439_INPUT_SELECT | TDA7439_AUTO_INC);
-	I2CWriteByte(TDA7439_IN_CNT - 1 - aproc.input);
-	I2CWriteByte(sndPar[MODE_SND_GAIN0 + aproc.input].value);
-	I2CStop();
+    I2CStart(TDA7439_I2C_ADDR);
+    I2CWriteByte(TDA7439_INPUT_SELECT | TDA7439_AUTO_INC);
+    I2CWriteByte(TDA7439_IN_CNT - 1 - aproc.input);
+    I2CWriteByte(sndPar[MODE_SND_GAIN0 + aproc.input].value);
+    I2CStop();
 
-	return;
+    return;
 }
 
 void tda7439SetMute(void)
 {
-	if (aproc.mute) {
-		I2CStart(TDA7439_I2C_ADDR);
-		I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
-		I2CWriteByte(TDA7439_SPEAKER_MUTE);
-		I2CWriteByte(TDA7439_SPEAKER_MUTE);
-		I2CStop();
-	} else {
-		tda7439SetSpeakers();
-	}
+    if (aproc.mute) {
+        I2CStart(TDA7439_I2C_ADDR);
+        I2CWriteByte(TDA7439_VOLUME_RIGHT | TDA7439_AUTO_INC);
+        I2CWriteByte(TDA7439_SPEAKER_MUTE);
+        I2CWriteByte(TDA7439_SPEAKER_MUTE);
+        I2CStop();
+    } else {
+        tda7439SetSpeakers();
+    }
 
-	return;
+    return;
 }

@@ -7,51 +7,51 @@
 
 static void pga2310SendGainLevels(uint8_t right, uint8_t left)
 {
-	PORT(SPISW_CE) &= ~SPISW_CE_LINE;
-	SPIswSendByte(right << 1);
-	SPIswSendByte(left << 1);
-	PORT(SPISW_CE) |= SPISW_CE_LINE;
+    PORT(SPISW_CE) &= ~SPISW_CE_LINE;
+    SPIswSendByte(right << 1);
+    SPIswSendByte(left << 1);
+    PORT(SPISW_CE) |= SPISW_CE_LINE;
 
-	return;
+    return;
 }
 
 void pga2310Init(void)
 {
-	SPIswInit(SPISW_DORD_MSB_FIRST);
+    SPIswInit(SPISW_DORD_MSB_FIRST);
 
-	PORT(SPISW_CE) |= SPISW_CE_LINE;
+    PORT(SPISW_CE) |= SPISW_CE_LINE;
 
-	return;
+    return;
 }
 
 void pga2310SetSpeakers(void)
 {
-	int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
-	int8_t spRight = sndPar[MODE_SND_VOLUME].value;
-	int8_t volMin = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
+    int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
+    int8_t spRight = sndPar[MODE_SND_VOLUME].value;
+    int8_t volMin = pgm_read_byte(&sndPar[MODE_SND_VOLUME].grid->min);
 
-	if (sndPar[MODE_SND_BALANCE].value > 0) {
-		spLeft -= sndPar[MODE_SND_BALANCE].value;
-		if (spLeft < volMin)
-			spLeft = volMin;
-	} else {
-		spRight += sndPar[MODE_SND_BALANCE].value;
-		if (spRight < volMin)
-			spRight = volMin;
-	}
+    if (sndPar[MODE_SND_BALANCE].value > 0) {
+        spLeft -= sndPar[MODE_SND_BALANCE].value;
+        if (spLeft < volMin)
+            spLeft = volMin;
+    } else {
+        spRight += sndPar[MODE_SND_BALANCE].value;
+        if (spRight < volMin)
+            spRight = volMin;
+    }
 
-	pga2310SendGainLevels(96 + spRight, 96 + spLeft);
+    pga2310SendGainLevels(96 + spRight, 96 + spLeft);
 
-	return;
+    return;
 }
 
 void pga2310SetMute(void)
 {
-	if (aproc.mute) {
-		pga2310SendGainLevels(PGA2310_MUTE, PGA2310_MUTE);
-	} else {
-		pga2310SetSpeakers();
-	}
+    if (aproc.mute) {
+        pga2310SendGainLevels(PGA2310_MUTE, PGA2310_MUTE);
+    } else {
+        pga2310SetSpeakers();
+    }
 
-	return;
+    return;
 }

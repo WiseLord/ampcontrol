@@ -25,8 +25,6 @@ else ifeq ($(AUDIOPROC), TEA63X0)
   AUDIO_SRC += audio/tea63x0.c
 else ifeq ($(AUDIOPROC), PGA2310)
   AUDIO_SRC += audio/pga2310.c
-else ifeq ($(AUDIOPROC), RDA580X_AUDIO)
-  AUDIO_SRC += audio/rda580xaudio.c
 endif
 
 TUNER_SRC = tuner/tuner.c
