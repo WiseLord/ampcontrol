@@ -125,9 +125,11 @@ uint8_t getAction(void)
 	case CMD_BTN_12_LONG:
 		action = ACTION_TESTMODE;
 		break;
+#ifdef _TEMPCONTROL
 	case CMD_BTN_13_LONG:
 		action = ACTION_TEMPMODE;
 		break;
+#endif
 	default:
 		break;
 	}
