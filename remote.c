@@ -10,7 +10,7 @@ static volatile uint8_t ovfCnt = 250;               // Overflow counter
 
 void rcInit(void)
 {
-    IN(RC);                            // Set PD3 (INT1) to input
+    IN(RC);                                         // Set PD3 (INT1) to input
     TCCR1A = 0;                                     // Reset Timer1 counter
     TCCR1B = (1 << CS11) | (1 << CS10);             // Set Timer1 prescaler to 64 (250kHz)
 #ifdef _atmega32

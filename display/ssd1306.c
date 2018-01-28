@@ -52,19 +52,19 @@ static void _I2CWriteByte(uint8_t data)
     // Data bits
     for (i = 0; i < 8; i++) {
         if (data & 0x80)
-            IN(SSD1306_SDA);  // Pullup SDA = 1
+            IN(SSD1306_SDA);    // Pullup SDA = 1
         else
             OUT(SSD1306_SDA);   // Active SDA = 0
         _delay_us(1);
-        IN(SSD1306_SCK);      // Pullup SCL = 1
+        IN(SSD1306_SCK);        // Pullup SCL = 1
         _delay_us(1);
         OUT(SSD1306_SCK);       // Active SCL = 0
         data <<= 1;
     }
     // ACK bit
-    IN(SSD1306_SDA);          // Pullup SDA = 1
+    IN(SSD1306_SDA);            // Pullup SDA = 1
     _delay_us(1);
-    IN(SSD1306_SCK);          // Pullup SCL = 1
+    IN(SSD1306_SCK);            // Pullup SCL = 1
     _delay_us(1);
     OUT(SSD1306_SCK);           // Active SCL = 0
 
@@ -73,8 +73,8 @@ static void _I2CWriteByte(uint8_t data)
 
 static void _I2CStart(uint8_t addr)
 {
-    IN(SSD1306_SCK);          // Pullup SCL = 1
-    IN(SSD1306_SDA);          // Pullup SDA = 1
+    IN(SSD1306_SCK);            // Pullup SCL = 1
+    IN(SSD1306_SDA);            // Pullup SDA = 1
     _delay_us(1);
     OUT(SSD1306_SDA);           // Active SDA = 0
     _delay_us(1);
@@ -90,9 +90,9 @@ static void _I2CStop(void)
     OUT(SSD1306_SCK);           // Active SCL = 0
     OUT(SSD1306_SDA);           // Active SDA = 0
     _delay_us(1);
-    IN(SSD1306_SCK);          // Pullup SCL = 1
+    IN(SSD1306_SCK);            // Pullup SCL = 1
     _delay_us(1);
-    IN(SSD1306_SDA);          // Pullup SDA = 1
+    IN(SSD1306_SDA);            // Pullup SDA = 1
 
     return;
 }

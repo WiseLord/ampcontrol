@@ -18,11 +18,11 @@
 #define SSD1306_MEMORYMODE_VERTICAL     0x01 // Vertical addressing mode
 #define SSD1306_MEMORYMODE_PAGE         0x02 // Page addressing mode
 
-#define SSD1306_COLUMNADDR              0x21 // (Horisontal or vertical addressing mode) // Select start and end column, followed by 2 bytes
+#define SSD1306_COLUMNADDR              0x21 // (Horisontal or vertical addressing mode) Select start and end column, followed by 2 bytes
 // 0x00..0x7F => Start column
 // 0x00..0x7F => End column
 
-#define SSD1306_PAGEADDR                0x22 // (Horisontal or vertical addressing mode) // Select start and end page, followed by 2 bytes
+#define SSD1306_PAGEADDR                0x22 // (Horisontal or vertical addressing mode) Select start and end page, followed by 2 bytes
 // 0x00..0x07 => Start page
 // 0x00..0x07 => End page
 

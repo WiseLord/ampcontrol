@@ -113,7 +113,7 @@ ISR (TIMER0_OVF_vect)
     static uint8_t br;
 
     if (j == ST7920_PHASE_SET_PAGE) {                       // Phase 1 (Y)
-        CLR(ST7920_RS);                 // Go to command mode
+        CLR(ST7920_RS);                                     // Go to command mode
         if (++i >= ST7920_PHASE_SET_PAGE)
             i = 0;
         st7920SetPort(ST7920_SET_GRAPHIC_RAM | i);          // Set Y
@@ -127,7 +127,7 @@ ISR (TIMER0_OVF_vect)
     }
 
     if (j != ST7920_PHASE_READ_PORT) {
-        SET(ST7920_E);                    // Strob
+        SET(ST7920_E);                                      // Strob
         asm("nop");
         CLR(ST7920_E);
 
@@ -140,16 +140,16 @@ ISR (TIMER0_OVF_vect)
 
     if (++j > ST7920_PHASE_READ_PORT) {
         j = 0;
-        SET(ST7920_RS);                  // Go to data mode
+        SET(ST7920_RS);                                     // Go to data mode
     }
 
     if (++br >= ST7920_MAX_BRIGHTNESS)                      // Loop brightness
         br = ST7920_MIN_BRIGHTNESS;
 
     if (br == _br) {
-        CLR(ST7920_BCKL);             // Turn backlight off
+        CLR(ST7920_BCKL);                                   // Turn backlight off
     } else if (br == 0)
-        SET(ST7920_BCKL);              // Turn backlight on
+        SET(ST7920_BCKL);                                   // Turn backlight on
 
     return;
 }

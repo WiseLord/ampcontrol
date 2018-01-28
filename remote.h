@@ -4,7 +4,7 @@
 #include <inttypes.h>
 
 // Time scale definitions and macroses
-#define RC_TIMER_DIV                4   // 1MHz / 250kHz of Timer 1 => delays in us
+#define RC_TIMER_DIV                4 // 1MHz / 250kHz of Timer 1 => delays in us
 
 #define NEC_DEV_MIN                 0.7
 #define NEC_DEV_MAX                 1.3

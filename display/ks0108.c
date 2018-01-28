@@ -143,7 +143,7 @@ ISR (TIMER0_OVF_vect)
                 break;
             }
         }
-        CLR(KS0108_DI);         // Go to command mode
+        CLR(KS0108_DI);                             // Go to command mode
         ks0108SetPort(KS0108_SET_PAGE + i);
     } else if (j == KS0108_PHASE_SET_ADDR) {        // Phase 2 (X)
         ks0108SetPort(KS0108_SET_ADDRESS);
@@ -155,7 +155,7 @@ ISR (TIMER0_OVF_vect)
     }
 
     if (j != KS0108_PHASE_READ_PORT) {
-        SET(KS0108_E);            // Strob
+        SET(KS0108_E);                              // Strob
         asm("nop");
         CLR(KS0108_E);
 
@@ -168,16 +168,16 @@ ISR (TIMER0_OVF_vect)
 
     if (++j > KS0108_PHASE_READ_PORT) {
         j = 0;
-        SET(KS0108_DI);          // Go to data mode
+        SET(KS0108_DI);                             // Go to data mode
     }
 
     if (++br >= KS0108_MAX_BRIGHTNESS)              // Loop brightness
         br = KS0108_MIN_BRIGHTNESS;
 
     if (br == _br) {
-        CLR(KS0108_BCKL);     // Turn backlight off
+        CLR(KS0108_BCKL);                           // Turn backlight off
     } else if (br == 0)
-        SET(KS0108_BCKL);      // Turn backlight on
+        SET(KS0108_BCKL);                           // Turn backlight on
 
     return;
 }

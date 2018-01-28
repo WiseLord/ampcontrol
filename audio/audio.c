@@ -466,7 +466,7 @@ void sndSwitchExtra(uint8_t extra)
 
 void sndNextParam(uint8_t *mode)
 {
-    do {                    // Skip unused params (with step = 0)
+    do { // Skip unused params (with step = 0)
         (*mode)++;
         if (*mode >= MODE_SND_GAIN0)
             *mode = MODE_SND_VOLUME;

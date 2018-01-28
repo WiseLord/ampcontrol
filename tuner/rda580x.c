@@ -69,7 +69,7 @@ void rda580xSetFreq(void)
 
     // Freq in grid
     chan = (tuner.freq - fMin) / RDA5807_CHAN_SPACING;
-    wrBuf[2] = chan >> 2;                               // 8 MSB
+    wrBuf[2] = chan >> 2; // 8 MSB
     wrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | band | RDA580X_SPACE_50;
 
     rda580xWriteReg(3);

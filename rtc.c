@@ -56,9 +56,9 @@ void rtcReadTime(void)
     rtc.hour = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
 #ifdef RTC_PCF8563
     rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
-    // weekday  I2CReadByte(I2C_ACK);
+    I2CReadByte(I2C_ACK);   // weekday
 #else
-    // weekday  I2CReadByte(I2C_ACK);
+    I2CReadByte(I2C_ACK);   // weekday
     rtc.date = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x3F);
 #endif
     rtc.month = rtcBinDecToDec(I2CReadByte(I2C_ACK) & 0x1F);

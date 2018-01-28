@@ -417,7 +417,7 @@ static void lcdGenAlarm(void)
         0b00000,
 
     };
-    if (userSybmols != LCD_ALARM) {     // Generate alarm symbols
+    if (userSybmols != LCD_ALARM) { // Generate alarm symbols
         userSybmols = LCD_ALARM;
 
         uint8_t i;

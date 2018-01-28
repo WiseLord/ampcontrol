@@ -233,9 +233,9 @@ ISR (TIMER0_OVF_vect)
         br = KS0066_MIN_BRIGHTNESS;
 
     if (br == _br) {
-        CLR(KS0066_BCKL);     // Turn backlight off
+        CLR(KS0066_BCKL);                           // Turn backlight off
     } else if (br == 0)
-        SET(KS0066_BCKL);      // Turn backlight on
+        SET(KS0066_BCKL);                           // Turn backlight on
 
     return;
 }

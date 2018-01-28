@@ -164,9 +164,9 @@ ISR (TIMER0_OVF_vect)
         br = LS020_MIN_BRIGHTNESS;
 
     if (br == _br) {
-        CLR(LS020_BCKL);       // Turn backlight off
+        CLR(LS020_BCKL);                            // Turn backlight off
     } else if (br == 0)
-        SET(LS020_BCKL);        // Turn backlight on
+        SET(LS020_BCKL);                            // Turn backlight on
 }
 
 
