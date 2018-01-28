@@ -8,7 +8,7 @@ void lc72131Init(void)
 {
     SPIswInit(SPISW_DORD_LSB_FIRST);
 
-    PORT(SPISW_CE) &= ~SPISW_CE_LINE;
+    CLR(SPISW_CE);
 
     return;
 }
@@ -20,18 +20,18 @@ void lc72131SetFreq(void)
     div = (tuner.freq + LC72131_IF) / LC72131_RF;
 
     SPIswSendByte(LC72131_IO_IN1);
-    PORT(SPISW_CE) |= SPISW_CE_LINE;
+    SET(SPISW_CE);
     SPIswSendByte(div & 0x00FF);
     SPIswSendByte((div & 0xFF00) >> 8);
     SPIswSendByte(LC72131_CTRL_IN1);
-    PORT(SPISW_CE) &= ~SPISW_CE_LINE;
+    CLR(SPISW_CE);
 
     SPIswSendByte(LC72131_IO_IN2);
-    PORT(SPISW_CE) |= SPISW_CE_LINE;
+    SET(SPISW_CE);
     SPIswSendByte(LC72131_CTRL_IN2_1);
     SPIswSendByte(LC72131_CTRL_IN2_2);
     SPIswSendByte(LC72131_CTRL_IN2_3);
-    PORT(SPISW_CE) &= ~SPISW_CE_LINE;
+    CLR(SPISW_CE);
 
     return;
 }

@@ -11,14 +11,14 @@ static uint8_t ds18x20IsOnBus(void)
 {
     uint8_t ret;
 
-    DDR(ONE_WIRE) |= ONE_WIRE_LINE;                     // Pin as output (0)
-    PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;                   // Set active 0
+    OUT(ONE_WIRE);                     // Pin as output (0)
+    CLR(ONE_WIRE);                   // Set active 0
     _delay_us(480);                                     // Reset
-    DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;                    // Pin as input (1)
-    PORT(ONE_WIRE) |= ONE_WIRE_LINE;                    // Enable pull-up resitor
+    IN(ONE_WIRE);                    // Pin as input (1)
+    SET(ONE_WIRE);                    // Enable pull-up resitor
     _delay_us(70);                                      // Wait for response
 
-    ret = !(PIN(ONE_WIRE) & ONE_WIRE_LINE);
+    ret = !(READ(ONE_WIRE));
 
     _delay_us(410);
 
@@ -27,13 +27,13 @@ static uint8_t ds18x20IsOnBus(void)
 
 static void ds18x20SendBit(uint8_t bit)
 {
-    DDR(ONE_WIRE) |= ONE_WIRE_LINE;                     // Pin as output (0)
-    PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;                   // Set active 0
+    OUT(ONE_WIRE);                     // Pin as output (0)
+    CLR(ONE_WIRE);                   // Set active 0
     _delay_us(5);
     if (!bit)
         _delay_us(50);
-    DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;                    // Pin as input (1)
-    PORT(ONE_WIRE) |= ONE_WIRE_LINE;                    // Enable pull-up resitor
+    IN(ONE_WIRE);                    // Pin as input (1)
+    SET(ONE_WIRE);                    // Enable pull-up resitor
     _delay_us(5);
     if (bit)
         _delay_us(50);
@@ -45,14 +45,14 @@ static uint8_t ds18x20GetBit(void)
 {
     uint8_t ret;
 
-    DDR(ONE_WIRE) |= ONE_WIRE_LINE;                     // Pin as output (0)
-    PORT(ONE_WIRE) &= ~ONE_WIRE_LINE;                   // Set active 0
+    OUT(ONE_WIRE);                     // Pin as output (0)
+    CLR(ONE_WIRE);                   // Set active 0
     _delay_us(5);                                       // Strob
-    DDR(ONE_WIRE) &= ~ONE_WIRE_LINE;                    // Pin as input (1)
-    PORT(ONE_WIRE) |= ONE_WIRE_LINE;                    // Enable pull-up resitor
+    IN(ONE_WIRE);                    // Pin as input (1)
+    SET(ONE_WIRE);                    // Enable pull-up resitor
     _delay_us(5);
 
-    ret = PIN(ONE_WIRE) & ONE_WIRE_LINE;
+    ret = READ(ONE_WIRE);
 
     _delay_us(50);
 
@@ -134,8 +134,8 @@ static void ds18x20ConvertTemp(void)
 
 #ifdef DS18X20_PARASITE_POWER
     // Set active 1 on port for at least 750ms as parasitic power
-    PORT(ONE_WIRE) |= ONE_WIRE_LINE;
-    DDR(ONE_WIRE) |= ONE_WIRE_LINE;
+    SET(ONE_WIRE);
+    OUT(ONE_WIRE);
 #endif
 
     return;

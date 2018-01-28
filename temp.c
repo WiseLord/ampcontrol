@@ -23,11 +23,11 @@ void saveTempParams(void)
 
 void tempInit(void)
 {
-    DDR(FAN1) |= FAN1_WIRE;
-    DDR(FAN2) |= FAN2_WIRE;
+    OUT(FAN1);
+    OUT(FAN2);
 
-    PORT(FAN1) &= ~FAN1_WIRE;
-    PORT(FAN2) &= ~FAN2_WIRE;
+    CLR(FAN1);
+    CLR(FAN2);
 
     return;
 }
@@ -40,14 +40,14 @@ void tempControlProcess(void)
     temp2 = ds18x20GetTemp(1) / 10;
 
     if (temp1 >= tempTH)
-        PORT(FAN1) |= FAN1_WIRE;
+        SET(FAN1);
     else if (temp1 <= tempTH - 5)
-        PORT(FAN1) &= ~FAN1_WIRE;
+        CLR(FAN1);
 
     if (temp2 >= tempTH)
-        PORT(FAN2) |= FAN2_WIRE;
+        SET(FAN2);
     else if (temp2 <= tempTH - 5)
-        PORT(FAN2) &= ~FAN2_WIRE;
+        CLR(FAN2);
 
     return;
 }

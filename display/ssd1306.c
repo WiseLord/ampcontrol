@@ -52,33 +52,33 @@ static void _I2CWriteByte(uint8_t data)
     // Data bits
     for (i = 0; i < 8; i++) {
         if (data & 0x80)
-            DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;  // Pullup SDA = 1
+            IN(SSD1306_SDA);  // Pullup SDA = 1
         else
-            DDR(SSD1306_SDA) |= SSD1306_SDA_LINE;   // Active SDA = 0
+            OUT(SSD1306_SDA);   // Active SDA = 0
         _delay_us(1);
-        DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;      // Pullup SCL = 1
+        IN(SSD1306_SCK);      // Pullup SCL = 1
         _delay_us(1);
-        DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;       // Active SCL = 0
+        OUT(SSD1306_SCK);       // Active SCL = 0
         data <<= 1;
     }
     // ACK bit
-    DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;          // Pullup SDA = 1
+    IN(SSD1306_SDA);          // Pullup SDA = 1
     _delay_us(1);
-    DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;          // Pullup SCL = 1
+    IN(SSD1306_SCK);          // Pullup SCL = 1
     _delay_us(1);
-    DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;           // Active SCL = 0
+    OUT(SSD1306_SCK);           // Active SCL = 0
 
     return;
 }
 
 static void _I2CStart(uint8_t addr)
 {
-    DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;          // Pullup SCL = 1
-    DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;          // Pullup SDA = 1
+    IN(SSD1306_SCK);          // Pullup SCL = 1
+    IN(SSD1306_SDA);          // Pullup SDA = 1
     _delay_us(1);
-    DDR(SSD1306_SDA) |= SSD1306_SDA_LINE;           // Active SDA = 0
+    OUT(SSD1306_SDA);           // Active SDA = 0
     _delay_us(1);
-    DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;           // Active SCL = 0
+    OUT(SSD1306_SCK);           // Active SCL = 0
 
     _I2CWriteByte(addr);
 
@@ -87,12 +87,12 @@ static void _I2CStart(uint8_t addr)
 
 static void _I2CStop(void)
 {
-    DDR(SSD1306_SCK) |= SSD1306_SCK_LINE;           // Active SCL = 0
-    DDR(SSD1306_SDA) |= SSD1306_SDA_LINE;           // Active SDA = 0
+    OUT(SSD1306_SCK);           // Active SCL = 0
+    OUT(SSD1306_SDA);           // Active SDA = 0
     _delay_us(1);
-    DDR(SSD1306_SCK) &= ~SSD1306_SCK_LINE;          // Pullup SCL = 1
+    IN(SSD1306_SCK);          // Pullup SCL = 1
     _delay_us(1);
-    DDR(SSD1306_SDA) &= ~SSD1306_SDA_LINE;          // Pullup SDA = 1
+    IN(SSD1306_SDA);          // Pullup SDA = 1
 
     return;
 }
@@ -107,23 +107,23 @@ static void ssd1306SendCmd(uint8_t cmd)
 static void ssd1306SetDdrIn(void)
 {
     // Set ports as inputs
-    DDR(DISP_D0) &= ~DISP_D0_LINE;
-    DDR(DISP_D1) &= ~DISP_D1_LINE;
-    DDR(DISP_D2) &= ~DISP_D2_LINE;
-    DDR(DISP_D3) &= ~DISP_D3_LINE;
-    DDR(DISP_D4) &= ~DISP_D4_LINE;
-    DDR(DISP_D5) &= ~DISP_D5_LINE;
-    DDR(DISP_D6) &= ~DISP_D6_LINE;
-    DDR(DISP_D7) &= ~DISP_D7_LINE;
+    IN(DISP_D0);
+    IN(DISP_D1);
+    IN(DISP_D2);
+    IN(DISP_D3);
+    IN(DISP_D4);
+    IN(DISP_D5);
+    IN(DISP_D6);
+    IN(DISP_D7);
     // Add pullup resistors
-    PORT(DISP_D0) |= DISP_D0_LINE;
-    PORT(DISP_D1) |= DISP_D1_LINE;
-    PORT(DISP_D2) |= DISP_D2_LINE;
-    PORT(DISP_D3) |= DISP_D3_LINE;
-    PORT(DISP_D4) |= DISP_D4_LINE;
-    PORT(DISP_D5) |= DISP_D5_LINE;
-    PORT(DISP_D6) |= DISP_D6_LINE;
-    PORT(DISP_D7) |= DISP_D7_LINE;
+    SET(DISP_D0);
+    SET(DISP_D1);
+    SET(DISP_D2);
+    SET(DISP_D3);
+    SET(DISP_D4);
+    SET(DISP_D5);
+    SET(DISP_D6);
+    SET(DISP_D7);
 
     return;
 }
@@ -132,14 +132,14 @@ uint8_t ssd1306GetPins(void)
 {
     uint8_t ret = 0x00;
 
-    if (PIN(DISP_D0) & DISP_D0_LINE) ret |= (1 << 0);
-    if (PIN(DISP_D1) & DISP_D1_LINE) ret |= (1 << 1);
-    if (PIN(DISP_D2) & DISP_D2_LINE) ret |= (1 << 2);
-    if (PIN(DISP_D3) & DISP_D3_LINE) ret |= (1 << 3);
-    if (PIN(DISP_D4) & DISP_D4_LINE) ret |= (1 << 4);
-    if (PIN(DISP_D5) & DISP_D5_LINE) ret |= (1 << 5);
-    if (PIN(DISP_D6) & DISP_D6_LINE) ret |= (1 << 6);
-    if (PIN(DISP_D7) & DISP_D7_LINE) ret |= (1 << 7);
+    if (READ(DISP_D0)) ret |= (1 << 0);
+    if (READ(DISP_D1)) ret |= (1 << 1);
+    if (READ(DISP_D2)) ret |= (1 << 2);
+    if (READ(DISP_D3)) ret |= (1 << 3);
+    if (READ(DISP_D4)) ret |= (1 << 4);
+    if (READ(DISP_D5)) ret |= (1 << 5);
+    if (READ(DISP_D6)) ret |= (1 << 6);
+    if (READ(DISP_D7)) ret |= (1 << 7);
 
     return ~ret;
 }

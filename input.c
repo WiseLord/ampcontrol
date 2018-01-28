@@ -45,23 +45,23 @@ void inputInit(void)
 {
 #ifdef _atmega32
     // Setup buttons and encoder as inputs with pull-up resistors
-    DDR(BUTTON_1) &= ~BUTTON_1_LINE;
-    DDR(BUTTON_2) &= ~BUTTON_2_LINE;
-    DDR(BUTTON_3) &= ~BUTTON_3_LINE;
-    DDR(BUTTON_4) &= ~BUTTON_4_LINE;
-    DDR(BUTTON_5) &= ~BUTTON_5_LINE;
+    IN(BUTTON_1);
+    IN(BUTTON_2);
+    IN(BUTTON_3);
+    IN(BUTTON_4);
+    IN(BUTTON_5);
 
-    DDR(ENCODER_A) &= ~ENCODER_A_LINE;
-    DDR(ENCODER_B) &= ~ENCODER_B_LINE;
+    IN(ENCODER_A);
+    IN(ENCODER_B);
 
-    PORT(BUTTON_1) |= BUTTON_1_LINE;
-    PORT(BUTTON_2) |= BUTTON_2_LINE;
-    PORT(BUTTON_3) |= BUTTON_3_LINE;
-    PORT(BUTTON_4) |= BUTTON_4_LINE;
-    PORT(BUTTON_5) |= BUTTON_5_LINE;
+    SET(BUTTON_1);
+    SET(BUTTON_2);
+    SET(BUTTON_3);
+    SET(BUTTON_4);
+    SET(BUTTON_5);
 
-    PORT(ENCODER_A) |= ENCODER_A_LINE;
-    PORT(ENCODER_B) |= ENCODER_B_LINE;
+    SET(ENCODER_A);
+    SET(ENCODER_B);
 #endif
 
     // Set timer prescaller to 128 (125 kHz) and reset on match
@@ -107,20 +107,20 @@ static uint8_t getPins()
 #ifdef _atmega32
     uint8_t pins = BTN_NO;
 
-    if (~PIN(BUTTON_1) & BUTTON_1_LINE)
+    if (!READ(BUTTON_1))
         pins |= BTN_D0;
-    if (~PIN(BUTTON_2) & BUTTON_2_LINE)
+    if (!READ(BUTTON_2))
         pins |= BTN_D1;
-    if (~PIN(BUTTON_3) & BUTTON_3_LINE)
+    if (!READ(BUTTON_3))
         pins |= BTN_D2;
-    if (~PIN(BUTTON_4) & BUTTON_4_LINE)
+    if (!READ(BUTTON_4))
         pins |= BTN_D3;
-    if (~PIN(BUTTON_5) & BUTTON_5_LINE)
+    if (!READ(BUTTON_5))
         pins |= BTN_D4;
 
-    if (~PIN(ENCODER_A) & ENCODER_A_LINE)
+    if (!READ(ENCODER_A))
         pins |= ENC_A;
-    if (~PIN(ENCODER_B) & ENCODER_B_LINE)
+    if (!READ(ENCODER_B))
         pins |= ENC_B;
 
     return pins;

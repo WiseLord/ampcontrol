@@ -10,7 +10,7 @@ static volatile uint8_t ovfCnt = 250;               // Overflow counter
 
 void rcInit(void)
 {
-    DDR(RC) &= ~RC_LINE;                            // Set PD3 (INT1) to input
+    IN(RC);                            // Set PD3 (INT1) to input
     TCCR1A = 0;                                     // Reset Timer1 counter
     TCCR1B = (1 << CS11) | (1 << CS10);             // Set Timer1 prescaler to 64 (250kHz)
 #ifdef _atmega32
@@ -45,7 +45,7 @@ ISR(INT0_vect)
     tcnt = TCNT1;
 
     // RC pin state on interrupt event is inverted due to inverted IR receiver polarity
-    uint8_t rcPin = !(PIN(RC) & RC_LINE);
+    uint8_t rcPin = !(READ(RC));
 
     // NEC protocol variables
     static uint8_t necCnt = 0;                      // NEC bit counter

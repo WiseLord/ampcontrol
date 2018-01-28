@@ -9,6 +9,12 @@
 #define PORT(x)             CONCAT(PORT,x)
 #define PIN(x)              CONCAT(PIN,x)
 
+#define OUT(x)              (DDR(x) |= x ## _LINE)
+#define IN(x)               (DDR(x) &= ~x ## _LINE)
+#define SET(x)              (PORT(x) |= x ## _LINE)
+#define CLR(x)              (PORT(x) &= ~x ## _LINE)
+#define READ(x)             (PIN(x) & x ## _LINE)
+
 #if defined(_atmega32)
 // Display data port
 #define DISP_D0             B
@@ -175,11 +181,15 @@
 #define ST7920_BCKL_LINE    DISP_BCKL_LINE
 
 // LS020 display
-#define LS020_DPORT         DISP_D0
+#define LS020_RS            DISP_D1
 #define LS020_RS_LINE       DISP_D1_LINE
+#define LS020_RES           DISP_D0
 #define LS020_RES_LINE      DISP_D0_LINE
+#define LS020_CS            DISP_D4
 #define LS020_CS_LINE       DISP_D4_LINE // Hardware !SS
+#define LS020_CLK           DISP_D7
 #define LS020_CLK_LINE      DISP_D7_LINE // Hardware SCK
+#define LS020_DAT           DISP_D5
 #define LS020_DAT_LINE      DISP_D5_LINE // Hardware MOSI
 // LS020 Backlight port
 #define LS020_BCKL          DISP_BCKL
@@ -246,9 +256,9 @@ enum {
 #define ONE_WIRE            EXT_0
 #define ONE_WIRE_LINE       EXT_0_LINE
 #define FAN1                EXT_1
-#define FAN1_WIRE           EXT_1_LINE
+#define FAN1_LINE           EXT_1_LINE
 #define FAN2                EXT_2
-#define FAN2_WIRE           EXT_2_LINE
+#define FAN2_LINE           EXT_2_LINE
 
 // Software SPI definitions
 #define SPISW_DI            EXT_0

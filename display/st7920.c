@@ -19,50 +19,50 @@ void st7920SetBrightness(uint8_t br)
 
 static void st7920SetPort(uint8_t data)
 {
-    if (data & (1 << 0)) PORT(ST7920_D0) |= ST7920_D0_LINE;
-    else PORT(ST7920_D0) &= ~ST7920_D0_LINE;
-    if (data & (1 << 1)) PORT(ST7920_D1) |= ST7920_D1_LINE;
-    else PORT(ST7920_D1) &= ~ST7920_D1_LINE;
-    if (data & (1 << 2)) PORT(ST7920_D2) |= ST7920_D2_LINE;
-    else PORT(ST7920_D2) &= ~ST7920_D2_LINE;
-    if (data & (1 << 3)) PORT(ST7920_D3) |= ST7920_D3_LINE;
-    else PORT(ST7920_D3) &= ~ST7920_D3_LINE;
-    if (data & (1 << 4)) PORT(ST7920_D4) |= ST7920_D4_LINE;
-    else PORT(ST7920_D4) &= ~ST7920_D4_LINE;
-    if (data & (1 << 5)) PORT(ST7920_D5) |= ST7920_D5_LINE;
-    else PORT(ST7920_D5) &= ~ST7920_D5_LINE;
-    if (data & (1 << 6)) PORT(ST7920_D6) |= ST7920_D6_LINE;
-    else PORT(ST7920_D6) &= ~ST7920_D6_LINE;
-    if (data & (1 << 7)) PORT(ST7920_D7) |= ST7920_D7_LINE;
-    else PORT(ST7920_D7) &= ~ST7920_D7_LINE;
+    if (data & (1 << 0)) SET(ST7920_D0);
+    else CLR(ST7920_D0);
+    if (data & (1 << 1)) SET(ST7920_D1);
+    else CLR(ST7920_D1);
+    if (data & (1 << 2)) SET(ST7920_D2);
+    else CLR(ST7920_D2);
+    if (data & (1 << 3)) SET(ST7920_D3);
+    else CLR(ST7920_D3);
+    if (data & (1 << 4)) SET(ST7920_D4);
+    else CLR(ST7920_D4);
+    if (data & (1 << 5)) SET(ST7920_D5);
+    else CLR(ST7920_D5);
+    if (data & (1 << 6)) SET(ST7920_D6);
+    else CLR(ST7920_D6);
+    if (data & (1 << 7)) SET(ST7920_D7);
+    else CLR(ST7920_D7);
 
     return;
 }
 
 static void st7920SetDdrIn(void)
 {
-    DDR(ST7920_D0) &= ~ST7920_D0_LINE;
-    DDR(ST7920_D1) &= ~ST7920_D1_LINE;
-    DDR(ST7920_D2) &= ~ST7920_D2_LINE;
-    DDR(ST7920_D3) &= ~ST7920_D3_LINE;
-    DDR(ST7920_D4) &= ~ST7920_D4_LINE;
-    DDR(ST7920_D5) &= ~ST7920_D5_LINE;
-    DDR(ST7920_D6) &= ~ST7920_D6_LINE;
-    DDR(ST7920_D7) &= ~ST7920_D7_LINE;
+    IN(ST7920_D0);
+    IN(ST7920_D1);
+    IN(ST7920_D2);
+    IN(ST7920_D3);
+    IN(ST7920_D4);
+    IN(ST7920_D5);
+    IN(ST7920_D6);
+    IN(ST7920_D7);
 
     return;
 }
 
 static void st7920SetDdrOut(void)
 {
-    DDR(ST7920_D0) |= ST7920_D0_LINE;
-    DDR(ST7920_D1) |= ST7920_D1_LINE;
-    DDR(ST7920_D2) |= ST7920_D2_LINE;
-    DDR(ST7920_D3) |= ST7920_D3_LINE;
-    DDR(ST7920_D4) |= ST7920_D4_LINE;
-    DDR(ST7920_D5) |= ST7920_D5_LINE;
-    DDR(ST7920_D6) |= ST7920_D6_LINE;
-    DDR(ST7920_D7) |= ST7920_D7_LINE;
+    OUT(ST7920_D0);
+    OUT(ST7920_D1);
+    OUT(ST7920_D2);
+    OUT(ST7920_D3);
+    OUT(ST7920_D4);
+    OUT(ST7920_D5);
+    OUT(ST7920_D6);
+    OUT(ST7920_D7);
 
     return;
 }
@@ -71,14 +71,14 @@ static uint8_t st7920ReadPin(void)
 {
     uint8_t ret = 0;
 
-    if (PIN(ST7920_D0) & ST7920_D0_LINE) ret |= (1 << 0);
-    if (PIN(ST7920_D1) & ST7920_D1_LINE) ret |= (1 << 1);
-    if (PIN(ST7920_D2) & ST7920_D2_LINE) ret |= (1 << 2);
-    if (PIN(ST7920_D3) & ST7920_D3_LINE) ret |= (1 << 3);
-    if (PIN(ST7920_D4) & ST7920_D4_LINE) ret |= (1 << 4);
-    if (PIN(ST7920_D5) & ST7920_D5_LINE) ret |= (1 << 5);
-    if (PIN(ST7920_D6) & ST7920_D6_LINE) ret |= (1 << 6);
-    if (PIN(ST7920_D7) & ST7920_D7_LINE) ret |= (1 << 7);
+    if (READ(ST7920_D0)) ret |= (1 << 0);
+    if (READ(ST7920_D1)) ret |= (1 << 1);
+    if (READ(ST7920_D2)) ret |= (1 << 2);
+    if (READ(ST7920_D3)) ret |= (1 << 3);
+    if (READ(ST7920_D4)) ret |= (1 << 4);
+    if (READ(ST7920_D5)) ret |= (1 << 5);
+    if (READ(ST7920_D6)) ret |= (1 << 6);
+    if (READ(ST7920_D7)) ret |= (1 << 7);
 
     return ret;
 }
@@ -87,12 +87,12 @@ static void st7920WriteCmd(uint8_t cmd)
 {
     _delay_us(50);
 
-    PORT(ST7920_RS) &= ~ST7920_RS_LINE;
+    CLR(ST7920_RS);
     st7920SetPort(cmd);
 
-    PORT(ST7920_E) |= ST7920_E_LINE;
+    SET(ST7920_E);
     asm("nop");
-    PORT(ST7920_E) &= ~ST7920_E_LINE;
+    CLR(ST7920_E);
 
     return;
 }
@@ -113,7 +113,7 @@ ISR (TIMER0_OVF_vect)
     static uint8_t br;
 
     if (j == ST7920_PHASE_SET_PAGE) {                       // Phase 1 (Y)
-        PORT(ST7920_RS) &= ~ST7920_RS_LINE;                 // Go to command mode
+        CLR(ST7920_RS);                 // Go to command mode
         if (++i >= ST7920_PHASE_SET_PAGE)
             i = 0;
         st7920SetPort(ST7920_SET_GRAPHIC_RAM | i);          // Set Y
@@ -127,9 +127,9 @@ ISR (TIMER0_OVF_vect)
     }
 
     if (j != ST7920_PHASE_READ_PORT) {
-        PORT(ST7920_E) |= ST7920_E_LINE;                    // Strob
+        SET(ST7920_E);                    // Strob
         asm("nop");
-        PORT(ST7920_E) &= ~ST7920_E_LINE;
+        CLR(ST7920_E);
 
         // Prepare to read pins
         if (j == ST7920_PHASE_SET_ADDR) {
@@ -140,16 +140,16 @@ ISR (TIMER0_OVF_vect)
 
     if (++j > ST7920_PHASE_READ_PORT) {
         j = 0;
-        PORT(ST7920_RS) |= ST7920_RS_LINE;                  // Go to data mode
+        SET(ST7920_RS);                  // Go to data mode
     }
 
     if (++br >= ST7920_MAX_BRIGHTNESS)                      // Loop brightness
         br = ST7920_MIN_BRIGHTNESS;
 
     if (br == _br) {
-        PORT(ST7920_BCKL) &= ~ST7920_BCKL_LINE;             // Turn backlight off
+        CLR(ST7920_BCKL);             // Turn backlight off
     } else if (br == 0)
-        PORT(ST7920_BCKL) |= ST7920_BCKL_LINE;              // Turn backlight on
+        SET(ST7920_BCKL);              // Turn backlight on
 
     return;
 }
@@ -157,28 +157,28 @@ ISR (TIMER0_OVF_vect)
 void st7920Init(void)
 {
     // Set control and data lines as outputs
-    DDR(ST7920_RS) |= ST7920_RS_LINE;
-    DDR(ST7920_E) |= ST7920_E_LINE;
-    DDR(ST7920_PSB) |= ST7920_PSB_LINE;
+    OUT(ST7920_RS);
+    OUT(ST7920_E);
+    OUT(ST7920_PSB);
     st7920SetDdrOut();
 
     // Set RW line to zero
 #ifdef _atmega32
-    DDR(ST7920_RW) |= ST7920_RW_LINE;
-    PORT(ST7920_RW) &= ~ST7920_RW_LINE;
+    OUT(ST7920_RW);
+    CLR(ST7920_RW);
 #endif
 
-    PORT(ST7920_RS) &= ~ST7920_RS_LINE;
-    PORT(ST7920_E) &= ~ST7920_E_LINE;
+    CLR(ST7920_RS);
+    CLR(ST7920_E);
     // Switch display to parallel mode
-    PORT(ST7920_PSB) |= ST7920_PSB_LINE;
+    SET(ST7920_PSB);
 
     // Hardware reset
 #ifdef _atmega32
-    DDR(ST7920_RST) |= ST7920_RST_LINE;
-    PORT(ST7920_RST) &= ~ST7920_RST_LINE;
+    OUT(ST7920_RST);
+    CLR(ST7920_RST);
     _delay_us(1);
-    PORT(ST7920_RST) |= ST7920_RST_LINE;
+    SET(ST7920_RST);
 #endif
 
     // Init display in graphics mode
@@ -187,7 +187,7 @@ void st7920Init(void)
     st7920WriteCmd(ST7920_FUNCTION | ST7920_8BIT | ST7920_EXT_INSTR);
     st7920WriteCmd(ST7920_FUNCTION | ST7920_8BIT | ST7920_EXT_INSTR | ST7920_GRAPHIC);
 
-    DDR(ST7920_BCKL)  |= ST7920_BCKL_LINE;
+    OUT(ST7920_BCKL);
 
     return;
 }

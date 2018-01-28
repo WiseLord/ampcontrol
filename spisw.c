@@ -9,16 +9,16 @@ static uint8_t extFunc;
 static void SPIswStrob()
 {
     _delay_us(1.5);
-    PORT(SPISW_CLK) |= SPISW_CLK_LINE;
+    SET(SPISW_CLK);
     _delay_us(1.5);
-    PORT(SPISW_CLK) &= ~SPISW_CLK_LINE;
+    CLR(SPISW_CLK);
 }
 
 void SPIswInitLines(uint8_t func)
 {
-    DDR(SPISW_DI) |= SPISW_DI_LINE;
-    DDR(SPISW_CLK) |= SPISW_CLK_LINE;
-    DDR(SPISW_CE) |= SPISW_CE_LINE;
+    OUT(SPISW_DI);
+    OUT(SPISW_CLK);
+    OUT(SPISW_CE);
 
     extFunc = func;
 }
@@ -27,7 +27,7 @@ void SPIswInit(uint8_t dataOrder)
 {
     dord = dataOrder;
 
-    PORT(SPISW_CLK) &= ~SPISW_CLK_LINE;
+    CLR(SPISW_CLK);
 }
 
 void SPIswSendByte(uint8_t data)
@@ -37,9 +37,9 @@ void SPIswSendByte(uint8_t data)
 
     for (i = 0; i < 8; i++) {
         if (data & mask)
-            PORT(SPISW_DI) |= SPISW_DI_LINE;
+            SET(SPISW_DI);
         else
-            PORT(SPISW_DI) &= ~SPISW_DI_LINE;
+            CLR(SPISW_DI);
 
         SPIswStrob();
 
@@ -55,19 +55,19 @@ void SPIswSet(int8_t input)
     if (extFunc != USE_INPUT_STATUS)
         return;
 
-    PORT(EXT_0) &= ~EXT_0_LINE;
-    PORT(EXT_1) &= ~EXT_1_LINE;
-    PORT(EXT_2) &= ~EXT_2_LINE;
+    CLR(EXT_0);
+    CLR(EXT_1);
+    CLR(EXT_2);
 
     switch (input) {
     case 0:
-        PORT(EXT_0) |= EXT_0_LINE;
+        SET(EXT_0);
         break;
     case 1:
-        PORT(EXT_1) |= EXT_1_LINE;
+        SET(EXT_1);
         break;
     case 2:
-        PORT(EXT_2) |= EXT_2_LINE;
+        SET(EXT_2);
         break;
     default:
         break;

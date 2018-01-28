@@ -9,18 +9,18 @@ static volatile uint8_t pins;
 
 #ifdef _KS0108B
 #define KS0108_SET_CS1(); \
-    PORT(KS0108_CS1) &= ~KS0108_CS1_LINE; \
-    PORT(KS0108_CS2) |= KS0108_CS2_LINE;
+    CLR(KS0108_CS1); \
+    SET(KS0108_CS2);
 #define KS0108_SET_CS2(); \
-    PORT(KS0108_CS2) &= ~KS0108_CS2_LINE; \
-    PORT(KS0108_CS1) |= KS0108_CS1_LINE;
+    CLR(KS0108_CS2); \
+    SET(KS0108_CS1);
 #else
 #define KS0108_SET_CS1(); \
-    PORT(KS0108_CS1) |= KS0108_CS1_LINE; \
-    PORT(KS0108_CS2) &= ~KS0108_CS2_LINE;
+    SET(KS0108_CS1); \
+    CLR(KS0108_CS2);
 #define KS0108_SET_CS2(x); \
-    PORT(KS0108_CS2) |= KS0108_CS2_LINE; \
-    PORT(KS0108_CS1) &= ~KS0108_CS1_LINE;
+    SET(KS0108_CS2); \
+    CLR(KS0108_CS1);
 #endif
 
 static uint8_t fb[KS0108_COLS * KS0108_CHIPS][KS0108_ROWS];
@@ -35,50 +35,50 @@ void ks0108SetBrightness(uint8_t br)
 
 static void ks0108SetPort(uint8_t data)
 {
-    if (data & (1 << 0)) PORT(KS0108_D0) |= KS0108_D0_LINE;
-    else PORT(KS0108_D0) &= ~KS0108_D0_LINE;
-    if (data & (1 << 1)) PORT(KS0108_D1) |= KS0108_D1_LINE;
-    else PORT(KS0108_D1) &= ~KS0108_D1_LINE;
-    if (data & (1 << 2)) PORT(KS0108_D2) |= KS0108_D2_LINE;
-    else PORT(KS0108_D2) &= ~KS0108_D2_LINE;
-    if (data & (1 << 3)) PORT(KS0108_D3) |= KS0108_D3_LINE;
-    else PORT(KS0108_D3) &= ~KS0108_D3_LINE;
-    if (data & (1 << 4)) PORT(KS0108_D4) |= KS0108_D4_LINE;
-    else PORT(KS0108_D4) &= ~KS0108_D4_LINE;
-    if (data & (1 << 5)) PORT(KS0108_D5) |= KS0108_D5_LINE;
-    else PORT(KS0108_D5) &= ~KS0108_D5_LINE;
-    if (data & (1 << 6)) PORT(KS0108_D6) |= KS0108_D6_LINE;
-    else PORT(KS0108_D6) &= ~KS0108_D6_LINE;
-    if (data & (1 << 7)) PORT(KS0108_D7) |= KS0108_D7_LINE;
-    else PORT(KS0108_D7) &= ~KS0108_D7_LINE;
+    if (data & (1 << 0)) SET(KS0108_D0);
+    else CLR(KS0108_D0);
+    if (data & (1 << 1)) SET(KS0108_D1);
+    else CLR(KS0108_D1);
+    if (data & (1 << 2)) SET(KS0108_D2);
+    else CLR(KS0108_D2);
+    if (data & (1 << 3)) SET(KS0108_D3);
+    else CLR(KS0108_D3);
+    if (data & (1 << 4)) SET(KS0108_D4);
+    else CLR(KS0108_D4);
+    if (data & (1 << 5)) SET(KS0108_D5);
+    else CLR(KS0108_D5);
+    if (data & (1 << 6)) SET(KS0108_D6);
+    else CLR(KS0108_D6);
+    if (data & (1 << 7)) SET(KS0108_D7);
+    else CLR(KS0108_D7);
 
     return;
 }
 
 static void ks0108SetDdrIn(void)
 {
-    DDR(KS0108_D0) &= ~KS0108_D0_LINE;
-    DDR(KS0108_D1) &= ~KS0108_D1_LINE;
-    DDR(KS0108_D2) &= ~KS0108_D2_LINE;
-    DDR(KS0108_D3) &= ~KS0108_D3_LINE;
-    DDR(KS0108_D4) &= ~KS0108_D4_LINE;
-    DDR(KS0108_D5) &= ~KS0108_D5_LINE;
-    DDR(KS0108_D6) &= ~KS0108_D6_LINE;
-    DDR(KS0108_D7) &= ~KS0108_D7_LINE;
+    IN(KS0108_D0);
+    IN(KS0108_D1);
+    IN(KS0108_D2);
+    IN(KS0108_D3);
+    IN(KS0108_D4);
+    IN(KS0108_D5);
+    IN(KS0108_D6);
+    IN(KS0108_D7);
 
     return;
 }
 
 static void ks0108SetDdrOut(void)
 {
-    DDR(KS0108_D0) |= KS0108_D0_LINE;
-    DDR(KS0108_D1) |= KS0108_D1_LINE;
-    DDR(KS0108_D2) |= KS0108_D2_LINE;
-    DDR(KS0108_D3) |= KS0108_D3_LINE;
-    DDR(KS0108_D4) |= KS0108_D4_LINE;
-    DDR(KS0108_D5) |= KS0108_D5_LINE;
-    DDR(KS0108_D6) |= KS0108_D6_LINE;
-    DDR(KS0108_D7) |= KS0108_D7_LINE;
+    OUT(KS0108_D0);
+    OUT(KS0108_D1);
+    OUT(KS0108_D2);
+    OUT(KS0108_D3);
+    OUT(KS0108_D4);
+    OUT(KS0108_D5);
+    OUT(KS0108_D6);
+    OUT(KS0108_D7);
 
     return;
 }
@@ -87,14 +87,14 @@ static uint8_t ks0108ReadPin(void)
 {
     uint8_t ret = 0;
 
-    if (PIN(KS0108_D0) & KS0108_D0_LINE) ret |= (1 << 0);
-    if (PIN(KS0108_D1) & KS0108_D1_LINE) ret |= (1 << 1);
-    if (PIN(KS0108_D2) & KS0108_D2_LINE) ret |= (1 << 2);
-    if (PIN(KS0108_D3) & KS0108_D3_LINE) ret |= (1 << 3);
-    if (PIN(KS0108_D4) & KS0108_D4_LINE) ret |= (1 << 4);
-    if (PIN(KS0108_D5) & KS0108_D5_LINE) ret |= (1 << 5);
-    if (PIN(KS0108_D6) & KS0108_D6_LINE) ret |= (1 << 6);
-    if (PIN(KS0108_D7) & KS0108_D7_LINE) ret |= (1 << 7);
+    if (READ(KS0108_D0)) ret |= (1 << 0);
+    if (READ(KS0108_D1)) ret |= (1 << 1);
+    if (READ(KS0108_D2)) ret |= (1 << 2);
+    if (READ(KS0108_D3)) ret |= (1 << 3);
+    if (READ(KS0108_D4)) ret |= (1 << 4);
+    if (READ(KS0108_D5)) ret |= (1 << 5);
+    if (READ(KS0108_D6)) ret |= (1 << 6);
+    if (READ(KS0108_D7)) ret |= (1 << 7);
 
     return ret;
 }
@@ -103,12 +103,12 @@ static void ks0108WriteCmd(uint8_t cmd)
 {
     _delay_us(50);
 
-    PORT(KS0108_DI) &= ~KS0108_DI_LINE;
+    CLR(KS0108_DI);
     ks0108SetPort(cmd);
 
-    PORT(KS0108_E) |= KS0108_E_LINE;
+    SET(KS0108_E);
     asm("nop");
-    PORT(KS0108_E) &= ~KS0108_E_LINE;
+    CLR(KS0108_E);
 
     return;
 }
@@ -143,7 +143,7 @@ ISR (TIMER0_OVF_vect)
                 break;
             }
         }
-        PORT(KS0108_DI) &= ~KS0108_DI_LINE;         // Go to command mode
+        CLR(KS0108_DI);         // Go to command mode
         ks0108SetPort(KS0108_SET_PAGE + i);
     } else if (j == KS0108_PHASE_SET_ADDR) {        // Phase 2 (X)
         ks0108SetPort(KS0108_SET_ADDRESS);
@@ -155,9 +155,9 @@ ISR (TIMER0_OVF_vect)
     }
 
     if (j != KS0108_PHASE_READ_PORT) {
-        PORT(KS0108_E) |= KS0108_E_LINE;            // Strob
+        SET(KS0108_E);            // Strob
         asm("nop");
-        PORT(KS0108_E) &= ~KS0108_E_LINE;
+        CLR(KS0108_E);
 
         // Prepare to read pins
         if (j == KS0108_PHASE_SET_ADDR) {
@@ -168,16 +168,16 @@ ISR (TIMER0_OVF_vect)
 
     if (++j > KS0108_PHASE_READ_PORT) {
         j = 0;
-        PORT(KS0108_DI) |= KS0108_DI_LINE;          // Go to data mode
+        SET(KS0108_DI);          // Go to data mode
     }
 
     if (++br >= KS0108_MAX_BRIGHTNESS)              // Loop brightness
         br = KS0108_MIN_BRIGHTNESS;
 
     if (br == _br) {
-        PORT(KS0108_BCKL) &= ~KS0108_BCKL_LINE;     // Turn backlight off
+        CLR(KS0108_BCKL);     // Turn backlight off
     } else if (br == 0)
-        PORT(KS0108_BCKL) |= KS0108_BCKL_LINE;      // Turn backlight on
+        SET(KS0108_BCKL);      // Turn backlight on
 
     return;
 }
@@ -185,28 +185,28 @@ ISR (TIMER0_OVF_vect)
 void ks0108Init(void)
 {
     // Set control and data lines as outputs
-    DDR(KS0108_DI) |= KS0108_DI_LINE;
-    DDR(KS0108_E) |= KS0108_E_LINE;
-    DDR(KS0108_CS1) |= KS0108_CS1_LINE;
-    DDR(KS0108_CS2) |= KS0108_CS2_LINE;
+    OUT(KS0108_DI);
+    OUT(KS0108_E);
+    OUT(KS0108_CS1);
+    OUT(KS0108_CS2);
 
     ks0108SetDdrOut();
 
     // Set RW line to zero
 #ifdef _atmega32
-    DDR(KS0108_RW) |= KS0108_RW_LINE;
-    PORT(KS0108_RW) &= ~(KS0108_RW_LINE);
+    OUT(KS0108_RW);
+    CLR(KS0108_RW);
 #endif
 
-    PORT(KS0108_DI) &= ~(KS0108_DI_LINE);
-    PORT(KS0108_E) &= ~(KS0108_E_LINE);
+    CLR(KS0108_DI);
+    CLR(KS0108_E);
 
     // Hardware reset
 #ifdef _atmega32
-    DDR(KS0108_RES) |= KS0108_RES_LINE;
-    PORT(KS0108_RES) &= ~(KS0108_RES_LINE);
+    OUT(KS0108_RES);
+    CLR(KS0108_RES);
     _delay_us(1);
-    PORT(KS0108_RES) |= KS0108_RES_LINE;
+    SET(KS0108_RES);
     _delay_us(1);
 #endif
 
@@ -221,10 +221,10 @@ void ks0108Init(void)
     ks0108WriteCmd(KS0108_DISPLAY_ON);
 
     // Go to data mode
-    PORT(KS0108_DI) |= KS0108_DI_LINE;
+    SET(KS0108_DI);
 
     // Enable backlight control
-    DDR(KS0108_BCKL) |= KS0108_BCKL_LINE;
+    OUT(KS0108_BCKL);
 
     return;
 }

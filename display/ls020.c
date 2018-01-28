@@ -65,10 +65,10 @@ static void ls020WriteData(uint8_t data)
 static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 {
     // Set command mode
-    PORT(LS020_DPORT) |= LS020_RS_LINE;
+    SET(LS020_RS);
 
     // Start command sequence
-    PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+    CLR(LS020_CS);
 
     ls020WriteCommand(0x0500); // Set Direction
 #ifdef LS020_ROTATE_180
@@ -84,7 +84,7 @@ static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 #endif
 
     // Stop command sequence
-    PORT(LS020_DPORT) |= LS020_CS_LINE;
+    SET(LS020_CS);
 
     return;
 }
@@ -115,10 +115,10 @@ void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color
     ls020SetWindow(x1, y1, x2, y2);
 
     // Set data mode
-    PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+    CLR(LS020_RS);
 
     // Start data sequence
-    PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+    CLR(LS020_CS);
 
     for (y = y1; y <= y2; y++)
         for (x = x1; x <= x2; x++)
@@ -126,7 +126,7 @@ void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color
 
     // Stop data sequence
     while (!(SPSR & (1 << SPIF)));
-    PORT(LS020_DPORT) |= LS020_CS_LINE;
+    SET(LS020_CS);
 
     return;
 }
@@ -164,9 +164,9 @@ ISR (TIMER0_OVF_vect)
         br = LS020_MIN_BRIGHTNESS;
 
     if (br == _br) {
-        PORT(LS020_BCKL) &= ~LS020_BCKL_LINE;       // Turn backlight off
+        CLR(LS020_BCKL);       // Turn backlight off
     } else if (br == 0)
-        PORT(LS020_BCKL) |= LS020_BCKL_LINE;        // Turn backlight on
+        SET(LS020_BCKL);        // Turn backlight on
 }
 
 
@@ -181,25 +181,29 @@ void ls020Init(void)
 {
     uint8_t i;
 
-    DDR(LS020_DPORT) = LS020_RS_LINE | LS020_RES_LINE | LS020_DAT_LINE | LS020_CLK_LINE | LS020_CS_LINE;
-    DDR(LS020_BCKL) |= LS020_BCKL_LINE;
+    OUT(LS020_RS);
+    OUT(LS020_RES);
+    OUT(LS020_DAT);
+    OUT(LS020_CLK);
+    OUT(LS020_CS);
+    OUT(LS020_BCKL);
 
     // Configure Hardware SPI
     SPCR = (1 << SPE) | (1 << MSTR);
     SPSR = (1 << SPI2X);
 
-    PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+    CLR(LS020_CS);
 
     // Reset display
-    PORT(LS020_DPORT) &= ~LS020_RES_LINE;
+    CLR(LS020_RES);
     _delay_ms(5);
-    PORT(LS020_DPORT) |= LS020_RES_LINE;
+    SET(LS020_RES);
 
     // Set command mode
-    PORT(LS020_DPORT) |= LS020_RS_LINE;
+    SET(LS020_RS);
 
     // Start command sequence
-    PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+    CLR(LS020_CS);
 
     // Display init magic
     for (i = 0; i < 2; i++)
@@ -218,7 +222,7 @@ void ls020Init(void)
     ls020WriteCommand(0xE800);
 
     // Stop command sequence
-    PORT(LS020_DPORT) |= LS020_CS_LINE;
+    SET(LS020_CS);
 
     ls020Clear();
 
@@ -230,16 +234,16 @@ void ls020PowerOff(void)
     uint8_t i;
 
     // Set command mode
-    PORT(LS020_DPORT) |= LS020_RS_LINE;
+    SET(LS020_RS);
 
     // Start command sequence
-    PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+    CLR(LS020_CS);
 
     for (i = 0; i < 26; i++)
         ls020WriteCommand(pgm_read_word(power + i));
 
     // Stop command sequence
-    PORT(LS020_DPORT) |= LS020_CS_LINE;
+    SET(LS020_CS);
 
     return;
 }
@@ -293,10 +297,10 @@ void ls020WriteChar(uint8_t code)
     ls020SetWindow(x, y, x + swd * fp[FONT_MULT] - 1, y + fp[FONT_HEIGHT] * fp[FONT_MULT] * 8 - 1);
 
     // Set data mode
-    PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+    CLR(LS020_RS);
 
     // Start data sequence
-    PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+    CLR(LS020_CS);
 
     for (j = 0; j < swd; j++) {
         for (my = 0; my < fp[FONT_MULT]; my++) {
@@ -323,7 +327,7 @@ void ls020WriteChar(uint8_t code)
 
     // Stop data sequence
     while (!(SPSR & (1 << SPIF)));
-    PORT(LS020_DPORT) |= LS020_CS_LINE;
+    SET(LS020_CS);
 
     ls020SetXY(x + swd * fp[FONT_MULT], y);
 
@@ -353,9 +357,9 @@ void ls020WriteIcon24(uint8_t iconNum)
     if (icon) {
         ls020SetWindow(_x, _y, _x + 24 - 1, _y + 24 - 1);
         // Set data mode
-        PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+        CLR(LS020_RS);
         // Start data sequence
-        PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+        CLR(LS020_CS);
 
         for (j = 0; j < 24; j++) {
             for (k = 0; k < 24 / 8; k++) {
@@ -373,7 +377,7 @@ void ls020WriteIcon24(uint8_t iconNum)
 
         // Stop data sequence
         while (!(SPSR & (1 << SPIF)));
-        PORT(LS020_DPORT) |= LS020_CS_LINE;
+        SET(LS020_CS);
     }
 
     return;
@@ -390,9 +394,9 @@ void ls020WriteIcon32(uint8_t iconNum)
     if (icon) {
         ls020SetWindow(_x, _y, _x + 32 - 1, _y + 32 - 1);
         // Set data mode
-        PORT(LS020_DPORT) &= ~LS020_RS_LINE;
+        CLR(LS020_RS);
         // Start data sequence
-        PORT(LS020_DPORT) &= ~LS020_CS_LINE;
+        CLR(LS020_CS);
 
         for (j = 0; j < 32; j++) {
             for (k = 0; k < 32 / 8; k++) {
@@ -410,7 +414,7 @@ void ls020WriteIcon32(uint8_t iconNum)
 
         // Stop data sequence
         while (!(SPSR & (1 << SPIF)));
-        PORT(LS020_DPORT) |= LS020_CS_LINE;
+        SET(LS020_CS);
     }
 
     return;

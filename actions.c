@@ -208,7 +208,7 @@ void handleAction(uint8_t action)
 
     switch (action) {
     case ACTION_EXIT_STANDBY:
-        PORT(STMU_STBY) |= STMU_STBY_LINE;  // Power up audio and tuner
+        SET(STMU_STBY);  // Power up audio and tuner
         setWorkBrightness();
 
 #ifdef _SPISW
@@ -239,7 +239,7 @@ void handleAction(uint8_t action)
 #ifdef _SPISW
         SPIswSet(-1);
 #endif
-        PORT(STMU_STBY) &= ~STMU_STBY_LINE;
+        CLR(STMU_STBY);
 
         setStbyBrightness();
         rtc.etm = RTC_NOEDIT;

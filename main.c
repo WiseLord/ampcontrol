@@ -53,8 +53,8 @@ static void hwInit(uint8_t extFunc)
 
     tunerInit();                            // Tuner
 
-    DDR(STMU_STBY) |= STMU_STBY_LINE;       // Standby port
-    DDR(STMU_MUTE) |= STMU_MUTE_LINE;       // Mute port
+    OUT(STMU_STBY);       // Standby port
+    OUT(STMU_MUTE);       // Mute port
     sndInit();                              // Load labels/icons/etc
 
     setStbyTimer(0);
