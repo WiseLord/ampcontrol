@@ -1,7 +1,7 @@
 #ifndef AUDIO_H
 #define AUDIO_H
 
-/* Integral circuits definitions */
+// Integral circuits definitions
 #if !defined(TDA7313) && !defined(TDA7318) && !defined(TDA7439)
 #define TDA7439
 #endif
@@ -14,4 +14,4 @@
 #include "tda7439.h"
 #endif
 
-#endif /* AUDIO_H */
+#endif // AUDIO_H

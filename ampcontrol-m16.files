@@ -1,3 +1,4 @@
+.astylerc
 audio/audio.h
 audio/tda7313.c
 audio/tda7313.h

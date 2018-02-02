@@ -17,16 +17,16 @@
 #include "lm7001.h"
 #endif
 
-#define FM_COUNT			50
+#define FM_COUNT            50
 
-#define SEARCH_UP			1
-#define SEARCH_DOWN			-1
+#define SEARCH_UP           1
+#define SEARCH_DOWN         -1
 
-#define FM_MONO				1
-#define FM_STEREO			0
+#define FM_MONO             1
+#define FM_STEREO           0
 
-#define FM_FREQ_MIN			8700
-#define FM_FREQ_MAX			10800
+#define FM_FREQ_MIN         8700
+#define FM_FREQ_MAX         10800
 
 void tunerInit();
 
@@ -54,4 +54,4 @@ void tunerSetMute(uint8_t mute);
 void tunerPowerOn(void);
 void tunerPowerOff(void);
 
-#endif /* TUNER_H */
+#endif // TUNER_H
