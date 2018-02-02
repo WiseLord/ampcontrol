@@ -753,14 +753,15 @@ void drawSpectrum(uint8_t *buf)
 				break;
 			}
 			data = 0xFF;
-			if (i == row)
+			if (i == row) {
 				data = 0xFF << (7 - val % 8);
-			else if (i < row)
+			} else if (i < row) {
 				data = 0x00;
-				ks0108WriteData(data);
-				ks0108WriteData(data);
-				ks0108WriteData(data);
-				ks0108WriteData(0x00);
+			}
+			ks0108WriteData(data);
+			ks0108WriteData(data);
+			ks0108WriteData(data);
+			ks0108WriteData(0x00);
 		}
 	}
 #elif defined(KS0066) || defined(PCF8574)
