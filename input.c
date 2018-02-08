@@ -58,7 +58,6 @@ void inputInit()
     TCCR2 = ((1 << CS22) | (0 << CS21) | (0 << CS20) | (1 << WGM21));
     OCR2 = 125;                     // 125000/125 => 1000 polls/sec
     TCNT2 = 0;                      // Reset timer value
-    TIMSK |= (1 << OCIE2);          // Enable timer compare match interrupt
 
     rcCodesInit();
 }

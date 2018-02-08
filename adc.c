@@ -28,9 +28,7 @@ static uint8_t _br;
 
 void adcInit()
 {
-    // Enable Timer0 overflow interrupt with prescaller 8 (1MHz)
-    TIMSK |= (1 << TOIE0);
-    TCCR0 |= (0 << CS02) | (1 << CS01) | (0 << CS00);
+    TCCR0 = (0 << CS02) | (1 << CS01) | (0 << CS00);
 
     // Enable ADC with prescaler 16
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (0 << ADPS1) | (0 << ADPS0);
@@ -71,31 +69,40 @@ static uint8_t revBits(uint8_t x)
 
 static void getValues()
 {
-    uint8_t i, j;
-    uint8_t hv;
+    uint8_t i;
 
     for (i = 0; i < FFT_SIZE; i++) {
-
         while (!(ADCSRA & (1 << ADSC)));                // Wait for start measure
-
-        j = revBits(i);
-        if (i < FFT_SIZE / 2)
-            hv = pgm_read_byte(&hannTable[i]);
-        else
-            hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
-
         while (ADCSRA & (1 << ADSC));                   // Wait for finish measure
+        fi[i] = ADCH;
+    }
 
-        fr[j] = ADCH - DC_CORR;                         // Read left channel value
-        fr[j] = ((int32_t)hv * fr[j]) >> 6;             // Apply Hann window
+    return;
+}
 
+static void prepareData(void)
+{
+    uint8_t i, j;
+    int16_t dcOft = 0;
+    uint8_t hw;
+
+    // Calculate average DC offset
+    for (i = 0; i < FFT_SIZE; i++)
+        dcOft += fi[i];
+    dcOft /= FFT_SIZE;
+
+    // Move FI => FR with reversing bit order in index
+    for (i = 0; i < FFT_SIZE; i++) {
+        j = revBits(i);
+        hw = pgm_read_byte(&hannTable[i < 32 ? i : 63 - i]);
+        fr[j] = ((fi[i] - dcOft) * hw) >> 6;
         fi[i] = 0;
     }
 
     return;
 }
 
-void cplx2dB(int16_t *fr, int16_t *fi)
+void cplx2dB()
 {
     uint8_t i, j;
     int16_t calc;
@@ -117,8 +124,9 @@ uint8_t *getSpData()
     uint8_t i;
 
     getValues();
+    prepareData();
     fftRad4(fr, fi);
-    cplx2dB(fr, fi);
+    cplx2dB();
 
     for (i = 0; i < FFT_SIZE / 4; i++) {
         if (fr[i] < buf[i])

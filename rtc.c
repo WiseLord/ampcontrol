@@ -8,19 +8,20 @@ RTC_type rtc;
 const static RTC_type rtcMin PROGMEM = {0, 0, 0, 1, 1, 1, 1, RTC_NOEDIT};
 const static RTC_type rtcMax PROGMEM = {59, 59, 23, 7, 31, 12, 99, RTC_NOEDIT};
 
-static void rtcWeekDay(void)
+int8_t rtcWeekDay(void)
 {
     uint8_t a, y, m;
+    int8_t ret;
 
     a = (rtc.month > 2 ? 0 : 1);
     y = 12 + rtc.year - a;
     m = rtc.month + 12 * a - 2;
 
-    rtc.wday = (rtc.date + y + (y / 4) + ((31 * m) / 12)) % 7;
-    if (rtc.wday == 0)
-        rtc.wday = 7;
+    ret = (rtc.date + y + (y / 4) + ((31 * m) / 12)) % 7;
+    if (ret == 0)
+        ret = 7;
 
-    return;
+    return ret;
 }
 
 static uint8_t rtcDaysInMonth(void)
@@ -61,18 +62,14 @@ static void rtcSaveTime(void)
     uint8_t i;
     uint8_t etm = rtc.etm;
 
-    if (etm > RTC_WDAY) {
-        rtcWeekDay();
-        etm = RTC_WDAY;
-    }
-
     I2CStart(RTC_I2C_ADDR);
     I2CWriteByte(etm);
     if (etm == RTC_SEC) {
         I2CWriteByte(0);
     } else {
-        for (i = etm; i <= RTC_YEAR; i++)
+        for (i = etm; i <= RTC_YEAR; i++) {
             I2CWriteByte(rtcDecToBinDec(*((int8_t *)&rtc + i)));
+        }
     }
 
     I2CStop();

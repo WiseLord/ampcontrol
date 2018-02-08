@@ -21,8 +21,10 @@ static void hwInit(void)
     rcInit();                           // RC5 IR remote control
     inputInit();                        // Buttons/encoder polling and timers
     adcInit();                          // Analog-to-digital converter
+
     rtc.etm = RTC_NOEDIT;
 
+    TIMSK = (1 << TOIE0) | (1 << OCIE2);
     sei();                              // Gloabl interrupt enable
 
     DDR(STMU_STBY) |= STMU_STBY_LINE;   // Standby port

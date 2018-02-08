@@ -10,7 +10,7 @@ void I2CInit(void)
     TWBR = 32;
     //TWSR = (0<<TWPS1) | (0<<TWPS0);               // Prescaler = 1
 
-    TWCR |= (1 << TWEN);                            // Enable TWI
+    TWCR = (1 << TWEN);                             // Enable TWI
 
     return;
 }
