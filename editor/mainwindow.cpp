@@ -885,12 +885,6 @@ void MainWindow::setOther()
     setEncres(eep[EEPROM_ENC_RES]);
     sbxEncres->setValue(eep[EEPROM_ENC_RES]);
 
-    setAdcleft((unsigned char)eep[EEPROM_ADC_CORR_L] - 128);
-    sbxAdcleft->setValue((unsigned char)eep[EEPROM_ADC_CORR_L] - 128);
-
-    setAdcright((unsigned char)eep[EEPROM_ADC_CORR_L] - 128);
-    sbxAdcright->setValue((unsigned char)eep[EEPROM_ADC_CORR_R] - 128);
-
     setExtfunc(eep[EEPROM_EXT_FUNC]);
     cbxExtfunc->setCurrentIndex(eep[EEPROM_EXT_FUNC]);
 
@@ -933,26 +927,6 @@ void MainWindow::setEncres(int value)
         value = sbxEncres->minimum();
     eep[EEPROM_ENC_RES] = (char)value;
     updateHexTable(EEPROM_ENC_RES);
-}
-
-void MainWindow::setAdcleft(int value)
-{
-    if (value > sbxAdcleft->maximum())
-        value = sbxAdcleft->maximum();
-    if (value < sbxAdcleft->minimum())
-        value = sbxAdcleft->minimum();
-    eep[EEPROM_ADC_CORR_L] = (char)value + 128;
-    updateHexTable(EEPROM_ADC_CORR_L);
-}
-
-void MainWindow::setAdcright(int value)
-{
-    if (value > sbxAdcright->maximum())
-        value = sbxAdcright->maximum();
-    if (value < sbxAdcright->minimum())
-        value = sbxAdcright->minimum();
-    eep[EEPROM_ADC_CORR_R] = (char)value + 128;
-    updateHexTable(EEPROM_ADC_CORR_R);
 }
 
 void MainWindow::setExtfunc(int value)

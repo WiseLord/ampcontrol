@@ -94,8 +94,6 @@ private slots:
     void setSpspeed(int value);
     void setBrstby(int value);
     void setEncres(int value);
-    void setAdcleft(int value);
-    void setAdcright(int value);
     void setExtfunc(int value);
     void setThreshold(int value);
     void setSilence(int value);
