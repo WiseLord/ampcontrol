@@ -16,13 +16,16 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setupUi(this);
 
+    QFontDatabase::addApplicationFont("://fonts/LiberationMono-Bold.ttf");
+    fontHex = QFont("Liberation Mono", 9, QFont::Bold);
+
     lc = new LcdConverter();
 
     /* Create hex table */
     wgtHexTable->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    wgtHexTable->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
-    wgtHexTable->verticalHeader()->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
-    wgtHexTable->horizontalHeader()->setFont(QFont(QFontDatabase::systemFont(QFontDatabase::FixedFont).family(), 9, QFont::Bold));
+    wgtHexTable->setFont(fontHex);
+    wgtHexTable->verticalHeader()->setFont(fontHex);
+    wgtHexTable->horizontalHeader()->setFont(fontHex);
     for (int y = 0; y < wgtHexTable->rowCount(); y++) {
         wgtHexTable->setVerticalHeaderItem(y, new QTableWidgetItem(QString("%1").arg(y * 16, 4, 16, QChar('0')).toUpper()));
         for (int x = 0; x < 16; x++)

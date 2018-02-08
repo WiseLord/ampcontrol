@@ -21,6 +21,7 @@ private:
     LcdConverter *lc;
     QString fileName;
     QByteArray eep;
+    QFont fontHex;
 
     void readEepromFile(QString name);
     void saveEepromFile(QString name);
