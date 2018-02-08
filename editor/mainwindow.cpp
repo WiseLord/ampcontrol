@@ -228,18 +228,8 @@ void MainWindow::setAudioproc(int proc)
 
     wgtVolume->hide();
     wgtBass->hide();
-    wgtMiddle->hide();
     wgtTreble->hide();
-    wgtPreamp->hide();
-    wgtFrontrear->hide();
     wgtBalance->hide();
-    wgtCenter->hide();
-    wgtSubwoofer->hide();
-    wgtGain0->hide();
-    wgtGain1->hide();
-    wgtGain2->hide();
-    wgtGain3->hide();
-    wgtGain4->hide();
     wgtLoudness->hide();
     wgtSurround->hide();
     wgtEffect3d->hide();
@@ -292,6 +282,16 @@ void MainWindow::setAudioproc(int proc)
 
     /* Common TDA73x1 audio parameters */
     switch (proc) {
+    case AUDIOPROC_TDA7439:
+        wgtVolume->show();
+        setAudioParam(dsbVolume, -79, 0, 1, MODE_SND_VOLUME);
+        wgtBass->show();
+        setAudioParam(dsbBass, -14, 14, 2, MODE_SND_BASS);
+        wgtTreble->show();
+        setAudioParam(dsbTreble, -14, 14, 2, MODE_SND_TREBLE);
+        wgtBalance->show();
+        setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
+        break;
     case AUDIOPROC_TDA7312:
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TDA7314:
@@ -307,110 +307,33 @@ void MainWindow::setAudioproc(int proc)
         wgtBalance->show();
         setAudioParam(dsbBalance, -18.75, 18.75, 1.25, MODE_SND_BALANCE);
         break;
-    }
-
-    switch (proc) {
-    case AUDIOPROC_TDA7439:
-        wgtVolume->show();
-        setAudioParam(dsbVolume, -79, 0, 1, MODE_SND_VOLUME);
-        wgtBass->show();
-        setAudioParam(dsbBass, -14, 14, 2, MODE_SND_BASS);
-        wgtMiddle->show();
-        setAudioParam(dsbMiddle, -14, 14, 2, MODE_SND_MIDDLE);
-        wgtTreble->show();
-        setAudioParam(dsbTreble, -14, 14, 2, MODE_SND_TREBLE);
-        wgtPreamp->show();
-        setAudioParam(dsbPreamp, -47, 0, 1, MODE_SND_PREAMP);
-        wgtBalance->show();
-        setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
-        wgtGain0->show();
-        setAudioParam(dsbGain0, 0, 30, 2, MODE_SND_GAIN0);
-        wgtGain1->show();
-        setAudioParam(dsbGain1, 0, 30, 2, MODE_SND_GAIN1);
-        wgtGain2->show();
-        setAudioParam(dsbGain2, 0, 30, 2, MODE_SND_GAIN2);
-        wgtGain3->show();
-        setAudioParam(dsbGain3, 0, 30, 2, MODE_SND_GAIN3);
-        break;
-    case AUDIOPROC_TDA7313:
-        wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -18.75, 18.75, 1.25, MODE_SND_FRONTREAR);
-        wgtGain0->show();
-        setAudioParam(dsbGain0, 0, 11.25, 3.75, MODE_SND_GAIN0);
-        wgtGain1->show();
-        setAudioParam(dsbGain1, 0, 11.25, 3.75, MODE_SND_GAIN1);
-        wgtGain2->show();
-        setAudioParam(dsbGain2, 0, 11.25, 3.75, MODE_SND_GAIN2);
-        break;
-    case AUDIOPROC_TDA7314:
-        wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -18.75, 18.75, 1.25, MODE_SND_FRONTREAR);
-        wgtGain0->show();
-        setAudioParam(dsbGain0, 0, 18.75, 6.25, MODE_SND_GAIN0);
-        break;
-    case AUDIOPROC_TDA7318:
-        wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -18.75, 18.75, 1.25, MODE_SND_FRONTREAR);
-        wgtGain0->show();
-        setAudioParam(dsbGain0, 0, 18.75, 6.25, MODE_SND_GAIN0);
-        wgtGain1->show();
-        setAudioParam(dsbGain1, 0, 18.75, 6.25, MODE_SND_GAIN1);
-        wgtGain2->show();
-        setAudioParam(dsbGain2, 0, 18.75, 6.25, MODE_SND_GAIN2);
-        wgtGain3->show();
-        setAudioParam(dsbGain3, 0, 18.75, 6.25, MODE_SND_GAIN3);
-        break;
-    case AUDIOPROC_PT2314:
-        wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -18.75, 18.75, 1.25, MODE_SND_FRONTREAR);
-        wgtGain0->show();
-        setAudioParam(dsbGain0, 0, 11.25, 3.75, MODE_SND_GAIN0);
-        wgtGain1->show();
-        setAudioParam(dsbGain1, 0, 11.25, 3.75, MODE_SND_GAIN1);
-        wgtGain2->show();
-        setAudioParam(dsbGain2, 0, 11.25, 3.75, MODE_SND_GAIN2);
-        wgtGain3->show();
-        setAudioParam(dsbGain3, 0, 11.25, 3.75, MODE_SND_GAIN3);
-        break;
     case AUDIOPROC_TDA7448:
         wgtVolume->show();
         setAudioParam(dsbVolume, -79, 0, 1, MODE_SND_VOLUME);
-        wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -7, 7, 1, MODE_SND_FRONTREAR);
         wgtBalance->show();
         setAudioParam(dsbBalance, -7, 7, 1, MODE_SND_BALANCE);
-        wgtCenter->show();
-        setAudioParam(dsbCenter, -15, 0, 1, MODE_SND_CENTER);
-        wgtSubwoofer->show();
-        setAudioParam(dsbSubwoofer, -15, 0, 1, MODE_SND_SUBWOOFER);
         break;
     case AUDIOPROC_PT232X:
         wgtVolume->show();
         setAudioParam(dsbVolume, -79, 0, 1, MODE_SND_VOLUME);
         wgtBass->show();
         setAudioParam(dsbBass, -14, 14, 2, MODE_SND_BASS);
-        wgtMiddle->show();
-        setAudioParam(dsbMiddle, -14, 14, 2, MODE_SND_MIDDLE);
         wgtTreble->show();
         setAudioParam(dsbTreble, -14, 14, 2, MODE_SND_TREBLE);
-        wgtFrontrear->show();
-        setAudioParam(dsbFrontrear, -7, 7, 1, MODE_SND_FRONTREAR);
         wgtBalance->show();
         setAudioParam(dsbBalance, -7, 7, 1, MODE_SND_BALANCE);
-        wgtCenter->show();
-        setAudioParam(dsbCenter, -15, 0, 1, MODE_SND_CENTER);
-        wgtSubwoofer->show();
-        setAudioParam(dsbSubwoofer, -15, 0, 1, MODE_SND_SUBWOOFER);
-        wgtGain0->show();
-        setAudioParam(dsbGain0, 0, 6, 6, MODE_SND_GAIN4);
-        wgtGain1->show();
-        setAudioParam(dsbGain1, 0, 6, 6, MODE_SND_GAIN4);
-        wgtGain2->show();
-        setAudioParam(dsbGain2, 0, 6, 6, MODE_SND_GAIN4);
-        wgtGain3->show();
-        setAudioParam(dsbGain3, 0, 6, 6, MODE_SND_GAIN4);
-        wgtGain4->show();
-        setAudioParam(dsbGain4, 0, 6, 6, MODE_SND_GAIN4);
+        break;
+    case AUDIOPROC_TEA6300:
+    case AUDIOPROC_TEA6330:
+        wgtVolume->show();
+        setAudioParam(dsbVolume, -66, 20, 2, MODE_SND_VOLUME);
+        wgtBass->show();
+        setAudioParam(dsbBass, -12, 15, 3, MODE_SND_BASS);
+        wgtTreble->show();
+        setAudioParam(dsbTreble, -12, 12, 3, MODE_SND_TREBLE);
+        wgtBalance->show();
+        setAudioParam(dsbBalance, -14, 14, 2, MODE_SND_BALANCE);
+        break;
         break;
     case AUDIOPROC_PGA2310:
         wgtVolume->show();
@@ -440,76 +363,16 @@ void MainWindow::setBass(double value)
     updateHexTable(EEPROM_VOLUME + MODE_SND_BASS);
 }
 
-void MainWindow::setMiddle(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_MIDDLE] = static_cast<char>(value / dsbMiddle->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_MIDDLE);
-}
-
 void MainWindow::setTreble(double value)
 {
     eep[EEPROM_VOLUME + MODE_SND_TREBLE] = static_cast<char>(value / dsbTreble->singleStep());
     updateHexTable(EEPROM_VOLUME + MODE_SND_TREBLE);
 }
 
-void MainWindow::setPreamp(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_PREAMP] = static_cast<char>(value / dsbPreamp->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_PREAMP);
-}
-
-void MainWindow::setFrontrear(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_FRONTREAR] = static_cast<char>(value / dsbFrontrear->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_FRONTREAR);
-}
-
 void MainWindow::setBalance(double value)
 {
     eep[EEPROM_VOLUME + MODE_SND_BALANCE] = static_cast<char>(value / dsbBalance->singleStep());
     updateHexTable(EEPROM_VOLUME + MODE_SND_BALANCE);
-}
-
-void MainWindow::setCenter(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_CENTER] = static_cast<char>(value / dsbCenter->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_CENTER);
-}
-
-void MainWindow::setSubwoofer(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_SUBWOOFER] = static_cast<char>(value / dsbSubwoofer->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_SUBWOOFER);
-}
-
-void MainWindow::setGain0(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_GAIN0] = static_cast<char>(value / dsbGain0->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN0);
-}
-
-void MainWindow::setGain1(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_GAIN1] = static_cast<char>(value / dsbGain1->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN1);
-}
-
-void MainWindow::setGain2(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_GAIN2] = static_cast<char>(value / dsbGain2->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN2);
-}
-
-void MainWindow::setGain3(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_GAIN3] = static_cast<char>(value / dsbGain3->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN3);
-}
-
-void MainWindow::setGain4(double value)
-{
-    eep[EEPROM_VOLUME + MODE_SND_GAIN4] = static_cast<char>(value / dsbGain4->singleStep());
-    updateHexTable(EEPROM_VOLUME + MODE_SND_GAIN4);
 }
 
 void MainWindow::setInput(int value)

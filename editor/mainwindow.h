@@ -48,18 +48,8 @@ private slots:
     void setAudioproc(int proc);
     void setVolume(double value);
     void setBass(double value);
-    void setMiddle(double value);
     void setTreble(double value);
-    void setPreamp(double value);
-    void setFrontrear(double value);
     void setBalance(double value);
-    void setCenter(double value);
-    void setSubwoofer(double value);
-    void setGain0(double value);
-    void setGain1(double value);
-    void setGain2(double value);
-    void setGain3(double value);
-    void setGain4(double value);
     void setInput(int value);
     void setLoudness(int value);
     void setSurround(int value);

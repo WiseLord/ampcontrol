@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>860</width>
     <height>580</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>800</width>
+    <width>860</width>
     <height>580</height>
    </size>
   </property>
@@ -801,59 +801,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="wgtMiddle" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblMiddle">
-             <property name="text">
-              <string>Middle</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbMiddle">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="minimum">
-              <double>-14.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>14.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>2.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
          <widget class="QWidget" name="wgtTreble" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,0">
            <property name="spacing">
@@ -907,109 +854,6 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="wgtPreamp" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblPreamp">
-             <property name="text">
-              <string>Preamp</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbPreamp">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="minimum">
-              <double>-47.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>0.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtFrontrear" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblFrontrear">
-             <property name="text">
-              <string>Front/Rear</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbFrontrear">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="minimum">
-              <double>0.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>0.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>0.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
          <widget class="QWidget" name="wgtBalance" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0">
            <property name="spacing">
@@ -1056,362 +900,6 @@
              </property>
              <property name="value">
               <double>0.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtCenter" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblCenter">
-             <property name="text">
-              <string>Center</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbCenter">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="minimum">
-              <double>0.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>0.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>0.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtSubwoofer" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblSubwoofer">
-             <property name="text">
-              <string>Subwoofer</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbSubwoofer">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="minimum">
-              <double>0.000000000000000</double>
-             </property>
-             <property name="maximum">
-              <double>0.000000000000000</double>
-             </property>
-             <property name="value">
-              <double>0.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtGain0" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblGain0">
-             <property name="text">
-              <string>Input 0 gain</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbGain0">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="maximum">
-              <double>30.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>2.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtGain1" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblGain1">
-             <property name="text">
-              <string>Input 1 gain</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbGain1">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="maximum">
-              <double>30.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>2.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtGain2" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblGain2">
-             <property name="text">
-              <string>Input 2 gain</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbGain2">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="maximum">
-              <double>30.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>2.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtGain3" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblGain3">
-             <property name="text">
-              <string>Input 3 gain</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbGain3">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="maximum">
-              <double>30.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>2.000000000000000</double>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QWidget" name="wgtGain4" native="true">
-          <layout class="QHBoxLayout" name="horizontalLayout_31" stretch="1,0">
-           <property name="spacing">
-            <number>0</number>
-           </property>
-           <property name="leftMargin">
-            <number>3</number>
-           </property>
-           <property name="topMargin">
-            <number>0</number>
-           </property>
-           <property name="rightMargin">
-            <number>0</number>
-           </property>
-           <property name="bottomMargin">
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="lblGain4">
-             <property name="text">
-              <string>Input 4 gain</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QDoubleSpinBox" name="dsbGain4">
-             <property name="minimumSize">
-              <size>
-               <width>120</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="suffix">
-              <string> dB</string>
-             </property>
-             <property name="maximum">
-              <double>30.000000000000000</double>
-             </property>
-             <property name="singleStep">
-              <double>2.000000000000000</double>
              </property>
             </widget>
            </item>
@@ -2465,8 +1953,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
-     <height>22</height>
+     <width>860</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -2611,22 +2099,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>dsbGain3</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setGain3(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>517</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>cbxInput</sender>
    <signal>activated(int)</signal>
    <receiver>MainWindow</receiver>
@@ -2639,22 +2111,6 @@
     <hint type="destinationlabel">
      <x>262</x>
      <y>22</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbGain1</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setGain1(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>473</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
     </hint>
    </hints>
   </connection>
@@ -2687,54 +2143,6 @@
     <hint type="destinationlabel">
      <x>437</x>
      <y>475</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbCenter</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setCenter(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>407</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbGain0</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setGain0(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>451</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbSubwoofer</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setSubwoofer(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>429</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
     </hint>
    </hints>
   </connection>
@@ -2867,22 +2275,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>dsbPreamp</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setPreamp(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>341</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>dsbVolume</sender>
    <signal>valueChanged(double)</signal>
    <receiver>MainWindow</receiver>
@@ -2895,38 +2287,6 @@
     <hint type="destinationlabel">
      <x>696</x>
      <y>22</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbMiddle</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setMiddle(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>297</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbGain2</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setGain2(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>495</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
     </hint>
    </hints>
   </connection>
@@ -2991,22 +2351,6 @@
     <hint type="destinationlabel">
      <x>414</x>
      <y>288</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbFrontrear</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setFrontrear(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>363</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
     </hint>
    </hints>
   </connection>
@@ -3119,22 +2463,6 @@
     <hint type="destinationlabel">
      <x>421</x>
      <y>127</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>dsbGain4</sender>
-   <signal>valueChanged(double)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setGain4(double)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>791</x>
-     <y>539</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>671</x>
-     <y>567</y>
     </hint>
    </hints>
   </connection>
@@ -3289,17 +2617,8 @@
   <slot>updateTranslation(int,int)</slot>
   <slot>setVolume(double)</slot>
   <slot>setBass(double)</slot>
-  <slot>setMiddle(double)</slot>
   <slot>setTreble(double)</slot>
-  <slot>setPreamp(double)</slot>
-  <slot>setFrontrear(double)</slot>
   <slot>setBalance(double)</slot>
-  <slot>setCenter(double)</slot>
-  <slot>setSubwoofer(double)</slot>
-  <slot>setGain0(double)</slot>
-  <slot>setGain1(double)</slot>
-  <slot>setGain2(double)</slot>
-  <slot>setGain3(double)</slot>
   <slot>setLoudness(int)</slot>
   <slot>setInput(int)</slot>
   <slot>saveEeprom()</slot>
@@ -3314,8 +2633,6 @@
   <slot>setSpspeed(int)</slot>
   <slot>setBrstby(int)</slot>
   <slot>setEncres(int)</slot>
-  <slot>setAdcleft(int)</slot>
-  <slot>setAdcright(int)</slot>
   <slot>setExtfunc(int)</slot>
   <slot>setThreshold(int)</slot>
   <slot>about()</slot>
@@ -3325,7 +2642,6 @@
   <slot>setSurround(int)</slot>
   <slot>setEffect3d(int)</slot>
   <slot>setToneDefeat(int)</slot>
-  <slot>setGain4(double)</slot>
   <slot>setFmstep2(int)</slot>
   <slot>setFmMin(double)</slot>
   <slot>setFmMax(double)</slot>
