@@ -7,10 +7,10 @@
 
 static void pga2310SendGainLevels(uint8_t right, uint8_t left)
 {
-    PORT(SPISW_CE) &= ~SPISW_CE_LINE;
+    CLR(SPISW_CE);
     SPIswSendByte(right << 1);
     SPIswSendByte(left << 1);
-    PORT(SPISW_CE) |= SPISW_CE_LINE;
+    SET(SPISW_CE);
 
     return;
 }
@@ -19,7 +19,7 @@ void pga2310Init(void)
 {
     SPIswInit(SPISW_DORD_MSB_FIRST);
 
-    PORT(SPISW_CE) |= SPISW_CE_LINE;
+    SET(SPISW_CE);
 
     return;
 }

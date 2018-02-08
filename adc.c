@@ -52,9 +52,9 @@ ISR (TIMER0_OVF_vect)
         br = DISP_MIN_BR;
 
     if (br >= _br)
-        PORT(BCKL) &= ~BCKL_LINE;                       // Turn backlight off
+        CLR(BCKL);                                      // Turn backlight off
     else
-        PORT(BCKL) |= BCKL_LINE;                        // Turn backlight on
+        SET(BCKL);                                      // Turn backlight on
 
     return;
 };

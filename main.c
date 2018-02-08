@@ -27,8 +27,8 @@ static void hwInit(void)
     TIMSK = (1 << TOIE0) | (1 << OCIE2);
     sei();                              // Gloabl interrupt enable
 
-    DDR(STMU_STBY) |= STMU_STBY_LINE;   // Standby port
-    DDR(BCKL) |= BCKL_LINE;             // Backlight port
+    OUT(STMU_STBY);                     // Standby port
+    OUT(BCKL);                          // Backlight port
 
     tunerInit();                        // Tuner
     sndInit();                          // Audio params, labels
@@ -146,7 +146,7 @@ int main(void)
         // Handle command
         switch (action) {
         case ACTION_EXIT_STANDBY:
-            PORT(STMU_STBY) |= STMU_STBY_LINE;  // Power up audio and tuner
+            SET(STMU_STBY); // Power up audio and tuner
             setWorkBrightness();
             initTimer = INIT_TIMER_START;
             dispMode = MODE_SPECTRUM;
@@ -162,7 +162,7 @@ int main(void)
             sndPowerOff();
             tunerPowerOff();
             displayPowerOff();
-            PORT(STMU_STBY) &= ~STMU_STBY_LINE;
+            CLR(STMU_STBY);
             setStbyBrightness();
             rtc.etm = RTC_NOEDIT;
             initTimer = INIT_TIMER_OFF;

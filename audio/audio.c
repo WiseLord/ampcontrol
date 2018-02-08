@@ -382,9 +382,9 @@ void sndSetMute(uint8_t value)
 
 #ifndef _NO_MUTE_PORT
     if (aproc.mute)
-        PORT(STMU_MUTE) &= ~STMU_MUTE_LINE;
+        CLR(STMU_MUTE);
     else
-        PORT(STMU_MUTE) |= STMU_MUTE_LINE;
+        SET(STMU_MUTE);
 #endif
 
     switch (aproc.ic) {
@@ -466,7 +466,7 @@ void sndSwitchExtra(uint8_t extra)
 
 void sndNextParam(uint8_t *mode)
 {
-    do {                    // Skip unused params (with step = 0)
+    do { // Skip unused params (with step = 0)
         (*mode)++;
         if (*mode >= MODE_SND_GAIN0)
             *mode = MODE_SND_VOLUME;

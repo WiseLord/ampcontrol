@@ -18,9 +18,9 @@ static void ks0066WriteStrob()
     I2CWriteByte(i2cData);
 #else
     _delay_us(0.04);
-    PORT(KS0066_E) |= KS0066_E_LINE;
+    SET(KS0066_E);
     _delay_us(0.23);
-    PORT(KS0066_E) &= ~KS0066_E_LINE;
+    CLR(KS0066_E);
 #endif
 
     return;
@@ -32,23 +32,23 @@ static void ks0066SetData(uint8_t data)
     i2cData &= 0x0F;
     i2cData |= (data & 0xF0);
 #else
-    if (data & (1 << 7)) PORT(KS0066_D7) |= KS0066_D7_LINE;
-    else PORT(KS0066_D7) &= ~KS0066_D7_LINE;
-    if (data & (1 << 6)) PORT(KS0066_D6) |= KS0066_D6_LINE;
-    else PORT(KS0066_D6) &= ~KS0066_D6_LINE;
-    if (data & (1 << 5)) PORT(KS0066_D5) |= KS0066_D5_LINE;
-    else PORT(KS0066_D5) &= ~KS0066_D5_LINE;
-    if (data & (1 << 4)) PORT(KS0066_D4) |= KS0066_D4_LINE;
-    else PORT(KS0066_D4) &= ~KS0066_D4_LINE;
+    if (data & (1 << 7)) SET(KS0066_D7);
+    else CLR(KS0066_D7);
+    if (data & (1 << 6)) SET(KS0066_D6);
+    else CLR(KS0066_D6);
+    if (data & (1 << 5)) SET(KS0066_D5);
+    else CLR(KS0066_D5);
+    if (data & (1 << 4)) SET(KS0066_D4);
+    else CLR(KS0066_D4);
 #ifdef KS0066_WIRE_8BIT
-    if (data & (1 << 3)) PORT(KS0066_D3) |= KS0066_D3_LINE;
-    else PORT(KS0066_D3) &= ~KS0066_D3_LINE;
-    if (data & (1 << 2)) PORT(KS0066_D2) |= KS0066_D2_LINE;
-    else PORT(KS0066_D2) &= ~KS0066_D2_LINE;
-    if (data & (1 << 1)) PORT(KS0066_D1) |= KS0066_D1_LINE;
-    else PORT(KS0066_D1) &= ~KS0066_D1_LINE;
-    if (data & (1 << 0)) PORT(KS0066_D0) |= KS0066_D0_LINE;
-    else PORT(KS0066_D0) &= ~KS0066_D0_LINE;
+    if (data & (1 << 3)) SET(KS0066_D3);
+    else CLR(KS0066_D3);
+    if (data & (1 << 2)) SET(KS0066_D2);
+    else CLR(KS0066_D2);
+    if (data & (1 << 1)) SET(KS0066_D1);
+    else CLR(KS0066_D1);
+    if (data & (1 << 0)) SET(KS0066_D0);
+    else CLR(KS0066_D0);
 #endif
 #endif
 
@@ -84,7 +84,7 @@ void ks0066WriteCommand(uint8_t command)
 #ifdef KS0066_WIRE_PCF8574
     i2cData &= ~PCF8574_RS_LINE;
 #else
-    PORT(KS0066_RS) &= ~KS0066_RS_LINE;
+    CLR(KS0066_RS);
 #endif
     ks0066WritePort(command);
 
@@ -96,7 +96,7 @@ void ks0066WriteData(uint8_t data)
 #ifdef KS0066_WIRE_PCF8574
     i2cData |= PCF8574_RS_LINE;
 #else
-    PORT(KS0066_RS) |= KS0066_RS_LINE;
+    SET(KS0066_RS);
 #endif
     ks0066WritePort(data);
 
@@ -118,21 +118,21 @@ void ks0066Init(void)
 
     i2cData = PCF8574_BL_LINE;
 #else
-    DDR(KS0066_D7) |= KS0066_D7_LINE;
-    DDR(KS0066_D6) |= KS0066_D6_LINE;
-    DDR(KS0066_D5) |= KS0066_D5_LINE;
-    DDR(KS0066_D4) |= KS0066_D4_LINE;
+    OUT(KS0066_D7);
+    OUT(KS0066_D6);
+    OUT(KS0066_D5);
+    OUT(KS0066_D4);
 #ifdef KS0066_WIRE_8BIT
-    DDR(KS0066_D3) |= KS0066_D3_LINE;
-    DDR(KS0066_D2) |= KS0066_D2_LINE;
-    DDR(KS0066_D1) |= KS0066_D1_LINE;
-    DDR(KS0066_D0) |= KS0066_D0_LINE;
+    OUT(KS0066_D3);
+    OUT(KS0066_D2);
+    OUT(KS0066_D1);
+    OUT(KS0066_D0);
 #endif
-    DDR(KS0066_E) |= KS0066_E_LINE;
-    DDR(KS0066_RS) |= KS0066_RS_LINE;
+    OUT(KS0066_E);
+    OUT(KS0066_RS);
 
-    PORT(KS0066_E) &= ~KS0066_E_LINE;
-    PORT(KS0066_RS) &= ~KS0066_RS_LINE;
+    CLR(KS0066_E);
+    CLR(KS0066_RS);
 #endif
 
     ks0066SetData(KS0066_FUNCTION | KS0066_8BIT);   // Init data
@@ -156,7 +156,7 @@ void ks0066Init(void)
     i2cData &= ~PCF8574_RW_LINE;
     i2cData &= ~PCF8574_RS_LINE;
 #else
-    PORT(KS0066_RS) &= ~KS0066_RS_LINE;
+    CLR(KS0066_RS);
     _delay_us(100);
 #endif
     ks0066SetData(KS0066_FUNCTION);

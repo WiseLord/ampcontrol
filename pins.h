@@ -9,6 +9,12 @@
 #define PORT(x)             CONCAT(PORT,x)
 #define PIN(x)              CONCAT(PIN,x)
 
+#define OUT(x)              (DDR(x) |= x ## _LINE)
+#define IN(x)               (DDR(x) &= ~x ## _LINE)
+#define SET(x)              (PORT(x) |= x ## _LINE)
+#define CLR(x)              (PORT(x) &= ~x ## _LINE)
+#define READ(x)             (PIN(x) & x ## _LINE)
+
 // KS0066 Data port
 #define KS0066_D4           D
 #define KS0066_D4_LINE      (1<<7)
