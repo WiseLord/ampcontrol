@@ -127,16 +127,19 @@ SUBDIRS = audio display tuner
 
 OBJS = $(addprefix $(BUILDDIR)/, $(SRCS:.c=.o))
 ELF = $(BUILDDIR)/$(TARG).elf
+HEX = flash/$(TARG).hex
 
-all: $(ELF) size
+all: $(HEX) size
+
+$(HEX): $(ELF)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) $(HEX)
 
 $(ELF): $(OBJS)
 	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
 	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
-size:
+size:   $(ELF)
 	@sh ./size.sh $(ELF)
 
 $(BUILDDIR)/%.o: %.c
@@ -147,7 +150,7 @@ clean:
 	rm -rf $(BUILDDIR)
 
 .PHONY: flash
-flash: $(ELF)
+flash:  $(HEX)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 fuse:

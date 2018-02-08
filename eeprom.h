@@ -48,8 +48,6 @@
 #define EEPROM_RC_TYPE              0x38
 #define EEPROM_RC_ADDR              0x39
 #define EEPROM_TEMP_TH              0x3A
-#define EEPROM_ADC_CORR_L           0x3B
-#define EEPROM_ADC_CORR_R           0x3C
 #define EEPROM_EXT_FUNC             0x3D
 #define EEPROM_SILENCE_TIMER        0x3E
 
