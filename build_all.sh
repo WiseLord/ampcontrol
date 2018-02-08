@@ -11,7 +11,7 @@ do
 				if [ $AUDIOPROC != "RDA580X_AUDIO" -o $TUNER  == "RDA580X" ]
 				then
 					make clean
-					make APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} WIRE=${WIRE}
+					make -j4 APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} WIRE=${WIRE}
 				fi
 			fi
 		done
