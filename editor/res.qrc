@@ -27,5 +27,6 @@
         <file>icons/mixer.bmp</file>
         <file>icons/satellite.bmp</file>
         <file>res/eeprom_en.bin</file>
+        <file>fonts/LiberationMono-Bold.ttf</file>
     </qresource>
 </RCC>

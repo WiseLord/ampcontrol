@@ -22,6 +22,7 @@ private:
     QString fileName;
     QByteArray eep;
     QString amsr;
+    QFont fontHex;
 
     void readEepromFile(QString name);
     void saveEepromFile(QString name);
