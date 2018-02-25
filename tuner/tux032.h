@@ -9,11 +9,13 @@
 
 #define TUX032_BUF_STEREO(buf)  (buf[3] & TUX032_STEREO)
 
+#define TUX032_RDBUF_SIZE       4
+
 void tux032Init(void);
 
 void tux032SetFreq(void);
 
-uint8_t *tux032ReadStatus(void);
+void tux032ReadStatus(void);
 
 void tux032SetMute(void);
 

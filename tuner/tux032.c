@@ -4,7 +4,6 @@
 #include "../i2c.h"
 
 static uint8_t wrBuf[9] = {0x80, 0x00, 0x00, 0x64, 0xB1, 0xC6, 0x4B, 0xA2, 0xD2};
-static uint8_t rdBuf[4];
 
 static void tux032WriteI2C(uint8_t bytes)
 {
@@ -38,17 +37,15 @@ void tux032SetFreq(void)
     return;
 }
 
-uint8_t *tux032ReadStatus(void)
+void tux032ReadStatus(void)
 {
     uint8_t i;
 
     I2CStart(TUX032_I2C_ADDR | I2C_READ);
-    for (i = 0; i < sizeof(rdBuf) - 1; i++)
-        rdBuf[i] = I2CReadByte(I2C_ACK);
-    rdBuf[sizeof(rdBuf) - 1] = I2CReadByte(I2C_NOACK);
+    for (i = 0; i < TUX032_RDBUF_SIZE - 1; i++)
+        tunerRdbuf[i] = I2CReadByte(I2C_ACK);
+    tunerRdbuf[TUX032_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
     I2CStop();
-
-    return rdBuf;
 }
 
 void tux032SetMute(void)
