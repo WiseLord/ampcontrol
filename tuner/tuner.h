@@ -3,6 +3,25 @@
 
 #include <inttypes.h>
 
+#ifdef _TEA5767
+#include "tea5767.h"
+#endif
+#ifdef _RDA580X
+#include "rda580x.h"
+#endif
+#ifdef _TUX032
+#include "tux032.h"
+#endif
+#ifdef _LM7001
+#include "lm7001.h"
+#endif
+#ifdef _LC72131
+#include "lc72131.h"
+#endif
+#ifdef _RDS
+#include "rds.h"
+#endif
+
 typedef enum {
     TUNER_NO = 0,
     TUNER_TEA5767,
@@ -32,6 +51,18 @@ typedef struct {
 } Tuner_type;
 
 extern Tuner_type tuner;
+
+#if defined(_RDA580X)
+#define TUNER_RDBUF_SIZE    RDA5807_RDBUF_SIZE
+#elif defined(_TEA5767)
+#define TUNER_RDBUF_SIZE    TEA5767_RDBUF_SIZE
+#elif defined(_TUX032)
+#define TUNER_RDBUF_SIZE    TUX032_RDBUF_SIZE
+#endif
+
+#if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032)
+extern uint8_t tunerRdbuf[];
+#endif
 
 #define FM_BAND_DIV_FREQ    7600
 

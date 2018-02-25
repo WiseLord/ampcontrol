@@ -65,11 +65,13 @@
 #define TEA5767_BUF_READY(buf)  (buf[0] & TEA5767_RF)
 #define TEA5767_BUF_STEREO(buf) (buf[2] & TEA5767_STEREO)
 
+#define TEA5767_RDBUF_SIZE      5
+
 void tea5767Init(void);
 
 void tea5767SetFreq(void);
 
-uint8_t *tea5767ReadStatus(void);
+void tea5767ReadStatus(void);
 
 void tea5767SetMute(void);
 

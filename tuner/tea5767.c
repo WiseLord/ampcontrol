@@ -10,7 +10,6 @@ static uint8_t wrBuf[5] = {
     TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE | TEA5767_XTAL,
     TEA5767_DTC,
 } ;
-static uint8_t rdBuf[5];
 
 static void tea5767WriteI2C(void)
 {
@@ -57,17 +56,15 @@ void tea5767SetFreq(void)
     return;
 }
 
-uint8_t *tea5767ReadStatus(void)
+void tea5767ReadStatus(void)
 {
     uint8_t i;
 
     I2CStart(TEA5767_I2C_ADDR | I2C_READ);
-    for (i = 0; i < sizeof(rdBuf) - 1; i++)
-        rdBuf[i] = I2CReadByte(I2C_ACK);
-    rdBuf[sizeof(rdBuf) - 1] = I2CReadByte(I2C_NOACK);
+    for (i = 0; i < TEA5767_RDBUF_SIZE - 1; i++)
+        tunerRdbuf[i] = I2CReadByte(I2C_ACK);
+    tunerRdbuf[TEA5767_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
     I2CStop();
-
-    return rdBuf;
 }
 
 void tea5767SetMute(void)

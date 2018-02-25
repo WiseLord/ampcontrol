@@ -185,6 +185,8 @@
 #define RDA5807_BUF_READY(buf)      (buf[3] & RDA580X_FM_READY)
 #define RDA5807_BUF_STEREO(buf)     (buf[0] & RDA580X_ST)
 
+#define RDA5807_RDBUF_SIZE          12
+
 #define RDA5807_CHAN_SPACING        5
 
 #define RDA5807_VOL_MIN             0
@@ -194,7 +196,7 @@ void rda580xInit(void);
 
 void rda580xSetFreq(void);
 
-uint8_t *rda580xReadStatus(void);
+void rda580xReadStatus(void);
 
 void rda580xSetVolume(int8_t value);
 void rda580xSetMute(uint8_t value);

@@ -24,7 +24,6 @@ static uint8_t wrBuf[14] = {
     0,
     0,
 };
-static uint8_t rdBuf[12];
 
 static uint16_t fMin;
 
@@ -82,39 +81,37 @@ void rda580xSetFreq(void)
     }
 }
 
-uint8_t *rda580xReadStatus(void)
+void rda580xReadStatus(void)
 {
     uint8_t i;
 
     I2CStart(RDA5807M_I2C_SEQ_ADDR | I2C_READ);
-    for (i = 0; i < sizeof(rdBuf) - 1; i++)
-        rdBuf[i] = I2CReadByte(I2C_ACK);
-    rdBuf[sizeof(rdBuf) - 1] = I2CReadByte(I2C_NOACK);
+    for (i = 0; i < RDA5807_RDBUF_SIZE - 1; i++)
+        tunerRdbuf[i] = I2CReadByte(I2C_ACK);
+    tunerRdbuf[RDA5807_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
     I2CStop();
 
     // Get RDS data
 #ifdef _RDS
     if (tuner.rds) {
         // If RDS ready and sync flag are set
-        if ((rdBuf[0] & RDA5807_RDSR) && (rdBuf[0] & RDA5807_RDSS)) {
+        if ((tunerRdbuf[0] & RDA5807_RDSR) && (tunerRdbuf[0] & RDA5807_RDSS)) {
             // If there are no errors in blocks A and B
-            if (!(rdBuf[3] & (RDA5807_BLERA | RDA5807_BLERB))) {
+            if (!(tunerRdbuf[3] & (RDA5807_BLERA | RDA5807_BLERB))) {
                 // Send rdBuf[4..11] as 16-bit blocks A-D
-                rdsSetBlocks(&rdBuf[4]);
+                rdsSetBlocks(&tunerRdbuf[4]);
             }
         }
     }
 #endif
 
     if (tuner.ic != TUNER_RDA5807_DF) {
-        uint16_t chan = rdBuf[0] & RDA580X_READCHAN_9_8;
+        uint16_t chan = tunerRdbuf[0] & RDA580X_READCHAN_9_8;
         chan <<= 8;
-        chan |= rdBuf[1];
+        chan |= tunerRdbuf[1];
 
         tuner.freq = chan * RDA5807_CHAN_SPACING + fMin;
     }
-
-    return rdBuf;
 }
 
 void rda580xSetVolume(int8_t value)

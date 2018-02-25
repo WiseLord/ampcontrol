@@ -3,26 +3,10 @@
 #include <avr/eeprom.h>
 #include "../eeprom.h"
 
-#ifdef _TEA5767
-#include "tea5767.h"
+//uint8_t *bufFM;
+#if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032)
+uint8_t tunerRdbuf[TUNER_RDBUF_SIZE];
 #endif
-#ifdef _RDA580X
-#include "rda580x.h"
-#endif
-#ifdef _TUX032
-#include "tux032.h"
-#endif
-#ifdef _LM7001
-#include "lm7001.h"
-#endif
-#ifdef _LC72131
-#include "lc72131.h"
-#endif
-#ifdef _RDS
-#include "rds.h"
-#endif
-
-uint8_t *bufFM;
 
 Tuner_type tuner;
 
@@ -149,19 +133,19 @@ void tunerReadStatus(void)
     switch (tuner.ic) {
 #ifdef _TEA5767
     case TUNER_TEA5767:
-        bufFM = tea5767ReadStatus();
+        tea5767ReadStatus();
         break;
 #endif
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
     case TUNER_RDA5807_DF:
-        bufFM = rda580xReadStatus();
+        rda580xReadStatus();
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
-        bufFM = tux032ReadStatus();
+        tux032ReadStatus();
         break;
 #endif
     default:
@@ -220,19 +204,19 @@ uint8_t tunerStereo(void)
     switch (tuner.ic) {
 #ifdef _TEA5767
     case TUNER_TEA5767:
-        ret = TEA5767_BUF_STEREO(bufFM);
+        ret = TEA5767_BUF_STEREO(tunerRdbuf);
         break;
 #endif
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
     case TUNER_RDA5807_DF:
-        ret = RDA5807_BUF_STEREO(bufFM);
+        ret = RDA5807_BUF_STEREO(tunerRdbuf);
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
-        ret = !TUX032_BUF_STEREO(bufFM);
+        ret = !TUX032_BUF_STEREO(tunerRdbuf);
         break;
 #endif
     default:
@@ -249,14 +233,14 @@ uint8_t tunerLevel(void)
     switch (tuner.ic) {
 #ifdef _TEA5767
     case TUNER_TEA5767:
-        ret = (bufFM[3] & TEA5767_LEV_MASK) >> 4;
+        ret = (tunerRdbuf[3] & TEA5767_LEV_MASK) >> 4;
         break;
 #endif
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
     case TUNER_RDA5807_DF:
-        ret = (bufFM[2] & RDA580X_RSSI) >> 1;
+        ret = (tunerRdbuf[2] & RDA580X_RSSI) >> 1;
         if (ret < 24)
             ret = 0;
         else
