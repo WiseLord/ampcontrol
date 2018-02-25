@@ -9,8 +9,6 @@ void lc72131Init(void)
     SPIswInit(SPISW_DORD_LSB_FIRST);
 
     CLR(SPISW_CE);
-
-    return;
 }
 
 void lc72131SetFreq(void)
@@ -32,6 +30,4 @@ void lc72131SetFreq(void)
     SPIswSendByte(LC72131_CTRL_IN2_2);
     SPIswSendByte(LC72131_CTRL_IN2_3);
     CLR(SPISW_CE);
-
-    return;
 }

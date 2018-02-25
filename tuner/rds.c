@@ -32,8 +32,6 @@ void rdsSetBlocks(uint8_t *rdsBlock)
             rdsFlag = RDS_FLAG_INIT;
         }
     }
-
-    return;
 }
 
 void rdsDisable()
@@ -44,8 +42,6 @@ void rdsDisable()
         rdsText[i] = ' ';
 
     rdsFlag = 0;
-
-    return;
 }
 
 uint8_t rdsGetFlag(void)
