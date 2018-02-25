@@ -5,13 +5,18 @@
     <name>BtSetupDialog</name>
     <message>
         <location filename="../btsetupdialog.ui" line="14"/>
-        <source>Dialog</source>
-        <translation type="unfinished"></translation>
+        <source>Bluetooth settings</source>
+        <translation>Настройки Bluetooth</translation>
     </message>
     <message>
-        <location filename="../btsetupdialog.ui" line="29"/>
-        <source>OK</source>
-        <translation type="unfinished"></translation>
+        <location filename="../btsetupdialog.ui" line="25"/>
+        <source>Select HC05/06 device:</source>
+        <translation>Выберите модуль HC05/06:</translation>
+    </message>
+    <message>
+        <location filename="../btsetupdialog.ui" line="46"/>
+        <source>Connect</source>
+        <translation>Подключение</translation>
     </message>
 </context>
 <context>

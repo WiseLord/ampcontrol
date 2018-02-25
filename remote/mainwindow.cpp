@@ -226,7 +226,9 @@ void MainWindow::openSettings()
 void MainWindow::deviceDiscovered(const QBluetoothDeviceInfo &device)
 {
     dlgSetup->addDevice(device);
-    openPort();
+    if (port->state() == QBluetoothSocket::UnconnectedState) {
+        openPort();
+    }
 }
 #else
 

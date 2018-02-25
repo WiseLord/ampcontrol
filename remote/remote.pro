@@ -23,14 +23,17 @@ TEMPLATE = app
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    btitem.cpp
 
 HEADERS += \
     mainwindow.h \
-    defines.h
+    defines.h \
+    btitem.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    btitem.ui
 
 !android {
     SOURCES += \
