@@ -31,13 +31,13 @@ void tea5767Init(void)
 
 void tea5767SetFreq(void)
 {
-    uint32_t fq = (uint32_t)tuner.freq * 10000 + 225000;
-    uint16_t div = 12500;
+    uint16_t pll = tuner.freq * 4 + 90;
 
-    if (tuner.ctrl & TEA5767_XTAL)
-        div = 8192;
-
-    uint16_t pll = fq / div;
+    if (tuner.ctrl & TEA5767_XTAL) {
+        pll = pll * 10000UL / 32768;
+    } else {
+        pll = pll / 5;
+    }
 
     wrBuf[0] &= 0xC0;
     wrBuf[0] |= (pll >> 8) & 0x3F;
