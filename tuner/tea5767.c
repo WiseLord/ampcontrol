@@ -9,7 +9,7 @@ static uint8_t wrBuf[5] = {
     TEA5767_HLSI,
     TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE | TEA5767_XTAL,
     TEA5767_DTC,
-} ;
+};
 
 static void tea5767WriteI2C(void)
 {
@@ -19,8 +19,6 @@ static void tea5767WriteI2C(void)
     for (i = 0; i < sizeof(wrBuf); i++)
         I2CWriteByte(wrBuf[i]);
     I2CStop();
-
-    return;
 }
 
 void tea5767Init(void)
@@ -52,8 +50,6 @@ void tea5767SetFreq(void)
         wrBuf[2] &= ~TEA5767_MS;
 
     tea5767WriteI2C();
-
-    return;
 }
 
 void tea5767ReadStatus(void)
@@ -75,15 +71,11 @@ void tea5767SetMute(void)
         wrBuf[0] &= ~TEA5767_MUTE;
 
     tea5767WriteI2C();
-
-    return;
 }
 
 void tea5767PowerOn(void)
 {
     wrBuf[3] &= ~TEA5767_STBY;
-
-    return;
 }
 
 void tea5767PowerOff(void)
@@ -91,6 +83,4 @@ void tea5767PowerOff(void)
     wrBuf[3] |= TEA5767_STBY;
 
     tea5767WriteI2C();
-
-    return;
 }

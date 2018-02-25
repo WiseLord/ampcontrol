@@ -66,8 +66,6 @@ void tunerInit(void)
     }
 
     tunerSetFreq();
-
-    return;
 }
 
 void tunerSetFreq()
@@ -112,8 +110,6 @@ void tunerSetFreq()
 #ifdef _RDS
     rdsDisable(); // Clear RDS buffer
 #endif
-
-    return;
 }
 
 void tunerChangeFreq(int8_t mult)
@@ -124,8 +120,6 @@ void tunerChangeFreq(int8_t mult)
         tuner.freq += tuner.step1 * mult;
 
     tunerSetFreq();
-
-    return;
 }
 
 void tunerReadStatus(void)
@@ -151,8 +145,6 @@ void tunerReadStatus(void)
     default:
         break;
     }
-
-    return;
 }
 
 void tunerSetMono(uint8_t value)
@@ -174,8 +166,6 @@ void tunerSetMono(uint8_t value)
         tuner.mono = 0;
         break;
     }
-
-    return;
 }
 
 #ifdef _RDS
@@ -310,8 +300,6 @@ void tunerNextStation(int8_t direction)
     tuner.freq = freq;
 
     tunerSetFreq();
-
-    return;
 }
 
 // Load station by number
@@ -323,8 +311,6 @@ void tunerLoadStation(uint8_t num)
         tuner.freq = freq;
         tunerSetFreq();
     }
-
-    return;
 }
 
 // Load favourite station by number
@@ -336,8 +322,6 @@ void tunerLoadFavStation(uint8_t num)
         tuner.freq = freq;
         tunerSetFreq();
     }
-
-    return;
 }
 
 // Load favourite station by number
@@ -349,8 +333,6 @@ void tunerStoreFavStation(uint8_t num)
         eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, 0);
     else
         eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, tuner.freq);
-
-    return;
 }
 
 // Save/delete station from eeprom
@@ -384,8 +366,6 @@ void tunerStoreStation(void)
             break;
         }
     }
-
-    return;
 }
 
 void tunerSetVolume(int8_t value)
@@ -403,8 +383,6 @@ void tunerSetVolume(int8_t value)
     default:
         break;
     }
-
-    return;
 }
 
 void tunerSetMute(uint8_t value)
@@ -432,8 +410,6 @@ void tunerSetMute(uint8_t value)
     default:
         break;
     }
-
-    return;
 }
 
 void tunerSetBass(uint8_t value)
@@ -478,8 +454,6 @@ void tunerPowerOn(void)
     }
 
     tunerSetFreq();
-
-    return;
 }
 
 void tunerPowerOff(void)
@@ -508,8 +482,6 @@ void tunerPowerOff(void)
     default:
         break;
     }
-
-    return;
 }
 
 void tunerSeek(int8_t direction)

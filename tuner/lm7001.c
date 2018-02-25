@@ -9,8 +9,6 @@ void lm7001Init(void)
     SPIswInit(SPISW_DORD_LSB_FIRST);
 
     CLR(SPISW_CE);
-
-    return;
 }
 
 void lm7001SetFreq(void)
@@ -26,6 +24,4 @@ void lm7001SetFreq(void)
     SPIswSendByte(LM7001_CTRL_WORD);
 
     CLR(SPISW_CE);
-
-    return;
 }
