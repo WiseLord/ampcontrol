@@ -11,12 +11,12 @@ static uint8_t ds18x20IsOnBus(void)
 {
     uint8_t ret;
 
-    OUT(ONE_WIRE);                     // Pin as output (0)
-    CLR(ONE_WIRE);                   // Set active 0
-    _delay_us(480);                                     // Reset
-    IN(ONE_WIRE);                    // Pin as input (1)
-    SET(ONE_WIRE);                    // Enable pull-up resitor
-    _delay_us(70);                                      // Wait for response
+    OUT(ONE_WIRE);  // Pin as output (0)
+    CLR(ONE_WIRE);  // Set active 0
+    _delay_us(480); // Reset
+    IN(ONE_WIRE);   // Pin as input (1)
+    SET(ONE_WIRE);  // Enable pull-up resitor
+    _delay_us(70);  // Wait for response
 
     ret = !(READ(ONE_WIRE));
 
@@ -27,13 +27,13 @@ static uint8_t ds18x20IsOnBus(void)
 
 static void ds18x20SendBit(uint8_t bit)
 {
-    OUT(ONE_WIRE);                     // Pin as output (0)
-    CLR(ONE_WIRE);                   // Set active 0
+    OUT(ONE_WIRE);  // Pin as output (0)
+    CLR(ONE_WIRE);  // Set active 0
     _delay_us(5);
     if (!bit)
         _delay_us(50);
-    IN(ONE_WIRE);                    // Pin as input (1)
-    SET(ONE_WIRE);                    // Enable pull-up resitor
+    IN(ONE_WIRE);   // Pin as input (1)
+    SET(ONE_WIRE);  // Enable pull-up resitor
     _delay_us(5);
     if (bit)
         _delay_us(50);
@@ -45,11 +45,11 @@ static uint8_t ds18x20GetBit(void)
 {
     uint8_t ret;
 
-    OUT(ONE_WIRE);                     // Pin as output (0)
-    CLR(ONE_WIRE);                   // Set active 0
-    _delay_us(5);                                       // Strob
-    IN(ONE_WIRE);                    // Pin as input (1)
-    SET(ONE_WIRE);                    // Enable pull-up resitor
+    OUT(ONE_WIRE);  // Pin as output (0)
+    CLR(ONE_WIRE);  // Set active 0
+    _delay_us(5);
+    IN(ONE_WIRE);   // Pin as input (1)
+    SET(ONE_WIRE);  // Enable pull-up resitor
     _delay_us(5);
 
     ret = READ(ONE_WIRE);
@@ -158,15 +158,15 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
         bitA = ds18x20GetBit();
         bitB = ds18x20GetBit();
 
-        if (bitA && bitB) {                             // Both bits 1 = ERROR
+        if (bitA && bitB) {                         // Both bits 1 = ERROR
             return 0xFF;
-        } else if (!(bitA || bitB)) {                   // Both bits 0
-            if (currBit == lastDeviation) {             // Select 1 if device has been selected
+        } else if (!(bitA || bitB)) {               // Both bits 0
+            if (currBit == lastDeviation) {         // Select 1 if device has been selected
                 *bitPattern |= bitMask;
-            } else if (currBit > lastDeviation) {       // Select 0 if no, and remember device
+            } else if (currBit > lastDeviation) {   // Select 0 if no, and remember device
                 (*bitPattern) &= ~bitMask;
                 newDeviation = currBit;
-            } else if (!(*bitPattern & bitMask)) {       // Otherwise just remember device
+            } else if (!(*bitPattern & bitMask)) {  // Otherwise just remember device
                 newDeviation = currBit;
             }
         } else { // Bits differ
@@ -246,7 +246,8 @@ int16_t ds18x20GetTemp(uint8_t num)
 {
     int16_t ret = devs[num].temp * 5;
 
-    if (devs[num].id[0] == 0x28) // DS18B20 has 8X better resolution
+    // DS18B20 has 8X better resolution
+    if (devs[num].id[0] == 0x28)
         ret /= 8;
 
     // Return value is in 0.1°C units
