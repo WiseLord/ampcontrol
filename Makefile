@@ -154,7 +154,11 @@ flash:  $(HEX)
 	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
 
 fuse:
+ifeq ($(MCU), atmega32)
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x3F:m -U hfuse:w:0xC1:m
+else
+	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0xff:m -U hfuse:w:0xd1:m -U efuse:w:0xfc:m
+endif
 
 eeprom_by:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_by.bin:r
