@@ -5,6 +5,8 @@
 
 #include "lcdconverter.h"
 
+#include <QTranslator>
+
 #define EEPROM_RESOURCE ":/res/eeprom_en.bin"
 
 class MainWindow : public QMainWindow, private Ui::MainWindow
@@ -33,6 +35,8 @@ private:
 
     int fmStepEep2Index(uint8_t value);
     uint8_t fmStepIndex2Step(uint8_t index);
+
+    QTranslator translator;
 
 private slots:
     void about();
@@ -73,6 +77,9 @@ private slots:
 
     void setOther();
     void setBrstby(int value);
+
+    void setLanguage();
+    void retranslate(QString lang);
 };
 
 #endif // MAINWINDOW_H

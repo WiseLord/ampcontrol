@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>ts/editor_by.qm</file>
+        <file>ts/editor_ru.qm</file>
+    </qresource>
+</RCC>

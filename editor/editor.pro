@@ -23,12 +23,24 @@ SOURCES += main.cpp\
     hex2spinbox.cpp
 
 HEADERS  += mainwindow.h \
-	lcdconverter.h \
+    lcdconverter.h \
     aboutdialog.h \
-    hex2spinbox.h
+    hex2spinbox.h \
+    defines.h
 
 FORMS    += mainwindow.ui \
     aboutdialog.ui
 
 RESOURCES += \
-    res.qrc
+    res.qrc \
+    ts.qrc
+
+TRANSLATIONS += \
+    ts/editor_ru.ts \
+    ts/editor_by.ts
+
+tr.commands = lupdate \"$$_PRO_FILE_\" && lrelease \"$$_PRO_FILE_\"
+commands = lupdate \"$$_PRO_FILE_\" && lrelease \"$$_PRO_FILE_\"
+
+PRE_TARGETDEPS += tr
+QMAKE_EXTRA_TARGETS += tr
