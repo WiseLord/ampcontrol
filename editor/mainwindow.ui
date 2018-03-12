@@ -2687,7 +2687,17 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAboutQt"/>
    </widget>
+   <widget class="QMenu" name="menuLang">
+    <property name="title">
+     <string>Language</string>
+    </property>
+    <addaction name="actionLangAuto"/>
+    <addaction name="actionLangBelarusian"/>
+    <addaction name="actionLangEnglish"/>
+    <addaction name="actionLangRussian"/>
+   </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuLang"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
@@ -2724,6 +2734,41 @@
   <action name="actionSaveAmsr">
    <property name="text">
     <string>Save &amp;AMSR file as ...</string>
+   </property>
+  </action>
+  <action name="actionLangAuto">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto</string>
+   </property>
+  </action>
+  <action name="actionLangBelarusian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Belarusian</string>
+   </property>
+  </action>
+  <action name="actionLangEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="actionLangRussian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Russian</string>
    </property>
   </action>
  </widget>
@@ -3468,6 +3513,70 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionLangAuto</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLanguage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>430</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLangBelarusian</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLanguage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>430</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLangEnglish</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLanguage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>430</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLangRussian</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setLanguage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>430</x>
+     <y>304</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -3510,5 +3619,6 @@
   <slot>setRemoteIndex(int)</slot>
   <slot>calcRemoteSeq()</slot>
   <slot>saveAmsr()</slot>
+  <slot>setLanguage()</slot>
  </slots>
 </ui>
