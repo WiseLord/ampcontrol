@@ -110,9 +110,9 @@ extern int16_t initTimer;
 
 void inputInit();
 
-int8_t getEncoder(void);
-uint8_t getBtnCmd(void);
-uint8_t getRcCmd(void);
+int8_t getEncoder();
+uint8_t getBtnCmd();
+uint8_t getRcCmd();
 
 void setDispTimer(uint8_t value);
 

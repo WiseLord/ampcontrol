@@ -4,24 +4,28 @@
 #include "pins.h"
 
 static uint8_t dord = SPISW_DORD_MSB_FIRST;
+static uint8_t extFunc;
 
-static void SPIswStrob(void)
+static void SPIswStrob()
 {
     _delay_us(1.5);
     SET(SPISW_CLK);
     _delay_us(1.5);
     CLR(SPISW_CLK);
+}
 
-    return;
+void SPIswInitLines(uint8_t func)
+{
+    OUT(SPISW_DI);
+    OUT(SPISW_CLK);
+    OUT(SPISW_CE);
+
+    extFunc = func;
 }
 
 void SPIswInit(uint8_t dataOrder)
 {
     dord = dataOrder;
-
-    OUT(SPISW_DI);
-    OUT(SPISW_CLK);
-    OUT(SPISW_CE);
 
     CLR(SPISW_CLK);
 }
@@ -44,6 +48,28 @@ void SPIswSendByte(uint8_t data)
         else
             data <<= 1;
     }
+}
 
-    return;
+void SPIswSet(int8_t input)
+{
+    if (extFunc != USE_INPUT_STATUS)
+        return;
+
+    CLR(EXT_0);
+    CLR(EXT_1);
+    CLR(EXT_2);
+
+    switch (input) {
+    case 0:
+        SET(EXT_0);
+        break;
+    case 1:
+        SET(EXT_1);
+        break;
+    case 2:
+        SET(EXT_2);
+        break;
+    default:
+        break;
+    }
 }

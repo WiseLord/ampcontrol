@@ -126,5 +126,4 @@ void fftRad4(int16_t *fr, int16_t *fi)
             phi += phi0;
         }
     }
-    return;
 }

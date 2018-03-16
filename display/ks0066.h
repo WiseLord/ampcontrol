@@ -66,8 +66,8 @@
 void ks0066WriteCommand(uint8_t cmd);
 void ks0066WriteData(uint8_t data);
 
-void ks0066Clear(void);
-void ks0066Init(void);
+void ks0066Clear();
+void ks0066Init();
 
 void ks0066SetXY(uint8_t x, uint8_t y);
 void ks0066WriteString(char *string);

@@ -30,10 +30,10 @@ typedef struct {
     uint8_t command;
 } IRData;
 
-void rcInit(void);
+void rcInit();
 
-IRData takeIrData(void);
-IRData getIrData(void);
+IRData takeIrData();
+IRData getIrData();
 void setIrData(uint8_t type, uint8_t addr, uint8_t cmd);
 
 #endif // RC5_H

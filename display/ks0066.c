@@ -22,8 +22,6 @@ static void ks0066WriteStrob()
     _delay_us(0.23);
     CLR(KS0066_E);
 #endif
-
-    return;
 }
 
 static void ks0066SetData(uint8_t data)
@@ -51,8 +49,6 @@ static void ks0066SetData(uint8_t data)
     else CLR(KS0066_D0);
 #endif
 #endif
-
-    return;
 }
 
 static void ks0066WritePort(uint8_t data)
@@ -75,8 +71,6 @@ static void ks0066WritePort(uint8_t data)
 #ifdef KS0066_WIRE_PCF8574
     I2CStop();
 #endif
-
-    return;
 }
 
 void ks0066WriteCommand(uint8_t command)
@@ -87,8 +81,6 @@ void ks0066WriteCommand(uint8_t command)
     CLR(KS0066_RS);
 #endif
     ks0066WritePort(command);
-
-    return;
 }
 
 void ks0066WriteData(uint8_t data)
@@ -99,19 +91,15 @@ void ks0066WriteData(uint8_t data)
     SET(KS0066_RS);
 #endif
     ks0066WritePort(data);
-
-    return;
 }
 
-void ks0066Clear(void)
+void ks0066Clear()
 {
     ks0066WriteCommand(KS0066_CLEAR);
     _delay_ms(2);
-
-    return;
 }
 
-void ks0066Init(void)
+void ks0066Init()
 {
 #ifdef KS0066_WIRE_PCF8574
     I2CStart(PCF8574_ADDR);
@@ -170,21 +158,15 @@ void ks0066Init(void)
     ks0066WriteCommand(KS0066_CLEAR);
     _delay_ms(2);
     ks0066WriteCommand(KS0066_SET_MODE | KS0066_INC_ADDR);
-
-    return;
 }
 
 void ks0066SetXY(uint8_t x, uint8_t y)
 {
     ks0066WriteCommand(KS0066_SET_DDRAM + (y ? KS0066_LINE_WIDTH : 0) + x);
-
-    return;
 }
 
 void ks0066WriteString(char *string)
 {
     while (*string)
         ks0066WriteData(*string++);
-
-    return;
 }

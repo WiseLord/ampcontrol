@@ -35,8 +35,6 @@ void adcInit()
 
     // Set mux to ADC2 with adjusting result to left
     ADMUX = (1 << ADLAR) | (0 << MUX3) | (0 << MUX2) | (1 << MUX1) | (0 << MUX0);
-
-    return;
 }
 
 ISR (TIMER0_OVF_vect)
@@ -55,9 +53,7 @@ ISR (TIMER0_OVF_vect)
         CLR(BCKL);                                      // Turn backlight off
     else
         SET(BCKL);                                      // Turn backlight on
-
-    return;
-};
+}
 
 static uint8_t revBits(uint8_t x)
 {
@@ -76,11 +72,9 @@ static void getValues()
         while (ADCSRA & (1 << ADSC));                   // Wait for finish measure
         fi[i] = ADCH;
     }
-
-    return;
 }
 
-static void prepareData(void)
+static void prepareData()
 {
     uint8_t i, j;
     int16_t dcOft = 0;
@@ -98,8 +92,6 @@ static void prepareData(void)
         fr[j] = ((fi[i] - dcOft) * hw) >> 6;
         fi[i] = 0;
     }
-
-    return;
 }
 
 void cplx2dB()
@@ -115,8 +107,6 @@ void cplx2dB()
                 break;
         fr[i] = j;
     }
-
-    return;
 }
 
 uint8_t *getSpData()
@@ -141,6 +131,4 @@ uint8_t *getSpData()
 void setDispBr(uint8_t br)
 {
     _br = br;
-
-    return;
 }

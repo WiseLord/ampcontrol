@@ -28,11 +28,9 @@ static void writeStringEeprom(const uint8_t *string)
         strbuf[i] = eeprom_read_byte(&string[i]);
 
     ks0066WriteString(strbuf);
-
-    return;
 }
 
-static void lcdGenLevels(void)
+static void lcdGenLevels()
 {
     ks0066WriteCommand(KS0066_SET_CGRAM);
 
@@ -47,11 +45,9 @@ static void lcdGenLevels(void)
             }
         }
     }
-
-    return;
 }
 
-static void lcdGenBar(void)
+static void lcdGenBar()
 {
     ks0066WriteCommand(KS0066_SET_CGRAM);
 
@@ -68,8 +64,6 @@ static void lcdGenBar(void)
             ks0066WriteData(pgm_read_byte(&barSymbols[sym]));
         }
     }
-
-    return;
 }
 
 static void writeNum(int8_t value, uint8_t width, uint8_t lead)
@@ -96,8 +90,6 @@ static void writeNum(int8_t value, uint8_t width, uint8_t lead)
         strbuf[pos] = sign;
 
     ks0066WriteString(strbuf);
-
-    return;
 }
 
 static void writeHexDigit(uint8_t hex)
@@ -106,8 +98,6 @@ static void writeHexDigit(uint8_t hex)
         hex += ('A' - '9' - 1);
 
     ks0066WriteData(hex + '0');
-
-    return;
 }
 
 static void showBar(int16_t min, int16_t max, int16_t value)
@@ -129,11 +119,9 @@ static void showBar(int16_t min, int16_t max, int16_t value)
             }
         }
     }
-
-    return;
 }
 
-void showRC5Info(void)
+void showRC5Info()
 {
     IRData irData = takeIrData();
 
@@ -144,8 +132,6 @@ void showRC5Info(void)
     ks0066WriteData(' ');
     writeHexDigit(irData.command >> 4);
     writeHexDigit(irData.command & 0x0F);
-
-    return;
 }
 
 void showRadio(uint8_t mode)
@@ -177,8 +163,6 @@ void showRadio(uint8_t mode)
 
     // Frequency scale
     showBar(0, (tuner.fMax - tuner.fMin) >> 4, (tuner.freq - tuner.fMin) >> 4);
-
-    return;
 }
 
 void showBoolParam(uint8_t value, uint8_t labelIndex)
@@ -189,12 +173,10 @@ void showBoolParam(uint8_t value, uint8_t labelIndex)
         writeStringEeprom(txtLabels[LABEL_ON]);
     else
         writeStringEeprom(txtLabels[LABEL_OFF]);
-
-    return;
 }
 
 // Show brightness control
-void showBrWork(void)
+void showBrWork()
 {
     writeStringEeprom(txtLabels[LABEL_BR_WORK]);
 
@@ -202,8 +184,6 @@ void showBrWork(void)
     writeNum(brWork, 3, ' ');
 
     showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
-
-    return;
 }
 
 void changeBrWork(int8_t diff)
@@ -214,8 +194,6 @@ void changeBrWork(int8_t diff)
     if (brWork < DISP_MIN_BR)
         brWork = DISP_MIN_BR;
     setWorkBrightness();
-
-    return;
 }
 
 // Show audio parameter
@@ -234,8 +212,6 @@ void showSndParam(uint8_t mode)
 
     showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max),
             param->value);
-
-    return;
 }
 
 static void drawTm(uint8_t tm)
@@ -244,11 +220,9 @@ static void drawTm(uint8_t tm)
         ks0066WriteString("  ");
     else
         writeNum(*((int8_t *)&rtc + tm), 2, '0');
-
-    return;
 }
 
-void showTime(void)
+void showTime()
 {
     drawTm(RTC_HOUR);
     ks0066WriteData(':');
@@ -268,11 +242,9 @@ void showTime(void)
     ks0066SetXY(0, 1);
 
     writeStringEeprom(txtLabels[LABEL_SUNDAY + rtcWeekDay() - 1]);
-
-    return;
 }
 
-void showSpectrum(void)
+void showSpectrum()
 {
     uint8_t i;
     uint8_t val;
@@ -295,25 +267,19 @@ void showSpectrum(void)
         else
             ks0066WriteData(0xFF);
     }
-
-    return;
 }
 
-void setWorkBrightness(void)
+void setWorkBrightness()
 {
     setDispBr(brWork);
-
-    return;
 }
 
-void setStbyBrightness(void)
+void setStbyBrightness()
 {
     setDispBr(brStby);
-
-    return;
 }
 
-void displayInit(void)
+void displayInit()
 {
     uint8_t i;
     uint8_t *addr;
@@ -340,8 +306,6 @@ void displayInit(void)
 
     brStby = eeprom_read_byte((uint8_t *)EEPROM_BR_STBY);
     brWork = eeprom_read_byte((uint8_t *)EEPROM_BR_WORK);
-
-    return;
 }
 
 void displayPowerOff()

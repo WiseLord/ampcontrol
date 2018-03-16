@@ -14,7 +14,7 @@
 #include "rtc.h"
 
 // Hardware initialization
-static void hwInit(void)
+static void hwInit()
 {
     I2CInit();                          // I2C bus
     displayInit();                      // Display
@@ -32,11 +32,9 @@ static void hwInit(void)
 
     tunerInit();                        // Tuner
     sndInit();                          // Audio params, labels
-
-    return;
 }
 
-int main(void)
+int main()
 {
     uint8_t dispMode = MODE_SPECTRUM;
     uint8_t dispModePrev = dispMode;

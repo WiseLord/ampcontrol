@@ -24,13 +24,11 @@ static volatile uint16_t rcTimer;
 static uint8_t rcAddr;
 static uint8_t rcCode[CMD_RC_END];  // Array with rc commands
 
-void rcCodesInit(void)
+void rcCodesInit()
 {
 //  rcType = eeprom_read_byte((uint8_t*)EEPROM_RC_TYPE);
     rcAddr = eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR);
     eeprom_read_block(rcCode, (uint8_t *)EEPROM_RC_CMD, CMD_RC_END);
-
-    return;
 }
 
 void inputInit()
@@ -181,19 +179,17 @@ ISR (TIMER2_COMP_vect)
     // RTC poll timer
     if (rtcTimer)
         rtcTimer--;
-
-    return;
-};
+}
 
 
-int8_t getEncoder(void)
+int8_t getEncoder()
 {
     int8_t ret = encCnt;
     encCnt = 0;
     return ret;
 }
 
-uint8_t getBtnCmd(void)
+uint8_t getBtnCmd()
 {
     uint8_t ret = cmdBuf;
     cmdBuf = CMD_RC_END;
@@ -227,6 +223,4 @@ uint8_t getRcCmd()
 void setDispTimer(uint8_t value)
 {
     dispTimer = 1000U * value;
-
-    return;
 }

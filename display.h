@@ -53,22 +53,22 @@ enum {
 
 #define STR_BUFSIZE     16
 
-void showRC5Info(void);
+void showRC5Info();
 void showRadio(uint8_t mode);
 void showBoolParam(uint8_t value, uint8_t labelIndex);
 
-void showBrWork(void);
+void showBrWork();
 void changeBrWork(int8_t diff);
 
 void showSndParam(uint8_t mode);
 
-void showTime(void);
-void showSpectrum(void);
+void showTime();
+void showSpectrum();
 
-void setWorkBrightness(void);
-void setStbyBrightness(void);
+void setWorkBrightness();
+void setStbyBrightness();
 
-void displayInit(void);
-void displayPowerOff(void);
+void displayInit();
+void displayPowerOff();
 
 #endif // DISPLAY_H

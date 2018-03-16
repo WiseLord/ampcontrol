@@ -5,15 +5,13 @@
 
 static volatile IRData irData;          // Last decoded IR command
 
-void rcInit(void)
+void rcInit()
 {
     MCUCR = (1 << ISC10);               // Set INT1 to trigger on any edge
     IN(RC);                             // Set PD3 (INT1) to input
     TCCR1A = 0;                         // Reset Timer1 counter
     TCCR1B = (1 << CS11);               // Set Timer1 prescaler to 8 (1MHz)
     GICR = (1 << INT1);                 // Enable INT1 interrupt
-
-    return;
 }
 
 
@@ -55,8 +53,6 @@ ISR(INT1_vect)
 
         rc5TogBitOld = rc5TogBit;
     }
-
-    return;
 }
 
 IRData takeIrData()
@@ -77,6 +73,4 @@ void setIrData(uint8_t type, uint8_t addr, uint8_t cmd)
     irData.type = type;
     irData.address = addr;
     irData.command = cmd;
-
-    return;
 }

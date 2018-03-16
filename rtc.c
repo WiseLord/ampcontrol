@@ -8,7 +8,7 @@ RTC_type rtc;
 const static RTC_type rtcMin PROGMEM = {0, 0, 0, 1, 1, 1, 1, RTC_NOEDIT};
 const static RTC_type rtcMax PROGMEM = {59, 59, 23, 7, 31, 12, 99, RTC_NOEDIT};
 
-int8_t rtcWeekDay(void)
+int8_t rtcWeekDay()
 {
     uint8_t a, y, m;
     int8_t ret;
@@ -24,7 +24,7 @@ int8_t rtcWeekDay(void)
     return ret;
 }
 
-static uint8_t rtcDaysInMonth(void)
+static uint8_t rtcDaysInMonth()
 {
     uint8_t ret = rtc.month;
 
@@ -40,7 +40,7 @@ static uint8_t rtcDaysInMonth(void)
     return ret;
 }
 
-void rtcReadTime(void)
+void rtcReadTime()
 {
     uint8_t temp;
     uint8_t i;
@@ -53,11 +53,9 @@ void rtcReadTime(void)
         *((int8_t *)&rtc + i) = rtcBinDecToDec(temp);
     }
     I2CStop();
-
-    return;
 }
 
-static void rtcSaveTime(void)
+static void rtcSaveTime()
 {
     uint8_t i;
     uint8_t etm = rtc.etm;
@@ -73,11 +71,9 @@ static void rtcSaveTime(void)
     }
 
     I2CStop();
-
-    return;
 }
 
-void rtcNextEditParam(void)
+void rtcNextEditParam()
 {
     switch (rtc.etm) {
     case RTC_HOUR:
@@ -95,8 +91,6 @@ void rtcNextEditParam(void)
         rtc.etm = RTC_HOUR;
         break;
     }
-
-    return;
 }
 
 void rtcChangeTime(int8_t diff)
@@ -116,8 +110,6 @@ void rtcChangeTime(int8_t diff)
         *time = timeMax;
 
     rtcSaveTime();
-
-    return;
 }
 
 

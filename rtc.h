@@ -31,10 +31,10 @@ extern RTC_type rtc;
 
 #define RTC_NOEDIT          0xFF
 
-int8_t rtcWeekDay(void);
+int8_t rtcWeekDay();
 
-void rtcReadTime(void);
-void rtcNextEditParam(void);
+void rtcReadTime();
+void rtcNextEditParam();
 void rtcChangeTime(int8_t diff);
 
 uint8_t rtcBinDecToDec(uint8_t num);
