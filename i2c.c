@@ -15,7 +15,7 @@ void I2CInit(void)
     return;
 }
 
-void I2CStart(uint8_t addr)
+uint8_t I2CStart(uint8_t addr)
 {
     uint8_t i = 0;
 
@@ -23,12 +23,10 @@ void I2CStart(uint8_t addr)
 
     while (bit_is_clear(TWCR, TWINT)) {
         if (i++ > 250)                                  // Avoid endless loop
-            return;
+            return 0;
     }
 
-    I2CWriteByte(addr);
-
-    return;
+    return I2CWriteByte(addr);
 }
 
 void I2CStop(void)
@@ -45,7 +43,7 @@ void I2CStop(void)
     return;
 }
 
-void I2CWriteByte(uint8_t data)
+uint8_t I2CWriteByte(uint8_t data)
 {
     uint8_t i = 0;
 
@@ -57,7 +55,7 @@ void I2CWriteByte(uint8_t data)
             break;
     }
 
-    return;
+    return TWSR & 0xF8;
 }
 
 uint8_t I2CReadByte(uint8_t ack)

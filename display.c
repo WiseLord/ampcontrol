@@ -170,7 +170,7 @@ static void lcdGenLevels(void)
         userSybmols = LCD_LEVELS;
 
         uint8_t i, j;
-        ks0066StartSym(0);
+        ks0066SelectSymbol(0);
         for (i = 0; i < 7; i++)
             for (j = 0; j < 8; j++)
                 if (i + j >= 7)
@@ -288,7 +288,7 @@ static void lcdGenBar(uint8_t sym)
     if (userSybmols != LCD_BAR || userAddSym != sym) {
         // Generate main 6 bar symbols
         userSybmols = LCD_BAR;
-        ks0066StartSym(0);
+        ks0066SelectSymbol(0);
         for (i = 0; i < 48; i++) {
             if ((i & 0x07) == 0x03) {
                 ks0066WriteData(0x15);
@@ -421,7 +421,7 @@ static void lcdGenAlarm(void)
         userSybmols = LCD_ALARM;
 
         uint8_t i;
-        ks0066StartSym(0);
+        ks0066SelectSymbol(0);
         for (i = 0; i < sizeof(alarmSym); i++)
             ks0066WriteData(pgm_read_byte(&alarmSym[i]));
     }

@@ -9,10 +9,10 @@
 
 void I2CInit(void);
 
-void I2CStart(uint8_t addr);
+uint8_t I2CStart(uint8_t addr);
 void I2CStop(void);
 
-void I2CWriteByte(uint8_t data);
+uint8_t I2CWriteByte(uint8_t data);
 uint8_t I2CReadByte(uint8_t ack);
 
 #endif // I2C_H

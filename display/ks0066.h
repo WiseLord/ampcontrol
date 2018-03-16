@@ -25,12 +25,6 @@
 #endif
 
 #if defined(KS0066_WIRE_PCF8574)
-#include "../i2c.h"
-// PCF8574 expander address inputs - 0 if soldered to ground, 1 if not
-#define PCF8574_A2                  (0 << 3)
-#define PCF8574_A1                  (0 << 2)
-#define PCF8574_A0                  (0 << 1)
-#define PCF8574_ADDR                (0x40 | PCF8574_A2 | PCF8574_A1 | PCF8574_A0)
 #define PCF8574_BL_LINE             (1<<3)
 #define PCF8574_E_LINE              (1<<2)
 #define PCF8574_RW_LINE             (1<<1)
@@ -82,7 +76,7 @@
 void ks0066Clear(void);
 void ks0066Init(void);
 
-void ks0066StartSym(uint8_t addr);
+void ks0066SelectSymbol(uint8_t num);
 void ks0066SetXY(uint8_t x, uint8_t y);
 
 void ks0066WriteData(uint8_t data);

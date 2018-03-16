@@ -3,11 +3,15 @@
 #include <util/delay.h>
 #include <avr/interrupt.h>
 #include "../pins.h"
+#if defined(KS0066_WIRE_PCF8574)
+#include "../i2c.h"
+#endif
 
 #define swap(x) (__builtin_avr_swap(x))             // Swaps nibbles
 
 #if defined(KS0066_WIRE_PCF8574)
 static uint8_t i2cData;
+static uint8_t pcf8574Addr = 0x40;
 #endif
 
 static uint8_t _br;
@@ -61,7 +65,7 @@ static void ks0066SetData(uint8_t data)
 static void ks0066WritePort(uint8_t data)
 {
 #if defined(KS0066_WIRE_PCF8574)
-    I2CStart(PCF8574_ADDR);
+    I2CStart(pcf8574Addr);
     i2cData &= ~PCF8574_RW_LINE;
 #else
     _delay_us(100);
@@ -121,7 +125,30 @@ void ks0066Clear(void)
 void ks0066Init(void)
 {
 #if defined(KS0066_WIRE_PCF8574)
-    I2CStart(PCF8574_ADDR);
+    // Try to find correct address on bus
+    // PCF8574 range
+    for (uint8_t addr = 0x40; addr < 0x4F; addr += 2) {
+        if ((I2CStart(addr) & 0x18) == 0x18) {
+            I2CStop();
+            pcf8574Addr = addr;
+            break;
+        }
+        I2CStop();
+    }
+    // PCF8574A range
+    for (uint8_t addr = 0x70; addr < 0x7F; addr += 2) {
+        if ((I2CStart(addr) & 0x18) == 0x18) {
+            I2CStop();
+            pcf8574Addr = addr;
+            break;
+        }
+        I2CStop();
+    }
+
+#endif
+
+#if defined(KS0066_WIRE_PCF8574)
+    I2CStart(pcf8574Addr);
 
     i2cData |= PCF8574_BL_LINE;
     i2cData &= ~PCF8574_E_LINE;
@@ -184,7 +211,7 @@ void ks0066Init(void)
     return;
 }
 
-void ks0066StartSym(uint8_t num)
+void ks0066SelectSymbol(uint8_t num)
 {
     dataMode = KS0066_DATA_CGRAM;
     ks0066WriteCommand(KS0066_SET_CGRAM + num * 8);
