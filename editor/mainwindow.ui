@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>862</width>
-    <height>609</height>
+    <width>860</width>
+    <height>580</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -471,12 +471,12 @@
              </item>
              <item>
               <property name="text">
-               <string>PGA2310 (m32 only)</string>
+               <string>PGA2310</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>RDA580x volume</string>
+               <string>RDA580x</string>
               </property>
              </item>
             </widget>
@@ -1931,7 +1931,7 @@
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
              <property name="prefix">
-              <string>0x</string>
+              <string notr="true">0x</string>
              </property>
              <property name="minimum">
               <number>0</number>
@@ -1984,7 +1984,7 @@
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
              <property name="prefix">
-              <string>0x</string>
+              <string notr="true">0x</string>
              </property>
              <property name="minimum">
               <number>0</number>
@@ -2389,7 +2389,7 @@
              </item>
              <item>
               <property name="text">
-               <string>Middle</string>
+               <string>Average</string>
               </property>
              </item>
              <item>
@@ -2666,7 +2666,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>862</width>
+     <width>860</width>
      <height>20</height>
     </rect>
    </property>
@@ -2679,6 +2679,7 @@
     <addaction name="actionSaveEepromAs"/>
     <addaction name="actionLoadDefaultEeprom"/>
     <addaction name="actionSaveAmsr"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -2733,7 +2734,7 @@
   </action>
   <action name="actionSaveAmsr">
    <property name="text">
-    <string>Save &amp;AMSR file as ...</string>
+    <string>Save AMSR file as ...</string>
    </property>
   </action>
   <action name="actionLangAuto">
@@ -2769,6 +2770,11 @@
    </property>
    <property name="text">
     <string>Russian</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
    </property>
   </action>
  </widget>
@@ -3574,6 +3580,22 @@
     <hint type="destinationlabel">
      <x>430</x>
      <y>304</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>429</x>
+     <y>289</y>
     </hint>
    </hints>
   </connection>
