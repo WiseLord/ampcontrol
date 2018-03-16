@@ -46,7 +46,7 @@ static void hwInit(uint8_t extFunc)
     uartInit();                             // USART
 #endif
     adcInit();                              // Analog-to-digital converter
-    rtc.etm = RTC_NOEDIT;
+    rtcInit();
     alarmInit();
     alarm0.eam = ALARM_NOEDIT;
     sei();                                  // Gloabl interrupt enable

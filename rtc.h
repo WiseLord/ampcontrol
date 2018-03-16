@@ -3,15 +3,9 @@
 
 #include <inttypes.h>
 
-//#define RTC_PCF8563
+#define PCF8563_I2C_ADDR    0xA2
+#define DS1307_I2C_ADDR     0xD0
 
-#ifdef RTC_PCF8563
-#define RTC_I2C_ADDR        0xA2
-#else
-#define RTC_I2C_ADDR        0xD0
-#endif
-
-#ifdef RTC_PCF8563
 enum {
     PCF8563_CS1,
     PCF8563_CS2,
@@ -23,7 +17,7 @@ enum {
     PCF8563_CENT_MONTH,
     PCF8563_YEAR,
 };
-#else
+
 enum {
     DS1307_SEC,
     DS1307_MIN,
@@ -34,7 +28,6 @@ enum {
     DS1307_YEAR,
     DS1307_CTRL,
 };
-#endif
 
 enum {
     RTC_HOUR,
@@ -60,9 +53,10 @@ typedef struct {
 
 extern RTC_type rtc;
 
-int8_t rtcWeekDay(void);
-void rtcReadTime(void);
-void rtcNextEditParam(void);
+void rtcInit();
+int8_t rtcWeekDay();
+void rtcReadTime();
+void rtcNextEditParam();
 void rtcChangeTime(int8_t diff);
 
 uint8_t rtcBinDecToDec(uint8_t num);
