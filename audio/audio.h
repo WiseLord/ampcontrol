@@ -12,7 +12,7 @@ typedef struct {
 typedef struct {
     int8_t value;
     const sndGrid *grid;
-    void (*set)(void);
+    void (*set)();
 } sndParam;
 
 typedef enum {
@@ -71,19 +71,19 @@ typedef struct {
 
 extern Audioproc_type aproc;
 
-void sndInit(void);
+void sndInit();
 
 void sndSetInput(uint8_t input);
 
 void sndSetMute(uint8_t value);
 
-void sndSetExtra(void);
+void sndSetExtra();
 void sndSwitchExtra(uint8_t extra);
 
 void sndNextParam(uint8_t *mode);
 void sndChangeParam(uint8_t mode, int8_t diff);
 
-void sndPowerOn(void);
-void sndPowerOff(void);
+void sndPowerOn();
+void sndPowerOff();
 
 #endif // AUDIOPROC

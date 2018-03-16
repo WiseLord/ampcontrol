@@ -192,11 +192,11 @@
 #define RDA5807_VOL_MIN             0
 #define RDA5807_VOL_MAX             16
 
-void rda580xInit(void);
+void rda580xInit();
 
-void rda580xSetFreq(void);
+void rda580xSetFreq();
 
-void rda580xReadStatus(void);
+void rda580xReadStatus();
 
 void rda580xSetVolume(int8_t value);
 void rda580xSetMute(uint8_t value);

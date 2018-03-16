@@ -11,15 +11,15 @@
 
 #define TUX032_RDBUF_SIZE       4
 
-void tux032Init(void);
+void tux032Init();
 
-void tux032SetFreq(void);
+void tux032SetFreq();
 
-void tux032ReadStatus(void);
+void tux032ReadStatus();
 
-void tux032SetMute(void);
+void tux032SetMute();
 
-void tux032PowerOn(void);
-void tux032PowerOff(void);
+void tux032PowerOn();
+void tux032PowerOff();
 
 #endif // TUX032_H

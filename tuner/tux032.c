@@ -13,18 +13,14 @@ static void tux032WriteI2C(uint8_t bytes)
     for (i = 0; i < bytes; i++)
         I2CWriteByte(wrBuf[i]);
     I2CStop();
-
-    return;
 }
 
-void tux032Init(void)
+void tux032Init()
 {
     tux032PowerOff();
-
-    return;
 }
 
-void tux032SetFreq(void)
+void tux032SetFreq()
 {
     uint16_t freq = tuner.freq / 5 + 214;
 
@@ -33,11 +29,9 @@ void tux032SetFreq(void)
     wrBuf[2] = freq & 0xFF;
 
     tux032WriteI2C(sizeof(wrBuf));
-
-    return;
 }
 
-void tux032ReadStatus(void)
+void tux032ReadStatus()
 {
     uint8_t i;
 
@@ -48,32 +42,26 @@ void tux032ReadStatus(void)
     I2CStop();
 }
 
-void tux032SetMute(void)
+void tux032SetMute()
 {
     if (tuner.mute)
         tux032PowerOff();
     else
         tux032PowerOn();
-
-    return;
 }
 
-void tux032PowerOn(void)
+void tux032PowerOn()
 {
     wrBuf[0] = 0x82;
     wrBuf[1] = 0x64;
 
     tux032WriteI2C(2);
-
-    return;
 }
 
-void tux032PowerOff(void)
+void tux032PowerOff()
 {
     wrBuf[0] = 0x82;
     wrBuf[1] = 0x00;
 
     tux032WriteI2C(2);
-
-    return;
 }

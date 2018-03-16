@@ -27,9 +27,9 @@
 #define TEA6300_IN_CNT              3
 #define TEA6330_IN_CNT              1
 
-void tea63x0SetVolume(void);
-void tea63x0SetBT(void);
-void tea63x0SetSpeakers(void);
-void tea63x0SetInputMute(void);
+void tea63x0SetVolume();
+void tea63x0SetBT();
+void tea63x0SetSpeakers();
+void tea63x0SetInputMute();
 
 #endif // TEA63X0_H

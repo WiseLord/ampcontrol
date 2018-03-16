@@ -11,7 +11,7 @@ static uint8_t wrBuf[5] = {
     TEA5767_DTC,
 };
 
-static void tea5767WriteI2C(void)
+static void tea5767WriteI2C()
 {
     uint8_t i;
 
@@ -21,15 +21,13 @@ static void tea5767WriteI2C(void)
     I2CStop();
 }
 
-void tea5767Init(void)
+void tea5767Init()
 {
     wrBuf[3] = tuner.ctrl & (TEA5767_HCC | TEA5767_SNC | TEA5767_SMUTE | TEA5767_BL | TEA5767_XTAL);
     wrBuf[4] = tuner.ctrl & (TEA5767_DTC | TEA5767_PLLREF);
-
-    return;
 }
 
-void tea5767SetFreq(void)
+void tea5767SetFreq()
 {
     uint16_t pll = tuner.freq * 4 + 90;
 
@@ -52,7 +50,7 @@ void tea5767SetFreq(void)
     tea5767WriteI2C();
 }
 
-void tea5767ReadStatus(void)
+void tea5767ReadStatus()
 {
     uint8_t i;
 
@@ -63,7 +61,7 @@ void tea5767ReadStatus(void)
     I2CStop();
 }
 
-void tea5767SetMute(void)
+void tea5767SetMute()
 {
     if (tuner.mute)
         wrBuf[0] |= TEA5767_MUTE;
@@ -73,12 +71,12 @@ void tea5767SetMute(void)
     tea5767WriteI2C();
 }
 
-void tea5767PowerOn(void)
+void tea5767PowerOn()
 {
     wrBuf[3] &= ~TEA5767_STBY;
 }
 
-void tea5767PowerOff(void)
+void tea5767PowerOff()
 {
     wrBuf[3] |= TEA5767_STBY;
 
