@@ -279,18 +279,18 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_NO:
         break;
     case AUDIOPROC_PT232X:
-        cbxInput->insertItem(0, "Input 5");
+        cbxInput->insertItem(0, tr("Input 4"));
     case AUDIOPROC_TDA7439:
     case AUDIOPROC_TDA7312:
     case AUDIOPROC_TDA7318:
     case AUDIOPROC_PT2314:
-        cbxInput->insertItem(0, "Input 4");
+        cbxInput->insertItem(0, tr("Input 3"));
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TEA6300:
-        cbxInput->insertItem(0, "Input 3");
-        cbxInput->insertItem(0, "Input 2");
+        cbxInput->insertItem(0, tr("Input 2"));
+        cbxInput->insertItem(0, tr("Input 1"));
     default:
-        cbxInput->insertItem(0, "Input 1");
+        cbxInput->insertItem(0, tr("Input 0"));
         wgtInput->show();
         setInput(eep[EEPROM_INPUT]);
         cbxInput->setCurrentIndex(eep[EEPROM_INPUT]);
