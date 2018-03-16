@@ -24,7 +24,7 @@ static const int16_t dbTable[N_DB - 1] PROGMEM = {
     1071, 1432, 1915, 2561, 3425, 4580, 6125
 };
 
-void adcInit(void)
+void adcInit()
 {
     // Enable ADC with prescaler 16
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (0 << ADPS1) | (0 << ADPS0);
@@ -36,7 +36,6 @@ void adcInit(void)
     TIMSK0 |= (1 << TOIE0);                             // Enable Timer0 overflow interrupt
     TCCR0B |= (0 << CS02) | (1 << CS01) | (0 << CS00);  // Set timer prescaller to 8 (2MHz)
 #endif
-    return;
 }
 
 static uint8_t revBits(uint8_t x)
@@ -60,11 +59,9 @@ static void getValues(uint8_t mux)
 
         fi[i] = ADCH;                                   // Store in FI for futher handling
     }
-
-    return;
 }
 
-static void prepareData(void)
+static void prepareData()
 {
     uint8_t i, j;
     int16_t dcOft = 0;
@@ -82,8 +79,6 @@ static void prepareData(void)
         fr[j] = ((fi[i] - dcOft) * hw) >> 6;
         fi[i] = 0;
     }
-
-    return;
 }
 
 static void cplx2dB(int16_t *fr, int16_t *fi)
@@ -99,8 +94,6 @@ static void cplx2dB(int16_t *fr, int16_t *fi)
                 break;
         fr[i] = j;
     }
-
-    return;
 }
 
 void getSpData(uint8_t fallSpeed)
@@ -124,11 +117,9 @@ void getSpData(uint8_t fallSpeed)
             p++;
         }
     }
-
-    return;
 }
 
-uint16_t getSignalLevel(void)
+uint16_t getSignalLevel()
 {
     uint16_t ret = 0;
     uint8_t i;

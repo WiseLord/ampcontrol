@@ -77,8 +77,6 @@ void rtcReadTime()
     rtc.year = rtcBinDecToDec(I2CReadByte(I2C_NOACK) & 0xFF);
 
     I2CStop();
-
-    return;
 }
 
 static void rtcSaveTime()
@@ -139,16 +137,12 @@ static void rtcSaveTime()
     }
 
     I2CStop();
-
-    return;
 }
 
 void rtcNextEditParam()
 {
     if (++rtc.etm >= RTC_NOEDIT)
         rtc.etm = RTC_HOUR;
-
-    return;
 }
 
 void rtcChangeTime(int8_t diff)
@@ -173,8 +167,6 @@ void rtcChangeTime(int8_t diff)
         *time = timeMax;
 
     rtcSaveTime();
-
-    return;
 }
 
 

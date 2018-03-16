@@ -10,22 +10,18 @@ ALARM_type alarm0;
 const static ALARM_type alarmMin PROGMEM = {0, 0, 0, 0, ALARM_NOEDIT};
 const static ALARM_type alarmMax PROGMEM = {23, 59, 6, 0x7F, ALARM_NOEDIT};
 
-void alarmInit(void)
+void alarmInit()
 {
     eeprom_read_block(&alarm0, (void *)EEPROM_A0_HOUR, sizeof(ALARM_type) - 1);
-
-    return;
 }
 
-void alarmSave(void)
+void alarmSave()
 {
     eeprom_update_block(&alarm0, (void *)EEPROM_A0_HOUR, sizeof(ALARM_type) - 1);
     alarm0.eam = ALARM_NOEDIT;
-
-    return;
 }
 
-void alarmNextEditParam(void)
+void alarmNextEditParam()
 {
     switch (alarm0.eam) {
     case ALARM_HOUR:
@@ -37,8 +33,6 @@ void alarmNextEditParam(void)
         alarm0.eam = ALARM_HOUR;
         break;
     }
-
-    return;
 }
 
 void alarmChangeTime(int diff)
@@ -58,6 +52,4 @@ void alarmChangeTime(int diff)
         *alarm = aMin;
     if (*alarm < aMin)
         *alarm = aMax;
-
-    return;
 }

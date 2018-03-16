@@ -107,13 +107,13 @@
 #define SSD1306_MIN_BRIGHTNESS          0
 #define SSD1306_MAX_BRIGHTNESS          32
 
-uint8_t ssd1306GetPins(void);
+uint8_t ssd1306GetPins();
 
-void ssd1306UpdateFb(void);
+void ssd1306UpdateFb();
 
-void ssd1306Init(void);
+void ssd1306Init();
 void ssd1306DrawPixel(uint8_t x, uint8_t y, uint8_t color);
-void ssd1306Clear(void);
+void ssd1306Clear();
 
 void ssd1306SetBrightness(uint8_t br);
 

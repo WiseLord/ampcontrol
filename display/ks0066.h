@@ -73,8 +73,8 @@
 #define KS0066_DATA_DDRAM           1
 
 // Functions
-void ks0066Clear(void);
-void ks0066Init(void);
+void ks0066Clear();
+void ks0066Init();
 
 void ks0066SelectSymbol(uint8_t num);
 void ks0066SetXY(uint8_t x, uint8_t y);

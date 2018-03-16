@@ -24,10 +24,10 @@
 // Number of inputs
 #define TDA7439_IN_CNT              4
 
-void tda7439SetSpeakers(void);
-void tda7439SetBMT(void);
-void tda7439SetPreamp(void);
-void tda7439SetInput(void);
-void tda7439SetMute(void);
+void tda7439SetSpeakers();
+void tda7439SetBMT();
+void tda7439SetPreamp();
+void tda7439SetInput();
+void tda7439SetMute();
 
 #endif // TDA7439_H

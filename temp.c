@@ -7,32 +7,26 @@
 
 static int8_t tempTH;
 
-void loadTempParams(void)
+void loadTempParams()
 {
     tempTH = eeprom_read_byte((uint8_t *)EEPROM_TEMP_TH);
-
-    return;
 }
 
-void saveTempParams(void)
+void saveTempParams()
 {
     eeprom_update_byte((uint8_t *)EEPROM_TEMP_TH, tempTH);
-
-    return;
 }
 
-void tempInit(void)
+void tempInit()
 {
     OUT(FAN1);
     OUT(FAN2);
 
     CLR(FAN1);
     CLR(FAN2);
-
-    return;
 }
 
-void tempControlProcess(void)
+void tempControlProcess()
 {
     int8_t temp1, temp2;
 
@@ -48,18 +42,14 @@ void tempControlProcess(void)
         SET(FAN2);
     else if (temp2 <= tempTH - 5)
         CLR(FAN2);
-
-    return;
 }
 
 void setTempTH(int8_t temp)
 {
     temp = temp;
-
-    return;
 }
 
-int8_t getTempTH(void)
+int8_t getTempTH()
 {
     return tempTH;
 }
@@ -71,7 +61,5 @@ void changeTempTH(int8_t diff)
         tempTH = MAX_TEMP;
     if (tempTH < MIN_TEMP)
         tempTH = MIN_TEMP;
-
-    return;
 }
 

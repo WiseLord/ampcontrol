@@ -82,47 +82,47 @@ enum {
     SYM_END
 };
 
-void displayInit(void);
+void displayInit();
 
-uint8_t **getTxtLabels(void);
+uint8_t **getTxtLabels();
 
 void setDefDisplay(uint8_t value);
 uint8_t getDefDisplay();
 
-void nextRcCmd(void);
+void nextRcCmd();
 void switchTestMode(uint8_t index);
-void showRcInfo(void);
+void showRcInfo();
 
 #ifdef _TEMPCONTROL
-void showTemp(void);
+void showTemp();
 #endif
 void showRadio(uint8_t tune);
 
-void showMute(void);
-void showLoudness(void);
-void showSurround(void);
-void showEffect3d(void);
-void showToneDefeat(void);
+void showMute();
+void showLoudness();
+void showSurround();
+void showEffect3d();
+void showToneDefeat();
 
-void showBrWork(void);
+void showBrWork();
 void changeBrWork(int8_t diff);
 
 void showSndParam(sndMode mode);
 
-void showTime(void);
-void showAlarm(void);
+void showTime();
+void showAlarm();
 void showTimer(int16_t timer);
 
-void switchSpMode(void);
-void switchFallSpeed(void);
-void getSpectrum(void);
-void showSpectrum(void);
+void switchSpMode();
+void switchFallSpeed();
+void getSpectrum();
+void showSpectrum();
 
-void setWorkBrightness(void);
-void setStbyBrightness(void);
+void setWorkBrightness();
+void setStbyBrightness();
 
-void displayPowerOff(void);
+void displayPowerOff();
 
-void displayUpdate(void);
+void displayUpdate();
 
 #endif // DISPLAY_H

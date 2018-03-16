@@ -45,8 +45,6 @@ inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 {
     *s = a + b;
     *d = a - b;
-
-    return;
 }
 
 inline void multShf(int16_t cos, int16_t sin,
@@ -56,8 +54,6 @@ inline void multShf(int16_t cos, int16_t sin,
 {
     *u = (mshf_16(x, cos) - mshf_16(y, sin));
     *v = (mshf_16(y, cos) + mshf_16(x, sin));
-
-    return;
 }
 
 void fftRad4(int16_t *fr, int16_t *fi)
@@ -134,5 +130,4 @@ void fftRad4(int16_t *fr, int16_t *fi)
             phi += phi0;
         }
     }
-    return;
 }

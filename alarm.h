@@ -23,10 +23,10 @@ extern ALARM_type alarm0;
 
 #define ALARM_NOEDIT        0xFF
 
-void alarmInit(void);
-void alarmSave(void);
+void alarmInit();
+void alarmSave();
 
-void alarmNextEditParam(void);
+void alarmNextEditParam();
 void alarmChangeTime(int diff);
 
 #endif // ALARM_H

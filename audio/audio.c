@@ -69,19 +69,16 @@ static const sndGrid grid_0_15_1            PROGMEM = {  0, 15, 1.00 * 8};  // 0
 sndParam sndPar[MODE_SND_END];
 Audioproc_type aproc;
 
-static void setNothing(void)
-{
-    return;
-}
+static void setNothing() {}
 
 #ifdef _RDA580X_AUDIO
-static void rda580xAudioSetVolume(void)
+static void rda580xAudioSetVolume()
 {
     rda580xSetVolume(sndPar[MODE_SND_VOLUME].value);
 }
 #endif
 
-void sndInit(void)
+void sndInit()
 {
     uint8_t i;
 
@@ -188,7 +185,7 @@ void sndInit(void)
 
     // Setup gain grid and functions
     const sndGrid *grid = &grid_0_0_0;
-    void (*set)(void) = setNothing;
+    void (*set)() = setNothing;
     switch (aproc.ic) {
 #ifdef _TDA7439
     case AUDIOPROC_TDA7439:
@@ -333,8 +330,6 @@ void sndInit(void)
     default:
         break;
     }
-
-    return;
 }
 
 void sndSetInput(uint8_t input)
@@ -372,8 +367,6 @@ void sndSetInput(uint8_t input)
     default:
         break;
     }
-
-    return;
 }
 
 void sndSetMute(uint8_t value)
@@ -432,11 +425,9 @@ void sndSetMute(uint8_t value)
     default:
         break;
     }
-
-    return;
 }
 
-void sndSetExtra(void)
+void sndSetExtra()
 {
 #ifdef _TDA731X
     if (aproc.ic == AUDIOPROC_TDA7313 || aproc.ic == AUDIOPROC_TDA7314 ||
@@ -451,8 +442,6 @@ void sndSetExtra(void)
     if (aproc.ic == AUDIOPROC_PT232X)
         pt232xSetSndFunc();
 #endif
-
-    return;
 }
 
 void sndSwitchExtra(uint8_t extra)
@@ -460,8 +449,6 @@ void sndSwitchExtra(uint8_t extra)
     aproc.extra ^= extra;
 
     sndSetExtra();
-
-    return;
 }
 
 void sndNextParam(uint8_t *mode)
@@ -472,8 +459,6 @@ void sndNextParam(uint8_t *mode)
             *mode = MODE_SND_VOLUME;
     } while ((pgm_read_byte(&sndPar[*mode].grid->step) == 0) &&
              (*mode < MODE_SND_GAIN0) && (*mode != MODE_SND_VOLUME));
-
-    return;
 }
 
 void sndChangeParam(uint8_t mode, int8_t diff)
@@ -485,11 +470,9 @@ void sndChangeParam(uint8_t mode, int8_t diff)
     if (param->value < (int8_t)pgm_read_byte(&param->grid->min))
         param->value = (int8_t)pgm_read_byte(&param->grid->min);
     param->set();
-
-    return;
 }
 
-void sndPowerOn(void)
+void sndPowerOn()
 {
     int8_t i;
 
@@ -507,11 +490,9 @@ void sndPowerOn(void)
         sndPar[i].set();
 
     sndSetMute(0);
-
-    return;
 }
 
-void sndPowerOff(void)
+void sndPowerOff()
 {
     uint8_t i;
 
@@ -520,6 +501,4 @@ void sndPowerOff(void)
 
     eeprom_update_byte((uint8_t *)EEPROM_APROC_EXTRA, aproc.extra);
     eeprom_update_byte((uint8_t *)EEPROM_INPUT, aproc.input);
-
-    return;
 }

@@ -8,8 +8,8 @@
 
 #define PGA2310_MUTE                0
 
-void pga2310Init(void);
-void pga2310SetSpeakers(void);
-void pga2310SetMute(void);
+void pga2310Init();
+void pga2310SetSpeakers();
+void pga2310SetMute();
 
 #endif // PGA2310_H

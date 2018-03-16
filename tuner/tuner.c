@@ -10,7 +10,7 @@ uint8_t tunerRdbuf[TUNER_RDBUF_SIZE];
 
 Tuner_type tuner;
 
-void tunerInit(void)
+void tunerInit()
 {
     eeprom_read_block(&tuner, (void *)EEPROM_FM_TUNER, sizeof(Tuner_type));
 
@@ -122,7 +122,7 @@ void tunerChangeFreq(int8_t mult)
     tunerSetFreq();
 }
 
-void tunerReadStatus(void)
+void tunerReadStatus()
 {
     switch (tuner.ic) {
 #ifdef _TEA5767
@@ -187,7 +187,7 @@ void tunerSetRDS(uint8_t value)
 }
 #endif
 
-uint8_t tunerStereo(void)
+uint8_t tunerStereo()
 {
     uint8_t ret = !tuner.mono;
 
@@ -216,7 +216,7 @@ uint8_t tunerStereo(void)
     return ret;
 }
 
-uint8_t tunerLevel(void)
+uint8_t tunerLevel()
 {
     uint8_t ret = 0;
 
@@ -249,7 +249,7 @@ uint8_t tunerLevel(void)
 }
 
 // Find station number (1..62) in EEPROM
-uint8_t tunerStationNum(void)
+uint8_t tunerStationNum()
 {
     uint8_t i;
 
@@ -261,7 +261,7 @@ uint8_t tunerStationNum(void)
 }
 
 // Find favourite station number (1..10) in EEPROM
-uint8_t tunerFavStationNum(void)
+uint8_t tunerFavStationNum()
 {
     uint8_t i;
 
@@ -336,7 +336,7 @@ void tunerStoreFavStation(uint8_t num)
 }
 
 // Save/delete station from eeprom
-void tunerStoreStation(void)
+void tunerStoreStation()
 {
     uint8_t i, j;
     uint16_t freqCell;
@@ -429,7 +429,7 @@ void tunerSetBass(uint8_t value)
     }
 }
 
-void tunerPowerOn(void)
+void tunerPowerOn()
 {
     switch (tuner.ic) {
 #ifdef _TEA5767
@@ -456,7 +456,7 @@ void tunerPowerOn(void)
     tunerSetFreq();
 }
 
-void tunerPowerOff(void)
+void tunerPowerOff()
 {
     eeprom_update_word((uint16_t *)EEPROM_FM_FREQ, tuner.freq);
     eeprom_update_byte((uint8_t *)EEPROM_FM_MONO, tuner.mono);

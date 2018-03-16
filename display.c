@@ -164,7 +164,7 @@ static uint8_t userAddSym = SYM_END;        // Additional user symbol
 #endif
 
 #if defined(_KS0066)
-static void lcdGenLevels(void)
+static void lcdGenLevels()
 {
     if (userSybmols != LCD_LEVELS) {        // Generate 7 level symbols
         userSybmols = LCD_LEVELS;
@@ -178,8 +178,6 @@ static void lcdGenLevels(void)
                 else
                     ks0066WriteData(0x00);
     }
-
-    return;
 }
 
 static void lcdGenBar(uint8_t sym)
@@ -345,11 +343,9 @@ static void lcdGenBar(uint8_t sym)
             break;
         }
     }
-
-    return;
 }
 
-static void lcdGenAlarm(void)
+static void lcdGenAlarm()
 {
     static const uint8_t alarmSym[] PROGMEM = {
         // Filled rectangle
@@ -425,8 +421,6 @@ static void lcdGenAlarm(void)
         for (i = 0; i < sizeof(alarmSym); i++)
             ks0066WriteData(pgm_read_byte(&alarmSym[i]));
     }
-
-    return;
 }
 #endif
 
@@ -542,8 +536,6 @@ static void showBar(int16_t min, int16_t max, int16_t value)
         }
     }
 #endif
-
-    return;
 }
 
 static void writeStringEeprom(const uint8_t *string)
@@ -554,16 +546,12 @@ static void writeStringEeprom(const uint8_t *string)
         strbuf[i] = eeprom_read_byte(&string[i]);
 
     writeString(strbuf);
-
-    return;
 }
 
 static void writeStringPgm(const char *string)
 {
     strcpy_P(strbuf, string);
     writeString(strbuf);
-
-    return;
 }
 
 static void writeNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
@@ -595,8 +583,6 @@ static void writeNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
         strbuf[i] = sign;
 
     writeString(strbuf);
-
-    return;
 }
 
 static void showParValue(int8_t value)
@@ -613,8 +599,6 @@ static void showParValue(int8_t value)
     gdSetXY(94, 30);
     writeNum(value, 3, ' ', 10);
 #endif
-
-    return;
 }
 
 static void showParLabel(uint8_t label)
@@ -631,8 +615,6 @@ static void showParLabel(uint8_t label)
     gdSetXY(0, 0);
     writeStringEeprom(txtLabels[label]);
 #endif
-
-    return;
 }
 
 #if !defined(_KS0066)
@@ -652,7 +634,6 @@ static void showParIcon(uint8_t icon)
     gdSetXY(104, 2);
     gdWriteIcon24(icon);
 #endif
-    return;
 }
 #endif
 
@@ -668,11 +649,9 @@ static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_
         ls020DrawVertLine(xbase + i, btm, val, COLOR_YELLOW);
         ls020DrawVertLine(xbase + i, val > (btm - max) ? val - 1 : val, btm - max, COLOR_BLACK);
     }
-
-    return;
 }
 
-static void drawBarSpectrum(void)
+static void drawBarSpectrum()
 {
     uint8_t x, xbase;
     uint8_t ybase;
@@ -684,8 +663,6 @@ static void drawBarSpectrum(void)
         drawSpCol(xbase, 2, 129, ybase, 31);
         ls020DrawVertLine(xbase + 2, 129, 129 - 31, 0); // Clear space between bars
     }
-
-    return;
 }
 #else
 static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_t max)
@@ -698,11 +675,9 @@ static void drawSpCol(uint8_t xbase, uint8_t w, uint8_t btm, uint8_t val, uint8_
         gdDrawVertLine(xbase + i, btm, val, 1);
         gdDrawVertLine(xbase + i, val > (btm - max) ? val - 1 : val, btm - max, 0);
     }
-
-    return;
 }
 
-static void drawBarSpectrum(void)
+static void drawBarSpectrum()
 {
     uint8_t x, xbase;
     uint8_t ybase;
@@ -714,13 +689,11 @@ static void drawBarSpectrum(void)
         drawSpCol(xbase, 2, 63, ybase, 23);
         gdDrawVertLine(xbase + 2, 63, 63 - 23, 0); // Clear space between bars
     }
-
-    return;
 }
 #endif
 
 
-static void drawMiniSpectrum(void)
+static void drawMiniSpectrum()
 {
 #if defined(_KS0066)
     uint16_t data;
@@ -756,8 +729,6 @@ static void drawMiniSpectrum(void)
         ybase = (buf[x] * 5 / 2 + buf[x + 32] * 5 / 2) / 4;
         drawSpCol(xbase, 2, 63, ybase, 39);
     }
-
-    return;
 #endif
 }
 
@@ -781,7 +752,6 @@ static void drawTm(uint8_t tm, const uint8_t *font)
     writeNum(*((int8_t *)&rtc + tm), 2, '0', 10);
     gdLoadFont(font, 1, FONT_DIR_0);
 #endif
-    return;
 }
 
 #if defined(_KS0066)
@@ -804,10 +774,9 @@ static void drawAm(uint8_t am, const uint8_t *font)
     writeNum(*((int8_t *)&alarm0 + am), 2, '0', 10);
     gdLoadFont(font, 1, FONT_DIR_0);
 #endif
-    return;
 }
 
-void displayInit(void)
+void displayInit()
 {
     uint8_t i;
     uint8_t *addr;
@@ -845,11 +814,9 @@ void displayInit(void)
     fallSpeed = eeprom_read_byte((uint8_t *)EEPROM_FALL_SPEED);
     if (fallSpeed > FALL_SPEED_FAST)
         fallSpeed = FALL_SPEED_FAST;
-
-    return;
 }
 
-uint8_t **getTxtLabels(void)
+uint8_t **getTxtLabels()
 {
     return txtLabels;
 }
@@ -857,8 +824,6 @@ uint8_t **getTxtLabels(void)
 void setDefDisplay(uint8_t value)
 {
     defDisplay = value;
-
-    return;
 }
 
 uint8_t getDefDisplay()
@@ -866,7 +831,7 @@ uint8_t getDefDisplay()
     return defDisplay;
 }
 
-void nextRcCmd(void)
+void nextRcCmd()
 {
     IRData irBuf = getIrData();
 
@@ -881,8 +846,6 @@ void nextRcCmd(void)
         rcIndex = CMD_RC_STBY;
 
     switchTestMode(rcIndex);
-
-    return;
 }
 
 void switchTestMode(uint8_t index)
@@ -891,11 +854,9 @@ void switchTestMode(uint8_t index)
     setIrData(eeprom_read_byte((uint8_t *)EEPROM_RC_TYPE),
               eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR),
               eeprom_read_byte((uint8_t *)EEPROM_RC_CMD + rcIndex));
-
-    return;
 }
 
-void showRcInfo(void)
+void showRcInfo()
 {
     IRData irBuf = getIrData();
     uint16_t btnBuf = getBtnBuf();
@@ -1053,11 +1014,10 @@ void showRcInfo(void)
     writeStringPgm(STR_PREFIX_HEX);
     writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
 #endif
-    return;
 }
 
 #ifdef _TEMPCONTROL
-void showTemp(void)
+void showTemp()
 {
     int8_t tempTH = getTempTH();
 #if defined(_KS0066)
@@ -1114,8 +1074,6 @@ void showTemp(void)
     showParIcon(ICON24_THRESHOLD);
 
 #endif
-
-    return;
 }
 #endif
 
@@ -1371,11 +1329,9 @@ void showRadio(uint8_t tune)
 #endif
     }
 #endif
-
-    return;
 }
 
-void showMute(void)
+void showMute()
 {
     showParLabel(LABEL_MUTE);
     drawMiniSpectrum();
@@ -1401,11 +1357,9 @@ void showMute(void)
     else
         gdWriteIcon32(ICON32_MUTE_OFF);
 #endif
-
-    return;
 }
 
-void showLoudness(void)
+void showLoudness()
 {
     showParLabel(LABEL_LOUDNESS);
     drawMiniSpectrum();
@@ -1430,8 +1384,6 @@ void showLoudness(void)
     else
         gdWriteIcon32(ICON32_LOUDNESS_OFF);
 #endif
-
-    return;
 }
 
 void showSurround()
@@ -1459,7 +1411,6 @@ void showSurround()
     else
         gdWriteIcon32(ICON32_SURROUND_OFF);
 #endif
-    return;
 }
 
 void showEffect3d()
@@ -1487,7 +1438,6 @@ void showEffect3d()
     else
         gdWriteIcon32(ICON32_EFFECT_3D_OFF);
 #endif
-    return;
 }
 
 void showToneDefeat()
@@ -1515,11 +1465,10 @@ void showToneDefeat()
     else
         gdWriteIcon32(ICON32_TONE_DEFEAT_OFF);
 #endif
-    return;
 }
 
 
-void showBrWork(void)
+void showBrWork()
 {
     showParLabel(LABEL_BR_WORK);
     showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
@@ -1535,7 +1484,6 @@ void showBrWork(void)
     drawBarSpectrum();
     showParIcon(ICON24_BRIGHTNESS);
 #endif
-    return;
 }
 
 void changeBrWork(int8_t diff)
@@ -1546,8 +1494,6 @@ void changeBrWork(int8_t diff)
     if (brWork < MIN_BRIGHTNESS)
         brWork = MIN_BRIGHTNESS;
     setWorkBrightness();
-
-    return;
 }
 
 void showSndParam(sndMode mode)
@@ -1572,11 +1518,9 @@ void showSndParam(sndMode mode)
     gdSetXY(116, 56);
 #endif
     writeStringEeprom(txtLabels[LABEL_DB]);
-
-    return;
 }
 
-void showTime(void)
+void showTime()
 {
 #if defined(_KS0066)
     ks0066SetXY(0, 0);
@@ -1644,11 +1588,9 @@ void showTime(void)
     gdSetXY(32, 56);
 #endif
     writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtcWeekDay() - 1) % 7]);
-
-    return;
 }
 
-void showAlarm(void)
+void showAlarm()
 {
     uint8_t i;
 
@@ -1788,8 +1730,6 @@ void showAlarm(void)
             gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 0);
     }
 #endif
-
-    return;
 }
 
 void showTimer(int16_t timer)
@@ -1873,36 +1813,28 @@ void showTimer(int16_t timer)
         drawSpCol(xbase, 3, 63, ybase, 31);
     }
 #endif
-
-    return;
 }
 
-void switchSpMode(void)
+void switchSpMode()
 {
     if (++spMode >= SP_MODE_END)
         spMode = SP_MODE_METER;
-
-    return;
 }
 
-void switchFallSpeed(void)
+void switchFallSpeed()
 {
     fallSpeed++;
     if (fallSpeed > FALL_SPEED_FAST)
         fallSpeed = FALL_SPEED_LOW;
-
-    return;
 }
 
 
-void getSpectrum(void)
+void getSpectrum()
 {
     getSpData(fallSpeed);
-
-    return;
 }
 
-void showSpectrum(void)
+void showSpectrum()
 {
 #if defined(_KS0066)
     uint8_t i, data;
@@ -2113,11 +2045,9 @@ void showSpectrum(void)
         break;
     }
 #endif
-
-    return;
 }
 
-void setWorkBrightness(void)
+void setWorkBrightness()
 {
 #if defined(_KS0066)
     ks0066SetBrightness(brWork);
@@ -2129,10 +2059,9 @@ void setWorkBrightness(void)
 #else
     gdSetBrightness(brWork);
 #endif
-    return;
 }
 
-void setStbyBrightness(void)
+void setStbyBrightness()
 {
 #if defined(_KS0066)
     ks0066SetBrightness(brStby);
@@ -2144,18 +2073,15 @@ void setStbyBrightness(void)
 #else
     gdSetBrightness(brStby);
 #endif
-    return;
 }
 
-void displayPowerOff(void)
+void displayPowerOff()
 {
     eeprom_update_byte((uint8_t *)EEPROM_BR_STBY, brStby);
     eeprom_update_byte((uint8_t *)EEPROM_BR_WORK, brWork);
     eeprom_update_byte((uint8_t *)EEPROM_SP_MODE, spMode);
     eeprom_update_byte((uint8_t *)EEPROM_DISPLAY, defDisplay);
     eeprom_update_byte((uint8_t *)EEPROM_FALL_SPEED, fallSpeed);
-
-    return;
 }
 
 void displayUpdate()
@@ -2164,6 +2090,4 @@ void displayUpdate()
 #if defined(_SSD1306)
     ssd1306UpdateFb();
 #endif
-
-    return;
 }

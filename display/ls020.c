@@ -50,16 +50,12 @@ static void ls020WriteCommand(uint16_t command)
     while (!(SPSR & (1 << SPIF)));
     SPDR = command & 0xFF;
     while (!(SPSR & (1 << SPIF)));
-
-    return;
 }
 
 static void ls020WriteData(uint8_t data)
 {
     while (!(SPSR & (1 << SPIF)));
     SPDR = data;
-
-    return;
 }
 
 static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
@@ -85,8 +81,6 @@ static void ls020SetWindow(uint8_t x0, uint8_t y0, uint8_t x1, uint8_t y1)
 
     // Stop command sequence
     SET(LS020_CS);
-
-    return;
 }
 
 void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
@@ -127,8 +121,6 @@ void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color
     // Stop data sequence
     while (!(SPSR & (1 << SPIF)));
     SET(LS020_CS);
-
-    return;
 }
 
 void ls020DrawFrame(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
@@ -137,15 +129,11 @@ void ls020DrawFrame(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t colo
     ls020DrawHorizLine(x1, y2, x2, color);
     ls020DrawVertLine(x1, y1, y2, color);
     ls020DrawVertLine(x2, y1, y2, color);
-
-    return;
 }
 
-void ls020Clear(void)
+void ls020Clear()
 {
     ls020DrawRect(0, 0, 175, 131, COLOR_BCKG);
-
-    return;
 }
 
 ISR (TIMER0_OVF_vect)
@@ -173,11 +161,9 @@ ISR (TIMER0_OVF_vect)
 void ls020SetBrightness(uint8_t br)
 {
     _br = br;
-
-    return;
 }
 
-void ls020Init(void)
+void ls020Init()
 {
     uint8_t i;
 
@@ -225,11 +211,9 @@ void ls020Init(void)
     SET(LS020_CS);
 
     ls020Clear();
-
-    return;
 }
 
-void ls020PowerOff(void)
+void ls020PowerOff()
 {
     uint8_t i;
 
@@ -244,8 +228,6 @@ void ls020PowerOff(void)
 
     // Stop command sequence
     SET(LS020_CS);
-
-    return;
 }
 
 void ls020SetXY(uint8_t x, uint8_t y)
@@ -254,7 +236,7 @@ void ls020SetXY(uint8_t x, uint8_t y)
     _y = y;
 }
 
-uint8_t ls020GetX(void)
+uint8_t ls020GetX()
 {
     return _x;
 }
@@ -330,8 +312,6 @@ void ls020WriteChar(uint8_t code)
     SET(LS020_CS);
 
     ls020SetXY(x + swd * fp[FONT_MULT], y);
-
-    return;
 }
 
 void ls020WriteString(char *string)
@@ -342,8 +322,6 @@ void ls020WriteString(char *string)
         ls020WriteChar(fp[FONT_LTSPPOS]);
         ls020WriteChar(*string++);
     }
-
-    return;
 }
 
 void ls020WriteIcon24(uint8_t iconNum)
@@ -379,8 +357,6 @@ void ls020WriteIcon24(uint8_t iconNum)
         while (!(SPSR & (1 << SPIF)));
         SET(LS020_CS);
     }
-
-    return;
 }
 
 void ls020WriteIcon32(uint8_t iconNum)
@@ -416,6 +392,4 @@ void ls020WriteIcon32(uint8_t iconNum)
         while (!(SPSR & (1 << SPIF)));
         SET(LS020_CS);
     }
-
-    return;
 }

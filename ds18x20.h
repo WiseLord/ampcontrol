@@ -34,9 +34,9 @@ typedef union {
     };
 } ds18x20Dev;
 
-void ds18x20SearchDevices(void);
-uint8_t ds18x20Process(void);
+void ds18x20SearchDevices();
+uint8_t ds18x20Process();
 int16_t ds18x20GetTemp(uint8_t num);
-uint8_t ds18x20GetDevCount(void);
+uint8_t ds18x20GetDevCount();
 
 #endif // DS18X20_H

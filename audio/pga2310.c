@@ -11,20 +11,16 @@ static void pga2310SendGainLevels(uint8_t right, uint8_t left)
     SPIswSendByte(right << 1);
     SPIswSendByte(left << 1);
     SET(SPISW_CE);
-
-    return;
 }
 
-void pga2310Init(void)
+void pga2310Init()
 {
     SPIswInit(SPISW_DORD_MSB_FIRST);
 
     SET(SPISW_CE);
-
-    return;
 }
 
-void pga2310SetSpeakers(void)
+void pga2310SetSpeakers()
 {
     int8_t spLeft = sndPar[MODE_SND_VOLUME].value;
     int8_t spRight = sndPar[MODE_SND_VOLUME].value;
@@ -41,17 +37,13 @@ void pga2310SetSpeakers(void)
     }
 
     pga2310SendGainLevels(96 + spRight, 96 + spLeft);
-
-    return;
 }
 
-void pga2310SetMute(void)
+void pga2310SetMute()
 {
     if (aproc.mute) {
         pga2310SendGainLevels(PGA2310_MUTE, PGA2310_MUTE);
     } else {
         pga2310SetSpeakers();
     }
-
-    return;
 }

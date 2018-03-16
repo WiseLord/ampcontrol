@@ -4,7 +4,7 @@
 #include <avr/pgmspace.h>
 #include "../i2c.h"
 
-void tda7448SetSpeakers(void)
+void tda7448SetSpeakers()
 {
     uint8_t i;
     uint8_t i2cData;
@@ -50,11 +50,9 @@ void tda7448SetSpeakers(void)
         I2CWriteByte(i2cData);
     }
     I2CStop();
-
-    return;
 }
 
-void tda7448SetMute(void)
+void tda7448SetMute()
 {
     uint8_t i;
 
@@ -67,6 +65,4 @@ void tda7448SetMute(void)
     } else {
         tda7448SetSpeakers();
     }
-
-    return;
 }

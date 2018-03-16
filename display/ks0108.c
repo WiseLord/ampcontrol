@@ -29,8 +29,6 @@ static uint8_t _br;
 void ks0108SetBrightness(uint8_t br)
 {
     _br = br;
-
-    return;
 }
 
 static void ks0108SetPort(uint8_t data)
@@ -51,11 +49,9 @@ static void ks0108SetPort(uint8_t data)
     else CLR(KS0108_D6);
     if (data & (1 << 7)) SET(KS0108_D7);
     else CLR(KS0108_D7);
-
-    return;
 }
 
-static void ks0108SetDdrIn(void)
+static void ks0108SetDdrIn()
 {
     IN(KS0108_D0);
     IN(KS0108_D1);
@@ -65,11 +61,9 @@ static void ks0108SetDdrIn(void)
     IN(KS0108_D5);
     IN(KS0108_D6);
     IN(KS0108_D7);
-
-    return;
 }
 
-static void ks0108SetDdrOut(void)
+static void ks0108SetDdrOut()
 {
     OUT(KS0108_D0);
     OUT(KS0108_D1);
@@ -79,11 +73,9 @@ static void ks0108SetDdrOut(void)
     OUT(KS0108_D5);
     OUT(KS0108_D6);
     OUT(KS0108_D7);
-
-    return;
 }
 
-static uint8_t ks0108ReadPin(void)
+static uint8_t ks0108ReadPin()
 {
     uint8_t ret = 0;
 
@@ -109,8 +101,6 @@ static void ks0108WriteCmd(uint8_t cmd)
     SET(KS0108_E);
     asm("nop");
     CLR(KS0108_E);
-
-    return;
 }
 
 ISR (TIMER0_OVF_vect)
@@ -178,11 +168,9 @@ ISR (TIMER0_OVF_vect)
         CLR(KS0108_BCKL);                           // Turn backlight off
     } else if (br == 0)
         SET(KS0108_BCKL);                           // Turn backlight on
-
-    return;
 }
 
-void ks0108Init(void)
+void ks0108Init()
 {
     // Set control and data lines as outputs
     OUT(KS0108_DI);
@@ -225,11 +213,9 @@ void ks0108Init(void)
 
     // Enable backlight control
     OUT(KS0108_BCKL);
-
-    return;
 }
 
-void ks0108Clear(void)
+void ks0108Clear()
 {
     uint8_t i, j;
 
@@ -238,8 +224,6 @@ void ks0108Clear(void)
             fb[i][j] = 0x00;
         }
     }
-
-    return;
 }
 
 void ks0108DrawPixel(uint8_t x, uint8_t y, uint8_t color)
@@ -257,11 +241,9 @@ void ks0108DrawPixel(uint8_t x, uint8_t y, uint8_t color)
         fb[x][y >> 3] |= bit;
     else
         fb[x][y >> 3] &= ~bit;
-
-    return;
 }
 
-uint8_t ks0108GetPins(void)
+uint8_t ks0108GetPins()
 {
     return ~pins;
 }

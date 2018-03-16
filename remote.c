@@ -8,7 +8,7 @@
 static volatile IRData irData;                      // Last decoded IR command
 static volatile uint8_t ovfCnt = 250;               // Overflow counter
 
-void rcInit(void)
+void rcInit()
 {
     IN(RC);                                         // Set PD3 (INT1) to input
     TCCR1A = 0;                                     // Reset Timer1 counter
@@ -22,15 +22,12 @@ void rcInit(void)
     EIMSK |= (1 << INT0);                           // Enable INT0 interrupt
     TIMSK1 = (1 << TOIE1);                          // Enable Timer1 overflow interrupt
 #endif
-    return;
 }
 
 ISR(TIMER1_OVF_vect)                                // Overflow every 1/(250kHz/65536) = 262ms
 {
     if (ovfCnt <= 250)
         ovfCnt++;
-
-    return;
 }
 
 #ifdef _atmega32
@@ -254,7 +251,6 @@ ISR(INT0_vect)
         irData.repeat = (rc6TogBit == rc6TogBitOld);
         rc6TogBitOld = rc6TogBit;
     }
-    return;
 }
 
 IRData takeIrData()
@@ -275,6 +271,4 @@ void setIrData(uint8_t type, uint8_t addr, uint8_t cmd)
     irData.type = type;
     irData.address = addr;
     irData.command = cmd;
-
-    return;
 }

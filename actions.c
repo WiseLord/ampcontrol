@@ -19,7 +19,7 @@
 static uint8_t dispMode = MODE_STANDBY;
 static uint8_t dispModePrev = MODE_STANDBY;
 
-static uint8_t defDispMode(void)
+static uint8_t defDispMode()
 {
     uint8_t ret;
 
@@ -37,7 +37,7 @@ static uint8_t defDispMode(void)
     return ret;
 }
 
-uint8_t getAction(void)
+uint8_t getAction()
 {
     uint8_t action = ACTION_NOACTION;
     cmdID cmd;
@@ -523,8 +523,6 @@ void handleEncoder(int8_t encCnt)
             break;
         }
     }
-
-    return;
 }
 
 void handleChangeFM(uint8_t step)
@@ -537,11 +535,9 @@ void handleChangeFM(uint8_t step)
         dispMode = MODE_FM_RADIO;
         setDisplayTime(DISPLAY_TIME_FM_RADIO);
     }
-
-    return;
 }
 
-uint8_t checkAlarmAndTime(void)
+uint8_t checkAlarmAndTime()
 {
     uint8_t ret = ACTION_NOACTION;
 
@@ -565,7 +561,7 @@ uint8_t checkAlarmAndTime(void)
     return ret;
 }
 
-void handleExitDefaultMode(void)
+void handleExitDefaultMode()
 {
     if (getDisplayTime() == 0) {
         switch (dispMode) {
@@ -584,11 +580,9 @@ void handleExitDefaultMode(void)
             break;
         }
     }
-
-    return;
 }
 
-void handleTimers(void)
+void handleTimers()
 {
     int16_t silenceTimer, stbyTimer;
 
@@ -612,19 +606,15 @@ void handleTimers(void)
         dispMode = MODE_TIMER;
         setDisplayTime(DISPLAY_TIME_TIMER_EXP);
     }
-
-    return;
 }
 
-void handleModeChange(void)
+void handleModeChange()
 {
     if (dispMode != dispModePrev)
         displayClear();
-
-    return;
 }
 
-void showScreen(void)
+void showScreen()
 {
     getSpectrum();
 
@@ -690,6 +680,4 @@ void showScreen(void)
 
     // Save current mode
     dispModePrev = dispMode;
-
-    return;
 }

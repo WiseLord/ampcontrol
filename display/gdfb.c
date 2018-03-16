@@ -21,8 +21,6 @@ void gdDrawHorizLine(uint8_t x1, uint8_t x2, uint8_t y, uint8_t color)
 
     for (i = x1; i <= x2; i++)
         gdDrawPixel(i, y, color);
-
-    return;
 }
 
 void gdDrawVertLine(uint8_t x, uint8_t y1, uint8_t y2, uint8_t color)
@@ -38,8 +36,6 @@ void gdDrawVertLine(uint8_t x, uint8_t y1, uint8_t y2, uint8_t color)
 
     for (i = y1; i <= y2; i++)
         gdDrawPixel(x, i, color);
-
-    return;
 }
 
 void gdDrawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
@@ -48,8 +44,6 @@ void gdDrawRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
     gdDrawHorizLine(x, x + w - 1, y + h - 1, color);
     gdDrawVertLine(x, y, y + h - 1, color);
     gdDrawVertLine(x + w - 1, y, y + h - 1, color);
-
-    return;
 }
 
 void gdDrawFilledRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
@@ -58,8 +52,6 @@ void gdDrawFilledRect(uint8_t x, uint8_t y, uint8_t w, uint8_t h, uint8_t color)
 
     for (i = 0; i < h; i++)
         gdDrawHorizLine(x, x + w - 1, y + i, color);
-
-    return;
 }
 
 void gdDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
@@ -86,8 +78,6 @@ void gdDrawLine(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color)
         }
     }
     gdDrawPixel(x2, y2, color);
-
-    return;
 }
 
 void gdDrawCircle(uint8_t x0, uint8_t y0, int16_t radius, uint8_t color)
@@ -144,11 +134,9 @@ void gdSetXY(uint8_t x, uint8_t y)
 {
     _x = x;
     _y = y;
-
-    return;
 }
 
-uint8_t gdGetX(void)
+uint8_t gdGetX()
 {
     return _x;
 }
@@ -163,15 +151,11 @@ void gdLoadFont(const uint8_t *font, uint8_t color, uint8_t direction)
     fp[FONT_COLOR] = color;
     fp[FONT_DIRECTION] = direction;
     fp[FONT_FIXED] = 0;
-
-    return;
 }
 
 void gdSetFontFixed(uint8_t width)
 {
     fp[FONT_FIXED] = width;
-
-    return;
 }
 
 void gdWriteChar(uint8_t code)
@@ -239,8 +223,6 @@ void gdWriteChar(uint8_t code)
         gdSetXY(_x, _y + fwd);
         break;
     }
-
-    return;
 }
 
 void gdWriteString(char *string)
@@ -252,8 +234,6 @@ void gdWriteString(char *string)
             gdWriteChar(fp[FONT_LTSPPOS]);
         gdWriteChar(*string++);
     }
-
-    return;
 }
 
 void gdWriteIcon24(uint8_t iconNum)
@@ -275,8 +255,6 @@ void gdWriteIcon24(uint8_t iconNum)
             }
         }
     }
-
-    return;
 }
 
 void gdWriteIcon32(uint8_t iconNum)
@@ -298,6 +276,4 @@ void gdWriteIcon32(uint8_t iconNum)
             }
         }
     }
-
-    return;
 }

@@ -67,8 +67,6 @@ static void _I2CWriteByte(uint8_t data)
     IN(SSD1306_SCK);            // Pullup SCL = 1
     _delay_us(1);
     OUT(SSD1306_SCK);           // Active SCL = 0
-
-    return;
 }
 
 static void _I2CStart(uint8_t addr)
@@ -81,11 +79,9 @@ static void _I2CStart(uint8_t addr)
     OUT(SSD1306_SCK);           // Active SCL = 0
 
     _I2CWriteByte(addr);
-
-    return;
 }
 
-static void _I2CStop(void)
+static void _I2CStop()
 {
     OUT(SSD1306_SCK);           // Active SCL = 0
     OUT(SSD1306_SDA);           // Active SDA = 0
@@ -93,18 +89,14 @@ static void _I2CStop(void)
     IN(SSD1306_SCK);            // Pullup SCL = 1
     _delay_us(1);
     IN(SSD1306_SDA);            // Pullup SDA = 1
-
-    return;
 }
 
 static void ssd1306SendCmd(uint8_t cmd)
 {
     _I2CWriteByte(cmd);
-
-    return;
 }
 
-static void ssd1306SetDdrIn(void)
+static void ssd1306SetDdrIn()
 {
     // Set ports as inputs
     IN(DISP_D0);
@@ -124,11 +116,9 @@ static void ssd1306SetDdrIn(void)
     SET(DISP_D5);
     SET(DISP_D6);
     SET(DISP_D7);
-
-    return;
 }
 
-uint8_t ssd1306GetPins(void)
+uint8_t ssd1306GetPins()
 {
     uint8_t ret = 0x00;
 
@@ -144,7 +134,7 @@ uint8_t ssd1306GetPins(void)
     return ~ret;
 }
 
-void ssd1306Init(void)
+void ssd1306Init()
 {
     uint8_t i;
 
@@ -158,8 +148,6 @@ void ssd1306Init(void)
 
     // Set display D0..D7 ports as inputs with pull-up
     ssd1306SetDdrIn();
-
-    return;
 }
 
 ISR (TIMER0_OVF_vect)
@@ -168,11 +156,9 @@ ISR (TIMER0_OVF_vect)
     TCNT0 = 56;
 
     ADCSRA |= 1 << ADSC;                        // Start ADC every interrupt
-
-    return;
 }
 
-void ssd1306UpdateFb(void)
+void ssd1306UpdateFb()
 {
     uint16_t i;
     uint8_t *fbP = fb;
@@ -192,8 +178,6 @@ void ssd1306UpdateFb(void)
         _I2CWriteByte(*fbP++);
 
     _I2CStop();
-
-    return;
 }
 
 void ssd1306DrawPixel(uint8_t x, uint8_t y, uint8_t color)
@@ -214,19 +198,15 @@ void ssd1306DrawPixel(uint8_t x, uint8_t y, uint8_t color)
         *fbP |= bit;
     else
         *fbP &= ~bit;
-
-    return;
 }
 
-void ssd1306Clear(void)
+void ssd1306Clear()
 {
     uint16_t i;
     uint8_t *fbP = fb;
 
     for (i = 0; i < SSD1306_BUFFERSIZE; i++)
         *fbP++ = 0x00;
-
-    return;
 }
 
 void ssd1306SetBrightness(uint8_t br)
@@ -243,6 +223,4 @@ void ssd1306SetBrightness(uint8_t br)
     ssd1306SendCmd(rawBr);
 
     _I2CStop();
-
-    return;
 }

@@ -3,7 +3,7 @@
 static char rdsText[9];
 static uint8_t rdsFlag = 0;
 
-char *rdsGetText(void)
+char *rdsGetText()
 {
     return rdsText;
 }
@@ -44,7 +44,7 @@ void rdsDisable()
     rdsFlag = 0;
 }
 
-uint8_t rdsGetFlag(void)
+uint8_t rdsGetFlag()
 {
     if (rdsFlag)
         rdsFlag--;

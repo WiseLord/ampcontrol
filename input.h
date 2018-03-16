@@ -95,38 +95,38 @@ typedef enum {
 #define TEMP_MEASURE_TIME       1
 #define SENSOR_POLL_INTERVAL    5
 
-void rcCodesInit(void);
-void inputInit(void);
+void rcCodesInit();
+void inputInit();
 
-int8_t getEncoder(void);
-cmdID getBtnCmd(void);
-cmdID getRcCmd(void);
+int8_t getEncoder();
+cmdID getBtnCmd();
+cmdID getRcCmd();
 
-uint16_t getBtnBuf(void);
-uint16_t getEncBuf(void);
+uint16_t getBtnBuf();
+uint16_t getEncBuf();
 
 void setDisplayTime(uint16_t value);
-uint16_t getDisplayTime(void);
+uint16_t getDisplayTime();
 
 #ifdef _TEMPCONTROL
-uint8_t getSensTimer(void);
+uint8_t getSensTimer();
 void setSensTimer(uint8_t val);
 #endif
 
-int16_t getStbyTimer(void);
+int16_t getStbyTimer();
 void setStbyTimer(int16_t val);
 
 void setSecTimer(uint16_t val);
-int16_t getSecTimer(void);
+int16_t getSecTimer();
 
 void setClockTimer(uint8_t value);
-uint8_t getClockTimer(void);
+uint8_t getClockTimer();
 
-void enableSilenceTimer(void);
-void disableSilenceTimer(void);
-int16_t getSilenceTimer(void);
+void enableSilenceTimer();
+void disableSilenceTimer();
+int16_t getSilenceTimer();
 
 void setInitTimer(int16_t value);
-int16_t getInitTimer(void);
+int16_t getInitTimer();
 
 #endif // INPUT_H

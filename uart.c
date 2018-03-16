@@ -12,7 +12,7 @@ static struct {
     char buf[6];
 } uRaw;
 
-void uartInit(void)
+void uartInit()
 {
 #ifdef _atmega32
     // Set UART prescaler (both UBRRH and UBRRL)
@@ -115,7 +115,7 @@ static uint8_t uartParseHex(const char *hexStr)
     return ret;
 }
 
-UARTData getUartData(void)
+UARTData getUartData()
 {
     UARTData ret = {UART_CMD_NO, CMD_RC_END};
 

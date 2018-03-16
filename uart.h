@@ -17,9 +17,9 @@ typedef struct {
     uint8_t command;
 } UARTData;
 
-void uartInit(void);
+void uartInit();
 void uartWriteString(char *string);
 
-UARTData getUartData(void);
+UARTData getUartData();
 
 #endif // UART_H

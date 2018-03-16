@@ -58,11 +58,9 @@ static void hwInit(uint8_t extFunc)
     sndInit();                              // Load labels/icons/etc
 
     setStbyTimer(0);
-
-    return;
 }
 
-int main(void)
+int main()
 {
     int8_t encCnt = 0;
     uint8_t action = ACTION_NOACTION;

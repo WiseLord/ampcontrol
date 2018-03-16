@@ -29,8 +29,6 @@ static void ks0066WriteStrob()
     _delay_us(0.23);
     CLR(KS0066_E);
 #endif
-
-    return;
 }
 
 static void ks0066SetData(uint8_t data)
@@ -58,8 +56,6 @@ static void ks0066SetData(uint8_t data)
     else CLR(KS0066_D0);
 #endif
 #endif
-
-    return;
 }
 
 static void ks0066WritePort(uint8_t data)
@@ -82,8 +78,6 @@ static void ks0066WritePort(uint8_t data)
 #if defined(KS0066_WIRE_PCF8574)
     I2CStop();
 #endif
-
-    return;
 }
 
 static void ks0066WriteCommand(uint8_t command)
@@ -94,8 +88,6 @@ static void ks0066WriteCommand(uint8_t command)
     CLR(KS0066_RS);
 #endif
     ks0066WritePort(command);
-
-    return;
 }
 
 void ks0066WriteData(uint8_t data)
@@ -110,19 +102,15 @@ void ks0066WriteData(uint8_t data)
         if (dataMode == KS0066_DATA_DDRAM)
             _x++;
     }
-
-    return;
 }
 
-void ks0066Clear(void)
+void ks0066Clear()
 {
     ks0066WriteCommand(KS0066_CLEAR);
     _delay_ms(2);
-
-    return;
 }
 
-void ks0066Init(void)
+void ks0066Init()
 {
 #if defined(KS0066_WIRE_PCF8574)
     // Try to find correct address on bus
@@ -207,16 +195,12 @@ void ks0066Init(void)
     ks0066WriteCommand(KS0066_CLEAR);
     _delay_ms(2);
     ks0066WriteCommand(KS0066_SET_MODE | KS0066_INC_ADDR);
-
-    return;
 }
 
 void ks0066SelectSymbol(uint8_t num)
 {
     dataMode = KS0066_DATA_CGRAM;
     ks0066WriteCommand(KS0066_SET_CGRAM + num * 8);
-
-    return;
 }
 
 void ks0066SetXY(uint8_t x, uint8_t y)
@@ -224,24 +208,18 @@ void ks0066SetXY(uint8_t x, uint8_t y)
     dataMode = KS0066_DATA_DDRAM;
     _x = x;
     ks0066WriteCommand(KS0066_SET_DDRAM + (y ? KS0066_LINE_WIDTH : 0) + x);
-
-    return;
 }
 
 void ks0066WriteString(char *string)
 {
     while (*string)
         ks0066WriteData(*string++);
-
-    return;
 }
 
 void ks0066WriteTail(uint8_t ch, uint8_t pos)
 {
     while (_x <= pos)
         ks0066WriteData (ch);
-
-    return;
 }
 
 ISR (TIMER0_OVF_vect)
@@ -263,8 +241,6 @@ ISR (TIMER0_OVF_vect)
         CLR(KS0066_BCKL);                           // Turn backlight off
     } else if (br == 0)
         SET(KS0066_BCKL);                           // Turn backlight on
-
-    return;
 }
 
 void pcf8574SetBacklight(uint8_t value)
@@ -276,13 +252,9 @@ void pcf8574SetBacklight(uint8_t value)
         i2cData &= ~PCF8574_BL_LINE;
     ks0066WriteCommand(KS0066_NO_COMMAND);
 #endif
-
-    return;
 }
 
 void ks0066SetBrightness(uint8_t br)
 {
     _br = br;
-
-    return;
 }

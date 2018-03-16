@@ -38,7 +38,7 @@ static void rda580xWriteReg(uint8_t reg)
     I2CStop();
 }
 
-void rda580xInit(void)
+void rda580xInit()
 {
     rda580xSetMono(tuner.mono);
 #ifdef _RDS
@@ -50,7 +50,7 @@ void rda580xInit(void)
     }
 }
 
-void rda580xSetFreq(void)
+void rda580xSetFreq()
 {
     uint16_t chan;
     uint8_t band = RDA580X_BAND_EASTEUROPE;
@@ -81,7 +81,7 @@ void rda580xSetFreq(void)
     }
 }
 
-void rda580xReadStatus(void)
+void rda580xReadStatus()
 {
     uint8_t i;
 

@@ -13,8 +13,6 @@ static uint8_t _br;
 void st7920SetBrightness(uint8_t br)
 {
     _br = br;
-
-    return;
 }
 
 static void st7920SetPort(uint8_t data)
@@ -35,11 +33,9 @@ static void st7920SetPort(uint8_t data)
     else CLR(ST7920_D6);
     if (data & (1 << 7)) SET(ST7920_D7);
     else CLR(ST7920_D7);
-
-    return;
 }
 
-static void st7920SetDdrIn(void)
+static void st7920SetDdrIn()
 {
     IN(ST7920_D0);
     IN(ST7920_D1);
@@ -49,11 +45,9 @@ static void st7920SetDdrIn(void)
     IN(ST7920_D5);
     IN(ST7920_D6);
     IN(ST7920_D7);
-
-    return;
 }
 
-static void st7920SetDdrOut(void)
+static void st7920SetDdrOut()
 {
     OUT(ST7920_D0);
     OUT(ST7920_D1);
@@ -63,11 +57,9 @@ static void st7920SetDdrOut(void)
     OUT(ST7920_D5);
     OUT(ST7920_D6);
     OUT(ST7920_D7);
-
-    return;
 }
 
-static uint8_t st7920ReadPin(void)
+static uint8_t st7920ReadPin()
 {
     uint8_t ret = 0;
 
@@ -93,8 +85,6 @@ static void st7920WriteCmd(uint8_t cmd)
     SET(ST7920_E);
     asm("nop");
     CLR(ST7920_E);
-
-    return;
 }
 
 ISR (TIMER0_OVF_vect)
@@ -150,11 +140,9 @@ ISR (TIMER0_OVF_vect)
         CLR(ST7920_BCKL);                                   // Turn backlight off
     } else if (br == 0)
         SET(ST7920_BCKL);                                   // Turn backlight on
-
-    return;
 }
 
-void st7920Init(void)
+void st7920Init()
 {
     // Set control and data lines as outputs
     OUT(ST7920_RS);
@@ -188,8 +176,6 @@ void st7920Init(void)
     st7920WriteCmd(ST7920_FUNCTION | ST7920_8BIT | ST7920_EXT_INSTR | ST7920_GRAPHIC);
 
     OUT(ST7920_BCKL);
-
-    return;
 }
 
 void st7920Clear()
@@ -201,8 +187,6 @@ void st7920Clear()
             fb[i][j] = 0x00;
         }
     }
-
-    return;
 }
 
 void st7920DrawPixel(uint8_t x, uint8_t y, uint8_t color)
@@ -223,11 +207,9 @@ void st7920DrawPixel(uint8_t x, uint8_t y, uint8_t color)
         fb[x >> 3][y & 0x1F] |= bit;
     else
         fb[x >> 3][y & 0x1F] &= ~bit;
-
-    return;
 }
 
-uint8_t st7920GetPins(void)
+uint8_t st7920GetPins()
 {
     return ~pins;
 }

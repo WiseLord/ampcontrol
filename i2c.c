@@ -2,7 +2,7 @@
 
 #include <avr/io.h>
 
-void I2CInit(void)
+void I2CInit()
 {
     // SCL = F_CPU / (16 + 2 * TWBR * prescaler)
     // SCL = 16000000 / (16 + 2 * 18 * 4)
@@ -11,8 +11,6 @@ void I2CInit(void)
     TWSR = (0 << TWPS1) | (1 << TWPS0);                 // Prescaler = 4
 
     TWCR |= (1 << TWEN);                                // Enable TWI
-
-    return;
 }
 
 uint8_t I2CStart(uint8_t addr)
@@ -29,7 +27,7 @@ uint8_t I2CStart(uint8_t addr)
     return I2CWriteByte(addr);
 }
 
-void I2CStop(void)
+void I2CStop()
 {
     uint8_t i = 0;
 
@@ -39,8 +37,6 @@ void I2CStop(void)
         if (i++ > 250)                                  // Avoid endless loop
             break;
     }
-
-    return;
 }
 
 uint8_t I2CWriteByte(uint8_t data)

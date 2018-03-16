@@ -72,26 +72,26 @@ extern uint8_t tunerRdbuf[];
 #define SEARCH_UP           1
 #define SEARCH_DOWN         -1
 
-void tunerInit(void);
+void tunerInit();
 
 void tunerSetFreq();
 
 void tunerChangeFreq(int8_t mult);
 
-void tunerReadStatus(void);
+void tunerReadStatus();
 void tunerSetMono(uint8_t value);
 #ifdef _RDS
 void tunerSetRDS(uint8_t value);
 #endif
-uint8_t tunerStereo(void);
-uint8_t tunerLevel(void);
+uint8_t tunerStereo();
+uint8_t tunerLevel();
 
-uint8_t tunerStationNum(void);
+uint8_t tunerStationNum();
 void tunerNextStation(int8_t direction);
 void tunerLoadStation(uint8_t num);
-void tunerStoreStation(void);
+void tunerStoreStation();
 
-uint8_t tunerFavStationNum(void);
+uint8_t tunerFavStationNum();
 void tunerLoadFavStation(uint8_t num);
 void tunerStoreFavStation(uint8_t num);
 
@@ -99,8 +99,8 @@ void tunerSetVolume(int8_t value);
 void tunerSetMute(uint8_t value);
 void tunerSetBass(uint8_t value);
 
-void tunerPowerOn(void);
-void tunerPowerOff(void);
+void tunerPowerOn();
+void tunerPowerOff();
 
 void tunerSeek(int8_t direction);
 

@@ -12,8 +12,8 @@
 
 extern uint8_t buf[FFT_SIZE];               // Previous results: left and right
 
-void adcInit(void);
+void adcInit();
 void getSpData(uint8_t fallSpeed);
-uint16_t getSignalLevel(void);
+uint16_t getSignalLevel();
 
 #endif // ADC_H

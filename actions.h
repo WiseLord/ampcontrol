@@ -61,18 +61,18 @@ enum {
     MODE_END
 };
 
-uint8_t getAction(void);
+uint8_t getAction();
 
 void handleAction(uint8_t action);
 void handleEncoder(int8_t encCnt);
 void handleChangeFM(uint8_t step);
 
-uint8_t checkAlarmAndTime(void);
+uint8_t checkAlarmAndTime();
 
-void handleExitDefaultMode(void);
-void handleTimers(void);
-void handleModeChange(void);
+void handleExitDefaultMode();
+void handleTimers();
+void handleModeChange();
 
-void showScreen(void);
+void showScreen();
 
 #endif // ACTIONS_H

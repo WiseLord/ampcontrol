@@ -32,16 +32,14 @@ static uint8_t rcType;
 static uint8_t rcAddr;
 static uint8_t rcCode[CMD_RC_END];                  // Array with rc commands
 
-void rcCodesInit(void)
+void rcCodesInit()
 {
     rcType = eeprom_read_byte((uint8_t *)EEPROM_RC_TYPE);
     rcAddr = eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR);
     eeprom_read_block(rcCode, (uint8_t *)EEPROM_RC_CMD, CMD_RC_END);
-
-    return;
 }
 
-void inputInit(void)
+void inputInit()
 {
 #ifdef _atmega32
     // Setup buttons and encoder as inputs with pull-up resistors
@@ -87,8 +85,6 @@ void inputInit(void)
 #ifdef _TEMPCONTROL
     sensTimer = 0;
 #endif
-
-    return;
 }
 
 static uint8_t rcCmdIndex(uint8_t cmd)
@@ -272,12 +268,10 @@ ISR (TIMER2_COMPA_vect)
     // Init timer
     if (initTimer > 0)
         initTimer--;
-
-    return;
 }
 
 
-int8_t getEncoder(void)
+int8_t getEncoder()
 {
     int8_t ret = 0;
 
@@ -309,14 +303,14 @@ int8_t getEncoder(void)
     return ret;
 }
 
-cmdID getBtnCmd(void)
+cmdID getBtnCmd()
 {
     cmdID ret = cmdBuf;
     cmdBuf = CMD_RC_END;
     return ret;
 }
 
-cmdID getRcCmd(void)
+cmdID getRcCmd()
 {
     // Place RC event to command buffer if enough RC timer ticks
     IRData ir = takeIrData();
@@ -339,12 +333,12 @@ cmdID getRcCmd(void)
     return rcCmdBuf;
 }
 
-uint16_t getBtnBuf(void)
+uint16_t getBtnBuf()
 {
     return btnPrev;
 }
 
-uint16_t getEncBuf(void)
+uint16_t getEncBuf()
 {
     return encPrev;
 }
@@ -352,17 +346,15 @@ uint16_t getEncBuf(void)
 void setDisplayTime(uint16_t value)
 {
     displayTime = value;
-
-    return;
 }
 
-uint16_t getDisplayTime(void)
+uint16_t getDisplayTime()
 {
     return displayTime;
 }
 
 #ifdef _TEMPCONTROL
-uint8_t getSensTimer(void)
+uint8_t getSensTimer()
 {
     return sensTimer;
 }
@@ -370,12 +362,10 @@ uint8_t getSensTimer(void)
 void setSensTimer(uint8_t val)
 {
     sensTimer = val;
-
-    return;
 }
 #endif
 
-int16_t getStbyTimer(void)
+int16_t getStbyTimer()
 {
     return stbyTimer;
 }
@@ -383,18 +373,14 @@ int16_t getStbyTimer(void)
 void setStbyTimer(int16_t val)
 {
     stbyTimer = val;
-
-    return;
 }
 
 void setSecTimer(uint16_t val)
 {
     secTimer = val;
-
-    return;
 }
 
-int16_t getSecTimer(void)
+int16_t getSecTimer()
 {
     return secTimer;
 }
@@ -402,45 +388,37 @@ int16_t getSecTimer(void)
 void setClockTimer(uint8_t value)
 {
     clockTimer = value;
-
-    return;
 }
 
-uint8_t getClockTimer(void)
+uint8_t getClockTimer()
 {
     return clockTimer;
 }
 
-void enableSilenceTimer(void)
+void enableSilenceTimer()
 {
     if (silenceTime)
         silenceTimer = 60 * silenceTime;
     else
         silenceTimer = STBY_TIMER_OFF;
-
-    return;
 }
 
-int16_t getSilenceTimer(void)
+int16_t getSilenceTimer()
 {
     return silenceTimer;
 }
 
-void disableSilenceTimer(void)
+void disableSilenceTimer()
 {
     silenceTimer = STBY_TIMER_OFF;
-
-    return;
 }
 
 void setInitTimer(int16_t value)
 {
     initTimer = value;
-
-    return;
 }
 
-int16_t getInitTimer(void)
+int16_t getInitTimer()
 {
     return initTimer;
 }

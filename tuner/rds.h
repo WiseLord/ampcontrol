@@ -5,9 +5,9 @@
 
 #define RDS_FLAG_INIT   50
 
-char *rdsGetText(void);
+char *rdsGetText();
 void rdsSetBlocks(uint8_t *rdsBlock);
 void rdsDisable();
-uint8_t rdsGetFlag(void);
+uint8_t rdsGetFlag();
 
 #endif // RDS_H

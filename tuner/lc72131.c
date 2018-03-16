@@ -4,14 +4,14 @@
 #include "../spisw.h"
 #include "../pins.h"
 
-void lc72131Init(void)
+void lc72131Init()
 {
     SPIswInit(SPISW_DORD_LSB_FIRST);
 
     CLR(SPISW_CE);
 }
 
-void lc72131SetFreq(void)
+void lc72131SetFreq()
 {
     uint16_t div;
 

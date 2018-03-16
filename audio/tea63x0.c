@@ -25,8 +25,6 @@ void tea63x0SetVolume()
     I2CWriteByte(spRight + 53);                         // -66dB..20dB => -33..10 grid => 20..53 raw
     I2CWriteByte(spLeft + 53);
     I2CStop();
-
-    return;
 }
 
 void tea63x0SetBT()
@@ -36,8 +34,6 @@ void tea63x0SetBT()
     I2CWriteByte(sndPar[MODE_SND_BASS].value + 7);      // -4..5 grid => 3..12 raw
     I2CWriteByte(sndPar[MODE_SND_TREBLE].value + 7);    // -4..4 grid => 3..11 raw
     I2CStop();
-
-    return;
 }
 
 void tea63x0SetSpeakers()
@@ -55,16 +51,12 @@ void tea63x0SetSpeakers()
     I2CWriteByte(TEA63X0_FADER);
     I2CWriteByte(TEA63X0_MFN | (spFR < 0 ? 15 : 15 - spFR));
     I2CStop();
-
-    return;
 }
 
-void tea63x0SetInputMute(void)
+void tea63x0SetInputMute()
 {
     I2CStart(TEA63X0_I2C_ADDR);
     I2CWriteByte(TEA63X0_AUDIO_SW);
     I2CWriteByte((aproc.mute ? TEA63X0_GMU : 0) | (1 << aproc.input));
     I2CStop();
-
-    return;
 }

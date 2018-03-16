@@ -67,13 +67,13 @@
 
 #define TEA5767_RDBUF_SIZE      5
 
-void tea5767Init(void);
+void tea5767Init();
 
-void tea5767SetFreq(void);
+void tea5767SetFreq();
 
-void tea5767ReadStatus(void);
+void tea5767ReadStatus();
 
-void tea5767SetMute(void);
+void tea5767SetMute();
 
 void tea5767PowerOn();
 void tea5767PowerOff();

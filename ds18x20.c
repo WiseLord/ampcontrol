@@ -7,7 +7,7 @@
 static ds18x20Dev devs[DS18X20_MAX_DEV];
 static uint8_t devCount = 0;
 
-static uint8_t ds18x20IsOnBus(void)
+static uint8_t ds18x20IsOnBus()
 {
     uint8_t ret;
 
@@ -37,11 +37,9 @@ static void ds18x20SendBit(uint8_t bit)
     _delay_us(5);
     if (bit)
         _delay_us(50);
-
-    return;
 }
 
-static uint8_t ds18x20GetBit(void)
+static uint8_t ds18x20GetBit()
 {
     uint8_t ret;
 
@@ -67,11 +65,9 @@ static void ds18x20SendByte(uint8_t byte)
         ds18x20SendBit(byte & 0x01);
         byte >>= 1;
     }
-
-    return;
 }
 
-static uint8_t ds18x20GetByte(void)
+static uint8_t ds18x20GetByte()
 {
     uint8_t i, ret;
 
@@ -93,8 +89,6 @@ static void ds18x20Select(ds18x20Dev *dev)
 
     for (i = 0; i < 8; i++)
         ds18x20SendByte(dev->id[i]);
-
-    return;
 }
 
 static void ds18x20GetAllTemps()
@@ -123,11 +117,9 @@ static void ds18x20GetAllTemps()
             }
         }
     }
-
-    return;
 }
 
-static void ds18x20ConvertTemp(void)
+static void ds18x20ConvertTemp()
 {
     ds18x20SendByte(DS18X20_CMD_SKIP_ROM);
     ds18x20SendByte(DS18X20_CMD_CONVERT);
@@ -137,8 +129,6 @@ static void ds18x20ConvertTemp(void)
     SET(ONE_WIRE);
     OUT(ONE_WIRE);
 #endif
-
-    return;
 }
 
 static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
@@ -190,7 +180,7 @@ static uint8_t ds18x20SearchRom(uint8_t *bitPattern, uint8_t lastDeviation)
     return newDeviation;
 }
 
-void ds18x20SearchDevices(void)
+void ds18x20SearchDevices()
 {
     uint8_t i, j;
     uint8_t *newID;
@@ -214,7 +204,6 @@ void ds18x20SearchDevices(void)
 
         if (!ds18x20IsOnBus()) {
             devCount = 0;
-
             return;
         }
 
@@ -227,11 +216,9 @@ void ds18x20SearchDevices(void)
     } while (lastDeviation != 0);
 
     devCount = count;
-
-    return;
 }
 
-uint8_t ds18x20Process(void)
+uint8_t ds18x20Process()
 {
     ds18x20GetAllTemps();
 
@@ -254,7 +241,7 @@ int16_t ds18x20GetTemp(uint8_t num)
     return ret;
 }
 
-uint8_t ds18x20GetDevCount(void)
+uint8_t ds18x20GetDevCount()
 {
     return devCount;
 }

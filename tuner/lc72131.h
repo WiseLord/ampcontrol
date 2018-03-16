@@ -60,7 +60,7 @@
 // IN2 control word3 bytes   8ms / 3..4ms    | IF counter normal mode
 #define LC72131_CTRL_IN2_3  (LC72131_IN2_GT0 | LC72131_IN2_IFS)
 
-void lc72131Init(void);
-void lc72131SetFreq(void);
+void lc72131Init();
+void lc72131SetFreq();
 
 #endif // LC72131_H

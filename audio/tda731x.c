@@ -3,16 +3,14 @@
 
 #include "../i2c.h"
 
-void tda731xSetVolume(void)
+void tda731xSetVolume()
 {
     I2CStart(TDA731X_I2C_ADDR);
     I2CWriteByte(TDA731X_VOLUME | -sndPar[MODE_SND_VOLUME].value);
     I2CStop();
-
-    return;
 }
 
-void tda731xSetBT(void)
+void tda731xSetBT()
 {
     int8_t val;
 
@@ -22,11 +20,9 @@ void tda731xSetBT(void)
     val = sndPar[MODE_SND_TREBLE].value;
     I2CWriteByte(TDA731X_TREBLE | (val > 0 ? 15 - val : 7 + val));
     I2CStop();
-
-    return;
 }
 
-void tda731xSetSpeakers(void)
+void tda731xSetSpeakers()
 {
     int8_t spFrontLeft = 0;
     int8_t spFrontRight = 0;
@@ -55,21 +51,17 @@ void tda731xSetSpeakers(void)
     I2CWriteByte(TDA731X_SP_FRONT_LEFT | -spFrontLeft);
     I2CWriteByte(TDA731X_SP_FRONT_RIGHT | -spFrontRight);
     I2CStop();
-
-    return;
 }
 
-void tda731xSetInput(void)
+void tda731xSetInput()
 {
     I2CStart(TDA731X_I2C_ADDR);
     I2CWriteByte(TDA731X_SW | (3 - sndPar[MODE_SND_GAIN0 + aproc.input].value) << 3 | !
                  (aproc.extra & APROC_EXTRA_LOUDNESS) << 2 | aproc.input);
     I2CStop();
-
-    return;
 }
 
-void tda731xSetMute(void)
+void tda731xSetMute()
 {
     I2CStart(TDA731X_I2C_ADDR);
     if (aproc.mute) {
@@ -81,6 +73,4 @@ void tda731xSetMute(void)
         tda731xSetSpeakers();
     }
     I2CStop();
-
-    return;
 }
