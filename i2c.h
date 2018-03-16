@@ -15,4 +15,6 @@ void I2CStop();
 uint8_t I2CWriteByte(uint8_t data);
 uint8_t I2CReadByte(uint8_t ack);
 
+uint8_t I2CFindDevice(uint8_t addr);
+
 #endif // I2C_H

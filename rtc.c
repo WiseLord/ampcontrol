@@ -30,10 +30,9 @@ void rtcInit()
 {
     rtc.etm = RTC_NOEDIT;
     // Try to find PCF8563
-    if ((I2CStart(PCF8563_I2C_ADDR) & 0x18) == 0x18) {
+    if (I2CFindDevice(PCF8563_I2C_ADDR)) {
         rtcAddr = PCF8563_I2C_ADDR;
     }
-    I2CStop();
 }
 
 int8_t rtcWeekDay()

@@ -12,6 +12,13 @@
 #if defined(KS0066_WIRE_PCF8574)
 static uint8_t i2cData;
 static uint8_t pcf8574Addr = 0x40;
+
+#include <avr/pgmspace.h>
+const uint8_t pcf8574Addresses[] PROGMEM = {
+    0x40, 0x42, 0x44, 0x46, 0x48, 0x4A, 0x4C, 0x4E,
+    0x70, 0x72, 0x74, 0x76, 0x78, 0x7A, 0x7C, 0x7E,
+};
+
 #endif
 
 static uint8_t _br;
@@ -113,26 +120,14 @@ void ks0066Clear()
 void ks0066Init()
 {
 #if defined(KS0066_WIRE_PCF8574)
-    // Try to find correct address on bus
-    // PCF8574 range
-    for (uint8_t addr = 0x40; addr < 0x4F; addr += 2) {
-        if ((I2CStart(addr) & 0x18) == 0x18) {
-            I2CStop();
+    // Try to find correct PCF8574 address on bus
+    for (uint8_t i = 0; i < sizeof(pcf8574Addresses); i++) {
+        uint8_t addr = pgm_read_byte(&pcf8574Addresses[i]);
+        if (I2CFindDevice(addr)) {
             pcf8574Addr = addr;
             break;
         }
-        I2CStop();
     }
-    // PCF8574A range
-    for (uint8_t addr = 0x70; addr < 0x7F; addr += 2) {
-        if ((I2CStart(addr) & 0x18) == 0x18) {
-            I2CStop();
-            pcf8574Addr = addr;
-            break;
-        }
-        I2CStop();
-    }
-
 #endif
 
 #if defined(KS0066_WIRE_PCF8574)
