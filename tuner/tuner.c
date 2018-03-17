@@ -458,8 +458,7 @@ void tunerPowerOn()
 
 void tunerPowerOff()
 {
-    eeprom_update_word((uint16_t *)EEPROM_FM_FREQ, tuner.freq);
-    eeprom_update_byte((uint8_t *)EEPROM_FM_MONO, tuner.mono);
+    eeprom_update_block(&tuner, (void *)EEPROM_FM_TUNER, sizeof(Tuner_type));
 
     switch (tuner.ic) {
 #ifdef _TEA5767
