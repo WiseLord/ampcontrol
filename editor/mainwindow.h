@@ -74,6 +74,7 @@ private slots:
     void setFmstep2(int value);
     void setFmmono(int value);
     void setFmRds(int value);
+    void setFmBass(int value);
     void setFmctrl();
 
     void setRemote(int rcType);

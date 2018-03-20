@@ -581,6 +581,7 @@ void MainWindow::setTuner(int tuner)
     wgtFmstep2->hide();
     wgtFmmono->hide();
     wgtFmRDS->hide();
+    wgtFmBass->hide();
     wgtFmctrl->hide();
 
     switch (tuner) {
@@ -595,10 +596,17 @@ void MainWindow::setTuner(int tuner)
         cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_XTAL);
     case TUNER_RDA5807:
     case TUNER_RDA5807_DF:
-        if (tuner != TUNER_TEA5767)
+        if (tuner != TUNER_TEA5767) {
+            wgtFmBass->show();
+            setFmBass(eep[EEPROM_FM_BASS]);
+            cbxFmBass->setCurrentIndex(eep[EEPROM_FM_BASS]);
+        }
+    case TUNER_SI470X:
+        if (tuner != TUNER_TEA5767) {
             wgtFmRDS->show();
-        setFmRds(eep[EEPROM_FM_RDS]);
-        cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
+            setFmRds(eep[EEPROM_FM_RDS]);
+            cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
+        }
     case TUNER_RDA5802:
         wgtFmmono->show();
         setFmmono(eep[EEPROM_FM_MONO]);
@@ -682,6 +690,15 @@ void MainWindow::setFmRds(int value)
     else
         eep[EEPROM_FM_RDS] = 0x00;
     updateHexTable(EEPROM_FM_RDS);
+}
+
+void MainWindow::setFmBass(int value)
+{
+    if (value)
+        eep[EEPROM_FM_BASS] = 0x01;
+    else
+        eep[EEPROM_FM_BASS] = 0x00;
+    updateHexTable(EEPROM_FM_BASS);
 }
 
 void MainWindow::setFmctrl()
