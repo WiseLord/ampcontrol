@@ -268,6 +268,12 @@ enum {
 #define SPISW_CE            EXT_2
 #define SPISW_CE_LINE       EXT_2_LINE
 
+// SI470X Reset pins
+#define SI470X_B_SDIO       C
+#define SI470X_B_SDIO_LINE  (1<<1) // SDA of hardware I2C
+#define SI470X_B_RST        EXT_2
+#define SI470X_B_RST_LINE   EXT_2_LINE
+
 // SSD1306 port
 #define SSD1306_SCK         DISP_STROB
 #define SSD1306_SCK_LINE    DISP_STROB_LINE

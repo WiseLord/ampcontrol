@@ -9,17 +9,17 @@
 #endif
 
 static uint8_t wrBuf[14] = {
-    RDA580X_DHIZ | RDA580X_DMUTE | RDA580X_SEEKUP,
+    RDA580X_DHIZ,
     RDA580X_SKMODE | RDA580X_CLK_MODE_32768 | RDA5807_NEW_METHOD,
     0,
-    RDA580X_BAND_EASTEUROPE | RDA580X_SPACE_50,
+    0,
     0,
     0,
     0b1000 & RDA5807_SEEKTH,
     RDA580X_LNA_PORT_SEL_LNAP | RDA580X_VOLUME,
     0,
     0,
-    (0x80 & RDA5807_TH_SOFRBLEND) | RDA5807_65M_50M_MODE,
+    (0x40 & RDA5807_TH_SOFRBLEND) | RDA5807_65M_50M_MODE,
     0,
     0,
     0,
@@ -96,8 +96,9 @@ void rda580xReadStatus()
     if (tuner.rds) {
         // If RDS ready and sync flag are set
         if ((tunerRdbuf[0] & RDA5807_RDSR) && (tunerRdbuf[0] & RDA5807_RDSS)) {
-            // If there are no errors in blocks A and B
-            if (!(tunerRdbuf[3] & (RDA5807_BLERA | RDA5807_BLERB))) {
+            // If there are no non-correctable errors in blocks A-D
+            if (    (tunerRdbuf[3] & RDA5807_BLERA) != RDA5807_BLERA &&
+                    (tunerRdbuf[2] & RDA5807_BLERA) != RDA5807_BLERB ) {
                 // Send rdBuf[4..11] as 16-bit blocks A-D
                 rdsSetBlocks(&tunerRdbuf[4]);
             }
@@ -110,7 +111,9 @@ void rda580xReadStatus()
         chan <<= 8;
         chan |= tunerRdbuf[1];
 
-        tuner.freq = chan * RDA5807_CHAN_SPACING + fMin;
+        tuner.rdFreq = chan * RDA5807_CHAN_SPACING + fMin;
+    } else {
+        tuner.rdFreq = tuner.freq;
     }
 }
 
@@ -136,20 +139,22 @@ void rda580xSetMute(uint8_t value)
 
 void rda580xSetBass(uint8_t value)
 {
-    if (value)
+    if (value) {
         wrBuf[0] |= RDA5807_BASS;
-    else
+    } else {
         wrBuf[0] &= ~RDA5807_BASS;
+    }
 
     rda580xWriteReg(2);
 }
 
 void rda580xSetMono(uint8_t value)
 {
-    if (value)
+    if (value) {
         wrBuf[0] |= RDA580X_MONO;
-    else
+    } else {
         wrBuf[0] &= ~RDA580X_MONO;
+    }
 
     rda580xWriteReg(2);
 }
@@ -159,10 +164,11 @@ void rda580xSetRds(uint8_t value)
 {
     rdsDisable();
 
-    if (value)
+    if (value) {
         wrBuf[1] |= RDA5807_RDS_EN;
-    else
+    } else {
         wrBuf[1] &= ~RDA5807_RDS_EN;
+    }
 
     rda580xWriteReg(2);
 }
@@ -170,10 +176,11 @@ void rda580xSetRds(uint8_t value)
 
 void rda580xSetPower(uint8_t value)
 {
-    if (value)
+    if (value) {
         wrBuf[1] |= RDA580X_ENABLE;
-    else
+    } else {
         wrBuf[1] &= ~RDA580X_ENABLE;
+    }
 
     rda580xWriteReg(2);
 }

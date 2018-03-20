@@ -31,6 +31,9 @@
 #define EEPROM_FM_FREQ              (EEPROM_FM_TUNER + 0x08)
 #define EEPROM_FM_MONO              (EEPROM_FM_TUNER + 0x0A)
 #define EEPROM_FM_RDS               (EEPROM_FM_TUNER + 0x0B)
+#define EEPROM_FM_VOLUME            (EEPROM_FM_TUNER + 0x0C)
+#define EEPROM_FM_BASS              (EEPROM_FM_TUNER + 0x0D)
+#define EEPROM_FM_TUNER_SIZE        14
 
 // FM stations
 #define EEPROM_FAV_STATIONS         (EEPROM_FM_TUNER + 0x10)

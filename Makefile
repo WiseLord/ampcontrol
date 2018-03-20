@@ -9,7 +9,7 @@ FEATURE_LIST = UARTCONTROL RDS
 
 ifeq ($(MCU), atmega32)
 APROC_LIST += PGA2310
-TUNER_LIST += LM7001 LC72131
+TUNER_LIST += LM7001 LC72131 SI470X
 FEATURE_LIST += TEMPCONTROL
 endif
 
@@ -81,6 +81,10 @@ ifeq "$(findstring LC72131, $(TUNER_LIST))" "LC72131"
   SRCS += tuner/lc72131.c
   SOFTWARE_SPI = YES
 endif
+ifeq "$(findstring SI470X, $(TUNER_LIST))" "SI470X"
+  SRCS += tuner/si470x.c
+  HARDWARE_RST = "YES"
+endif
 DEFINES += $(addprefix -D_, $(TUNER_LIST))
 
 # Features
@@ -99,6 +103,10 @@ DEFINES += $(addprefix -D_, $(FEATURE_LIST))
 ifeq "$(findstring YES, $(SOFTWARE_SPI))" "YES"
   SRCS += spisw.c
   DEFINES += -D_SPISW
+endif
+
+ifeq "$(findstring YES, $(HARDWARE_RST))" "YES"
+  DEFINES += -D_HARDWARE_RST
 endif
 
 # Build directory

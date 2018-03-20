@@ -18,6 +18,9 @@
 #ifdef _LC72131
 #include "lc72131.h"
 #endif
+#ifdef _SI470X
+#include "si470x.h"
+#endif
 #ifdef _RDS
 #include "rds.h"
 #endif
@@ -31,11 +34,13 @@ typedef enum {
     TUNER_RDA5802,
     TUNER_RDA5807_DF,
     TUNER_LC72131,
+    TUNER_SI470X,
 
     TUNER_END
 } tunerIC;
 
 typedef struct {
+    // EEPROM part
     tunerIC ic;
     uint8_t ctrl;
     uint8_t step1;
@@ -46,21 +51,25 @@ typedef struct {
     uint8_t mono;
     uint8_t rds;
     int8_t volume;
-    uint8_t mute;
     uint8_t bass;
+    // LIVE part
+    uint16_t rdFreq;
+    uint8_t mute;
 } Tuner_type;
 
 extern Tuner_type tuner;
 
 #if defined(_RDA580X)
 #define TUNER_RDBUF_SIZE    RDA5807_RDBUF_SIZE
+#elif defined(_SI470X)
+#define TUNER_RDBUF_SIZE    SI470X_RDBUF_SIZE
 #elif defined(_TEA5767)
 #define TUNER_RDBUF_SIZE    TEA5767_RDBUF_SIZE
 #elif defined(_TUX032)
 #define TUNER_RDBUF_SIZE    TUX032_RDBUF_SIZE
 #endif
 
-#if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032)
+#if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032) || defined(_SI470X)
 extern uint8_t tunerRdbuf[];
 #endif
 

@@ -1096,9 +1096,9 @@ void showRadio(uint8_t tune)
     // Frequency value
     ks0066SetXY(0, 0);
     writeString("FM ");
-    writeNum(tuner.freq / 100, 3, ' ', 10);
+    writeNum(tuner.rdFreq / 100, 3, ' ', 10);
     ks0066WriteData('.');
-    writeNum(tuner.freq % 100, 2, '0', 10);
+    writeNum(tuner.rdFreq % 100, 2, '0', 10);
 
     // Signal level
     ks0066SetXY(12, 0);
@@ -1146,7 +1146,7 @@ void showRadio(uint8_t tune)
     } else {
 #endif
         // Frequency scale
-        uint8_t value = (int16_t)36 * ((tuner.freq - tuner.fMin) >> 4) / ((tuner.fMax - tuner.fMin) >> 4);
+        uint8_t value = (int16_t)36 * ((tuner.rdFreq - tuner.fMin) >> 4) / ((tuner.fMax - tuner.fMin) >> 4);
         ks0066SetXY(0, 1);
         for (i = 0; i < 12; i++) {
             if (value / 3 > i) {
@@ -1174,9 +1174,9 @@ void showRadio(uint8_t tune)
     // Frequency value
     ls020SetXY(8, 2);
     ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 2);
-    writeNum(tuner.freq / 100, 3, ' ', 10);
+    writeNum(tuner.rdFreq / 100, 3, ' ', 10);
     writeStringPgm(STR_SPDOTSP);
-    writeNum(tuner.freq % 100, 2, '0', 10);
+    writeNum(tuner.rdFreq % 100, 2, '0', 10);
 
     // Signal level
     for (i = 0; i < 16; i += 2) {
@@ -1215,7 +1215,7 @@ void showRadio(uint8_t tune)
         writeStringPgm(STR_SPMINUS2);
 
     // Frequency scale
-    showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.freq >> 4);
+    showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.rdFreq >> 4);
 
     // Select between RDS and spectrum mode
 #ifdef _RDS
@@ -1251,9 +1251,9 @@ void showRadio(uint8_t tune)
     gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
     gdSetXY(0, 0);
     writeStringPgm(STR_FM);
-    writeNum(tuner.freq / 100, 3, ' ', 10);
+    writeNum(tuner.rdFreq / 100, 3, ' ', 10);
     writeStringPgm(STR_SPDOTSP);
-    writeNum(tuner.freq % 100, 2, '0', 10);
+    writeNum(tuner.rdFreq % 100, 2, '0', 10);
 
     // Signal level
     gdSetXY (112, 0);
@@ -1292,7 +1292,7 @@ void showRadio(uint8_t tune)
         writeStringPgm(STR_MINUS2);
 
     // Frequency scale
-    showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.freq >> 4);
+    showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.rdFreq >> 4);
 
     // Select between RDS and spectrum mode
 #ifdef _RDS
