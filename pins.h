@@ -204,6 +204,19 @@
 #define RC_LINE             (1<<2)
 #endif
 
+// I2C port definitions
+#if defined(_atmega32)
+#define I2C_SDA             C
+#define I2C_SDA_LINE        (1<<1)
+#define I2C_SCL             C
+#define I2C_SCL_LINE        (1<<0)
+#elif defined(_atmega328p)
+#define I2C_SDA             C
+#define I2C_SDA_LINE        (1<<4)
+#define I2C_SCL             C
+#define I2C_SCL_LINE        (1<<5)
+#endif
+
 // Standby/Mute port definitions
 #if defined(_atmega32)
 #define STMU_MUTE           C
@@ -269,10 +282,17 @@ enum {
 #define SPISW_CE_LINE       EXT_2_LINE
 
 // SI470X Reset pins
-#define SI470X_B_SDIO       C
-#define SI470X_B_SDIO_LINE  (1<<1) // SDA of hardware I2C
+#define SI470X_B_SDIO       I2C_SDA
+#define SI470X_B_SDIO_LINE  I2C_SDA_LINE
+#define SI470X_B_SCLK       I2C_SCL
+#define SI470X_B_SCLK_LINE  I2C_SCL_LINE
+#if defined(_atmega32)
 #define SI470X_B_RST        EXT_2
 #define SI470X_B_RST_LINE   EXT_2_LINE
+#elif defined(_atmega328p)
+#define SI470X_B_RST        D
+#define SI470X_B_RST_LINE   (1<<1)
+#endif
 
 // SSD1306 port
 #define SSD1306_SCK         DISP_STROB

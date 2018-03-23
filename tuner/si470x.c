@@ -38,12 +38,16 @@ static void initRegs()
 void si470xReset()
 {
     OUT(SI470X_B_RST);
+    IN(SI470X_B_SCLK);
+    SET(SI470X_B_SCLK);
+    _delay_ms(1);
     OUT(SI470X_B_SDIO);
 
     CLR(SI470X_B_SDIO);
     CLR(SI470X_B_RST);
     _delay_ms(1);
     SET(SI470X_B_RST);
+    IN(SI470X_B_SDIO);
     _delay_ms(1);
 }
 

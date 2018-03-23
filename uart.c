@@ -34,8 +34,8 @@ void uartInit()
     // Set double transmission speed
     UCSR0A = (1 << U2X0);
 
-    // Enable RX complete interrupt and both receiver and transmitter
-    UCSR0B = (1 << RXCIE0) | (1 << RXEN0) | (1 << TXEN0);
+    // Enable RX complete interrupt and receiver but not transmitter
+    UCSR0B = (1 << RXCIE0) | (1 << RXEN0) | (0 << TXEN0);
 
     // Set frame format (8 data bits, 1 stop bit)
     UCSR0C = (1 << UCSZ01) | (1 << UCSZ00);
@@ -122,7 +122,7 @@ UARTData getUartData()
     if (uRaw.ready) {
         uRaw.ready = 0;
 #ifdef _atmega328p
-        uartWriteString(uRaw.buf);
+//        uartWriteString(uRaw.buf);
 #endif
 
         // Check command type
