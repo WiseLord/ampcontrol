@@ -5,6 +5,11 @@
 #include "audio.h"
 #include "../pins.h"
 
+static void r2s15904spDelay()
+{
+    _delay_us(4);
+}
+
 static void r2s15904spSendData(uint16_t data)
 {
     uint8_t i;
@@ -16,31 +21,31 @@ static void r2s15904spSendData(uint16_t data)
         } else {
             CLR(SPISW_DI);
         }
-        _delay_us(2);
+        r2s15904spDelay();
         // Set clock
         SET(SPISW_CLK);
-        _delay_us(4);
+        r2s15904spDelay();
         // Clear data but last bit
         if (i == 15) {
             SET(SPISW_DI);
         } else {
             CLR(SPISW_DI);
         }
-        _delay_us(2);
+        r2s15904spDelay();
         // Clear clock
         CLR(SPISW_CLK);
-        _delay_us(2);
+        r2s15904spDelay();
 
         data <<= 1;
     }
     // Latch data
     CLR(SPISW_DI);
-    _delay_us(2);
+    r2s15904spDelay();
     // Set clock
     SET(SPISW_CLK);
-    _delay_us(4);
+    r2s15904spDelay();
     CLR(SPISW_CLK);
-    _delay_us(4);
+    r2s15904spDelay();
 }
 
 void r2s15904spSetSpeakers()
