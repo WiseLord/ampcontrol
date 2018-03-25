@@ -76,7 +76,7 @@ enum {
     SYM_LOUDNESS_CROSS,
     SYM_SURROUND_CROSS,
     SYM_EFFECT_3D_CROSS,
-    SYM_TONE_DEFEAT_CROSS,
+    SYM_TONE_BYPASS_CROSS,
     SYM_STEREO_MONO,
 
     SYM_END
@@ -102,7 +102,7 @@ void showMute();
 void showLoudness();
 void showSurround();
 void showEffect3d();
-void showToneDefeat();
+void showToneBypass();
 
 void showBrWork();
 void changeBrWork(int8_t diff);

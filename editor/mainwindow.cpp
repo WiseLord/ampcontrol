@@ -310,12 +310,12 @@ void MainWindow::setAudioproc(int proc)
     wgtLoudness->hide();
     wgtSurround->hide();
     wgtEffect3d->hide();
-    wgtToneDefeat->hide();
+    wgtToneBypass->hide();
     wgtInput->hide();
     wgtInputIcon->hide();
     cbxInput->clear();
 
-    /* Handle loudness/surround/effect3d/tone_defeat*/
+    /* Handle loudness/surround/effect3d/tone_bypass*/
     switch (proc) {
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TDA7314:
@@ -330,8 +330,8 @@ void MainWindow::setAudioproc(int proc)
         cbxSurround->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_SURROUND));
         wgtEffect3d->show();
         cbxEffect3d->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_EFFECT3D));
-        wgtToneDefeat->show();
-        cbxToneDefeat->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_TONEDEFEAT));
+        wgtToneBypass->show();
+        cbxToneBypass->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_BYPASS));
         break;
     }
 
@@ -498,12 +498,12 @@ void MainWindow::setEffect3d(int value)
     updateHexTable(EEPROM_APROC_EXTRA);
 }
 
-void MainWindow::setToneDefeat(int value)
+void MainWindow::setToneBypass(int value)
 {
     if (value)
-        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_TONEDEFEAT;
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_BYPASS;
     else
-        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_TONEDEFEAT;
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_BYPASS;
     updateHexTable(EEPROM_APROC_EXTRA);
 }
 

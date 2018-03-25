@@ -43,7 +43,7 @@ const char STR_RC_IN_NEXT[]     PROGMEM = "Next input";
 const char STR_RC_LOUDNESS[]    PROGMEM = "Loudness";
 const char STR_RC_SURROUND[]    PROGMEM = "Surround";
 const char STR_RC_EFFECT_3D[]   PROGMEM = "3D effect";
-const char STR_RC_TONE_DEFEAT[] PROGMEM = "Tone defeat";
+const char STR_RC_TONE_BYPASS[] PROGMEM = "Tone bypass";
 
 const char STR_RC_FM_RDS[]      PROGMEM = "RDS enable";
 const char STR_RC_FM_INC[]      PROGMEM = "Channel +";
@@ -86,7 +86,7 @@ PGM_P const rcLabels[] PROGMEM = {
     STR_RC_LOUDNESS,
     STR_RC_SURROUND,
     STR_RC_EFFECT_3D,
-    STR_RC_TONE_DEFEAT,
+    STR_RC_TONE_BYPASS,
 
     STR_RC_FM_RDS,
     STR_RC_FM_INC,
@@ -230,7 +230,7 @@ static void lcdGenBar(uint8_t sym)
         0b01110,
         0b00000,
     };
-    static const uint8_t toneDefeatIcon[] PROGMEM = {
+    static const uint8_t toneBypassIcon[] PROGMEM = {
         0b01000,
         0b10101,
         0b00010,
@@ -323,9 +323,9 @@ static void lcdGenBar(uint8_t sym)
             for (i = 0; i < 8; i++)
                 ks0066WriteData(pgm_read_byte(&crossIcon[i]));
             break;
-        case SYM_TONE_DEFEAT_CROSS:
+        case SYM_TONE_BYPASS_CROSS:
             for (i = 0; i < 8; i++)
-                ks0066WriteData(pgm_read_byte(&toneDefeatIcon[i]));
+                ks0066WriteData(pgm_read_byte(&toneBypassIcon[i]));
             for (i = 0; i < 8; i++)
                 ks0066WriteData(pgm_read_byte(&crossIcon[i]));
             break;
@@ -1440,30 +1440,30 @@ void showEffect3d()
 #endif
 }
 
-void showToneDefeat()
+void showToneBypass()
 {
-    showParLabel(LABEL_TONE_DEFEAT);
+    showParLabel(LABEL_TONE_BYPASS);
     drawMiniSpectrum();
 #if defined(_KS0066)
-    lcdGenBar(SYM_TONE_DEFEAT_CROSS);
+    lcdGenBar(SYM_TONE_BYPASS_CROSS);
     ks0066SetXY(14, 0);
     ks0066WriteData(0x06);
-    if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
+    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
         ks0066WriteData(0x07);
     else
         ks0066WriteData(' ');
 #elif defined(_LS020)
     ls020SetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
-        ls020WriteIcon32(ICON32_TONE_DEFEAT_ON);
+    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
+        ls020WriteIcon32(ICON32_TONE_BYPASS_ON);
     else
-        ls020WriteIcon32(ICON32_TONE_DEFEAT_OFF);
+        ls020WriteIcon32(ICON32_TONE_BYPASS_OFF);
 #else
     gdSetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
-        gdWriteIcon32(ICON32_TONE_DEFEAT_ON);
+    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
+        gdWriteIcon32(ICON32_TONE_BYPASS_ON);
     else
-        gdWriteIcon32(ICON32_TONE_DEFEAT_OFF);
+        gdWriteIcon32(ICON32_TONE_BYPASS_OFF);
 #endif
 }
 

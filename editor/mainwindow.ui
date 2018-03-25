@@ -269,7 +269,7 @@
           </row>
           <row>
            <property name="text">
-            <string>Tone defeat</string>
+            <string>Tone bypass</string>
            </property>
           </row>
           <row>
@@ -978,7 +978,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="wgtToneDefeat" native="true">
+         <widget class="QWidget" name="wgtToneBypass" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="1,0">
            <property name="spacing">
             <number>0</number>
@@ -996,14 +996,14 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="lblToneDefeat">
+            <widget class="QLabel" name="lblToneBypass">
              <property name="text">
-              <string>Tone defeat</string>
+              <string>Tone bypass</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="cbxToneDefeat">
+            <widget class="QComboBox" name="cbxToneBypass">
              <property name="minimumSize">
               <size>
                <width>120</width>
@@ -2132,7 +2132,7 @@
           </item>
           <item>
            <property name="text">
-            <string>Tone defeat</string>
+            <string>Tone bypass</string>
            </property>
           </item>
           <item>
@@ -3301,10 +3301,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>cbxToneDefeat</sender>
+   <sender>cbxToneBypass</sender>
    <signal>activated(int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>setToneDefeat(int)</slot>
+   <slot>setToneBypass(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>738</x>
@@ -3699,7 +3699,7 @@
   <slot>setInputIcon(int)</slot>
   <slot>setSurround(int)</slot>
   <slot>setEffect3d(int)</slot>
-  <slot>setToneDefeat(int)</slot>
+  <slot>setToneBypass(int)</slot>
   <slot>setFmstep2(int)</slot>
   <slot>setFmMin(double)</slot>
   <slot>setFmMax(double)</slot>

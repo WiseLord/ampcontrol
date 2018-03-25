@@ -64,7 +64,7 @@ private slots:
     void setLoudness(int value);
     void setSurround(int value);
     void setEffect3d(int value);
-    void setToneDefeat(int value);
+    void setToneBypass(int value);
 
     void setTuner(int tuner);
     void setFmfreq(double value);

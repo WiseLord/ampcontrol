@@ -381,9 +381,9 @@ void handleAction(uint8_t action)
         dispMode = MODE_EFFECT_3D;
         setDisplayTime(DISPLAY_TIME_AUDIO);
         break;
-    case CMD_RC_TONE_DEFEAT:
-        sndSwitchExtra(APROC_EXTRA_TONEDEFEAT);
-        dispMode = MODE_TONE_DEFEAT;
+    case CMD_RC_TONE_BYPASS:
+        sndSwitchExtra(APROC_EXTRA_TONE_BYPASS);
+        dispMode = MODE_TONE_BYPASS;
         setDisplayTime(DISPLAY_TIME_AUDIO);
         break;
     case CMD_RC_FALLSPEED:
@@ -508,7 +508,7 @@ void handleEncoder(int8_t encCnt)
         case MODE_LOUDNESS:
         case MODE_SURROUND:
         case MODE_EFFECT_3D:
-        case MODE_TONE_DEFEAT:
+        case MODE_TONE_BYPASS:
         case MODE_SPECTRUM:
         case MODE_TIME:
         case MODE_TIMER:
@@ -651,8 +651,8 @@ void showScreen()
     case MODE_EFFECT_3D:
         showEffect3d();
         break;
-    case MODE_TONE_DEFEAT:
-        showToneDefeat();
+    case MODE_TONE_BYPASS:
+        showToneBypass();
         break;
     case MODE_TIME:
     case MODE_TIME_EDIT:

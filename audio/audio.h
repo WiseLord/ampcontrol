@@ -67,7 +67,7 @@ typedef struct {
 #define APROC_EXTRA_LOUDNESS        (1<<0)
 #define APROC_EXTRA_SURROUND        (1<<1)
 #define APROC_EXTRA_EFFECT3D        (1<<2)
-#define APROC_EXTRA_TONEDEFEAT      (1<<3)
+#define APROC_EXTRA_TONE_BYPASS     (1<<3)
 
 extern Audioproc_type aproc;
 
