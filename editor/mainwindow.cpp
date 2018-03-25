@@ -608,7 +608,6 @@ void MainWindow::setTuner(int tuner)
         cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_PLLREF);
         cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_XTAL);
     case TUNER_RDA5807:
-    case TUNER_RDA5807_DF:
         if (tuner != TUNER_TEA5767) {
             wgtFmBass->show();
             setFmBass(eep[EEPROM_FM_BASS]);

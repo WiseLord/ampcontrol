@@ -44,7 +44,6 @@ void tunerInit()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xInit();
         break;
 #endif
@@ -91,7 +90,6 @@ void tunerSetFreq()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetFreq();
         break;
 #endif
@@ -145,7 +143,6 @@ void tunerReadStatus()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xReadStatus();
         break;
 #endif
@@ -176,7 +173,6 @@ void tunerSetMono(uint8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetMono(value);
         break;
 #endif
@@ -199,7 +195,6 @@ void tunerSetRDS(uint8_t value)
     switch (tuner.ic) {
 #ifdef _RDA580X
     case TUNER_RDA5807:
-    case TUNER_RDA5807_DF:
         rda580xSetRds(value);
         break;
 #endif
@@ -228,7 +223,6 @@ uint8_t tunerStereo()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         ret = RDA5807_BUF_STEREO(tunerRdbuf);
         break;
 #endif
@@ -262,7 +256,6 @@ uint8_t tunerLevel()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         ret = (tunerRdbuf[2] & RDA580X_RSSI) >> 1;
         if (ret < 24)
             ret = 0;
@@ -413,7 +406,6 @@ void tunerSetVolume(int8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetVolume(value);
         break;
 #endif
@@ -440,7 +432,6 @@ void tunerSetMute(uint8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetMute(value);
         break;
 #endif
@@ -465,7 +456,6 @@ void tunerSetBass(uint8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         tuner.bass = value;
         rda580xSetBass(value);
         break;
@@ -487,7 +477,6 @@ void tunerPowerOn()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetPower(1);
         break;
 #endif
@@ -522,7 +511,6 @@ void tunerPowerOff()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetPower(0);
         break;
 #endif

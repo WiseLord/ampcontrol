@@ -32,9 +32,8 @@ typedef enum {
     TUNER_TUX032,
     TUNER_LM7001,
     TUNER_RDA5802,
-    TUNER_RDA5807_DF,
-    TUNER_LC72131,
     TUNER_SI470X,
+    TUNER_LC72131,
 
     TUNER_END
 } tunerIC;

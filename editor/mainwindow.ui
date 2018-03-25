@@ -1350,17 +1350,12 @@
              </item>
              <item>
               <property name="text">
-               <string>RDA5807 direct freq</string>
+               <string>Si4703</string>
               </property>
              </item>
              <item>
               <property name="text">
                <string>LC72131</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>Si4703</string>
               </property>
              </item>
             </widget>
