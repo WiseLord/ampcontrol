@@ -53,6 +53,8 @@ typedef enum {
 
     AUDIOPROC_RDA580X,
 
+    AUDIOPROC_R2S15904SP,
+
     AUDIOPROC_END
 } aprocIC;
 

@@ -330,6 +330,7 @@ void MainWindow::setAudioproc(int proc)
         cbxSurround->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_SURROUND));
         wgtEffect3d->show();
         cbxEffect3d->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_EFFECT3D));
+    case AUDIOPROC_R2S15904SP:
         wgtToneBypass->show();
         cbxToneBypass->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_BYPASS));
         break;
@@ -345,6 +346,7 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_TDA7312:
     case AUDIOPROC_TDA7318:
     case AUDIOPROC_PT2314:
+    case AUDIOPROC_R2S15904SP:
         cbxInput->insertItem(0, "Input 4");
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TEA6300:
@@ -423,6 +425,17 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_RDA580X:
         wgtVolume->show();
         setAudioParam(dsbVolume, 0, 15, 1, MODE_SND_VOLUME);
+        break;
+    case AUDIOPROC_R2S15904SP:
+        wgtVolume->show();
+        setAudioParam(dsbVolume, -79, 0, 1, MODE_SND_VOLUME);
+        wgtBass->show();
+        setAudioParam(dsbBass, -16, 16, 2, MODE_SND_BASS);
+        wgtTreble->show();
+        setAudioParam(dsbTreble, -16, 16, 2, MODE_SND_TREBLE);
+        wgtBalance->show();
+        setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
+        break;
         break;
     }
 

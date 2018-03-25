@@ -479,6 +479,11 @@
                <string>RDA580x</string>
               </property>
              </item>
+             <item>
+              <property name="text">
+               <string>R2S15904SP</string>
+              </property>
+             </item>
             </widget>
            </item>
           </layout>
