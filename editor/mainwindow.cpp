@@ -332,7 +332,7 @@ void MainWindow::setAudioproc(int proc)
         cbxEffect3d->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_EFFECT3D));
     case AUDIOPROC_R2S15904SP:
         wgtToneBypass->show();
-        cbxToneBypass->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_BYPASS));
+        cbxToneBypass->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_TONE_BYPASS));
         break;
     }
 
@@ -514,9 +514,9 @@ void MainWindow::setEffect3d(int value)
 void MainWindow::setToneBypass(int value)
 {
     if (value)
-        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_BYPASS;
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_TONE_BYPASS;
     else
-        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_BYPASS;
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_TONE_BYPASS;
     updateHexTable(EEPROM_APROC_EXTRA);
 }
 
