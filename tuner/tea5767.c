@@ -59,8 +59,6 @@ void tea5767ReadStatus()
         tunerRdbuf[i] = I2CReadByte(I2C_ACK);
     tunerRdbuf[TEA5767_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
     I2CStop();
-
-    tuner.rdFreq = tuner.freq;
 }
 
 void tea5767SetMute()

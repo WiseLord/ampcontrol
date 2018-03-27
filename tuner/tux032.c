@@ -40,8 +40,6 @@ void tux032ReadStatus()
         tunerRdbuf[i] = I2CReadByte(I2C_ACK);
     tunerRdbuf[TUX032_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
     I2CStop();
-
-    tuner.rdFreq = tuner.freq;
 }
 
 void tux032SetMute()

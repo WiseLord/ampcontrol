@@ -23,8 +23,6 @@ static uint8_t wrBuf[12] = {
     0,
 };
 
-static uint16_t fMin;
-
 static void rda580xWriteReg(uint8_t reg)
 {
     uint8_t *wrAddr = &wrBuf[2 * reg - 4];
@@ -47,23 +45,11 @@ void rda580xInit()
 void rda580xSetFreq()
 {
     uint16_t chan;
-    uint8_t band = RDA580X_BAND_EASTEUROPE;
-
-    fMin = 6500;
-
-    if (tuner.freq >= 7600) {
-        fMin = 7600;
-        band = RDA580X_BAND_WORLDWIDE;
-    }
-    if (tuner.fMin >= 8700) {
-        fMin = 8700;
-        band = RDA580X_BAND_US_EUROPE;
-    }
 
     // Freq in grid
-    chan = (tuner.freq - fMin) / RDA5807_CHAN_SPACING;
+    chan = (tuner.freq - 7600) / RDA5807_CHAN_SPACING;
     wrBuf[2] = chan >> 2; // 8 MSB
-    wrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | band | RDA580X_SPACE_50;
+    wrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | RDA580X_BAND_WORLDWIDE | RDA580X_SPACE_100;
 
     rda580xWriteReg(3);
 }
@@ -92,8 +78,11 @@ void rda580xReadStatus()
         }
     }
 #endif
+    uint16_t chan = tunerRdbuf[0] & RDA580X_READCHAN_9_8;
+    chan <<= 8;
+    chan |= tunerRdbuf[1];
 
-    tuner.rdFreq = tuner.freq;
+    tuner.rdFreq = chan * RDA5807_CHAN_SPACING + 7600;
 }
 
 void rda580xSetVolume(int8_t value)

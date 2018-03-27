@@ -187,7 +187,7 @@
 
 #define RDA5807_RDBUF_SIZE          12
 
-#define RDA5807_CHAN_SPACING        5
+#define RDA5807_CHAN_SPACING        10
 
 #define RDA5807_VOL_MIN             0
 #define RDA5807_VOL_MAX             16

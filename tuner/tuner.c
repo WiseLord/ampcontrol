@@ -81,6 +81,8 @@ void tunerSetFreq()
     else if (tuner.freq > tuner.fMax)
         tuner.freq = tuner.fMax;
 
+    tuner.rdFreq = tuner.freq;
+
     switch (tuner.ic) {
 #ifdef _TEA5767
     case TUNER_TEA5767:
@@ -157,7 +159,6 @@ void tunerReadStatus()
         break;
 #endif
     default:
-        tuner.rdFreq = tuner.freq;
         break;
     }
 }
