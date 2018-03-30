@@ -476,7 +476,7 @@
              </item>
              <item>
               <property name="text">
-               <string>RDA580x</string>
+               <string>TUNER_AUDIO</string>
               </property>
              </item>
              <item>
@@ -1456,7 +1456,7 @@
               <double>50.000000000000000</double>
              </property>
              <property name="maximum">
-              <double>87.000000000000000</double>
+              <double>87.500000000000000</double>
              </property>
             </widget>
            </item>
@@ -1795,7 +1795,7 @@
            <item>
             <widget class="QLabel" name="lblFmctrl">
              <property name="text">
-              <string>Tuner control byte</string>
+              <string>Tuner control byte:</string>
              </property>
             </widget>
            </item>

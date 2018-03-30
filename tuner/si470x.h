@@ -36,6 +36,10 @@
 
 // 5 byte (04L)
 #define SI470X_BLNDADJ              0b11000000
+    #define SI470X_BLNDADJ_31_49    0b00000000
+    #define SI470X_BLNDADJ_37_55    0b01000000
+    #define SI470X_BLNDADJ_19_37    0b10000000
+    #define SI470X_BLNDADJ_25_43    0b11000000
 #define SI470X_GPIO3                0b00110000
 #define SI470X_GPIO2                0b00001100
 #define SI470X_GPIO1                0b00000011

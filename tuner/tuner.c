@@ -20,7 +20,7 @@ void tunerInit()
 #elif  defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
     tuner.ic = TUNER_TEA5767;
 #elif !defined(_TEA5767) &&  defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
-    if (tuner.ic != TUNER_RDA5802 && tuner.ic != TUNER_RDA5807_DF)
+    if (tuner.ic != TUNER_RDA5802)
         tuner.ic = TUNER_RDA5807;
 #elif !defined(_TEA5767) && !defined(_RDA580X) &&  defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
     tuner.ic = TUNER_TUX032;
@@ -126,6 +126,7 @@ void tunerSetFreq()
 
 void tunerChangeFreq(int8_t mult)
 {
+    tuner.freq = tuner.rdFreq;
     if ((tuner.freq > FM_BAND_DIV_FREQ) || (mult > 0 && tuner.freq == FM_BAND_DIV_FREQ))
         tuner.freq += tuner.step2 * mult;
     else
@@ -258,14 +259,15 @@ uint8_t tunerLevel()
     case TUNER_RDA5807:
     case TUNER_RDA5802:
         ret = (tunerRdbuf[2] & RDA580X_RSSI) >> 1;
-        if (ret < 24)
+        if (ret < 30)
             ret = 0;
         else
-            ret = (ret - 24) >> 1;
+            ret = (ret - 30) >> 1;
         break;
 #endif
 #ifdef _SI470X
     case TUNER_SI470X:
+        ret = (tunerRdbuf[1] / 2);
         break;
 #endif
     default:
@@ -285,7 +287,7 @@ uint8_t tunerStationNum()
     uint8_t i;
 
     for (i = 0; i < FM_COUNT; i++)
-        if (eeprom_read_word((uint16_t *)EEPROM_STATIONS + i) == tuner.freq)
+        if (eeprom_read_word((uint16_t *)EEPROM_STATIONS + i) == tuner.rdFreq)
             return i + 1;
 
     return 0;
@@ -297,7 +299,7 @@ uint8_t tunerFavStationNum()
     uint8_t i;
 
     for (i = 0; i < FM_FAV_COUNT; i++)
-        if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + i) == tuner.freq)
+        if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + i) == tuner.rdFreq)
             return i + 1;
 
     return 0;
@@ -308,7 +310,10 @@ void tunerNextStation(int8_t direction)
 {
     uint8_t i;
     uint16_t freqCell;
-    uint16_t freq = tuner.freq;
+    uint16_t freq;
+
+    tuner.freq = tuner.rdFreq;
+    freq = tuner.freq;
 
     for (i = 0; i < FM_COUNT; i++) {
         freqCell = eeprom_read_word((uint16_t *)EEPROM_STATIONS + i);

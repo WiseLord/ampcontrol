@@ -7,6 +7,9 @@
 
 static uint8_t wrBuf[12];
 
+static uint8_t band = SI470X_BAND_US_EUROPE;
+static uint16_t fBL = 8750;
+
 static void si470xWriteI2C(uint8_t bytes)
 {
     uint8_t i;
@@ -55,9 +58,32 @@ void si470xInit()
 {
     initRegs();
 
-    wrBuf[0] = /*SI470X_DMUTE | */SI470X_SEEKUP;
-    wrBuf[4] = SI470X_DE; // 50us used in Europe
-    wrBuf[7] = SI470X_BAND_JAPAN_WIDE | SI470X_SPACE_100;
+    wrBuf[0] = SI470X_SKMODE;
+    if (tuner.ctrl & TUNER_SMUTE) {
+        wrBuf[0] &= ~SI470X_DSMUTE;
+    } else {
+        wrBuf[0] |= SI470X_DSMUTE;
+    }
+
+    if (tuner.ctrl & TUNER_DE) {
+        wrBuf[4] &= !SI470X_DE; // 75us used in USA
+    } else {
+        wrBuf[4] |= SI470X_DE;  // 50us used in Europe
+    }
+
+    wrBuf[5] = SI470X_BLNDADJ_19_37;
+
+    if (tuner.ctrl & TUNER_BL) {
+        fBL = 7600;
+        band = SI470X_BAND_JAPAN;
+    } else {
+        if (tuner.fMin < 8750) {
+            fBL = 7600;
+            band = SI470X_BAND_JAPAN_WIDE;
+        }
+    }
+    wrBuf[7] = band | SI470X_VOLUME |
+               (tuner.step2 == 20 ? SI470X_SPACE_200 : (tuner.step2 == 10 ? SI470X_SPACE_100 : SI470X_SPACE_50));
 
     wrBuf[6] = SI470X_SEEKTH & 12; // 25 by default for backward compatibility
     wrBuf[9] = (SI470X_SKSNR & 0b00010000) | (SI470X_SKCNT & 0b00000001);
@@ -68,13 +94,16 @@ void si470xInit()
     wrBuf[4] |= SI470X_RDS;
 
     si470xWriteI2C(sizeof(wrBuf));
+
+    if (tuner.step2 < 10)
+        tuner.step2 = 5;
 }
 
 void si470xSetFreq()
 {
     uint16_t chan;
 
-    chan = (tuner.freq - 7600) / SI470X_CHAN_SPACING;
+    chan = (tuner.freq - fBL) / tuner.step2;
 
     wrBuf[0] &= ~SI470X_SEEK; // not seek
     wrBuf[2] = SI470X_TUNE | ((chan >> 8) & 0b00000011);
@@ -120,7 +149,7 @@ void si470xReadStatus()
     chan <<= 8;
     chan |= tunerRdbuf[3];
 
-    tuner.rdFreq = chan * SI470X_CHAN_SPACING + 7600;
+    tuner.rdFreq = chan * tuner.step2 + fBL;
 }
 
 void si470xSetVolume(int8_t value)

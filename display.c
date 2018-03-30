@@ -1256,7 +1256,6 @@ void showRadio(uint8_t tune)
     writeNum(tuner.rdFreq % 100, 2, '0', 10);
 
     // Signal level
-    gdSetXY (112, 0);
     for (i = 0; i < 16; i += 2) {
         if (i <= level) {
             gdDrawLine(112 + i, 7, 112 + i, 7 - i / 2, 0x01);

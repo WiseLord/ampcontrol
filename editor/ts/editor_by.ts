@@ -62,9 +62,8 @@
         <translation>Пераклад</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1798"/>
         <source>Tuner control byte</source>
-        <translation>Кантрольны байт цюнера</translation>
+        <translation type="vanished">Кантрольны байт цюнера</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1805"/>
@@ -248,9 +247,8 @@
         <translation>PGA2310</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="479"/>
         <source>RDA580x</source>
-        <translation>RDA580x</translation>
+        <translation type="vanished">RDA580x</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="332"/>
@@ -427,6 +425,11 @@
         <translation>Si4703</translation>
     </message>
     <message>
+        <location filename="../mainwindow.ui" line="479"/>
+        <source>TUNER_AUDIO</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <location filename="../mainwindow.ui" line="1387"/>
         <source>Frequency</source>
         <translation>Частата</translation>
@@ -508,6 +511,11 @@
         <location filename="../mainwindow.ui" line="1759"/>
         <source>Bass boost</source>
         <translation>Узмацненне НЧ</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="1798"/>
+        <source>Tuner control byte:</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1812"/>

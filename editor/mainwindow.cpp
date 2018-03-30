@@ -320,7 +320,7 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_TDA7314:
     case AUDIOPROC_TDA7315:
     case AUDIOPROC_PT2314:
-    case AUDIOPROC_RDA580X:
+    case AUDIOPROC_TUNER_IC:
         wgtLoudness->show();
         cbxLoudness->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_LOUDNESS));
         break;
@@ -421,9 +421,9 @@ void MainWindow::setAudioproc(int proc)
         wgtBalance->show();
         setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
         break;
-    case AUDIOPROC_RDA580X:
+    case AUDIOPROC_TUNER_IC:
         wgtVolume->show();
-        setAudioParam(dsbVolume, 0, 15, 1, MODE_SND_VOLUME);
+        setAudioParam(dsbVolume, 0, 16, 1, MODE_SND_VOLUME);
         break;
     case AUDIOPROC_R2S15904SP:
         wgtVolume->show();
@@ -532,7 +532,7 @@ double MainWindow::getFreq(int pos)
 
 void MainWindow::setFreq(double value, int pos)
 {
-    int freq = value * 100;
+    int freq = (value + 0.001) * 100;
 
     eep[pos] = (char)(freq & 0x00FF);
     eep[pos + 1] = (char)((freq & 0xFF00) >> 8);
@@ -625,35 +625,22 @@ void MainWindow::setTuner(int tuner)
         cbxFmctrlPllref->show();
         cbxFmctrlXtal->show();
     case TUNER_RDA5807:
-        if (tuner != TUNER_TEA5767) {
-            wgtFmctrl->show();
-            cbxFmctrlDfreq->show();
-            cbxFmctrlSm->show();
-            cbxFmctrlDe->show();
-            cbxFmctrlBl->show();
-            wgtFmBass->show();
-            setFmBass(eep[EEPROM_FM_BASS]);
-            cbxFmBass->setCurrentIndex(eep[EEPROM_FM_BASS]);
-        }
+    case TUNER_RDA5802:
     case TUNER_SI470X:
         if (tuner != TUNER_TEA5767) {
             wgtFmctrl->show();
-            cbxFmctrlSm->show();
-            cbxFmctrlDe->show();
-            cbxFmctrlBl->show();
             wgtFmRDS->show();
-            setFmRds(eep[EEPROM_FM_RDS]);
-            cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
-        }
-    case TUNER_RDA5802:
-        if (tuner != TUNER_TEA5767) {
-            wgtFmctrl->show();
+            if (tuner == TUNER_RDA5807) {
+                cbxFmctrlDfreq->show();
+            }
             cbxFmctrlSm->show();
             cbxFmctrlDe->show();
             cbxFmctrlBl->show();
-            wgtFmBass->show();
-            setFmBass(eep[EEPROM_FM_BASS]);
-            cbxFmBass->setCurrentIndex(eep[EEPROM_FM_BASS]);
+            if (tuner == TUNER_RDA5802 || tuner == TUNER_RDA5807) {
+                wgtFmBass->show();
+                setFmBass(eep[EEPROM_FM_BASS]);
+                cbxFmBass->setCurrentIndex(eep[EEPROM_FM_BASS]);
+            }
         }
         wgtFmmono->show();
         setFmmono(eep[EEPROM_FM_MONO]);
