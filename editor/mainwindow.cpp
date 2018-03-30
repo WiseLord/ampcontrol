@@ -646,6 +646,15 @@ void MainWindow::setTuner(int tuner)
             cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
         }
     case TUNER_RDA5802:
+        if (tuner != TUNER_TEA5767) {
+            wgtFmctrl->show();
+            cbxFmctrlSm->show();
+            cbxFmctrlDe->show();
+            cbxFmctrlBl->show();
+            wgtFmBass->show();
+            setFmBass(eep[EEPROM_FM_BASS]);
+            cbxFmBass->setCurrentIndex(eep[EEPROM_FM_BASS]);
+        }
         wgtFmmono->show();
         setFmmono(eep[EEPROM_FM_MONO]);
         cbxFmmono->setCurrentIndex(eep[EEPROM_FM_MONO]);
