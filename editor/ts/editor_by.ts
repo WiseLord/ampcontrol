@@ -62,27 +62,37 @@
         <translation>Пераклад</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2225"/>
+        <location filename="../mainwindow.ui" line="1798"/>
+        <source>Tuner control byte</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="1805"/>
+        <source>Direct Freq Input</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="2232"/>
         <source>Alarm</source>
         <translation>Будзільнік</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2728"/>
+        <location filename="../mainwindow.ui" line="2735"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2739"/>
+        <location filename="../mainwindow.ui" line="2746"/>
         <source>&amp;Help</source>
         <translation>&amp;Даведка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2790"/>
+        <location filename="../mainwindow.ui" line="2797"/>
         <source>Save AMSR file as ...</source>
         <translation>Захаваць AMSR файл як ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2809"/>
+        <location filename="../mainwindow.ui" line="2816"/>
         <source>Belarusian</source>
         <translation>Беларуская</translation>
     </message>
@@ -148,28 +158,28 @@
     <message>
         <location filename="../mainwindow.ui" line="232"/>
         <location filename="../mainwindow.ui" line="532"/>
-        <location filename="../mainwindow.ui" line="2085"/>
+        <location filename="../mainwindow.ui" line="2092"/>
         <source>Input 1</source>
         <translation>Уваход 1</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="237"/>
         <location filename="../mainwindow.ui" line="537"/>
-        <location filename="../mainwindow.ui" line="2090"/>
+        <location filename="../mainwindow.ui" line="2097"/>
         <source>Input 2</source>
         <translation>Уваход 2</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="242"/>
         <location filename="../mainwindow.ui" line="542"/>
-        <location filename="../mainwindow.ui" line="2095"/>
+        <location filename="../mainwindow.ui" line="2102"/>
         <source>Input 3</source>
         <translation>Уваход 3</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="247"/>
         <location filename="../mainwindow.ui" line="547"/>
-        <location filename="../mainwindow.ui" line="2100"/>
+        <location filename="../mainwindow.ui" line="2107"/>
         <source>Input 4</source>
         <translation>Уваход 4</translation>
     </message>
@@ -181,21 +191,21 @@
     <message>
         <location filename="../mainwindow.ui" line="257"/>
         <location filename="../mainwindow.ui" line="862"/>
-        <location filename="../mainwindow.ui" line="2120"/>
+        <location filename="../mainwindow.ui" line="2127"/>
         <source>Loudness</source>
         <translation>Тонкарэкцыя</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="262"/>
         <location filename="../mainwindow.ui" line="910"/>
-        <location filename="../mainwindow.ui" line="2125"/>
+        <location filename="../mainwindow.ui" line="2132"/>
         <source>Surround</source>
         <translation>Аб&apos;ёмны гук</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="267"/>
         <location filename="../mainwindow.ui" line="958"/>
-        <location filename="../mainwindow.ui" line="2130"/>
+        <location filename="../mainwindow.ui" line="2137"/>
         <source>3D effect</source>
         <translation>3D-эфект</translation>
     </message>
@@ -228,7 +238,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="327"/>
-        <location filename="../mainwindow.ui" line="2235"/>
+        <location filename="../mainwindow.ui" line="2242"/>
         <source>Brightness</source>
         <translation>Яркасць</translation>
     </message>
@@ -254,7 +264,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="342"/>
-        <location filename="../mainwindow.ui" line="2230"/>
+        <location filename="../mainwindow.ui" line="2237"/>
         <source>Timer</source>
         <translation>Таймер</translation>
     </message>
@@ -346,7 +356,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="552"/>
-        <location filename="../mainwindow.ui" line="2105"/>
+        <location filename="../mainwindow.ui" line="2112"/>
         <source>Input 5</source>
         <translation>Уваход 5</translation>
     </message>
@@ -358,7 +368,7 @@
     <message>
         <location filename="../mainwindow.ui" line="272"/>
         <location filename="../mainwindow.ui" line="1006"/>
-        <location filename="../mainwindow.ui" line="2135"/>
+        <location filename="../mainwindow.ui" line="2142"/>
         <source>Tone bypass</source>
         <translation>Вымкненне тембру</translation>
     </message>
@@ -480,7 +490,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1677"/>
-        <location filename="../mainwindow.ui" line="2392"/>
+        <location filename="../mainwindow.ui" line="2399"/>
         <source>Stereo</source>
         <translation>Стэрэа</translation>
     </message>
@@ -500,414 +510,413 @@
         <translation>Узмацненне НЧ</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1798"/>
         <source>TEA5767 control byte</source>
-        <translation>Кантрольны байт TEA5767</translation>
+        <translation type="vanished">Кантрольны байт TEA5767</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1805"/>
+        <location filename="../mainwindow.ui" line="1812"/>
         <source>High Cut Control</source>
         <translation>Падаўленне ВЧ пры шуме</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1812"/>
+        <location filename="../mainwindow.ui" line="1819"/>
         <source>Stereo Noise Cancelling</source>
         <translation>Памяншэнне стэрэашума</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1819"/>
+        <location filename="../mainwindow.ui" line="1826"/>
         <source>Soft MUTE</source>
         <translation>Мяккі MUTE</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1826"/>
+        <location filename="../mainwindow.ui" line="1833"/>
         <source>De-emphasis 75us (1) or 50us (0)</source>
         <translation>Перадскажэнне 75мкс (1) ці 50мкс (0)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1833"/>
+        <location filename="../mainwindow.ui" line="1840"/>
         <source>Band Limit Japanes (1) or US/Europe (0)</source>
         <translation>Японскі (1) ці US/Еўропа (0) дыяпазон</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1840"/>
+        <location filename="../mainwindow.ui" line="1847"/>
         <source>PLL Reference 6.5MHz</source>
         <translation>6.5 МГц тактаванне</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1847"/>
+        <location filename="../mainwindow.ui" line="1854"/>
         <source>Freq XTAL 32.768 kHz (1) or 13 MHz (0)</source>
         <translation>Кварц 32768 кГц (1) ці 13МГц (0)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1871"/>
+        <location filename="../mainwindow.ui" line="1878"/>
         <source>Remote</source>
         <translation>Пульт</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1910"/>
+        <location filename="../mainwindow.ui" line="1917"/>
         <source>Remote type</source>
         <translation>Тып пратакола</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1927"/>
+        <location filename="../mainwindow.ui" line="1934"/>
         <source>RC5</source>
         <translation>RC5</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1932"/>
+        <location filename="../mainwindow.ui" line="1939"/>
         <source>NEC</source>
         <translation>NEC</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1937"/>
+        <location filename="../mainwindow.ui" line="1944"/>
         <source>RC6</source>
         <translation>RC6</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1942"/>
+        <location filename="../mainwindow.ui" line="1949"/>
         <source>Samsung</source>
         <translation>Samsung</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="1971"/>
+        <location filename="../mainwindow.ui" line="1978"/>
         <source>Remote address</source>
         <translation>Адрас пульта</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2024"/>
+        <location filename="../mainwindow.ui" line="2031"/>
         <source>Remote command</source>
         <translation>Каманда пульта</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2060"/>
+        <location filename="../mainwindow.ui" line="2067"/>
         <source>Standby mode</source>
         <translation>Рэжым чакання</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2065"/>
+        <location filename="../mainwindow.ui" line="2072"/>
         <source>Mute sound</source>
         <translation>Прыглушыць гук</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2070"/>
+        <location filename="../mainwindow.ui" line="2077"/>
         <source>Sound menu</source>
         <translation>Меню гуку</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2075"/>
+        <location filename="../mainwindow.ui" line="2082"/>
         <source>Volume +</source>
         <translation>Гучнасць +</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2080"/>
+        <location filename="../mainwindow.ui" line="2087"/>
         <source>Volume -</source>
         <translation>Гучнасць -</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2110"/>
+        <location filename="../mainwindow.ui" line="2117"/>
         <source>Prev input</source>
         <translation>Папярэдні ўваход</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2115"/>
+        <location filename="../mainwindow.ui" line="2122"/>
         <source>Next input</source>
         <translation>Наступны ўваход</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2140"/>
+        <location filename="../mainwindow.ui" line="2147"/>
         <source>RDS enable</source>
         <translation>Уключычь RDS</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2145"/>
+        <location filename="../mainwindow.ui" line="2152"/>
         <source>Channel +</source>
         <translation>Канал +</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2150"/>
+        <location filename="../mainwindow.ui" line="2157"/>
         <source>Channel -</source>
         <translation>Канал -</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2155"/>
+        <location filename="../mainwindow.ui" line="2162"/>
         <source>FM tune</source>
         <translation>Налады FM</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2160"/>
+        <location filename="../mainwindow.ui" line="2167"/>
         <source>FM mono</source>
         <translation>FM мона</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2165"/>
+        <location filename="../mainwindow.ui" line="2172"/>
         <source>Store freq</source>
         <translation>Захаваць частату</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2170"/>
+        <location filename="../mainwindow.ui" line="2177"/>
         <source>Button 0</source>
         <translation>Кнопка 0</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2175"/>
+        <location filename="../mainwindow.ui" line="2182"/>
         <source>Button 1</source>
         <translation>Кнопка 1</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2180"/>
+        <location filename="../mainwindow.ui" line="2187"/>
         <source>Button 2</source>
         <translation>Кнопка 2</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2185"/>
+        <location filename="../mainwindow.ui" line="2192"/>
         <source>Button 3</source>
         <translation>Кнопка 3</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2190"/>
+        <location filename="../mainwindow.ui" line="2197"/>
         <source>Button 4</source>
         <translation>Кнопка 4</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2195"/>
+        <location filename="../mainwindow.ui" line="2202"/>
         <source>Button 5</source>
         <translation>Кнопка 5</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2200"/>
+        <location filename="../mainwindow.ui" line="2207"/>
         <source>Button 6</source>
         <translation>Кнопка 6</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2205"/>
+        <location filename="../mainwindow.ui" line="2212"/>
         <source>Button 7</source>
         <translation>Кнопка 7</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2210"/>
+        <location filename="../mainwindow.ui" line="2217"/>
         <source>Button 8</source>
         <translation>Кнопка 8</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2215"/>
+        <location filename="../mainwindow.ui" line="2222"/>
         <source>Button 9</source>
         <translation>Кнопка 9</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2220"/>
+        <location filename="../mainwindow.ui" line="2227"/>
         <source>Time</source>
         <translation>Час</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2240"/>
+        <location filename="../mainwindow.ui" line="2247"/>
         <source>Display mode</source>
         <translation>Рэжым экрана</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2245"/>
-        <location filename="../mainwindow.ui" line="2373"/>
+        <location filename="../mainwindow.ui" line="2252"/>
+        <location filename="../mainwindow.ui" line="2380"/>
         <source>Spectrum mode</source>
         <translation>Рэжым спектру</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2250"/>
+        <location filename="../mainwindow.ui" line="2257"/>
         <source>Fall speed</source>
         <translation>Хуткасць спектру</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2282"/>
+        <location filename="../mainwindow.ui" line="2289"/>
         <source>IR sequence</source>
         <translation>ІЧ-паслядоўнасць</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2298"/>
+        <location filename="../mainwindow.ui" line="2305"/>
         <source> Hz</source>
         <translation>Гц</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2334"/>
+        <location filename="../mainwindow.ui" line="2341"/>
         <source>Other</source>
         <translation>Іншае</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2387"/>
+        <location filename="../mainwindow.ui" line="2394"/>
         <source>Bar</source>
         <translation>Узровень</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2397"/>
+        <location filename="../mainwindow.ui" line="2404"/>
         <source>Mixed</source>
         <translation>Змешаны</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2426"/>
+        <location filename="../mainwindow.ui" line="2433"/>
         <source>Spectrum speed</source>
         <translation>Хуткасць спектру</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2440"/>
+        <location filename="../mainwindow.ui" line="2447"/>
         <source>Low</source>
         <translation>Нізкая</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2445"/>
+        <location filename="../mainwindow.ui" line="2452"/>
         <source>Average</source>
         <translation>Сярэдняя</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2450"/>
+        <location filename="../mainwindow.ui" line="2457"/>
         <source>Fast</source>
         <translation>Высокая</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2479"/>
+        <location filename="../mainwindow.ui" line="2486"/>
         <source>Standby brightness</source>
         <translation>Яркасць у рэжыме чакання</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2523"/>
+        <location filename="../mainwindow.ui" line="2530"/>
         <source>Encoder resolution</source>
         <translation>Раздзяленне энкодера</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2570"/>
+        <location filename="../mainwindow.ui" line="2577"/>
         <source>EXTx pins function (m32 only)</source>
         <translation>Функцыя вывадаў EXT (толькі m32)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2584"/>
+        <location filename="../mainwindow.ui" line="2591"/>
         <source>DS18x20</source>
         <translation>DS18x20</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2589"/>
+        <location filename="../mainwindow.ui" line="2596"/>
         <source>Software SPI</source>
         <translation>Праграмны SPI</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2594"/>
+        <location filename="../mainwindow.ui" line="2601"/>
         <source>Input status</source>
         <translation>Статус уваходаў</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2623"/>
+        <location filename="../mainwindow.ui" line="2630"/>
         <source>Temperature threshold</source>
         <translation>Парог спрацоўвання тэрмадатчыка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2670"/>
+        <location filename="../mainwindow.ui" line="2677"/>
         <source>Silence timer (min, 0 = OFF)</source>
         <translation>Таймер цішыні (хв, 0 = вымк)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2746"/>
+        <location filename="../mainwindow.ui" line="2753"/>
         <source>Language</source>
         <translation>Мова</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2760"/>
+        <location filename="../mainwindow.ui" line="2767"/>
         <source>&amp;Open eeprom binary …</source>
         <translation>&amp;Адкрыць бінарны файл eeprom …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2765"/>
+        <location filename="../mainwindow.ui" line="2772"/>
         <source>&amp;Save eeprom binary</source>
         <translation>&amp;Захаваць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2770"/>
+        <location filename="../mainwindow.ui" line="2777"/>
         <source>Save &amp;eeprom binary as …</source>
         <translation>Захаваць бінарны файл eeprom &amp;як …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2775"/>
+        <location filename="../mainwindow.ui" line="2782"/>
         <source>&amp;Load default eeprom</source>
         <translation>За&amp;грузіць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2780"/>
+        <location filename="../mainwindow.ui" line="2787"/>
         <source>&amp;About</source>
         <translation>&amp;Аб праграме</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2785"/>
+        <location filename="../mainwindow.ui" line="2792"/>
         <source>A&amp;boutQt</source>
         <translation>Аб &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2801"/>
+        <location filename="../mainwindow.ui" line="2808"/>
         <source>Auto</source>
         <translation>Аўта</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2817"/>
+        <location filename="../mainwindow.ui" line="2824"/>
         <source>English</source>
         <translation>Англiйская</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2825"/>
+        <location filename="../mainwindow.ui" line="2832"/>
         <source>Russian</source>
         <translation>Руская</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2830"/>
+        <location filename="../mainwindow.ui" line="2837"/>
         <source>Exit</source>
         <translation>Выхад</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="97"/>
+        <location filename="../mainwindow.cpp" line="96"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="97"/>
+        <location filename="../mainwindow.cpp" line="96"/>
         <source>loaded</source>
         <translation>загружаны</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="169"/>
-        <location filename="../mainwindow.cpp" line="182"/>
+        <location filename="../mainwindow.cpp" line="168"/>
+        <location filename="../mainwindow.cpp" line="181"/>
         <source>Can&apos;t save</source>
         <translation>Не атрымалася захаваць</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="174"/>
+        <location filename="../mainwindow.cpp" line="173"/>
         <source>Saved as</source>
         <translation>Захавана як</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="188"/>
+        <location filename="../mainwindow.cpp" line="187"/>
         <source>AMSR saved as</source>
         <translation>AMSR файл сохранён как</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="234"/>
+        <location filename="../mainwindow.cpp" line="233"/>
         <source>Open eeprom binary</source>
         <translation>Адкрыць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="236"/>
+        <location filename="../mainwindow.cpp" line="235"/>
         <source>EEPROM files (*.bin);;All files (*.*)</source>
         <translation>Файлы EEPROM (*.bin);;Усе файлы (*.*)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="249"/>
+        <location filename="../mainwindow.cpp" line="248"/>
         <source>Save eeprom binary</source>
         <translation>Захаваць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="251"/>
+        <location filename="../mainwindow.cpp" line="250"/>
         <source>EEPROM files (*.bin)</source>
         <translation>Файлы EEPROM (*.bin)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="267"/>
+        <location filename="../mainwindow.cpp" line="266"/>
         <source>Save AMSR file</source>
         <translation>Захаваць AMSR файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="269"/>
+        <location filename="../mainwindow.cpp" line="268"/>
         <source>AMSR files (*.amsr)</source>
         <translation>Файлы AMSR (*.amsr)</translation>
     </message>

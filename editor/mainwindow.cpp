@@ -11,7 +11,6 @@
 #include "../audio/audio.h"
 #include "../eeprom.h"
 #include "../tuner/tuner.h"
-#include "../tuner/tea5767.h"
 #include "../display.h"
 #include "../remote.h"
 
@@ -595,26 +594,53 @@ void MainWindow::setTuner(int tuner)
     wgtFmmono->hide();
     wgtFmRDS->hide();
     wgtFmBass->hide();
+
+    cbxFmctrlDfreq->setChecked(eep[EEPROM_FM_CTRL] & TUNER_DFREQ);
+    cbxFmctrlSnc->setChecked(eep[EEPROM_FM_CTRL] & TUNER_SNC);
+    cbxFmctrlHcc->setChecked(eep[EEPROM_FM_CTRL] & TUNER_HCC);
+    cbxFmctrlSm->setChecked(eep[EEPROM_FM_CTRL] & TUNER_SMUTE);
+    cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TUNER_XTAL);
+    cbxFmctrlBl->setChecked(eep[EEPROM_FM_CTRL] & TUNER_BL);
+    cbxFmctrlDe->setChecked(eep[EEPROM_FM_CTRL] & TUNER_DE);
+    cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TUNER_PLLREF);
+
     wgtFmctrl->hide();
+    cbxFmctrlDfreq->hide();
+    cbxFmctrlSnc->hide();
+    cbxFmctrlHcc->hide();
+    cbxFmctrlSm->hide();
+    cbxFmctrlXtal->hide();
+    cbxFmctrlBl->hide();
+    cbxFmctrlDe->hide();
+    cbxFmctrlPllref->hide();
 
     switch (tuner) {
     case TUNER_TEA5767:
         wgtFmctrl->show();
-        cbxFmctrlHcc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_HCC);
-        cbxFmctrlSnc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_SNC);
-        cbxFmctrlSm->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_SMUTE);
-        cbxFmctrlDtc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_DTC);
-        cbxFmctrlBl->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_BL);
-        cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_PLLREF);
-        cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_XTAL);
+        cbxFmctrlHcc->show();
+        cbxFmctrlSnc->show();
+        cbxFmctrlSm->show();
+        cbxFmctrlDe->show();
+        cbxFmctrlBl->show();
+        cbxFmctrlPllref->show();
+        cbxFmctrlXtal->show();
     case TUNER_RDA5807:
         if (tuner != TUNER_TEA5767) {
+            wgtFmctrl->show();
+            cbxFmctrlDfreq->show();
+            cbxFmctrlSm->show();
+            cbxFmctrlDe->show();
+            cbxFmctrlBl->show();
             wgtFmBass->show();
             setFmBass(eep[EEPROM_FM_BASS]);
             cbxFmBass->setCurrentIndex(eep[EEPROM_FM_BASS]);
         }
     case TUNER_SI470X:
         if (tuner != TUNER_TEA5767) {
+            wgtFmctrl->show();
+            cbxFmctrlSm->show();
+            cbxFmctrlDe->show();
+            cbxFmctrlBl->show();
             wgtFmRDS->show();
             setFmRds(eep[EEPROM_FM_RDS]);
             cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
@@ -717,13 +743,14 @@ void MainWindow::setFmctrl()
 {
     char ctrl = 0;
 
-    if (cbxFmctrlHcc->isChecked()) ctrl |= TEA5767_HCC;
-    if (cbxFmctrlSnc->isChecked()) ctrl |= TEA5767_SNC;
-    if (cbxFmctrlSm->isChecked()) ctrl |= TEA5767_SMUTE;
-    if (cbxFmctrlDtc->isChecked()) ctrl |= TEA5767_DTC;
-    if (cbxFmctrlBl->isChecked()) ctrl |= TEA5767_BL;
-    if (cbxFmctrlPllref->isChecked()) ctrl |= TEA5767_PLLREF;
-    if (cbxFmctrlXtal->isChecked()) ctrl |= TEA5767_XTAL;
+    if (cbxFmctrlDfreq->isChecked()) ctrl |= TUNER_DFREQ;
+    if (cbxFmctrlHcc->isChecked()) ctrl |= TUNER_HCC;
+    if (cbxFmctrlSnc->isChecked()) ctrl |= TUNER_SNC;
+    if (cbxFmctrlSm->isChecked()) ctrl |= TUNER_SMUTE;
+    if (cbxFmctrlDe->isChecked()) ctrl |= TUNER_DE;
+    if (cbxFmctrlBl->isChecked()) ctrl |= TUNER_BL;
+    if (cbxFmctrlPllref->isChecked()) ctrl |= TUNER_PLLREF;
+    if (cbxFmctrlXtal->isChecked()) ctrl |= TUNER_XTAL;
 
     eep[EEPROM_FM_CTRL] = ctrl;
     updateHexTable(EEPROM_FM_CTRL);

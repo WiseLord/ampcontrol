@@ -58,6 +58,15 @@ typedef struct {
 
 extern Tuner_type tuner;
 
+#define TUNER_DFREQ     0x01    // (1) Enable Direct Freq input (RDA5807)
+#define TUNER_SNC       0x02    // (1) Enable Stereo Noise Cancelling (TEA5767)
+#define TUNER_HCC       0x04    // (1) Enable High Cut Control enabled (TEA5767)
+#define TUNER_SMUTE     0x08    // (1) Enable Soft Mute (TEA5767) (RDA580x) (SI470X, inverted)
+#define TUNER_XTAL      0x10    // (1) Use 32K oscillator (TEA5767)
+#define TUNER_BL        0x20    // (1) Japanese or (0) US/Europe band limit (TEA5767)
+#define TUNER_DE        0x40    // (1) 75us or (0) 50us de-emphasis
+#define TUNER_PLLREF    0x80    // (1) 6.5MHz PLL ref
+
 #if defined(_RDA580X)
 #define TUNER_RDBUF_SIZE    RDA5807_RDBUF_SIZE
 #elif defined(_SI470X)

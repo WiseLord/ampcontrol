@@ -1795,7 +1795,14 @@
            <item>
             <widget class="QLabel" name="lblFmctrl">
              <property name="text">
-              <string>TEA5767 control byte</string>
+              <string>Tuner control byte</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlDfreq">
+             <property name="text">
+              <string>Direct Freq Input</string>
              </property>
             </widget>
            </item>
@@ -1821,7 +1828,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="cbxFmctrlDtc">
+            <widget class="QCheckBox" name="cbxFmctrlDe">
              <property name="text">
               <string>De-emphasis 75us (1) or 50us (0)</string>
              </property>
@@ -2924,11 +2931,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>448</x>
-     <y>469</y>
+     <y>496</y>
     </hint>
     <hint type="destinationlabel">
-     <x>426</x>
-     <y>470</y>
+     <x>431</x>
+     <y>500</y>
     </hint>
    </hints>
   </connection>
@@ -2972,11 +2979,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>454</x>
-     <y>444</y>
+     <y>471</y>
     </hint>
     <hint type="destinationlabel">
      <x>422</x>
-     <y>444</y>
+     <y>471</y>
     </hint>
    </hints>
   </connection>
@@ -2988,27 +2995,27 @@
    <hints>
     <hint type="sourcelabel">
      <x>453</x>
-     <y>309</y>
+     <y>336</y>
     </hint>
     <hint type="destinationlabel">
      <x>424</x>
-     <y>311</y>
+     <y>335</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>cbxFmctrlDtc</sender>
+   <sender>cbxFmctrlDe</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>450</x>
-     <y>392</y>
+     <y>419</y>
     </hint>
     <hint type="destinationlabel">
      <x>429</x>
-     <y>392</y>
+     <y>418</y>
     </hint>
    </hints>
   </connection>
@@ -3020,11 +3027,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>449</x>
-     <y>365</y>
+     <y>392</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>365</y>
+     <x>426</x>
+     <y>388</y>
     </hint>
    </hints>
   </connection>
@@ -3068,11 +3075,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>451</x>
-     <y>417</y>
+     <y>444</y>
     </hint>
     <hint type="destinationlabel">
-     <x>431</x>
-     <y>416</y>
+     <x>429</x>
+     <y>443</y>
     </hint>
    </hints>
   </connection>
@@ -3099,8 +3106,8 @@
    <slot>setTuner(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>714</x>
-     <y>65</y>
+     <x>848</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
      <x>694</x>
@@ -3116,11 +3123,11 @@
    <hints>
     <hint type="sourcelabel">
      <x>452</x>
-     <y>336</y>
+     <y>363</y>
     </hint>
     <hint type="destinationlabel">
-     <x>425</x>
-     <y>335</y>
+     <x>427</x>
+     <y>361</y>
     </hint>
    </hints>
   </connection>
@@ -3665,6 +3672,22 @@
     <hint type="destinationlabel">
      <x>720</x>
      <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlDfreq</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>453</x>
+     <y>309</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>428</x>
+     <y>309</y>
     </hint>
    </hints>
   </connection>
