@@ -64,12 +64,12 @@
     <message>
         <location filename="../mainwindow.ui" line="1798"/>
         <source>Tuner control byte</source>
-        <translation type="unfinished"></translation>
+        <translation>Контрольный байт тюнера</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1805"/>
         <source>Direct Freq Input</source>
-        <translation type="unfinished"></translation>
+        <translation>Прямой ввод частоты</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="2232"/>
@@ -508,10 +508,6 @@
         <location filename="../mainwindow.ui" line="1759"/>
         <source>Bass boost</source>
         <translation>Усиление НЧ</translation>
-    </message>
-    <message>
-        <source>TEA5767 control byte</source>
-        <translation type="vanished">Контрольный байт TEA5767</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1812"/>
