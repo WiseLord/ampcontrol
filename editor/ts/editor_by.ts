@@ -427,7 +427,7 @@
     <message>
         <location filename="../mainwindow.ui" line="479"/>
         <source>TUNER_AUDIO</source>
-        <translation type="unfinished"></translation>
+        <translation>TUNER_AUDIO</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1387"/>
@@ -515,7 +515,7 @@
     <message>
         <location filename="../mainwindow.ui" line="1798"/>
         <source>Tuner control byte:</source>
-        <translation type="unfinished"></translation>
+        <translation>Кантрольны байт цюнера:</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="1812"/>
