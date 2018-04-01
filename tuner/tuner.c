@@ -365,10 +365,10 @@ void tunerStoreFavStation(uint8_t num)
 {
     uint16_t freq = eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + num);
 
-    if (freq == tuner.freq)
+    if (freq == tuner.rdFreq)
         eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, 0);
     else
-        eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, tuner.freq);
+        eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, tuner.rdFreq);
 }
 
 // Save/delete station from eeprom
@@ -378,7 +378,7 @@ void tunerStoreStation()
     uint16_t freqCell;
     uint16_t freq;
 
-    freq = tuner.freq;
+    freq = tuner.rdFreq;
 
     for (i = 0; i < FM_COUNT; i++) {
         freqCell = eeprom_read_word((uint16_t *)EEPROM_STATIONS + i);
