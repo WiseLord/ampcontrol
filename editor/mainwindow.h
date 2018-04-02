@@ -24,6 +24,7 @@ private:
     QString fileName;
     QByteArray eep;
     QFont fontHex;
+    double curFreq;
 
     void readEepromFile(QString name);
     void saveEepromFile(QString name);
@@ -32,6 +33,8 @@ private:
 
     double getFreq(int pos);
     void setFreq (double value, int pos);
+
+    void fillStations();
 
     int fmStepEep2Index(uint8_t value);
     uint8_t fmStepIndex2Step(uint8_t index);
@@ -59,6 +62,11 @@ private slots:
     void setSurround(int value);
     void setEffect3d(int value);
     void setToneDefeat(int value);
+
+    void stationAddRemove();
+    void stationRemoveAll();
+    void setStationIndex(int index);
+    void setCurFreq(double value);
 
     void setTuner(int tuner);
     void setFmfreq(double value);

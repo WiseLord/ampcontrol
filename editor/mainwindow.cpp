@@ -2,6 +2,7 @@
 
 #include <QDebug>
 #include <QtWidgets>
+#include <QStringList>
 
 #include "defines.h"
 #include "aboutdialog.h"
@@ -27,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     retranslate(lang);
 
-    QActionGroup* langGroup = new QActionGroup(this);
+    QActionGroup *langGroup = new QActionGroup(this);
     actionLangAuto->setActionGroup(langGroup);
     actionLangBelarusian->setActionGroup(langGroup);
     actionLangEnglish->setActionGroup(langGroup);
@@ -44,12 +45,14 @@ MainWindow::MainWindow(QWidget *parent) :
     wgtHexTable->verticalHeader()->setFont(fontHex);
     wgtHexTable->horizontalHeader()->setFont(fontHex);
     for (int y = 0; y < wgtHexTable->rowCount(); y++) {
-        wgtHexTable->setVerticalHeaderItem(y, new QTableWidgetItem(QString("%1").arg(y * 16, 4, 16, QChar('0')).toUpper()));
+        wgtHexTable->setVerticalHeaderItem(y, new QTableWidgetItem(QString("%1").arg(y * 16, 4, 16,
+                                                                                     QChar('0')).toUpper()));
         for (int x = 0; x < 16; x++)
             wgtHexTable->setItem(y, x, new QTableWidgetItem());
     }
     for (int x = 0; x < 16; x++)
-        wgtHexTable->setHorizontalHeaderItem(x, new QTableWidgetItem(QString("%1").arg(x, 0, 16).toUpper()));
+        wgtHexTable->setHorizontalHeaderItem(x, new QTableWidgetItem(QString("%1").arg(x, 0,
+                                                                                       16).toUpper()));
 
     /* Create translations table */
     wgtTranslations->blockSignals(true);
@@ -91,7 +94,7 @@ void MainWindow::readEepromFile(QString name)
         actionSaveEeprom->setEnabled(true);
         fileName = name;
         Ui_MainWindow::statusBar->showMessage(
-                    tr("File") + " " + fileName + " " + tr("loaded"));
+            tr("File") + " " + fileName + " " + tr("loaded"));
     } else {
         actionSaveEeprom->setEnabled(false);
         fileName.clear();
@@ -215,7 +218,8 @@ void MainWindow::loadDefaultEeprom()
 
 void MainWindow::updateTranslation(int row, int column)
 {
-    Q_UNUSED(row); Q_UNUSED(column);
+    Q_UNUSED(row);
+    Q_UNUSED(column);
 
     QBuffer buffer(&eep);
 
@@ -436,6 +440,85 @@ void MainWindow::setToneDefeat(int value)
     updateHexTable(EEPROM_APROC_EXTRA);
 }
 
+// Save/delete station from eeprom
+void MainWindow::stationAddRemove()
+{
+    uint8_t i, j;
+    uint16_t freqCell;
+    uint16_t freq;
+
+    freq = (dsbCurfreq->value() + 0.001) * 100;
+
+    for (i = 0; i < FM_COUNT; i++) {
+        freqCell = (uint8_t)eep[EEPROM_STATIONS + 2 * i] | ((uint8_t)eep[EEPROM_STATIONS + 2 * i + 1] << 8);
+        if (freqCell < freq)
+            continue;
+        if (freqCell == freq) {
+            for (j = i; j < FM_COUNT; j++) {
+                if (j == FM_COUNT - 1) {
+                    freqCell = 0xFFFF;
+                } else {
+                    freqCell = (uint8_t)eep[EEPROM_STATIONS + 2 * (j + 1)] | ((uint8_t)eep[EEPROM_STATIONS + 2 *
+                                                                                           (j + 1) + 1] << 8);
+                }
+                eep[EEPROM_STATIONS + 2 * j] = (char)(freqCell & 0x00FF);
+                eep[EEPROM_STATIONS + 2 * j + 1] = (char)(freqCell >> 8);
+            }
+            break;
+        } else {
+            for (j = i; j < FM_COUNT; j++) {
+                freqCell = (uint8_t)eep[EEPROM_STATIONS + 2 * j] | ((uint8_t)eep[EEPROM_STATIONS + 2 * j + 1] << 8);
+                eep[EEPROM_STATIONS + 2 * j] = (char)(freq & 0x00FF);
+                eep[EEPROM_STATIONS + 2 * j + 1] = (char)(freq >> 8);
+                freq = freqCell;
+            }
+            break;
+        }
+    }
+    updateHexTable();
+    fillStations();
+    setCurFreq(dsbCurfreq->value());
+}
+
+void MainWindow::stationRemoveAll()
+{
+    for (uint8_t i = 0; i < FM_COUNT; i++) {
+        eep[EEPROM_STATIONS + 2 * i] = 0xFF;
+        eep[EEPROM_STATIONS + 2 * i + 1] = 0xFF;
+    }
+    updateHexTable();
+    fillStations();
+    setCurFreq(dsbCurfreq->value());
+}
+
+void MainWindow::setStationIndex(int index)
+{
+    if (lwStations->item(index)) {
+        double freq = lwStations->item(index)->text().toDouble();
+        dsbCurfreq->setValue(freq);
+    }
+}
+
+void MainWindow::setCurFreq(double value)
+{
+    if (value < 76)
+        dsbCurfreq->setSingleStep((double)fmStepIndex2Step(cbxFmstep1->currentIndex()) / 100);
+    else
+        dsbCurfreq->setSingleStep((double)fmStepIndex2Step(cbxFmstep2->currentIndex()) / 100);
+    curFreq = value;
+
+    for (int i = 0; i < lwStations->count(); i++) {
+        if (lwStations->item(i)->text() == QString::number(curFreq, 'f', 2)) {
+            lwStations->setCurrentRow(i);
+            pbStationAddRemove->setText(tr("Remove station"));
+            return;
+        }
+    }
+
+    lwStations->clearSelection();
+    pbStationAddRemove->setText(tr("Add station"));
+}
+
 double MainWindow::getFreq(int pos)
 {
     double freq;
@@ -456,6 +539,17 @@ void MainWindow::setFreq(double value, int pos)
 
     updateHexTable(pos);
     updateHexTable(pos + 1);
+}
+
+void MainWindow::fillStations()
+{
+    lwStations->clear();
+    for (int i = 0; i < FM_COUNT; i++) {
+        double freq = getFreq(EEPROM_STATIONS + i * 2);
+        if (freq < 655) { // 0xFFFF
+            lwStations->addItem(QString::number(freq, 'f', 2));
+        }
+    }
 }
 
 int MainWindow::fmStepEep2Index(uint8_t value)
@@ -539,7 +633,7 @@ void MainWindow::setTuner(int tuner)
         wgtFmMin->show();
         wgtFmMax->show();
         dsbFmfreq->setValue(getFreq(EEPROM_FM_FREQ));
-        dsbFmMin->setValue(getFreq(EEPROM_FM_FREQ_MIN));
+        dsbCurfreq->setValue(getFreq(EEPROM_FM_FREQ));
         dsbFmMax->setValue(getFreq(EEPROM_FM_FREQ_MAX));
         if (dsbFmfreq->value() < 76)
             dsbFmfreq->setSingleStep((double)eep[EEPROM_FM_STEP1] / 100);
@@ -554,6 +648,9 @@ void MainWindow::setTuner(int tuner)
 
     eep[EEPROM_FM_TUNER] = tuner;
     updateHexTable(EEPROM_FM_TUNER);
+
+    fillStations();
+    setCurFreq(getFreq(EEPROM_FM_FREQ));
 }
 
 void MainWindow::setFmfreq(double value)
