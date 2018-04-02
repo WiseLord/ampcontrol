@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
-    <height>580</height>
+    <width>960</width>
+    <height>640</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -25,8 +25,14 @@
      <widget class="QTableWidget" name="wgtHexTable">
       <property name="minimumSize">
        <size>
-        <width>420</width>
+        <width>430</width>
         <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>430</width>
+        <height>16777215</height>
        </size>
       </property>
       <property name="gridStyle">
@@ -134,11 +140,14 @@
     </item>
     <item>
      <widget class="QTabWidget" name="tabWidget">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="currentIndex">
        <number>0</number>
-      </property>
-      <property name="movable">
-       <bool>true</bool>
       </property>
       <widget class="QWidget" name="tabTranslations">
        <attribute name="title">
@@ -1873,6 +1882,141 @@
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="tabStations">
+       <attribute name="title">
+        <string>Stations</string>
+       </attribute>
+       <layout class="QVBoxLayout" name="verticalLayout_7">
+        <property name="spacing">
+         <number>1</number>
+        </property>
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QListWidget" name="lwStations"/>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtCurfreq" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblCurfreq">
+             <property name="text">
+              <string>Station frequency</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QDoubleSpinBox" name="dsbCurfreq">
+             <property name="minimumSize">
+              <size>
+               <width>150</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="suffix">
+              <string> MHz</string>
+             </property>
+             <property name="minimum">
+              <double>50.000000000000000</double>
+             </property>
+             <property name="maximum">
+              <double>152.530000000000001</double>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
+         <widget class="QWidget" name="wgtStationButtons" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_28" stretch="0,0,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="pbStationRemoveAll">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Remove all</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="hspStationButtons">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pbStationAddRemove">
+             <property name="minimumSize">
+              <size>
+               <width>150</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>Add or remove station</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="tabRemote">
        <attribute name="title">
         <string>Remote</string>
@@ -2726,7 +2870,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>860</width>
+     <width>960</width>
      <height>20</height>
     </rect>
    </property>
@@ -2882,7 +3026,7 @@
    <slot>setInput(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
+     <x>838</x>
      <y>93</y>
     </hint>
     <hint type="destinationlabel">
@@ -2898,7 +3042,7 @@
    <slot>setLoudness(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>154</y>
     </hint>
     <hint type="destinationlabel">
@@ -2914,7 +3058,7 @@
    <slot>setAudioproc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>746</x>
+     <x>846</x>
      <y>67</y>
     </hint>
     <hint type="destinationlabel">
@@ -2930,7 +3074,7 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>448</x>
+     <x>458</x>
      <y>496</y>
     </hint>
     <hint type="destinationlabel">
@@ -2946,7 +3090,7 @@
    <slot>setFmmono(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>740</x>
+     <x>840</x>
      <y>211</y>
     </hint>
     <hint type="destinationlabel">
@@ -2962,7 +3106,7 @@
    <slot>setFmfreq(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>93</y>
     </hint>
     <hint type="destinationlabel">
@@ -3026,7 +3170,7 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>449</x>
+     <x>459</x>
      <y>392</y>
     </hint>
     <hint type="destinationlabel">
@@ -3042,7 +3186,7 @@
    <slot>setBalance(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>741</x>
+     <x>841</x>
      <y>321</y>
     </hint>
     <hint type="destinationlabel">
@@ -3058,7 +3202,7 @@
    <slot>setVolume(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>741</x>
+     <x>841</x>
      <y>250</y>
     </hint>
     <hint type="destinationlabel">
@@ -3090,7 +3234,7 @@
    <slot>setTreble(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>740</x>
+     <x>840</x>
      <y>299</y>
     </hint>
     <hint type="destinationlabel">
@@ -3138,7 +3282,7 @@
    <slot>setBass(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>740</x>
+     <x>840</x>
      <y>277</y>
     </hint>
     <hint type="destinationlabel">
@@ -3154,7 +3298,7 @@
    <slot>setSpspeed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>737</x>
+     <x>837</x>
      <y>91</y>
     </hint>
     <hint type="destinationlabel">
@@ -3170,7 +3314,7 @@
    <slot>setExtfunc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>162</y>
     </hint>
     <hint type="destinationlabel">
@@ -3186,7 +3330,7 @@
    <slot>setBrstby(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>740</x>
+     <x>840</x>
      <y>116</y>
     </hint>
     <hint type="destinationlabel">
@@ -3202,7 +3346,7 @@
    <slot>setEncres(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>145</y>
     </hint>
     <hint type="destinationlabel">
@@ -3218,7 +3362,7 @@
    <slot>setThreshold(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>190</y>
     </hint>
     <hint type="destinationlabel">
@@ -3250,7 +3394,7 @@
    <slot>setSilence(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
+     <x>836</x>
      <y>214</y>
     </hint>
     <hint type="destinationlabel">
@@ -3266,7 +3410,7 @@
    <slot>setInputIcon(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>802</x>
+     <x>902</x>
      <y>121</y>
     </hint>
     <hint type="destinationlabel">
@@ -3282,7 +3426,7 @@
    <slot>setSurround(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>179</y>
     </hint>
     <hint type="destinationlabel">
@@ -3298,7 +3442,7 @@
    <slot>setEffect3d(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>203</y>
     </hint>
     <hint type="destinationlabel">
@@ -3314,7 +3458,7 @@
    <slot>setToneBypass(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
+     <x>838</x>
      <y>224</y>
     </hint>
     <hint type="destinationlabel">
@@ -3330,7 +3474,7 @@
    <slot>setFmMin(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>737</x>
+     <x>837</x>
      <y>116</y>
     </hint>
     <hint type="destinationlabel">
@@ -3346,7 +3490,7 @@
    <slot>setFmMax(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>746</x>
+     <x>846</x>
      <y>146</y>
     </hint>
     <hint type="destinationlabel">
@@ -3362,7 +3506,7 @@
    <slot>setFmRds(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
+     <x>838</x>
      <y>235</y>
     </hint>
     <hint type="destinationlabel">
@@ -3378,7 +3522,7 @@
    <slot>setFmstep1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
+     <x>838</x>
      <y>165</y>
     </hint>
     <hint type="destinationlabel">
@@ -3394,7 +3538,7 @@
    <slot>setFmstep2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>739</x>
+     <x>839</x>
      <y>187</y>
     </hint>
     <hint type="destinationlabel">
@@ -3410,7 +3554,7 @@
    <slot>setRemoteType(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
+     <x>838</x>
      <y>67</y>
     </hint>
     <hint type="destinationlabel">
@@ -3426,7 +3570,7 @@
    <slot>setRemoteAddr(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>736</x>
+     <x>836</x>
      <y>92</y>
     </hint>
     <hint type="destinationlabel">
@@ -3442,7 +3586,7 @@
    <slot>setRemoteCmd(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
+     <x>838</x>
      <y>114</y>
     </hint>
     <hint type="destinationlabel">
@@ -3474,7 +3618,7 @@
    <slot>setSpmode(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>740</x>
+     <x>840</x>
      <y>67</y>
     </hint>
     <hint type="destinationlabel">
@@ -3554,8 +3698,8 @@
    <slot>calcRemoteSeq()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
-     <y>414</y>
+     <x>838</x>
+     <y>474</y>
     </hint>
     <hint type="destinationlabel">
      <x>721</x>
@@ -3666,7 +3810,7 @@
    <slot>setFmBass(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>738</x>
+     <x>838</x>
      <y>263</y>
     </hint>
     <hint type="destinationlabel">
@@ -3688,6 +3832,70 @@
     <hint type="destinationlabel">
      <x>428</x>
      <y>309</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dsbCurfreq</sender>
+   <signal>valueChanged(double)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setCurFreq(double)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>838</x>
+     <y>595</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>707</x>
+     <y>532</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbStationAddRemove</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>stationAddRemove()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>874</x>
+     <y>569</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>759</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lwStations</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setStationIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>613</x>
+     <y>355</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>587</x>
+     <y>353</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbStationRemoveAll</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>stationRemoveAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>483</x>
+     <y>570</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>442</x>
+     <y>574</y>
     </hint>
    </hints>
   </connection>
@@ -3735,5 +3943,9 @@
   <slot>saveAmsr()</slot>
   <slot>setLanguage()</slot>
   <slot>setFmBass(int)</slot>
+  <slot>setCurFreq(double)</slot>
+  <slot>stationAddRemove()</slot>
+  <slot>setStationIndex(int)</slot>
+  <slot>stationRemoveAll()</slot>
  </slots>
 </ui>

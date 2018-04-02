@@ -98,8 +98,6 @@ QString IrSeq::getNecSamSequence(int addr, int cmd, int type)
     int pause1 = this->freq * pause1_us / 1000000;
     int E = this->freq * E_ms / 1000;
 
-    qDebug() << StartPulse << " " << StartPause;
-
     QString out;
     out.clear();
 
