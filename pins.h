@@ -38,13 +38,27 @@
 #define RC                  D
 #define RC_LINE             (1<<3)
 
+// I2C port definitions
+#define I2C_SDA             C
+#define I2C_SDA_LINE        (1<<4)
+#define I2C_SCL             C
+#define I2C_SCL_LINE        (1<<5)
+
 // AVR ISP definitions
 #define ISP_MOSI            B
 #define ISP_MOSI_LINE       (1<<3)
-#define ISP_MISO            B
-#define ISP_MISO_LINE       (1<<4)
 #define ISP_SCK             B
 #define ISP_SCK_LINE        (1<<5)
+#define ISP_MISO            B
+#define ISP_MISO_LINE       (1<<4)
+
+// EXT outputs definitions
+#define EXT_0               ISP_MOSI
+#define EXT_0_LINE          ISP_MOSI_LINE
+#define EXT_1               ISP_SCK
+#define EXT_1_LINE          ISP_SCK_LINE
+#define EXT_2               ISP_MISO
+#define EXT_2_LINE          ISP_MISO_LINE
 
 // Software SPI definitions
 #define SPISW_DI            ISP_MOSI
@@ -53,6 +67,14 @@
 #define SPISW_CLK_LINE      ISP_SCK_LINE
 #define SPISW_CE            ISP_MISO
 #define SPISW_CE_LINE       ISP_MISO_LINE
+
+// SI470X Reset pins
+#define SI470X_B_SDIO       I2C_SDA
+#define SI470X_B_SDIO_LINE  I2C_SDA_LINE
+#define SI470X_B_SCLK       I2C_SCL
+#define SI470X_B_SCLK_LINE  I2C_SCL_LINE
+#define SI470X_B_RST        EXT_2
+#define SI470X_B_RST_LINE   EXT_2_LINE
 
 // Standby/Mute port definitions
 #define STMU_STBY           B

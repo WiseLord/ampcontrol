@@ -6,7 +6,7 @@ F_CPU = 8000000L
 
 APROC_LIST = PT232X
 TUNER_LIST = RDA580X
-FEATURE_LIST =
+FEATURE_LIST = RDA5807_DF
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -21,6 +21,7 @@ ifeq ($(DISPLAY), KS0066_16X2)
 SRCS += display/ks0066.c
 DEFINES +=-DKS0066_WIRE_$(WIRE) -DKS0066
 endif
+SRCS += display.c
 
 # Audio source files
 SRCS += audio/audio.c
@@ -68,7 +69,10 @@ ifeq "$(findstring LC72131, $(TUNER_LIST))" "LC72131"
   SRCS += tuner/lc72131.c
   SOFTWARE_SPI = YES
 endif
-SRCS += display.c
+ifeq "$(findstring SI470X, $(TUNER_LIST))" "SI470X"
+  SRCS += tuner/si470x.c
+  HARDWARE_RST = "YES"
+endif
 DEFINES += $(addprefix -D_, $(TUNER_LIST))
 
 # Features

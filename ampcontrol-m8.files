@@ -30,6 +30,8 @@ tuner/rda580x.c
 tuner/rda580x.h
 tuner/rds.c
 tuner/rds.h
+tuner/si470x.c
+tuner/si470x.h
 tuner/tea5767.c
 tuner/tea5767.h
 tuner/tuner.c

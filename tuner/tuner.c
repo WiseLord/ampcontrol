@@ -4,7 +4,7 @@
 #include "../eeprom.h"
 
 //uint8_t *bufFM;
-#if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032)
+#if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032) || defined(_SI470X)
 uint8_t tunerRdbuf[TUNER_RDBUF_SIZE];
 #endif
 
@@ -12,22 +12,24 @@ Tuner_type tuner;
 
 void tunerInit()
 {
-    eeprom_read_block(&tuner, (void *)EEPROM_FM_TUNER, sizeof(Tuner_type));
+    eeprom_read_block(&tuner, (void *)EEPROM_FM_TUNER, EEPROM_FM_TUNER_SIZE);
 
     // If defined only tuner, use it despite on eeprom value
-#if   !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131)
+#if   !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
     tuner.ic = TUNER_NO;
-#elif  defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131)
+#elif  defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
     tuner.ic = TUNER_TEA5767;
-#elif !defined(_TEA5767) &&  defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131)
-    if (tuner.ic != TUNER_RDA5802 && tuner.ic != TUNER_RDA5807_DF)
+#elif !defined(_TEA5767) &&  defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
+    if (tuner.ic != TUNER_RDA5802)
         tuner.ic = TUNER_RDA5807;
-#elif !defined(_TEA5767) && !defined(_RDA580X) &&  defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131)
+#elif !defined(_TEA5767) && !defined(_RDA580X) &&  defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
     tuner.ic = TUNER_TUX032;
-#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) &&  defined(_LM7001) && !defined(_LC72131)
+#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) &&  defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
     tuner.ic = TUNER_LM7001;
-#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) &&  defined(_LC72131)
+#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) &&  defined(_LC72131) && !defined(_SI470X)
     tuner.ic = TUNER_LC72131;
+#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) &&  defined(_SI470X)
+    tuner.ic = TUNER_SI470X;
 #else
     if (tuner.ic >= TUNER_END)
         tuner.ic = TUNER_NO;
@@ -42,7 +44,6 @@ void tunerInit()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xInit();
         break;
 #endif
@@ -61,6 +62,11 @@ void tunerInit()
         lc72131Init();
         break;
 #endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xInit();
+        break;
+#endif
     default:
         break;
     }
@@ -75,6 +81,8 @@ void tunerSetFreq()
     else if (tuner.freq > tuner.fMax)
         tuner.freq = tuner.fMax;
 
+    tuner.rdFreq = tuner.freq;
+
     switch (tuner.ic) {
 #ifdef _TEA5767
     case TUNER_TEA5767:
@@ -84,7 +92,6 @@ void tunerSetFreq()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetFreq();
         break;
 #endif
@@ -103,6 +110,11 @@ void tunerSetFreq()
         lc72131SetFreq();
         break;
 #endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetFreq();
+        break;
+#endif
     default:
         break;
     }
@@ -114,6 +126,7 @@ void tunerSetFreq()
 
 void tunerChangeFreq(int8_t mult)
 {
+    tuner.freq = tuner.rdFreq;
     if ((tuner.freq > FM_BAND_DIV_FREQ) || (mult > 0 && tuner.freq == FM_BAND_DIV_FREQ))
         tuner.freq += tuner.step2 * mult;
     else
@@ -133,13 +146,17 @@ void tunerReadStatus()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xReadStatus();
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
         tux032ReadStatus();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xReadStatus();
         break;
 #endif
     default:
@@ -158,8 +175,12 @@ void tunerSetMono(uint8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetMono(value);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetMono(value);
         break;
 #endif
     default:
@@ -176,8 +197,12 @@ void tunerSetRDS(uint8_t value)
     switch (tuner.ic) {
 #ifdef _RDA580X
     case TUNER_RDA5807:
-    case TUNER_RDA5807_DF:
         rda580xSetRds(value);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetRds(value);
         break;
 #endif
     default:
@@ -200,13 +225,17 @@ uint8_t tunerStereo()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         ret = RDA5807_BUF_STEREO(tunerRdbuf);
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
         ret = !TUX032_BUF_STEREO(tunerRdbuf);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        ret = SI470X_BUF_STEREO(tunerRdbuf);
         break;
 #endif
     default:
@@ -229,12 +258,16 @@ uint8_t tunerLevel()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         ret = (tunerRdbuf[2] & RDA580X_RSSI) >> 1;
-        if (ret < 24)
+        if (ret < 30)
             ret = 0;
         else
-            ret = (ret - 24) >> 1;
+            ret = (ret - 30) >> 1;
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        ret = (tunerRdbuf[1] / 2);
         break;
 #endif
     default:
@@ -254,7 +287,7 @@ uint8_t tunerStationNum()
     uint8_t i;
 
     for (i = 0; i < FM_COUNT; i++)
-        if (eeprom_read_word((uint16_t *)EEPROM_STATIONS + i) == tuner.freq)
+        if (eeprom_read_word((uint16_t *)EEPROM_STATIONS + i) == tuner.rdFreq)
             return i + 1;
 
     return 0;
@@ -266,7 +299,7 @@ uint8_t tunerFavStationNum()
     uint8_t i;
 
     for (i = 0; i < FM_FAV_COUNT; i++)
-        if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + i) == tuner.freq)
+        if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + i) == tuner.rdFreq)
             return i + 1;
 
     return 0;
@@ -277,7 +310,10 @@ void tunerNextStation(int8_t direction)
 {
     uint8_t i;
     uint16_t freqCell;
-    uint16_t freq = tuner.freq;
+    uint16_t freq;
+
+    tuner.freq = tuner.rdFreq;
+    freq = tuner.freq;
 
     for (i = 0; i < FM_COUNT; i++) {
         freqCell = eeprom_read_word((uint16_t *)EEPROM_STATIONS + i);
@@ -329,10 +365,10 @@ void tunerStoreFavStation(uint8_t num)
 {
     uint16_t freq = eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + num);
 
-    if (freq == tuner.freq)
+    if (freq == tuner.rdFreq)
         eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, 0);
     else
-        eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, tuner.freq);
+        eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, tuner.rdFreq);
 }
 
 // Save/delete station from eeprom
@@ -342,7 +378,7 @@ void tunerStoreStation()
     uint16_t freqCell;
     uint16_t freq;
 
-    freq = tuner.freq;
+    freq = tuner.rdFreq;
 
     for (i = 0; i < FM_COUNT; i++) {
         freqCell = eeprom_read_word((uint16_t *)EEPROM_STATIONS + i);
@@ -376,8 +412,12 @@ void tunerSetVolume(int8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetVolume(value);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetVolume(value);
         break;
 #endif
     default:
@@ -398,13 +438,17 @@ void tunerSetMute(uint8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetMute(value);
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
         tux032SetMute();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetMute(value);
         break;
 #endif
     default:
@@ -418,7 +462,6 @@ void tunerSetBass(uint8_t value)
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         tuner.bass = value;
         rda580xSetBass(value);
         break;
@@ -440,13 +483,17 @@ void tunerPowerOn()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetPower(1);
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
         tux032PowerOn();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetPower(1);
         break;
 #endif
     default:
@@ -458,7 +505,8 @@ void tunerPowerOn()
 
 void tunerPowerOff()
 {
-    eeprom_update_block(&tuner, (void *)EEPROM_FM_TUNER, sizeof(Tuner_type));
+    tuner.freq = tuner.rdFreq;
+    eeprom_update_block(&tuner, (void *)EEPROM_FM_TUNER, EEPROM_FM_TUNER_SIZE);
 
     switch (tuner.ic) {
 #ifdef _TEA5767
@@ -469,13 +517,17 @@ void tunerPowerOff()
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-    case TUNER_RDA5807_DF:
         rda580xSetPower(0);
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
         tux032PowerOff();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetPower(0);
         break;
 #endif
     default:
@@ -490,6 +542,11 @@ void tunerSeek(int8_t direction)
     case TUNER_RDA5807:
     case TUNER_RDA5802:
         rda580xSeek(direction);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSeek(direction);
         break;
 #endif
     default:
