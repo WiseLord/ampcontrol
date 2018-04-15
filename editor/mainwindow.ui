@@ -2871,7 +2871,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>20</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -3026,12 +3026,12 @@
    <slot>setInput(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>93</y>
+     <x>878</x>
+     <y>107</y>
     </hint>
     <hint type="destinationlabel">
-     <x>715</x>
-     <y>92</y>
+     <x>817</x>
+     <y>105</y>
     </hint>
    </hints>
   </connection>
@@ -3042,12 +3042,12 @@
    <slot>setLoudness(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>154</y>
+     <x>949</x>
+     <y>191</y>
     </hint>
     <hint type="destinationlabel">
-     <x>724</x>
-     <y>154</y>
+     <x>812</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
@@ -3062,8 +3062,8 @@
      <y>67</y>
     </hint>
     <hint type="destinationlabel">
-     <x>721</x>
-     <y>70</y>
+     <x>810</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -3074,12 +3074,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>458</x>
-     <y>496</y>
+     <x>857</x>
+     <y>551</y>
     </hint>
     <hint type="destinationlabel">
-     <x>431</x>
-     <y>500</y>
+     <x>836</x>
+     <y>549</y>
     </hint>
    </hints>
   </connection>
@@ -3090,12 +3090,12 @@
    <slot>setFmmono(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>211</y>
+     <x>846</x>
+     <y>259</y>
     </hint>
     <hint type="destinationlabel">
-     <x>720</x>
-     <y>209</y>
+     <x>808</x>
+     <y>260</y>
     </hint>
    </hints>
   </connection>
@@ -3106,12 +3106,12 @@
    <slot>setFmfreq(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>93</y>
+     <x>844</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>719</x>
-     <y>92</y>
+     <x>804</x>
+     <y>107</y>
     </hint>
    </hints>
   </connection>
@@ -3122,12 +3122,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>454</x>
-     <y>471</y>
+     <x>855</x>
+     <y>527</y>
     </hint>
     <hint type="destinationlabel">
-     <x>422</x>
-     <y>471</y>
+     <x>834</x>
+     <y>524</y>
     </hint>
    </hints>
   </connection>
@@ -3138,12 +3138,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>453</x>
-     <y>336</y>
+     <x>849</x>
+     <y>394</y>
     </hint>
     <hint type="destinationlabel">
-     <x>424</x>
-     <y>335</y>
+     <x>830</x>
+     <y>393</y>
     </hint>
    </hints>
   </connection>
@@ -3154,12 +3154,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>450</x>
-     <y>419</y>
+     <x>852</x>
+     <y>471</y>
     </hint>
     <hint type="destinationlabel">
-     <x>429</x>
-     <y>418</y>
+     <x>832</x>
+     <y>470</y>
     </hint>
    </hints>
   </connection>
@@ -3170,12 +3170,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>459</x>
-     <y>392</y>
+     <x>849</x>
+     <y>443</y>
     </hint>
     <hint type="destinationlabel">
-     <x>426</x>
-     <y>388</y>
+     <x>832</x>
+     <y>445</y>
     </hint>
    </hints>
   </connection>
@@ -3186,12 +3186,12 @@
    <slot>setBalance(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>841</x>
-     <y>321</y>
+     <x>949</x>
+     <y>401</y>
     </hint>
     <hint type="destinationlabel">
-     <x>713</x>
-     <y>321</y>
+     <x>815</x>
+     <y>390</y>
     </hint>
    </hints>
   </connection>
@@ -3202,12 +3202,12 @@
    <slot>setVolume(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>841</x>
-     <y>250</y>
+     <x>949</x>
+     <y>311</y>
     </hint>
     <hint type="destinationlabel">
-     <x>720</x>
-     <y>249</y>
+     <x>811</x>
+     <y>296</y>
     </hint>
    </hints>
   </connection>
@@ -3218,12 +3218,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>451</x>
-     <y>444</y>
+     <x>854</x>
+     <y>501</y>
     </hint>
     <hint type="destinationlabel">
-     <x>429</x>
-     <y>443</y>
+     <x>837</x>
+     <y>497</y>
     </hint>
    </hints>
   </connection>
@@ -3234,12 +3234,12 @@
    <slot>setTreble(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>299</y>
+     <x>949</x>
+     <y>371</y>
     </hint>
     <hint type="destinationlabel">
-     <x>714</x>
-     <y>298</y>
+     <x>811</x>
+     <y>357</y>
     </hint>
    </hints>
   </connection>
@@ -3254,8 +3254,8 @@
      <y>78</y>
     </hint>
     <hint type="destinationlabel">
-     <x>694</x>
-     <y>65</y>
+     <x>806</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>
@@ -3266,12 +3266,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>452</x>
-     <y>363</y>
+     <x>850</x>
+     <y>418</y>
     </hint>
     <hint type="destinationlabel">
-     <x>427</x>
-     <y>361</y>
+     <x>833</x>
+     <y>421</y>
     </hint>
    </hints>
   </connection>
@@ -3282,12 +3282,12 @@
    <slot>setBass(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>277</y>
+     <x>949</x>
+     <y>341</y>
     </hint>
     <hint type="destinationlabel">
-     <x>714</x>
-     <y>276</y>
+     <x>811</x>
+     <y>329</y>
     </hint>
    </hints>
   </connection>
@@ -3298,12 +3298,12 @@
    <slot>setSpspeed(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>837</x>
-     <y>91</y>
+     <x>843</x>
+     <y>112</y>
     </hint>
     <hint type="destinationlabel">
-     <x>720</x>
-     <y>90</y>
+     <x>816</x>
+     <y>106</y>
     </hint>
    </hints>
   </connection>
@@ -3314,12 +3314,12 @@
    <slot>setExtfunc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>162</y>
+     <x>841</x>
+     <y>197</y>
     </hint>
     <hint type="destinationlabel">
-     <x>716</x>
-     <y>164</y>
+     <x>824</x>
+     <y>193</y>
     </hint>
    </hints>
   </connection>
@@ -3330,12 +3330,12 @@
    <slot>setBrstby(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>116</y>
+     <x>842</x>
+     <y>141</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>123</y>
+     <x>811</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
@@ -3346,12 +3346,12 @@
    <slot>setEncres(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>145</y>
+     <x>842</x>
+     <y>166</y>
     </hint>
     <hint type="destinationlabel">
-     <x>720</x>
-     <y>144</y>
+     <x>818</x>
+     <y>166</y>
     </hint>
    </hints>
   </connection>
@@ -3362,12 +3362,12 @@
    <slot>setThreshold(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>190</y>
+     <x>846</x>
+     <y>227</y>
     </hint>
     <hint type="destinationlabel">
-     <x>716</x>
-     <y>190</y>
+     <x>816</x>
+     <y>226</y>
     </hint>
    </hints>
   </connection>
@@ -3394,12 +3394,12 @@
    <slot>setSilence(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>836</x>
-     <y>214</y>
+     <x>847</x>
+     <y>259</y>
     </hint>
     <hint type="destinationlabel">
-     <x>709</x>
-     <y>216</y>
+     <x>818</x>
+     <y>257</y>
     </hint>
    </hints>
   </connection>
@@ -3410,12 +3410,12 @@
    <slot>setInputIcon(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>902</x>
-     <y>121</y>
+     <x>949</x>
+     <y>161</y>
     </hint>
     <hint type="destinationlabel">
-     <x>774</x>
-     <y>121</y>
+     <x>868</x>
+     <y>143</y>
     </hint>
    </hints>
   </connection>
@@ -3426,12 +3426,12 @@
    <slot>setSurround(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>179</y>
+     <x>949</x>
+     <y>221</y>
     </hint>
     <hint type="destinationlabel">
-     <x>720</x>
-     <y>178</y>
+     <x>805</x>
+     <y>206</y>
     </hint>
    </hints>
   </connection>
@@ -3442,12 +3442,12 @@
    <slot>setEffect3d(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>203</y>
+     <x>949</x>
+     <y>251</y>
     </hint>
     <hint type="destinationlabel">
-     <x>723</x>
-     <y>203</y>
+     <x>807</x>
+     <y>238</y>
     </hint>
    </hints>
   </connection>
@@ -3458,12 +3458,12 @@
    <slot>setToneBypass(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>224</y>
+     <x>949</x>
+     <y>281</y>
     </hint>
     <hint type="destinationlabel">
-     <x>713</x>
-     <y>225</y>
+     <x>810</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -3474,12 +3474,12 @@
    <slot>setFmMin(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>837</x>
-     <y>116</y>
+     <x>842</x>
+     <y>138</y>
     </hint>
     <hint type="destinationlabel">
-     <x>717</x>
-     <y>118</y>
+     <x>803</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
@@ -3490,12 +3490,12 @@
    <slot>setFmMax(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>846</x>
-     <y>146</y>
+     <x>838</x>
+     <y>172</y>
     </hint>
     <hint type="destinationlabel">
-     <x>717</x>
-     <y>143</y>
+     <x>805</x>
+     <y>167</y>
     </hint>
    </hints>
   </connection>
@@ -3506,12 +3506,12 @@
    <slot>setFmRds(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>235</y>
+     <x>839</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel">
-     <x>718</x>
-     <y>235</y>
+     <x>809</x>
+     <y>288</y>
     </hint>
    </hints>
   </connection>
@@ -3522,12 +3522,12 @@
    <slot>setFmstep1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>165</y>
+     <x>842</x>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel">
-     <x>717</x>
-     <y>167</y>
+     <x>807</x>
+     <y>195</y>
     </hint>
    </hints>
   </connection>
@@ -3538,12 +3538,12 @@
    <slot>setFmstep2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>187</y>
+     <x>842</x>
+     <y>229</y>
     </hint>
     <hint type="destinationlabel">
-     <x>718</x>
-     <y>186</y>
+     <x>809</x>
+     <y>226</y>
     </hint>
    </hints>
   </connection>
@@ -3554,12 +3554,12 @@
    <slot>setRemoteType(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>67</y>
+     <x>830</x>
+     <y>72</y>
     </hint>
     <hint type="destinationlabel">
-     <x>720</x>
-     <y>66</y>
+     <x>819</x>
+     <y>77</y>
     </hint>
    </hints>
   </connection>
@@ -3570,12 +3570,12 @@
    <slot>setRemoteAddr(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>836</x>
-     <y>92</y>
+     <x>841</x>
+     <y>112</y>
     </hint>
     <hint type="destinationlabel">
-     <x>723</x>
-     <y>92</y>
+     <x>819</x>
+     <y>104</y>
     </hint>
    </hints>
   </connection>
@@ -3586,12 +3586,12 @@
    <slot>setRemoteCmd(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>114</y>
+     <x>848</x>
+     <y>137</y>
     </hint>
     <hint type="destinationlabel">
-     <x>721</x>
-     <y>115</y>
+     <x>815</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
@@ -3618,12 +3618,12 @@
    <slot>setSpmode(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>67</y>
+     <x>842</x>
+     <y>80</y>
     </hint>
     <hint type="destinationlabel">
-     <x>722</x>
-     <y>68</y>
+     <x>809</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -3698,12 +3698,12 @@
    <slot>calcRemoteSeq()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>474</y>
+     <x>842</x>
+     <y>476</y>
     </hint>
     <hint type="destinationlabel">
-     <x>721</x>
-     <y>412</y>
+     <x>816</x>
+     <y>475</y>
     </hint>
    </hints>
   </connection>
@@ -3810,12 +3810,12 @@
    <slot>setFmBass(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>263</y>
+     <x>848</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
-     <x>720</x>
-     <y>260</y>
+     <x>812</x>
+     <y>318</y>
     </hint>
    </hints>
   </connection>
@@ -3826,12 +3826,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>453</x>
-     <y>309</y>
+     <x>848</x>
+     <y>374</y>
     </hint>
     <hint type="destinationlabel">
-     <x>428</x>
-     <y>309</y>
+     <x>828</x>
+     <y>370</y>
     </hint>
    </hints>
   </connection>
@@ -3842,12 +3842,12 @@
    <slot>setCurFreq(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>595</y>
+     <x>821</x>
+     <y>565</y>
     </hint>
     <hint type="destinationlabel">
-     <x>707</x>
-     <y>532</y>
+     <x>789</x>
+     <y>563</y>
     </hint>
    </hints>
   </connection>
@@ -3858,12 +3858,12 @@
    <slot>stationAddRemove()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>874</x>
-     <y>569</y>
+     <x>822</x>
+     <y>598</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>509</y>
+     <x>789</x>
+     <y>594</y>
     </hint>
    </hints>
   </connection>
@@ -3890,12 +3890,12 @@
    <slot>stationRemoveAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>483</x>
-     <y>570</y>
+     <x>481</x>
+     <y>596</y>
     </hint>
     <hint type="destinationlabel">
-     <x>442</x>
-     <y>574</y>
+     <x>461</x>
+     <y>594</y>
     </hint>
    </hints>
   </connection>

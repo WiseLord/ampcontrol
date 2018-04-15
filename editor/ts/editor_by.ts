@@ -939,11 +939,13 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="596"/>
+        <location filename="../mainwindow.cpp" line="1026"/>
         <source>Remove station</source>
         <translation>Выдаліць станцыю</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="602"/>
+        <location filename="../mainwindow.cpp" line="1030"/>
         <source>Add station</source>
         <translation>Дадаць станцыю</translation>
     </message>

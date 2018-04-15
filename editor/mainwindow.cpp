@@ -1020,4 +1020,12 @@ void MainWindow::retranslate(QString lang)
     qApp->removeTranslator(&translator);
     qApp->installTranslator(&translator);
     retranslateUi(this);
+
+    for (int i = 0; i < lwStations->count(); i++) {
+        if (lwStations->item(i)->text() == QString::number(curFreq, 'f', 2)) {
+            pbStationAddRemove->setText(tr("Remove station"));
+            return;
+        }
+    }
+    pbStationAddRemove->setText(tr("Add station"));
 }
