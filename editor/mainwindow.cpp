@@ -10,7 +10,6 @@
 #include "../audio/audio.h"
 #include "../eeprom.h"
 #include "../tuner/tuner.h"
-#include "../tuner/tea5767.h"
 #include "../display.h"
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -254,17 +253,17 @@ void MainWindow::setAudioproc(int proc)
     wgtLoudness->hide();
     wgtSurround->hide();
     wgtEffect3d->hide();
-    wgtToneDefeat->hide();
+    wgtToneBypass->hide();
     wgtInput->hide();
     cbxInput->clear();
 
-    /* Handle loudness/surround/effect3d/tone_defeat*/
+    /* Handle loudness/surround/effect3d/tone_bypass*/
     switch (proc) {
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TDA7314:
     case AUDIOPROC_TDA7315:
     case AUDIOPROC_PT2314:
-    case AUDIOPROC_RDA580X:
+    case AUDIOPROC_TUNER_IC:
         wgtLoudness->show();
         cbxLoudness->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_LOUDNESS));
         break;
@@ -273,8 +272,9 @@ void MainWindow::setAudioproc(int proc)
         cbxSurround->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_SURROUND));
         wgtEffect3d->show();
         cbxEffect3d->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_EFFECT3D));
-        wgtToneDefeat->show();
-        cbxToneDefeat->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_TONEDEFEAT));
+    case AUDIOPROC_R2S15904SP:
+        wgtToneBypass->show();
+        cbxToneBypass->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_TONE_BYPASS));
         break;
     }
 
@@ -283,18 +283,19 @@ void MainWindow::setAudioproc(int proc)
     case AUDIOPROC_NO:
         break;
     case AUDIOPROC_PT232X:
-        cbxInput->insertItem(0, tr("Input 4"));
+        cbxInput->insertItem(0, "Input 5");
     case AUDIOPROC_TDA7439:
     case AUDIOPROC_TDA7312:
     case AUDIOPROC_TDA7318:
     case AUDIOPROC_PT2314:
-        cbxInput->insertItem(0, tr("Input 3"));
+    case AUDIOPROC_R2S15904SP:
+        cbxInput->insertItem(0, "Input 4");
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TEA6300:
-        cbxInput->insertItem(0, tr("Input 2"));
-        cbxInput->insertItem(0, tr("Input 1"));
+        cbxInput->insertItem(0, "Input 3");
+        cbxInput->insertItem(0, "Input 2");
     default:
-        cbxInput->insertItem(0, tr("Input 0"));
+        cbxInput->insertItem(0, "Input 1");
         wgtInput->show();
         setInput(eep[EEPROM_INPUT]);
         cbxInput->setCurrentIndex(eep[EEPROM_INPUT]);
@@ -362,9 +363,20 @@ void MainWindow::setAudioproc(int proc)
         wgtBalance->show();
         setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
         break;
-    case AUDIOPROC_RDA580X:
+    case AUDIOPROC_TUNER_IC:
         wgtVolume->show();
-        setAudioParam(dsbVolume, 0, 15, 1, MODE_SND_VOLUME);
+        setAudioParam(dsbVolume, 0, 16, 1, MODE_SND_VOLUME);
+        break;
+    case AUDIOPROC_R2S15904SP:
+        wgtVolume->show();
+        setAudioParam(dsbVolume, -79, 0, 1, MODE_SND_VOLUME);
+        wgtBass->show();
+        setAudioParam(dsbBass, -16, 16, 2, MODE_SND_BASS);
+        wgtTreble->show();
+        setAudioParam(dsbTreble, -16, 16, 2, MODE_SND_TREBLE);
+        wgtBalance->show();
+        setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
+        break;
         break;
     }
 
@@ -431,12 +443,12 @@ void MainWindow::setEffect3d(int value)
     updateHexTable(EEPROM_APROC_EXTRA);
 }
 
-void MainWindow::setToneDefeat(int value)
+void MainWindow::setToneBypass(int value)
 {
     if (value)
-        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_TONEDEFEAT;
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] | APROC_EXTRA_TONE_BYPASS;
     else
-        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_TONEDEFEAT;
+        eep[EEPROM_APROC_EXTRA] = eep[EEPROM_APROC_EXTRA] & ~APROC_EXTRA_TONE_BYPASS;
     updateHexTable(EEPROM_APROC_EXTRA);
 }
 
@@ -532,7 +544,7 @@ double MainWindow::getFreq(int pos)
 
 void MainWindow::setFreq(double value, int pos)
 {
-    int freq = value * 100;
+    int freq = (value + 0.001) * 100;
 
     eep[pos] = (char)(freq & 0x00FF);
     eep[pos + 1] = (char)((freq & 0xFF00) >> 8);
@@ -604,25 +616,57 @@ void MainWindow::setTuner(int tuner)
     wgtFmstep2->hide();
     wgtFmmono->hide();
     wgtFmRDS->hide();
+    wgtFmBass->hide();
+
+    cbxFmctrlDfreq->setChecked(eep[EEPROM_FM_CTRL] & TUNER_DFREQ);
+    cbxFmctrlSnc->setChecked(eep[EEPROM_FM_CTRL] & TUNER_SNC);
+    cbxFmctrlHcc->setChecked(eep[EEPROM_FM_CTRL] & TUNER_HCC);
+    cbxFmctrlSm->setChecked(eep[EEPROM_FM_CTRL] & TUNER_SMUTE);
+    cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TUNER_XTAL);
+    cbxFmctrlBl->setChecked(eep[EEPROM_FM_CTRL] & TUNER_BL);
+    cbxFmctrlDe->setChecked(eep[EEPROM_FM_CTRL] & TUNER_DE);
+    cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TUNER_PLLREF);
+
     wgtFmctrl->hide();
+    cbxFmctrlDfreq->hide();
+    cbxFmctrlSnc->hide();
+    cbxFmctrlHcc->hide();
+    cbxFmctrlSm->hide();
+    cbxFmctrlXtal->hide();
+    cbxFmctrlBl->hide();
+    cbxFmctrlDe->hide();
+    cbxFmctrlPllref->hide();
 
     switch (tuner) {
     case TUNER_TEA5767:
         wgtFmctrl->show();
-        cbxFmctrlHcc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_HCC);
-        cbxFmctrlSnc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_SNC);
-        cbxFmctrlSm->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_SMUTE);
-        cbxFmctrlDtc->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_DTC);
-        cbxFmctrlBl->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_BL);
-        cbxFmctrlPllref->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_PLLREF);
-        cbxFmctrlXtal->setChecked(eep[EEPROM_FM_CTRL] & TEA5767_XTAL);
+        cbxFmctrlHcc->show();
+        cbxFmctrlSnc->show();
+        cbxFmctrlSm->show();
+        cbxFmctrlDe->show();
+        cbxFmctrlBl->show();
+        cbxFmctrlPllref->show();
+        cbxFmctrlXtal->show();
     case TUNER_RDA5807:
-    case TUNER_RDA5807_DF:
-        if (tuner != TUNER_TEA5767)
-            wgtFmRDS->show();
-        setFmRds(eep[EEPROM_FM_RDS]);
-        cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
     case TUNER_RDA5802:
+    case TUNER_SI470X:
+        if (tuner != TUNER_TEA5767) {
+            wgtFmctrl->show();
+            wgtFmRDS->show();
+            setFmRds(eep[EEPROM_FM_RDS]);
+            cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
+            if (tuner == TUNER_RDA5807) {
+                cbxFmctrlDfreq->show();
+            }
+            cbxFmctrlSm->show();
+            cbxFmctrlDe->show();
+            cbxFmctrlBl->show();
+            if (tuner == TUNER_RDA5802 || tuner == TUNER_RDA5807) {
+                wgtFmBass->show();
+                setFmBass(eep[EEPROM_FM_BASS]);
+                cbxFmBass->setCurrentIndex(eep[EEPROM_FM_BASS]);
+            }
+        }
         wgtFmmono->show();
         setFmmono(eep[EEPROM_FM_MONO]);
         cbxFmmono->setCurrentIndex(eep[EEPROM_FM_MONO]);
@@ -634,6 +678,7 @@ void MainWindow::setTuner(int tuner)
         wgtFmMax->show();
         dsbFmfreq->setValue(getFreq(EEPROM_FM_FREQ));
         dsbCurfreq->setValue(getFreq(EEPROM_FM_FREQ));
+        dsbFmMin->setValue(getFreq(EEPROM_FM_FREQ_MIN));
         dsbFmMax->setValue(getFreq(EEPROM_FM_FREQ_MAX));
         if (dsbFmfreq->value() < 76)
             dsbFmfreq->setSingleStep((double)eep[EEPROM_FM_STEP1] / 100);
@@ -710,17 +755,27 @@ void MainWindow::setFmRds(int value)
     updateHexTable(EEPROM_FM_RDS);
 }
 
+void MainWindow::setFmBass(int value)
+{
+    if (value)
+        eep[EEPROM_FM_BASS] = 0x01;
+    else
+        eep[EEPROM_FM_BASS] = 0x00;
+    updateHexTable(EEPROM_FM_BASS);
+}
+
 void MainWindow::setFmctrl()
 {
     char ctrl = 0;
 
-    if (cbxFmctrlHcc->isChecked()) ctrl |= TEA5767_HCC;
-    if (cbxFmctrlSnc->isChecked()) ctrl |= TEA5767_SNC;
-    if (cbxFmctrlSm->isChecked()) ctrl |= TEA5767_SMUTE;
-    if (cbxFmctrlDtc->isChecked()) ctrl |= TEA5767_DTC;
-    if (cbxFmctrlBl->isChecked()) ctrl |= TEA5767_BL;
-    if (cbxFmctrlPllref->isChecked()) ctrl |= TEA5767_PLLREF;
-    if (cbxFmctrlXtal->isChecked()) ctrl |= TEA5767_XTAL;
+    if (cbxFmctrlDfreq->isChecked()) ctrl |= TUNER_DFREQ;
+    if (cbxFmctrlHcc->isChecked()) ctrl |= TUNER_HCC;
+    if (cbxFmctrlSnc->isChecked()) ctrl |= TUNER_SNC;
+    if (cbxFmctrlSm->isChecked()) ctrl |= TUNER_SMUTE;
+    if (cbxFmctrlDe->isChecked()) ctrl |= TUNER_DE;
+    if (cbxFmctrlBl->isChecked()) ctrl |= TUNER_BL;
+    if (cbxFmctrlPllref->isChecked()) ctrl |= TUNER_PLLREF;
+    if (cbxFmctrlXtal->isChecked()) ctrl |= TUNER_XTAL;
 
     eep[EEPROM_FM_CTRL] = ctrl;
     updateHexTable(EEPROM_FM_CTRL);
@@ -793,4 +848,12 @@ void MainWindow::retranslate(QString lang)
     qApp->removeTranslator(&translator);
     qApp->installTranslator(&translator);
     retranslateUi(this);
+
+    for (int i = 0; i < lwStations->count(); i++) {
+        if (lwStations->item(i)->text() == QString::number(curFreq, 'f', 2)) {
+            pbStationAddRemove->setText(tr("Remove station"));
+            return;
+        }
+    }
+    pbStationAddRemove->setText(tr("Add station"));
 }

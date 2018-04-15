@@ -433,7 +433,12 @@
              </item>
              <item>
               <property name="text">
-               <string>RDA580x</string>
+               <string>TUNER_AUDIO</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>R2S15904SP</string>
               </property>
              </item>
             </widget>
@@ -654,7 +659,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QWidget" name="wgtToneDefeat" native="true">
+         <widget class="QWidget" name="wgtToneBypass" native="true">
           <layout class="QHBoxLayout" name="horizontalLayout_35" stretch="1,0">
            <property name="spacing">
             <number>0</number>
@@ -672,14 +677,14 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QLabel" name="lblToneDefeat">
+            <widget class="QLabel" name="lblToneBypass">
              <property name="text">
-              <string>Tone defeat</string>
+              <string>Tone bypass</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="cbxToneDefeat">
+            <widget class="QComboBox" name="cbxToneBypass">
              <property name="minimumSize">
               <size>
                <width>120</width>
@@ -1021,7 +1026,7 @@
              </item>
              <item>
               <property name="text">
-               <string>RDA5807 direct freq</string>
+               <string>Si4703</string>
               </property>
              </item>
              <item>
@@ -1407,6 +1412,54 @@
          </widget>
         </item>
         <item>
+         <widget class="QWidget" name="wgtFmBass" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_44" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblFmBass">
+             <property name="text">
+              <string>Bass boost</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxFmBass">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string>Off</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>On</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <widget class="QWidget" name="wgtFmctrl" native="true">
           <layout class="QVBoxLayout" name="verticalLayout_4">
            <property name="leftMargin">
@@ -1418,7 +1471,14 @@
            <item>
             <widget class="QLabel" name="lblFmctrl">
              <property name="text">
-              <string>TEA5767 control byte</string>
+              <string>Tuner control byte:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QCheckBox" name="cbxFmctrlDfreq">
+             <property name="text">
+              <string>Direct Freq Input</string>
              </property>
             </widget>
            </item>
@@ -1444,7 +1504,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QCheckBox" name="cbxFmctrlDtc">
+            <widget class="QCheckBox" name="cbxFmctrlDe">
              <property name="text">
               <string>De-emphasis 75us (1) or 50us (0)</string>
              </property>
@@ -2101,7 +2161,7 @@
      <x>0</x>
      <y>0</y>
      <width>960</width>
-     <height>20</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -2123,7 +2183,7 @@
    </widget>
    <widget class="QMenu" name="menuLang">
     <property name="title">
-     <string>Language</string>
+     <string>&amp;Language</string>
     </property>
     <addaction name="actionLangAuto"/>
     <addaction name="actionLangBelarusian"/>
@@ -2233,66 +2293,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionSaveEeprom</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>saveEeprom()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>380</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionSaveEepromAs</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>saveEepromAs()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>380</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionLoadDefaultEeprom</sender>
-   <signal>triggered()</signal>
-   <receiver>MainWindow</receiver>
-   <slot>loadDefaultEeprom()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>380</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>wgtTranslations</sender>
    <signal>cellChanged(int,int)</signal>
    <receiver>MainWindow</receiver>
    <slot>updateTranslation(int,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>517</x>
-     <y>75</y>
+     <x>722</x>
+     <y>229</y>
     </hint>
     <hint type="destinationlabel">
-     <x>761</x>
-     <y>26</y>
+     <x>707</x>
+     <y>228</y>
     </hint>
    </hints>
   </connection>
@@ -2303,12 +2315,12 @@
    <slot>setInput(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>90</y>
+     <x>851</x>
+     <y>106</y>
     </hint>
     <hint type="destinationlabel">
-     <x>262</x>
-     <y>22</y>
+     <x>807</x>
+     <y>107</y>
     </hint>
    </hints>
   </connection>
@@ -2323,8 +2335,8 @@
      <y>149</y>
     </hint>
     <hint type="destinationlabel">
-     <x>355</x>
-     <y>26</y>
+     <x>806</x>
+     <y>138</y>
     </hint>
    </hints>
   </connection>
@@ -2335,12 +2347,12 @@
    <slot>setAudioproc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>846</x>
-     <y>64</y>
+     <x>845</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
-     <x>437</x>
-     <y>475</y>
+     <x>815</x>
+     <y>75</y>
     </hint>
    </hints>
   </connection>
@@ -2351,12 +2363,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>458</x>
-     <y>426</y>
+     <x>864</x>
+     <y>552</y>
     </hint>
     <hint type="destinationlabel">
-     <x>419</x>
-     <y>420</y>
+     <x>837</x>
+     <y>551</y>
     </hint>
    </hints>
   </connection>
@@ -2367,12 +2379,12 @@
    <slot>setFmmono(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>200</y>
+     <x>949</x>
+     <y>272</y>
     </hint>
     <hint type="destinationlabel">
-     <x>664</x>
-     <y>198</y>
+     <x>817</x>
+     <y>259</y>
     </hint>
    </hints>
   </connection>
@@ -2383,12 +2395,12 @@
    <slot>setFmfreq(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>86</y>
+     <x>949</x>
+     <y>122</y>
     </hint>
     <hint type="destinationlabel">
-     <x>658</x>
-     <y>85</y>
+     <x>813</x>
+     <y>109</y>
     </hint>
    </hints>
   </connection>
@@ -2399,12 +2411,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>785</x>
-     <y>401</y>
+     <x>855</x>
+     <y>522</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>392</y>
+     <x>838</x>
+     <y>524</y>
     </hint>
    </hints>
   </connection>
@@ -2415,28 +2427,28 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>720</x>
-     <y>272</y>
+     <x>854</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
-     <x>415</x>
-     <y>267</y>
+     <x>827</x>
+     <y>398</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>cbxFmctrlDtc</sender>
+   <sender>cbxFmctrlDe</sender>
    <signal>clicked()</signal>
    <receiver>MainWindow</receiver>
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>775</x>
-     <y>348</y>
+     <x>854</x>
+     <y>473</y>
     </hint>
     <hint type="destinationlabel">
-     <x>415</x>
-     <y>343</y>
+     <x>833</x>
+     <y>471</y>
     </hint>
    </hints>
   </connection>
@@ -2447,12 +2459,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>459</x>
-     <y>326</y>
+     <x>854</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
-     <x>416</x>
-     <y>318</y>
+     <x>832</x>
+     <y>447</y>
     </hint>
    </hints>
   </connection>
@@ -2463,12 +2475,12 @@
    <slot>setBalance(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>841</x>
-     <y>385</y>
+     <x>839</x>
+     <y>348</y>
     </hint>
     <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
+     <x>820</x>
+     <y>346</y>
     </hint>
    </hints>
   </connection>
@@ -2483,8 +2495,8 @@
      <y>253</y>
     </hint>
     <hint type="destinationlabel">
-     <x>696</x>
-     <y>22</y>
+     <x>821</x>
+     <y>259</y>
     </hint>
    </hints>
   </connection>
@@ -2495,12 +2507,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>785</x>
-     <y>376</y>
+     <x>854</x>
+     <y>498</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>369</y>
+     <x>832</x>
+     <y>496</y>
     </hint>
    </hints>
   </connection>
@@ -2515,8 +2527,8 @@
      <y>319</y>
     </hint>
     <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
+     <x>817</x>
+     <y>315</y>
     </hint>
    </hints>
   </connection>
@@ -2527,12 +2539,12 @@
    <slot>setTuner(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>680</x>
-     <y>71</y>
+     <x>840</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
-     <x>630</x>
-     <y>61</y>
+     <x>788</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -2543,12 +2555,12 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>785</x>
-     <y>301</y>
+     <x>852</x>
+     <y>423</y>
     </hint>
     <hint type="destinationlabel">
-     <x>414</x>
-     <y>288</y>
+     <x>829</x>
+     <y>421</y>
     </hint>
    </hints>
   </connection>
@@ -2563,8 +2575,8 @@
      <y>275</y>
     </hint>
     <hint type="destinationlabel">
-     <x>382</x>
-     <y>254</y>
+     <x>809</x>
+     <y>289</y>
     </hint>
    </hints>
   </connection>
@@ -2575,12 +2587,12 @@
    <slot>setBrstby(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>120</y>
+     <x>949</x>
+     <y>92</y>
     </hint>
     <hint type="destinationlabel">
-     <x>765</x>
-     <y>118</y>
+     <x>816</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -2591,7 +2603,7 @@
    <slot>aboutQt()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
+     <x>-1</x>
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
@@ -2623,12 +2635,12 @@
    <slot>setSurround(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>183</y>
+     <x>845</x>
+     <y>169</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>166</y>
+     <x>814</x>
+     <y>165</y>
     </hint>
    </hints>
   </connection>
@@ -2643,24 +2655,24 @@
      <y>207</y>
     </hint>
     <hint type="destinationlabel">
-     <x>418</x>
-     <y>154</y>
+     <x>813</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>cbxToneDefeat</sender>
+   <sender>cbxToneBypass</sender>
    <signal>activated(int)</signal>
    <receiver>MainWindow</receiver>
-   <slot>setToneDefeat(int)</slot>
+   <slot>setToneBypass(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>838</x>
      <y>223</y>
     </hint>
     <hint type="destinationlabel">
-     <x>421</x>
-     <y>127</y>
+     <x>812</x>
+     <y>226</y>
     </hint>
    </hints>
   </connection>
@@ -2671,12 +2683,12 @@
    <slot>setFmMin(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>837</x>
-     <y>112</y>
+     <x>850</x>
+     <y>140</y>
     </hint>
     <hint type="destinationlabel">
-     <x>661</x>
-     <y>107</y>
+     <x>814</x>
+     <y>137</y>
     </hint>
    </hints>
   </connection>
@@ -2687,12 +2699,12 @@
    <slot>setFmMax(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>846</x>
-     <y>130</y>
+     <x>949</x>
+     <y>182</y>
     </hint>
     <hint type="destinationlabel">
-     <x>659</x>
-     <y>129</y>
+     <x>816</x>
+     <y>169</y>
     </hint>
    </hints>
   </connection>
@@ -2703,12 +2715,12 @@
    <slot>setFmRds(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>233</y>
+     <x>949</x>
+     <y>302</y>
     </hint>
     <hint type="destinationlabel">
-     <x>659</x>
-     <y>218</y>
+     <x>817</x>
+     <y>291</y>
     </hint>
    </hints>
   </connection>
@@ -2719,12 +2731,12 @@
    <slot>setFmstep1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>155</y>
+     <x>949</x>
+     <y>212</y>
     </hint>
     <hint type="destinationlabel">
-     <x>656</x>
-     <y>152</y>
+     <x>814</x>
+     <y>199</y>
     </hint>
    </hints>
   </connection>
@@ -2735,12 +2747,12 @@
    <slot>setFmstep2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>179</y>
+     <x>949</x>
+     <y>242</y>
     </hint>
     <hint type="destinationlabel">
-     <x>662</x>
-     <y>174</y>
+     <x>817</x>
+     <y>230</y>
     </hint>
    </hints>
   </connection>
@@ -2755,8 +2767,8 @@
      <y>74</y>
     </hint>
     <hint type="destinationlabel">
-     <x>666</x>
-     <y>74</y>
+     <x>807</x>
+     <y>84</y>
     </hint>
    </hints>
   </connection>
@@ -2767,12 +2779,12 @@
    <slot>setRemoteAddr(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>836</x>
-     <y>99</y>
+     <x>839</x>
+     <y>107</y>
     </hint>
     <hint type="destinationlabel">
-     <x>663</x>
-     <y>96</y>
+     <x>808</x>
+     <y>109</y>
     </hint>
    </hints>
   </connection>
@@ -2783,12 +2795,12 @@
    <slot>setRemoteCmd(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>117</y>
+     <x>846</x>
+     <y>138</y>
     </hint>
     <hint type="destinationlabel">
-     <x>666</x>
-     <y>116</y>
+     <x>816</x>
+     <y>136</y>
     </hint>
    </hints>
   </connection>
@@ -2799,12 +2811,12 @@
    <slot>setRemoteIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>447</x>
-     <y>137</y>
+     <x>702</x>
+     <y>268</y>
     </hint>
     <hint type="destinationlabel">
-     <x>416</x>
-     <y>135</y>
+     <x>687</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -2895,12 +2907,12 @@
    <slot>setCurFreq(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>595</y>
+     <x>814</x>
+     <y>563</y>
     </hint>
     <hint type="destinationlabel">
-     <x>707</x>
-     <y>532</y>
+     <x>778</x>
+     <y>564</y>
     </hint>
    </hints>
   </connection>
@@ -2911,12 +2923,12 @@
    <slot>stationAddRemove()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>874</x>
-     <y>569</y>
+     <x>815</x>
+     <y>597</y>
     </hint>
     <hint type="destinationlabel">
-     <x>759</x>
-     <y>509</y>
+     <x>783</x>
+     <y>593</y>
     </hint>
    </hints>
   </connection>
@@ -2943,12 +2955,44 @@
    <slot>stationRemoveAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>483</x>
-     <y>570</y>
+     <x>498</x>
+     <y>595</y>
     </hint>
     <hint type="destinationlabel">
-     <x>442</x>
-     <y>574</y>
+     <x>476</x>
+     <y>594</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmctrlDfreq</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmctrl()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>854</x>
+     <y>369</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>827</x>
+     <y>366</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbxFmBass</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setFmBass(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>843</x>
+     <y>316</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>817</x>
+     <y>320</y>
     </hint>
    </hints>
   </connection>
@@ -2983,7 +3027,7 @@
   <slot>setInputIcon(int)</slot>
   <slot>setSurround(int)</slot>
   <slot>setEffect3d(int)</slot>
-  <slot>setToneDefeat(int)</slot>
+  <slot>setToneBypass(int)</slot>
   <slot>setFmstep2(int)</slot>
   <slot>setFmMin(double)</slot>
   <slot>setFmMax(double)</slot>
@@ -2998,5 +3042,6 @@
   <slot>stationAddRemove()</slot>
   <slot>setStationIndex(int)</slot>
   <slot>stationRemoveAll()</slot>
+  <slot>setFmBass(int)</slot>
  </slots>
 </ui>

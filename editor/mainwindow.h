@@ -61,7 +61,7 @@ private slots:
     void setLoudness(int value);
     void setSurround(int value);
     void setEffect3d(int value);
-    void setToneDefeat(int value);
+    void setToneBypass(int value);
 
     void stationAddRemove();
     void stationRemoveAll();
@@ -76,6 +76,7 @@ private slots:
     void setFmstep2(int value);
     void setFmmono(int value);
     void setFmRds(int value);
+    void setFmBass(int value);
     void setFmctrl();
 
     void setRemoteType(int type);
