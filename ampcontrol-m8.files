@@ -6,6 +6,8 @@ audio/pga2310.c
 audio/pga2310.h
 audio/pt232x.c
 audio/pt232x.h
+audio/r2s15904sp.c
+audio/r2s15904sp.h
 audio/rda580xaudio.c
 audio/rda580xaudio.h
 audio/tda731x.c

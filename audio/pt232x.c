@@ -93,7 +93,7 @@ void pt232xSetSndFunc()
         sndFunc |= PT2322_MUTE_ON;
     if (!(aproc.extra & APROC_EXTRA_EFFECT3D))
         sndFunc |= PT2322_3D_OFF;
-    if (aproc.extra & APROC_EXTRA_TONEDEFEAT)
+    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
         sndFunc |= PT2322_TONE_OFF;
 
     I2CStart(PT2322_I2C_ADDR);

@@ -52,6 +52,7 @@ void SPIswSendByte(uint8_t data)
 
 void SPIswSet(int8_t input)
 {
+#ifndef _atmega8
     if (extFunc != USE_INPUT_STATUS)
         return;
 
@@ -72,4 +73,5 @@ void SPIswSet(int8_t input)
     default:
         break;
     }
+#endif
 }

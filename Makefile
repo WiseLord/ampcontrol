@@ -43,6 +43,10 @@ ifeq "$(findstring PGA2310, $(APROC_LIST))" "PGA2310"
   SRCS += audio/pga2310.c
   SOFTWARE_SPI = YES
 endif
+ifeq "$(findstring R2S15904SP, $(APROC_LIST))" "R2S15904SP"
+  SRCS += audio/r2s15904sp.c
+  SOFTWARE_SPI = YES
+endif
 DEFINES += $(addprefix -D_, $(APROC_LIST))
 
 # Tuner source files
