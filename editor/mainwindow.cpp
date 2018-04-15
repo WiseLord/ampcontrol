@@ -724,6 +724,8 @@ void MainWindow::setTuner(int tuner)
         if (tuner != TUNER_TEA5767) {
             wgtFmctrl->show();
             wgtFmRDS->show();
+            setFmRds(eep[EEPROM_FM_RDS]);
+            cbxFmRDS->setCurrentIndex(eep[EEPROM_FM_RDS]);
             if (tuner == TUNER_RDA5807) {
                 cbxFmctrlDfreq->show();
             }
@@ -747,6 +749,7 @@ void MainWindow::setTuner(int tuner)
         wgtFmMax->show();
         dsbFmfreq->setValue(getFreq(EEPROM_FM_FREQ));
         dsbCurfreq->setValue(getFreq(EEPROM_FM_FREQ));
+        dsbFmMin->setValue(getFreq(EEPROM_FM_FREQ_MIN));
         dsbFmMax->setValue(getFreq(EEPROM_FM_FREQ_MAX));
         if (dsbFmfreq->value() < 76)
             dsbFmfreq->setSingleStep((double)eep[EEPROM_FM_STEP1] / 100);

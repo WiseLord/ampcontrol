@@ -111,7 +111,7 @@ void sndInit()
 #elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) &&  defined(_PGA2310) && !defined(_TUNER_AUDIO) && !defined(_R2S15904SP)
     aproc.ic = AUDIOPROC_PGA2310;
 #elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) &&  defined(_TUNER_AUDIO) && !defined(_R2S15904SP)
-    aproc.ic = AUDIOPROC_RDA580X;
+    aproc.ic = AUDIOPROC_TUNER_IC;
 #elif !defined(_TDA7439) && !defined(_TDA731X) && !defined(_TDA7448) && !defined(_PT232X) && !defined(_TEA63X0) && !defined(_PGA2310) && !defined(_TUNER_AUDIO) &&  defined(_R2S15904SP)
     aproc.ic = AUDIOPROC_R2S15904SP;
 #else

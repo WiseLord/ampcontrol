@@ -181,7 +181,7 @@ void rda580xSetPower(uint8_t value)
 
 void rda580xSeek(int8_t direction)
 {
-    if (tuner.ic == TUNER_RDA5807 && (tuner.ctrl & TUNER_DFREQ)) {
+    if (wrBuf[11] & RDA5807_FREQ_MODE) {
         tunerChangeFreq(direction);
         return;
     }
