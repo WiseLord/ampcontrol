@@ -8,12 +8,18 @@
 #include "rds.h"
 #endif
 
+#ifdef _RDA5807_DF
 static uint8_t wrBuf[14] = {
+#else
+static uint8_t wrBuf[8] = {
+#endif
     [0] = RDA580X_DHIZ,
     [1] = RDA580X_SKMODE | RDA580X_CLK_MODE_32768 | RDA5807_NEW_METHOD,
     [6] = 0b1000 & RDA5807_SEEKTH,
     [7] = RDA580X_LNA_PORT_SEL_LNAP | RDA580X_VOLUME,
+#ifdef _RDA5807_DF
     [10] = (0x40 & RDA5807_TH_SOFRBLEND),
+#endif
 };
 
 static uint8_t band = RDA580X_BAND_US_EUROPE;
@@ -48,13 +54,14 @@ void rda580xInit()
 #ifdef _RDS
     rda580xSetRds(tuner.rds);
 #endif
+#ifdef _RDA5807_DF
     if (tuner.ic == TUNER_RDA5807 && (tuner.ctrl & TUNER_DFREQ)) {
         wrBuf[11] |= RDA5807_FREQ_MODE;
     } else {
         wrBuf[11] &= RDA5807_FREQ_MODE;
     }
     rda580xWriteReg(7);
-
+#endif
     if (tuner.ctrl & TUNER_DE) {
         wrBuf[4] &= ~RDA580X_DE;
     } else {
@@ -84,6 +91,7 @@ void rda580xInit()
 
 void rda580xSetFreq()
 {
+#ifdef _RDA5807_DF
     if (wrBuf[11] & RDA5807_FREQ_MODE) {
         uint16_t df = (tuner.freq - 5000) * 10;
         wrBuf[13] = df & 0xFF;
@@ -92,6 +100,9 @@ void rda580xSetFreq()
 
         wrBuf[3] = RDA580X_TUNE | RDA580X_BAND_EASTEUROPE;
     } else {
+#else
+    {
+#endif
         // Freq in grid
         uint16_t chan = (tuner.freq - fBL) / tuner.step2;
         wrBuf[2] = chan >> 2; // 8 MSB
@@ -130,9 +141,13 @@ void rda580xReadStatus()
     chan <<= 8;
     chan |= tunerRdbuf[1];
 
+#ifdef _RDA5807_DF
     if (wrBuf[11] & RDA5807_FREQ_MODE) {
         tuner.rdFreq = tuner.freq;
     } else {
+#else
+    {
+#endif
         uint16_t chan = tunerRdbuf[0] & RDA580X_READCHAN_9_8;
         chan <<= 8;
         chan |= tunerRdbuf[1];
@@ -181,11 +196,12 @@ void rda580xSetPower(uint8_t value)
 
 void rda580xSeek(int8_t direction)
 {
+#ifdef _RDA5807_DF
     if (wrBuf[11] & RDA5807_FREQ_MODE) {
         tunerChangeFreq(direction);
         return;
     }
-
+#endif
     wrBuf[0] |= RDA580X_SEEK;
     rda580xSetBit(0, RDA580X_SEEKUP, direction > 0);
     wrBuf[0] &= ~RDA580X_SEEK;
