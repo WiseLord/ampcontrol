@@ -123,6 +123,7 @@
 #define SI470X_BUF_STEREO(buf)      (buf[0] & SI740X_ST)
 
 #define SI470X_RDBUF_SIZE           12
+#define SI470X_WRBUF_SIZE           12
 
 #define SI470X_CHAN_SPACING         10
 

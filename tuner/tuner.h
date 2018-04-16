@@ -67,18 +67,31 @@ extern Tuner_type tuner;
 #define TUNER_DE        0x40    // (1) 75us or (0) 50us de-emphasis
 #define TUNER_PLLREF    0x80    // (1) 6.5MHz PLL ref
 
+// Select maximumum read buffer size
 #if defined(_RDA580X)
-#define TUNER_RDBUF_SIZE    RDA5807_RDBUF_SIZE
+#define TUNER_RDBUF_SIZE    RDA5807_RDBUF_SIZE  // 12
 #elif defined(_SI470X)
-#define TUNER_RDBUF_SIZE    SI470X_RDBUF_SIZE
+#define TUNER_RDBUF_SIZE    SI470X_RDBUF_SIZE   // 12
 #elif defined(_TEA5767)
-#define TUNER_RDBUF_SIZE    TEA5767_RDBUF_SIZE
+#define TUNER_RDBUF_SIZE    TEA5767_RDBUF_SIZE  // 5
 #elif defined(_TUX032)
-#define TUNER_RDBUF_SIZE    TUX032_RDBUF_SIZE
+#define TUNER_RDBUF_SIZE    TUX032_RDBUF_SIZE   // 4
+#endif
+
+// Select maximumum write buffer size
+#if defined(_RDA580X)
+#define TUNER_WRBUF_SIZE    RDA5807_WRBUF_SIZE  // 14
+#elif defined(_SI470X)
+#define TUNER_WRBUF_SIZE    SI470X_WRBUF_SIZE   // 12
+#elif defined(_TUX032)
+#define TUNER_WRBUF_SIZE    TUX032_WRBUF_SIZE   // 9
+#elif defined(_TEA5767)
+#define TUNER_WRBUF_SIZE    TEA5767_WRBUF_SIZE  // 5
 #endif
 
 #if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032) || defined(_SI470X)
-extern uint8_t tunerRdbuf[];
+extern uint8_t tunerRdBuf[];
+extern uint8_t tunerWrBuf[];
 #endif
 
 #define FM_BAND_DIV_FREQ    7600

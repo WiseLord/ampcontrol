@@ -10,6 +10,7 @@
 #define TUX032_BUF_STEREO(buf)  (buf[3] & TUX032_STEREO)
 
 #define TUX032_RDBUF_SIZE       4
+#define TUX032_WRBUF_SIZE       9
 
 void tux032Init();
 

@@ -1,33 +1,18 @@
 #include "rda580x.h"
 #include "tuner.h"
 
-#include <avr/pgmspace.h>
 #include "../i2c.h"
 
 #ifdef _RDS
 #include "rds.h"
 #endif
 
-#ifdef _RDA5807_DF
-static uint8_t wrBuf[14] = {
-#else
-static uint8_t wrBuf[8] = {
-#endif
-    [0] = RDA580X_DHIZ,
-    [1] = RDA580X_SKMODE | RDA580X_CLK_MODE_32768 | RDA5807_NEW_METHOD,
-    [6] = 0b1000 & RDA5807_SEEKTH,
-    [7] = RDA580X_LNA_PORT_SEL_LNAP | RDA580X_VOLUME,
-#ifdef _RDA5807_DF
-    [10] = (0x40 & RDA5807_TH_SOFRBLEND),
-#endif
-};
-
 static uint8_t band = RDA580X_BAND_US_EUROPE;
 static uint16_t fBL = 8700;
 
 static void rda580xWriteReg(uint8_t reg)
 {
-    uint8_t *wrAddr = &wrBuf[2 * reg - 4];
+    uint8_t *wrAddr = &tunerWrBuf[2 * reg - 4];
 
     I2CStart(RDA5807M_I2C_RAND_ADDR);
     I2CWriteByte(reg);
@@ -39,9 +24,9 @@ static void rda580xWriteReg(uint8_t reg)
 static void rda580xSetBit(uint8_t idx, uint8_t bit, uint8_t cond)
 {
     if (cond) {
-        wrBuf[idx] |= bit;
+        tunerWrBuf[idx] |= bit;
     } else {
-        wrBuf[idx] &= ~bit;
+        tunerWrBuf[idx] &= ~bit;
     }
 
     rda580xWriteReg(idx / 2 + 2);
@@ -49,6 +34,14 @@ static void rda580xSetBit(uint8_t idx, uint8_t bit, uint8_t cond)
 
 void rda580xInit()
 {
+    tunerWrBuf[0] = RDA580X_DHIZ;
+    tunerWrBuf[1] = RDA580X_SKMODE | RDA580X_CLK_MODE_32768 | RDA5807_NEW_METHOD;
+    tunerWrBuf[6] = 0b1000 & RDA5807_SEEKTH;
+    tunerWrBuf[7] = RDA580X_LNA_PORT_SEL_LNAP | RDA580X_VOLUME;
+#ifdef _RDA5807_DF
+    tunerWrBuf[10] = (0x40 & RDA5807_TH_SOFRBLEND);
+#endif
+
     rda580xSetMono(tuner.mono);
     rda580xSetBass(tuner.bass);
 #ifdef _RDS
@@ -56,22 +49,22 @@ void rda580xInit()
 #endif
 #ifdef _RDA5807_DF
     if (tuner.ic == TUNER_RDA5807 && (tuner.ctrl & TUNER_DFREQ)) {
-        wrBuf[11] |= RDA5807_FREQ_MODE;
+        tunerWrBuf[11] |= RDA5807_FREQ_MODE;
     } else {
-        wrBuf[11] &= RDA5807_FREQ_MODE;
+        tunerWrBuf[11] &= RDA5807_FREQ_MODE;
     }
     rda580xWriteReg(7);
 #endif
     if (tuner.ctrl & TUNER_DE) {
-        wrBuf[4] &= ~RDA580X_DE;
+        tunerWrBuf[4] &= ~RDA580X_DE;
     } else {
-        wrBuf[4] |= RDA580X_DE;
+        tunerWrBuf[4] |= RDA580X_DE;
     }
 
     if (tuner.ctrl & TUNER_SMUTE) {
-        wrBuf[4] |= RDA580X_SOFTMUTE_EN;
+        tunerWrBuf[4] |= RDA580X_SOFTMUTE_EN;
     } else {
-        wrBuf[4] &= ~RDA580X_SOFTMUTE_EN;
+        tunerWrBuf[4] &= ~RDA580X_SOFTMUTE_EN;
     }
     rda580xWriteReg(4);
 
@@ -92,22 +85,22 @@ void rda580xInit()
 void rda580xSetFreq()
 {
 #ifdef _RDA5807_DF
-    if (wrBuf[11] & RDA5807_FREQ_MODE) {
+    if (tunerWrBuf[11] & RDA5807_FREQ_MODE) {
         uint16_t df = (tuner.freq - 5000) * 10;
-        wrBuf[13] = df & 0xFF;
-        wrBuf[12] = df >> 8;
+        tunerWrBuf[13] = df & 0xFF;
+        tunerWrBuf[12] = df >> 8;
         rda580xWriteReg(8);
 
-        wrBuf[3] = RDA580X_TUNE | RDA580X_BAND_EASTEUROPE;
+        tunerWrBuf[3] = RDA580X_TUNE | RDA580X_BAND_EASTEUROPE;
     } else {
 #else
     {
 #endif
         // Freq in grid
         uint16_t chan = (tuner.freq - fBL) / tuner.step2;
-        wrBuf[2] = chan >> 2; // 8 MSB
-        wrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | band |
-                (tuner.step2 == 20 ? RDA580X_SPACE_200 : (tuner.step2 == 10 ? RDA580X_SPACE_100 : RDA580X_SPACE_50));
+        tunerWrBuf[2] = chan >> 2; // 8 MSB
+        tunerWrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | band |
+        (tuner.step2 == 20 ? RDA580X_SPACE_200 : (tuner.step2 == 10 ? RDA580X_SPACE_100 : RDA580X_SPACE_50));
     }
     rda580xWriteReg(2); // Stop seek if it is
     rda580xWriteReg(3);
@@ -119,38 +112,38 @@ void rda580xReadStatus()
 
     I2CStart(RDA5807M_I2C_SEQ_ADDR | I2C_READ);
     for (i = 0; i < RDA5807_RDBUF_SIZE - 1; i++)
-        tunerRdbuf[i] = I2CReadByte(I2C_ACK);
-    tunerRdbuf[RDA5807_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
+        tunerRdBuf[i] = I2CReadByte(I2C_ACK);
+    tunerRdBuf[RDA5807_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
     I2CStop();
 
     // Get RDS data
 #ifdef _RDS
     if (tuner.rds) {
         // If RDS ready and sync flag are set
-        if ((tunerRdbuf[0] & RDA5807_RDSR) && (tunerRdbuf[0] & RDA5807_RDSS)) {
+        if ((tunerRdBuf[0] & RDA5807_RDSR) && (tunerRdBuf[0] & RDA5807_RDSS)) {
             // If there are no non-correctable errors in blocks A-D
-            if (    (tunerRdbuf[3] & RDA5807_BLERA) != RDA5807_BLERA &&
-                    (tunerRdbuf[3] & RDA5807_BLERB) != RDA5807_BLERB ) {
+            if (    (tunerRdBuf[3] & RDA5807_BLERA) != RDA5807_BLERA &&
+                    (tunerRdBuf[3] & RDA5807_BLERB) != RDA5807_BLERB ) {
                 // Send rdBuf[4..11] as 16-bit blocks A-D
-                rdsSetBlocks(&tunerRdbuf[4]);
+                rdsSetBlocks(&tunerRdBuf[4]);
             }
         }
     }
 #endif
-    uint16_t chan = tunerRdbuf[0] & RDA580X_READCHAN_9_8;
+    uint16_t chan = tunerRdBuf[0] & RDA580X_READCHAN_9_8;
     chan <<= 8;
-    chan |= tunerRdbuf[1];
+    chan |= tunerRdBuf[1];
 
 #ifdef _RDA5807_DF
-    if (wrBuf[11] & RDA5807_FREQ_MODE) {
+    if (tunerWrBuf[11] & RDA5807_FREQ_MODE) {
         tuner.rdFreq = tuner.freq;
     } else {
 #else
     {
 #endif
-        uint16_t chan = tunerRdbuf[0] & RDA580X_READCHAN_9_8;
+        uint16_t chan = tunerRdBuf[0] & RDA580X_READCHAN_9_8;
         chan <<= 8;
-        chan |= tunerRdbuf[1];
+        chan |= tunerRdBuf[1];
         tuner.rdFreq = chan * tuner.step2 + fBL;
     }
 }
@@ -158,7 +151,7 @@ void rda580xReadStatus()
 void rda580xSetVolume(int8_t value)
 {
     if (value)
-        wrBuf[7] = RDA580X_LNA_PORT_SEL_LNAP | (value - 1);
+        tunerWrBuf[7] = RDA580X_LNA_PORT_SEL_LNAP | (value - 1);
     else
         rda580xSetMute(1);
 
@@ -197,12 +190,12 @@ void rda580xSetPower(uint8_t value)
 void rda580xSeek(int8_t direction)
 {
 #ifdef _RDA5807_DF
-    if (wrBuf[11] & RDA5807_FREQ_MODE) {
+    if (tunerWrBuf[11] & RDA5807_FREQ_MODE) {
         tunerChangeFreq(direction);
         return;
     }
 #endif
-    wrBuf[0] |= RDA580X_SEEK;
+    tunerWrBuf[0] |= RDA580X_SEEK;
     rda580xSetBit(0, RDA580X_SEEKUP, direction > 0);
-    wrBuf[0] &= ~RDA580X_SEEK;
+    tunerWrBuf[0] &= ~RDA580X_SEEK;
 }

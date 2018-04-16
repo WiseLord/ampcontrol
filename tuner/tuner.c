@@ -5,7 +5,8 @@
 
 //uint8_t *bufFM;
 #if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032) || defined(_SI470X)
-uint8_t tunerRdbuf[TUNER_RDBUF_SIZE];
+uint8_t tunerRdBuf[TUNER_RDBUF_SIZE];
+uint8_t tunerWrBuf[TUNER_WRBUF_SIZE];
 #endif
 
 Tuner_type tuner;
@@ -219,23 +220,23 @@ uint8_t tunerStereo()
     switch (tuner.ic) {
 #ifdef _TEA5767
     case TUNER_TEA5767:
-        ret = TEA5767_BUF_STEREO(tunerRdbuf);
+        ret = TEA5767_BUF_STEREO(tunerRdBuf);
         break;
 #endif
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-        ret = RDA5807_BUF_STEREO(tunerRdbuf);
+        ret = RDA5807_BUF_STEREO(tunerRdBuf);
         break;
 #endif
 #ifdef _TUX032
     case TUNER_TUX032:
-        ret = !TUX032_BUF_STEREO(tunerRdbuf);
+        ret = !TUX032_BUF_STEREO(tunerRdBuf);
         break;
 #endif
 #ifdef _SI470X
     case TUNER_SI470X:
-        ret = SI470X_BUF_STEREO(tunerRdbuf);
+        ret = SI470X_BUF_STEREO(tunerRdBuf);
         break;
 #endif
     default:
@@ -252,13 +253,13 @@ uint8_t tunerLevel()
     switch (tuner.ic) {
 #ifdef _TEA5767
     case TUNER_TEA5767:
-        ret = (tunerRdbuf[3] & TEA5767_LEV_MASK) >> 4;
+        ret = (tunerRdBuf[3] & TEA5767_LEV_MASK) >> 4;
         break;
 #endif
 #ifdef _RDA580X
     case TUNER_RDA5807:
     case TUNER_RDA5802:
-        ret = (tunerRdbuf[2] & RDA580X_RSSI) >> 1;
+        ret = (tunerRdBuf[2] & RDA580X_RSSI) >> 1;
         if (ret < 30)
             ret = 0;
         else
@@ -267,7 +268,7 @@ uint8_t tunerLevel()
 #endif
 #ifdef _SI470X
     case TUNER_SI470X:
-        ret = (tunerRdbuf[1] / 2);
+        ret = (tunerRdBuf[1] / 2);
         break;
 #endif
     default:
