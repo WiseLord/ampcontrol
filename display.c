@@ -145,9 +145,9 @@ void showRadio(uint8_t mode)
     ks0066WriteData('.');
     writeNum(tuner.freq % 100, 2, '0');
 
-    // Mono/stereo indicator ('M'/'S')
+    // Mono/stereo indicator
     ks0066SetXY(10, 0);
-    ks0066WriteData('M' + tunerStereo() ? 5 : 0);
+    ks0066WriteData(tunerStereo() ? 'S' : 'M');
 
     // Signal level
     // Temporary disabled
@@ -162,7 +162,19 @@ void showRadio(uint8_t mode)
         ks0066WriteString("--");
 
     // Frequency scale
-    showBar(0, (tuner.fMax - tuner.fMin) >> 4, (tuner.freq - tuner.fMin) >> 4);
+#ifdef _RDS
+    uint8_t rdsFlag = rdsGetFlag();
+    if (rdsFlag) {
+        // RDS data
+        ks0066SetXY(0, 1);
+        ks0066WriteString("RDS:    ");
+        ks0066WriteString(rdsGetText());
+    } else {
+#else
+    {
+#endif
+        showBar(0, (tuner.fMax - tuner.fMin) >> 4, (tuner.freq - tuner.fMin) >> 4);
+    }
 }
 
 void showBoolParam(uint8_t value, uint8_t labelIndex)

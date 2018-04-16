@@ -16,6 +16,11 @@
 // Hardware initialization
 static void hwInit()
 {
+#ifdef _HARDWARE_RST
+#ifdef _SI470X
+    si470xReset();
+#endif
+#endif
     I2CInit();                          // I2C bus
     displayInit();                      // Display
     rcInit();                           // RC5 IR remote control
@@ -198,7 +203,7 @@ int main()
             break;
         case CMD_RC_DEF_DISPLAY:
             if (aproc.input == 0) {
-                setDispTimer(DISPLAY_TIME_FM_RADIO);
+                setDispTimer(DISPLAY_TIME_FM_SCALE);
                 fmMode = MODE_FM_RADIO;
                 dispMode = MODE_FM_RADIO;
             }

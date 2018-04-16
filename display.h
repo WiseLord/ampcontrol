@@ -12,6 +12,7 @@
 #define DISPLAY_TIME_TIME       2
 #define DISPLAY_TIME_TIME_EDIT  10
 #define DISPLAY_TIME_FM_RADIO   5
+#define DISPLAY_TIME_FM_SCALE   60
 #define DISPLAY_TIME_CHAN       2
 #define DISPLAY_TIME_AUDIO      3
 #define DISPLAY_TIME_SP         3

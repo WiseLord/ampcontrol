@@ -93,6 +93,10 @@ ifeq "$(findstring YES, $(SOFTWARE_SPI))" "YES"
   DEFINES += -D_SPISW
 endif
 
+ifeq "$(findstring YES, $(HARDWARE_RST))" "YES"
+  DEFINES += -D_HARDWARE_RST
+endif
+
 # Build directory
 BUILDDIR = build
 
