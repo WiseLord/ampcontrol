@@ -5,8 +5,6 @@
 #include "../pins.h"
 #include <util/delay.h>
 
-static uint8_t wrBuf[12];
-
 static uint8_t band = SI470X_BAND_US_EUROPE;
 static uint16_t fBL = 8750;
 
@@ -16,7 +14,7 @@ static void si470xWriteI2C(uint8_t bytes)
 
     I2CStart(SI470X_I2C_ADDR);
     for (i = 0; i < bytes; i++)
-        I2CWriteByte(wrBuf[i]);
+        I2CWriteByte(tunerWrBuf[i]);
     I2CStop();
 }
 
@@ -32,8 +30,8 @@ static void initRegs()
     }
 
     // Regs 07..09 must be read first before we will write them later
-    wrBuf[10] = I2CReadByte(I2C_ACK);
-    wrBuf[11] = I2CReadByte(I2C_NOACK);
+    tunerWrBuf[10] = I2CReadByte(I2C_ACK);
+    tunerWrBuf[11] = I2CReadByte(I2C_NOACK);
 
     I2CStop();
 }
@@ -58,20 +56,20 @@ void si470xInit()
 {
     initRegs();
 
-    wrBuf[0] = SI470X_SKMODE;
+    tunerWrBuf[0] = SI470X_SKMODE;
     if (tuner.ctrl & TUNER_SMUTE) {
-        wrBuf[0] &= ~SI470X_DSMUTE;
+        tunerWrBuf[0] &= ~SI470X_DSMUTE;
     } else {
-        wrBuf[0] |= SI470X_DSMUTE;
+        tunerWrBuf[0] |= SI470X_DSMUTE;
     }
 
     if (tuner.ctrl & TUNER_DE) {
-        wrBuf[4] &= !SI470X_DE; // 75us used in USA
+        tunerWrBuf[4] &= !SI470X_DE; // 75us used in USA
     } else {
-        wrBuf[4] |= SI470X_DE;  // 50us used in Europe
+        tunerWrBuf[4] |= SI470X_DE;  // 50us used in Europe
     }
 
-    wrBuf[5] = SI470X_BLNDADJ_19_37;
+    tunerWrBuf[5] = SI470X_BLNDADJ_19_37;
 
     if (tuner.ctrl & TUNER_BL) {
         fBL = 7600;
@@ -82,18 +80,18 @@ void si470xInit()
             band = SI470X_BAND_JAPAN_WIDE;
         }
     }
-    wrBuf[7] = band | SI470X_VOLUME |
+    tunerWrBuf[7] = band | SI470X_VOLUME |
                (tuner.step2 == 20 ? SI470X_SPACE_200 : (tuner.step2 == 10 ? SI470X_SPACE_100 : SI470X_SPACE_50));
 
-    wrBuf[6] = SI470X_SEEKTH & 12; // 25 by default for backward compatibility
-    wrBuf[9] = (SI470X_SKSNR & 0b00010000) | (SI470X_SKCNT & 0b00000001);
+    tunerWrBuf[6] = SI470X_SEEKTH & 12; // 25 by default for backward compatibility
+    tunerWrBuf[9] = (SI470X_SKSNR & 0b00010000) | (SI470X_SKCNT & 0b00000001);
 
-    wrBuf[10] |= SI470X_XOSCEN;
+    tunerWrBuf[10] |= SI470X_XOSCEN;
 
-    wrBuf[0] |= SI470X_RDSM; // New method
-    wrBuf[4] |= SI470X_RDS;
+    tunerWrBuf[0] |= SI470X_RDSM; // New method
+    tunerWrBuf[4] |= SI470X_RDS;
 
-    si470xWriteI2C(sizeof(wrBuf));
+    si470xWriteI2C(SI470X_WRBUF_SIZE);
 
     if (tuner.step2 < 10)
         tuner.step2 = 5;
@@ -105,9 +103,9 @@ void si470xSetFreq()
 
     chan = (tuner.freq - fBL) / tuner.step2;
 
-    wrBuf[0] &= ~SI470X_SEEK; // not seek
-    wrBuf[2] = SI470X_TUNE | ((chan >> 8) & 0b00000011);
-    wrBuf[3] = (chan & SI470X_CHAN_7_0);
+    tunerWrBuf[0] &= ~SI470X_SEEK; // not seek
+    tunerWrBuf[2] = SI470X_TUNE | ((chan >> 8) & 0b00000011);
+    tunerWrBuf[3] = (chan & SI470X_CHAN_7_0);
 
     si470xWriteI2C(4);
 }
@@ -118,13 +116,13 @@ void si470xReadStatus()
 
     I2CStart(SI470X_I2C_ADDR | I2C_READ);
     for (i = 0; i < SI470X_RDBUF_SIZE - 1; i++)
-        tunerRdbuf[i] = I2CReadByte(I2C_ACK);
-    tunerRdbuf[SI470X_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
+        tunerRdBuf[i] = I2CReadByte(I2C_ACK);
+    tunerRdBuf[SI470X_RDBUF_SIZE - 1] = I2CReadByte(I2C_NOACK);
     I2CStop();
 
-    if (tunerRdbuf[0] & SI740X_STC) { // seek complete
-        wrBuf[0] &= ~SI470X_SEEK;
-        wrBuf[2] &= ~SI470X_TUNE;
+    if (tunerRdBuf[0] & SI740X_STC) { // seek complete
+        tunerWrBuf[0] &= ~SI470X_SEEK;
+        tunerWrBuf[2] &= ~SI470X_TUNE;
         si470xWriteI2C(4);
     }
 
@@ -132,30 +130,30 @@ void si470xReadStatus()
 #ifdef _RDS
     if (tuner.rds) {
         // If RDS ready and sync flag is set
-        if ((tunerRdbuf[0] & SI740X_RDSR) && (tunerRdbuf[0] & SI740X_RDSS)) {
+        if ((tunerRdBuf[0] & SI740X_RDSR) && (tunerRdBuf[0] & SI740X_RDSS)) {
             // If there are no non-correctable errors in blocks A-D
-            if (    (tunerRdbuf[0] & SI740X_BLERA) != SI740X_BLERA &&
-                    (tunerRdbuf[2] & SI740X_BLERB) != SI740X_BLERB &&
-                    (tunerRdbuf[2] & SI740X_BLERC) != SI740X_BLERC &&
-                    (tunerRdbuf[2] & SI740X_BLERD) != SI740X_BLERD ) {
+            if (    (tunerRdBuf[0] & SI740X_BLERA) != SI740X_BLERA &&
+                    (tunerRdBuf[2] & SI740X_BLERB) != SI740X_BLERB &&
+                    (tunerRdBuf[2] & SI740X_BLERC) != SI740X_BLERC &&
+                    (tunerRdBuf[2] & SI740X_BLERD) != SI740X_BLERD ) {
                 // Send rdBuf[4..11] as 16-bit blocks A-D
-                rdsSetBlocks(&tunerRdbuf[4]);
+                rdsSetBlocks(&tunerRdBuf[4]);
             }
         }
     }
 #endif
 
-    uint16_t chan = tunerRdbuf[2] & SI740X_READCHAN_9_8;
+    uint16_t chan = tunerRdBuf[2] & SI740X_READCHAN_9_8;
     chan <<= 8;
-    chan |= tunerRdbuf[3];
+    chan |= tunerRdBuf[3];
 
     tuner.rdFreq = chan * tuner.step2 + fBL;
 }
 
 void si470xSetVolume(int8_t value)
 {
-    wrBuf[7] &= ~SI470X_VOLUME;
-    wrBuf[7] |= value;
+    tunerWrBuf[7] &= ~SI470X_VOLUME;
+    tunerWrBuf[7] |= value;
 
     si470xWriteI2C(8);
 }
@@ -163,9 +161,9 @@ void si470xSetVolume(int8_t value)
 void si470xSetMute(uint8_t value)
 {
     if (value) {
-        wrBuf[0] &= ~SI470X_DMUTE;
+        tunerWrBuf[0] &= ~SI470X_DMUTE;
     } else {
-        wrBuf[0] |= SI470X_DMUTE;
+        tunerWrBuf[0] |= SI470X_DMUTE;
     }
 
     si470xWriteI2C(2);
@@ -174,9 +172,9 @@ void si470xSetMute(uint8_t value)
 void si470xSetMono(uint8_t value)
 {
     if (value) {
-        wrBuf[0] |= SI470X_MONO;
+        tunerWrBuf[0] |= SI470X_MONO;
     } else {
-        wrBuf[0] &= ~SI470X_MONO;
+        tunerWrBuf[0] &= ~SI470X_MONO;
     }
 
     si470xWriteI2C(2);
@@ -188,9 +186,9 @@ void si470xSetRds(uint8_t value)
     rdsDisable();
 
     if (value) {
-        wrBuf[4] |= SI470X_RDS;
+        tunerWrBuf[4] |= SI470X_RDS;
     } else {
-        wrBuf[4] &= ~SI470X_RDS;
+        tunerWrBuf[4] &= ~SI470X_RDS;
     }
 
     si470xWriteI2C(6);
@@ -200,11 +198,11 @@ void si470xSetRds(uint8_t value)
 
 void si470xSetPower(uint8_t value)
 {
-    wrBuf[1] |= SI470X_ENABLE;
+    tunerWrBuf[1] |= SI470X_ENABLE;
     if (value) {
-        wrBuf[1] &= ~SI470X_DISABLE;
+        tunerWrBuf[1] &= ~SI470X_DISABLE;
     } else {
-        wrBuf[1] |= SI470X_DISABLE;
+        tunerWrBuf[1] |= SI470X_DISABLE;
     }
 
     si470xWriteI2C(4);
@@ -213,12 +211,12 @@ void si470xSetPower(uint8_t value)
 
 void si470xSeek(int8_t direction)
 {
-    wrBuf[0] |= SI470X_SEEK;
+    tunerWrBuf[0] |= SI470X_SEEK;
 
     if (direction > 0) {
-        wrBuf[0] |= SI470X_SEEKUP;
+        tunerWrBuf[0] |= SI470X_SEEKUP;
     } else {
-        wrBuf[0] &= ~SI470X_SEEKUP;
+        tunerWrBuf[0] &= ~SI470X_SEEKUP;
     }
 
     si470xWriteI2C(2);

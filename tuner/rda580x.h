@@ -186,6 +186,7 @@
 #define RDA5807_BUF_STEREO(buf)     (buf[0] & RDA580X_ST)
 
 #define RDA5807_RDBUF_SIZE          12
+#define RDA5807_WRBUF_SIZE          14
 
 #define RDA5807_VOL_MIN             0
 #define RDA5807_VOL_MAX             16

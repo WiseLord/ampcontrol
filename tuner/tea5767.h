@@ -66,6 +66,7 @@
 #define TEA5767_BUF_STEREO(buf) (buf[2] & TEA5767_STEREO)
 
 #define TEA5767_RDBUF_SIZE      5
+#define TEA5767_WRBUF_SIZE      5
 
 void tea5767Init();
 
