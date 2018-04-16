@@ -29,8 +29,7 @@ static const uint8_t sinTable[] PROGMEM = {
     prod;                     \
     })
 
-static inline int16_t sinTbl(uint8_t phi) __attribute__((always_inline));
-static inline int16_t sinTbl(uint8_t phi)
+static int16_t sinTbl(uint8_t phi)
 {
     int16_t ret;
     uint8_t neg = (phi >= N_WAVE / 2);
@@ -40,16 +39,13 @@ static inline int16_t sinTbl(uint8_t phi)
     return neg ? -ret : ret;
 }
 
-inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d) __attribute__((always_inline));
-inline void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
+static void sumDif(int16_t a, int16_t b, int16_t *s, int16_t *d)
 {
     *s = a + b;
     *d = a - b;
 }
 
-inline void multShf(int16_t cos, int16_t sin,
-                    int16_t x, int16_t y, int16_t *u, int16_t *v) __attribute__((always_inline));
-inline void multShf(int16_t cos, int16_t sin,
+static void multShf(int16_t cos, int16_t sin,
                     int16_t x, int16_t y, int16_t *u, int16_t *v)
 {
     *u = (mshf_16(x, cos) - mshf_16(y, sin));

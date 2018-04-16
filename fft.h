@@ -8,8 +8,6 @@
 
 #define N_WAVE      64
 
-#define N_DB        32
-
 void fftRad4(int16_t *fr, int16_t *fi);
 
 #endif // FFT_H
