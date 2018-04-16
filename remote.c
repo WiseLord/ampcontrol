@@ -7,13 +7,17 @@ static volatile IRData irData;          // Last decoded IR command
 
 void rcInit()
 {
-    MCUCR = (1 << ISC10);               // Set INT1 to trigger on any edge
     IN(RC);                             // Set PD3 (INT1) to input
     TCCR1A = 0;                         // Reset Timer1 counter
     TCCR1B = (1 << CS11);               // Set Timer1 prescaler to 8 (1MHz)
+#if defined(_atmega8)
+    MCUCR = (1 << ISC10);               // Set INT1 to trigger on any edge
     GICR = (1 << INT1);                 // Enable INT1 interrupt
+#else
+    EICRA = (1 << ISC10);               // Set INT1 to trigger on any edge
+    EIMSK = (1 << INT1);                // Enable INT1 interrupt
+#endif
 }
-
 
 ISR(INT1_vect)
 {

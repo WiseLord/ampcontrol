@@ -24,7 +24,12 @@ static void hwInit()
 
     rtc.etm = RTC_NOEDIT;
 
+#if defined(_atmega8)
     TIMSK = (1 << TOIE0) | (1 << OCIE2);
+#else
+    TIMSK0 = (1 << TOIE0);
+    TIMSK2 = (1 << OCIE2A);
+#endif
     sei();                              // Gloabl interrupt enable
 
     OUT(STMU_STBY);                     // Standby port

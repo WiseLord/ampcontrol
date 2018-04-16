@@ -53,10 +53,16 @@ void inputInit()
     SET(ENCODER_B);
 
     // Set timer prescaller to 64 (125 kHz) and reset on match
-    TCCR2 = ((1 << CS22) | (0 << CS21) | (0 << CS20) | (1 << WGM21));
+#if defined(_atmega8)
+    TCCR2 = (1 << CS22) | (0 << CS21) | (0 << CS20) | (1 << WGM21);
     OCR2 = 125;                     // 125000/125 => 1000 polls/sec
     TCNT2 = 0;                      // Reset timer value
-
+#else
+    TCCR2A = (1 << WGM21);
+    TCCR2B = (1 << CS22) | (0 << CS21) | (0 << CS20);
+    OCR2A = 125;
+    TCNT2 = 0;
+#endif
     rcCodesInit();
 }
 
@@ -94,7 +100,11 @@ static uint8_t getPins()
     return pins;
 }
 
+#if defined(_atmega8)
 ISR (TIMER2_COMP_vect)
+#else
+ISR (TIMER2_COMPA_vect)
+#endif
 {
     static int16_t btnCnt = 0;      // Buttons press duration value
 

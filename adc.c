@@ -28,8 +28,11 @@ static uint8_t _br;
 
 void adcInit()
 {
+#if defined(_atmega8)
     TCCR0 = (0 << CS02) | (1 << CS01) | (0 << CS00);
-
+#else
+    TCCR0B = (0 << CS02) | (1 << CS01) | (0 << CS00);
+#endif
     // Enable ADC with prescaler 16
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (0 << ADPS1) | (0 << ADPS0);
 
