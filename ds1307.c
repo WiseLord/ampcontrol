@@ -54,7 +54,7 @@ int8_t *readTime(void)
         I2CStart(DS1307_ADDR);
         I2CWriteByte(i);
         I2CStart(DS1307_ADDR | I2C_READ);
-        I2CReadByte(&temp, I2C_NOACK);
+        temp = I2CReadByte(I2C_NOACK);
         I2CStop();
         time[i] = BD2D(temp);
     }

@@ -1,12 +1,13 @@
 AUDIOPROC = TDA7439
 DISPLAY = KS0108
-TUNER = RDA5807
+
+TUNER_LIST = RDA580X
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m16_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER))
+TARG = ampcontrol_m16_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER_LIST))
 
 MCU = atmega16
 F_CPU = 16000000L
@@ -30,21 +31,50 @@ else ifeq ($(DISPLAY), PCF8574)
   DISP_SRC = display/pcf8574.c
 endif
 
-ifeq ($(TUNER), TEA5767)
-  TUNER_SRC = tuner/tuner.c tuner/tea5767.c
-else ifeq ($(TUNER), TUX032)
-  TUNER_SRC = tuner/tuner.c tuner/tux032.c
-else ifeq ($(TUNER), LM7001)
-  TUNER_SRC = tuner/tuner.c tuner/lm7001.c
-else ifeq ($(TUNER), RDA5807)
-  TUNER_SRC = tuner/tuner.c tuner/rda5807.c
+SRCS = $(wildcard *.c) $(AUDIO_SRC) $(DISP_SRC)
+
+# Tuner source files
+SRCS += tuner/tuner.c
+ifeq "$(findstring TEA5767, $(TUNER_LIST))" "TEA5767"
+  SRCS += tuner/tea5767.c
+endif
+ifeq "$(findstring RDA580X, $(TUNER_LIST))" "RDA580X"
+  SRCS += tuner/rda580x.c
+endif
+ifeq "$(findstring TUX032, $(TUNER_LIST))" "TUX032"
+  SRCS += tuner/tux032.c
+endif
+ifeq "$(findstring LM7001, $(TUNER_LIST))" "LM7001"
+  SRCS += tuner/lm7001.c
+  SOFTWARE_SPI = YES
+endif
+ifeq "$(findstring LC72131, $(TUNER_LIST))" "LC72131"
+  SRCS += tuner/lc72131.c
+  SOFTWARE_SPI = YES
+endif
+ifeq "$(findstring SI470X, $(TUNER_LIST))" "SI470X"
+  SRCS += tuner/si470x.c
+  HARDWARE_RST = "YES"
+endif
+DEFINES += $(addprefix -D_, $(TUNER_LIST))
+
+ifeq "$(findstring RDS, $(FEATURE_LIST))" "RDS"
+  SRCS += tuner/rds.c
+endif
+DEFINES += $(addprefix -D_, $(FEATURE_LIST))
+
+# Software SPI
+ifeq "$(findstring YES, $(SOFTWARE_SPI))" "YES"
+#  SRCS += spisw.c
+  DEFINES += -D_SPISW
 endif
 
-SRCS = $(wildcard *.c) $(AUDIO_SRC) $(DISP_SRC) $(TUNER_SRC)
+ifeq "$(findstring YES, $(HARDWARE_RST))" "YES"
+  DEFINES += -D_HARDWARE_RST
+endif
 
 # Build directory
 BUILDDIR = build
-
 
 OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding
 DEBUG = -g -Wall -Werror
@@ -77,7 +107,7 @@ size:
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D_atmega16 -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D_atmega16 -D$(AUDIOPROC) -D$(DISPLAY) $(DEFINES) -c -o $@ $<
 
 clean:
 	rm -rf $(BUILDDIR)

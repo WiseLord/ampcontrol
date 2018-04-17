@@ -2,149 +2,305 @@
 
 #include <avr/eeprom.h>
 #include "../eeprom.h"
-#include "../pins.h"
 
-uint8_t *bufFM;
+//uint8_t *bufFM;
+#if defined(_RDA580X) || defined(_TEA5767) || defined(_TUX032) || defined(_SI470X)
+uint8_t tunerRdBuf[TUNER_RDBUF_SIZE];
+uint8_t tunerWrBuf[TUNER_WRBUF_SIZE];
+#endif
 
-static uint16_t _freq;
-static uint8_t _mono;
-static uint8_t _step;
-static uint8_t _ctrl;
+Tuner_type tuner;
 
 void tunerInit()
 {
-    _ctrl = eeprom_read_byte((uint8_t *)EEPROM_FM_CTRL);
-    _freq = eeprom_read_word((uint16_t *)EEPROM_FM_FREQ);
-    _mono = eeprom_read_byte((uint8_t *)EEPROM_FM_MONO);
-    _step = eeprom_read_byte((uint8_t *)EEPROM_FM_STEP2);
+    eeprom_read_block(&tuner, (void *)EEPROM_FM_TUNER, EEPROM_FM_TUNER_SIZE);
 
-#if defined(TEA5767)
-    tea5767Init(_ctrl);
-#elif defined(RDA5807)
-    rda5807Init();
-#elif defined(TUX032)
-    tux032Init();
-#elif defined(LM7001)
-    lm7001Init();
+    // If defined only tuner, use it despite on eeprom value
+#if   !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
+    tuner.ic = TUNER_NO;
+#elif  defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
+    tuner.ic = TUNER_TEA5767;
+#elif !defined(_TEA5767) &&  defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
+    if (tuner.ic != TUNER_RDA5802)
+        tuner.ic = TUNER_RDA5807;
+#elif !defined(_TEA5767) && !defined(_RDA580X) &&  defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
+    tuner.ic = TUNER_TUX032;
+#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) &&  defined(_LM7001) && !defined(_LC72131) && !defined(_SI470X)
+    tuner.ic = TUNER_LM7001;
+#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) &&  defined(_LC72131) && !defined(_SI470X)
+    tuner.ic = TUNER_LC72131;
+#elif !defined(_TEA5767) && !defined(_RDA580X) && !defined(_TUX032) && !defined(_LM7001) && !defined(_LC72131) &&  defined(_SI470X)
+    tuner.ic = TUNER_SI470X;
+#else
+    if (tuner.ic >= TUNER_END)
+        tuner.ic = TUNER_NO;
 #endif
 
-    return;
-}
-
-void tunerSetFreq(uint16_t freq)
-{
-    if (freq > FM_FREQ_MAX)
-        freq = FM_FREQ_MAX;
-    if (freq < FM_FREQ_MIN)
-        freq = FM_FREQ_MIN;
-
-    _freq = freq;
-
-#if defined(TEA5767)
-    tea5767SetFreq(_freq, _mono);
-#elif defined(RDA5807)
-    rda5807SetFreq(_freq, _mono);
-#elif defined(TUX032)
-    tux032SetFreq(_freq);
-#elif defined(LM7001)
-    lm7001SetFreq(_freq);
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        tea5767Init();
+        break;
 #endif
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xInit();
+        break;
+#endif
+#ifdef _TUX032
+    case TUNER_TUX032:
+        tux032Init();
+        break;
+#endif
+#ifdef _LM7001
+    case TUNER_LM7001:
+        lm7001Init();
+        break;
+#endif
+#ifdef _LC72131
+    case TUNER_LC72131:
+        lc72131Init();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xInit();
+        break;
+#endif
+    default:
+        break;
+    }
 
-    return;
+    tunerSetFreq();
 }
 
-uint16_t tunerGetFreq(void)
+void tunerSetFreq()
 {
-    return _freq;
+    if (tuner.freq < tuner.fMin)
+        tuner.freq = tuner.fMin;
+    else if (tuner.freq > tuner.fMax)
+        tuner.freq = tuner.fMax;
+
+    tuner.rdFreq = tuner.freq;
+
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        tea5767SetFreq();
+        break;
+#endif
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xSetFreq();
+        break;
+#endif
+#ifdef _TUX032
+    case TUNER_TUX032:
+        tux032SetFreq();
+        break;
+#endif
+#ifdef _LM7001
+    case TUNER_LM7001:
+        lm7001SetFreq();
+        break;
+#endif
+#ifdef _LC72131
+    case TUNER_LC72131:
+        lc72131SetFreq();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetFreq();
+        break;
+#endif
+    default:
+        break;
+    }
+
+#ifdef _RDS
+    rdsDisable(); // Clear RDS buffer
+#endif
 }
 
 void tunerChangeFreq(int8_t mult)
 {
-    tunerSetFreq(_freq + _step * mult);
+    tuner.freq = tuner.rdFreq;
+    if ((tuner.freq > FM_BAND_DIV_FREQ) || (mult > 0 && tuner.freq == FM_BAND_DIV_FREQ))
+        tuner.freq += tuner.step2 * mult;
+    else
+        tuner.freq += tuner.step1 * mult;
 
-    return;
+    tunerSetFreq();
 }
 
-void tunerReadStatus(void)
+void tunerReadStatus()
 {
-#if defined(TEA5767)
-    bufFM = tea5767ReadStatus();
-#elif defined(RDA5807)
-    bufFM = rda5807ReadStatus();
-#elif defined(TUX032)
-    bufFM = tux032ReadStatus();
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        tea5767ReadStatus();
+        break;
 #endif
-
-    return;
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xReadStatus();
+        break;
+#endif
+#ifdef _TUX032
+    case TUNER_TUX032:
+        tux032ReadStatus();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xReadStatus();
+        break;
+#endif
+    default:
+        break;
+    }
 }
 
-void tunerSwitchMono(void)
+void tunerSetMono(uint8_t value)
 {
-    _mono = !_mono;
+    tuner.mono = value;
 
-#if defined(TEA5767) || defined(RDA5807)
-    tunerSetFreq(tunerGetFreq());
+    switch (tuner.ic) {
+    case TUNER_TEA5767:
+        tunerSetFreq();
+        break;
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xSetMono(value);
+        break;
 #endif
-
-    return;
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetMono(value);
+        break;
+#endif
+    default:
+        tuner.mono = 0;
+        break;
+    }
 }
 
-uint8_t tunerStereo(void)
+#ifdef _RDS
+void tunerSetRDS(uint8_t value)
 {
-    uint8_t ret = 1;
+    tuner.rds = value;
 
-#if defined(TEA5767)
-    ret = TEA5767_BUF_STEREO(bufFM) && !_mono;
-#elif defined(RDA5807)
-    ret = RDA5807_BUF_STEREO(bufFM) && !_mono;
-#elif defined(TUX032)
-    ret = !TUX032_BUF_STEREO(bufFM);
+    switch (tuner.ic) {
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+        rda580xSetRds(value);
+        break;
 #endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetRds(value);
+        break;
+#endif
+    default:
+        tuner.rds = 0;
+        break;
+    }
+}
+#endif
+
+uint8_t tunerStereo()
+{
+    uint8_t ret = !tuner.mono;
+
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        ret = TEA5767_BUF_STEREO(tunerRdBuf);
+        break;
+#endif
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        ret = RDA5807_BUF_STEREO(tunerRdBuf);
+        break;
+#endif
+#ifdef _TUX032
+    case TUNER_TUX032:
+        ret = !TUX032_BUF_STEREO(tunerRdBuf);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        ret = SI470X_BUF_STEREO(tunerRdBuf);
+        break;
+#endif
+    default:
+        break;
+    }
 
     return ret;
 }
 
-uint8_t tunerLevel(void)
+uint8_t tunerLevel()
 {
     uint8_t ret = 0;
 
-#if defined(TEA5767)
-    ret = (bufFM[3] & TEA5767_LEV_MASK) >> 4;
-#elif defined(RDA5807)
-    uint8_t rawLevel = (bufFM[2] & RDA5807_RSSI) >> 1;
-    if (rawLevel < 24)
-        ret = 0;
-    else
-        ret = (rawLevel - 24) >> 1;
-#else
-    if (tunerStereo())
-        ret = 13;
-    else
-        ret = 3;
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        ret = (tunerRdBuf[3] & TEA5767_LEV_MASK) >> 4;
+        break;
 #endif
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        ret = (tunerRdBuf[2] & RDA580X_RSSI) >> 1;
+        if (ret < 30)
+            ret = 0;
+        else
+            ret = (ret - 30) >> 1;
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        ret = (tunerRdBuf[1] / 2);
+        break;
+#endif
+    default:
+        if (tunerStereo())
+            ret = 13;
+        else
+            ret = 3;
+        break;
+    }
 
     return ret;
 }
 
-// Find station number (1..50) in EEPROM
-uint8_t tunerStationNum(void)
+// Find station number (1..62) in EEPROM
+uint8_t tunerStationNum()
 {
     uint8_t i;
 
     for (i = 0; i < FM_COUNT; i++)
-        if (eeprom_read_word((uint16_t *)EEPROM_STATIONS + i) == _freq)
+        if (eeprom_read_word((uint16_t *)EEPROM_STATIONS + i) == tuner.rdFreq)
             return i + 1;
 
     return 0;
 }
 
 // Find favourite station number (1..10) in EEPROM
-uint8_t tunerFavStationNum(void)
+uint8_t tunerFavStationNum()
 {
     uint8_t i;
 
-    for (i = 0; i < FM_COUNT; i++)
-        if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + i) == _freq)
+    for (i = 0; i < FM_FAV_COUNT; i++)
+        if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + i) == tuner.rdFreq)
             return i + 1;
 
     return 0;
@@ -155,19 +311,22 @@ void tunerNextStation(int8_t direction)
 {
     uint8_t i;
     uint16_t freqCell;
-    uint16_t freqFound = _freq;
+    uint16_t freq;
+
+    tuner.freq = tuner.rdFreq;
+    freq = tuner.freq;
 
     for (i = 0; i < FM_COUNT; i++) {
         freqCell = eeprom_read_word((uint16_t *)EEPROM_STATIONS + i);
         if (freqCell != 0xFFFF) {
             if (direction == SEARCH_UP) {
-                if (freqCell > _freq) {
-                    freqFound = freqCell;
+                if (freqCell > tuner.freq) {
+                    freq = freqCell;
                     break;
                 }
             } else {
-                if (freqCell < _freq) {
-                    freqFound = freqCell;
+                if (freqCell < tuner.freq) {
+                    freq = freqCell;
                 } else {
                     break;
                 }
@@ -175,50 +334,52 @@ void tunerNextStation(int8_t direction)
         }
     }
 
-    tunerSetFreq(freqFound);
+    tuner.freq = freq;
 
-    return;
+    tunerSetFreq();
 }
 
 // Load station by number
 void tunerLoadStation(uint8_t num)
 {
-    uint16_t freqCell = eeprom_read_word((uint16_t *)EEPROM_STATIONS + num);
+    uint16_t freq = eeprom_read_word((uint16_t *)EEPROM_STATIONS + num);
 
-    if (freqCell != 0xFFFF)
-        tunerSetFreq(freqCell);
-
-    return;
+    if (freq >= tuner.fMin && freq <= tuner.fMax) {
+        tuner.freq = freq;
+        tunerSetFreq();
+    }
 }
 
 // Load favourite station by number
 void tunerLoadFavStation(uint8_t num)
 {
-    if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + num) != 0)
-        tunerSetFreq(eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + num));
+    uint16_t freq = eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + num);
 
-    return;
+    if (freq >= tuner.fMin && freq <= tuner.fMax) {
+        tuner.freq = freq;
+        tunerSetFreq();
+    }
 }
 
 // Load favourite station by number
 void tunerStoreFavStation(uint8_t num)
 {
-    if (eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + num) == _freq)
+    uint16_t freq = eeprom_read_word((uint16_t *)EEPROM_FAV_STATIONS + num);
+
+    if (freq == tuner.rdFreq)
         eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, 0);
     else
-        eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, _freq);
-
-    return;
+        eeprom_update_word((uint16_t *)EEPROM_FAV_STATIONS + num, tuner.rdFreq);
 }
 
 // Save/delete station from eeprom
-void tunerStoreStation(void)
+void tunerStoreStation()
 {
     uint8_t i, j;
     uint16_t freqCell;
     uint16_t freq;
 
-    freq = _freq;
+    freq = tuner.rdFreq;
 
     for (i = 0; i < FM_COUNT; i++) {
         freqCell = eeprom_read_word((uint16_t *)EEPROM_STATIONS + i);
@@ -242,50 +403,155 @@ void tunerStoreStation(void)
             break;
         }
     }
-
-    return;
 }
 
-void tunerSetMute(uint8_t mute)
+void tunerSetVolume(int8_t value)
 {
-#if defined(TEA5767)
-    tea5767SetMute(mute);
-#elif defined(RDA5807)
-    rda5807SetMute(mute);
-#elif defined(TUX032)
-    tux032SetMute(mute);
-#endif
+    tuner.volume = value;
 
-    return;
+    switch (tuner.ic) {
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xSetVolume(value);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetVolume(value);
+        break;
+#endif
+    default:
+        break;
+    }
 }
 
-void tunerPowerOn(void)
+void tunerSetMute(uint8_t value)
 {
-#if defined(TEA5767)
-    tea5767PowerOn();
-#elif defined(RDA5807)
-    rda5807PowerOn();
-#elif defined(TUX032)
-    tux032PowerOn();
+    tuner.mute = value;
+
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        tea5767SetMute();
+        break;
 #endif
-
-    tunerSetFreq(_freq);
-
-    return;
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xSetMute(value);
+        break;
+#endif
+#ifdef _TUX032
+    case TUNER_TUX032:
+        tux032SetMute();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetMute(value);
+        break;
+#endif
+    default:
+        break;
+    }
 }
 
-void tunerPowerOff(void)
+void tunerSetBass(uint8_t value)
 {
-    eeprom_update_word((uint16_t *)EEPROM_FM_FREQ, _freq);
-    eeprom_update_byte((uint8_t *)EEPROM_FM_MONO, _mono);
-
-#if defined(TEA5767)
-    tea5767PowerOff();
-#elif defined(RDA5807)
-    rda5807PowerOff();
-#elif defined(TUX032)
-    tux032PowerOff();
+    switch (tuner.ic) {
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        tuner.bass = value;
+        rda580xSetBass(value);
+        break;
 #endif
+    default:
+        tuner.bass = 0;
+        break;
+    }
+}
 
-    return;
+void tunerPowerOn()
+{
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        tea5767PowerOn();
+        break;
+#endif
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xSetPower(1);
+        break;
+#endif
+#ifdef _TUX032
+    case TUNER_TUX032:
+        tux032PowerOn();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetPower(1);
+        break;
+#endif
+    default:
+        break;
+    }
+
+    tunerSetFreq();
+}
+
+void tunerPowerOff()
+{
+    tuner.freq = tuner.rdFreq;
+    eeprom_update_block(&tuner, (void *)EEPROM_FM_TUNER, EEPROM_FM_TUNER_SIZE);
+
+    switch (tuner.ic) {
+#ifdef _TEA5767
+    case TUNER_TEA5767:
+        tea5767PowerOff();
+        break;
+#endif
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xSetPower(0);
+        break;
+#endif
+#ifdef _TUX032
+    case TUNER_TUX032:
+        tux032PowerOff();
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSetPower(0);
+        break;
+#endif
+    default:
+        break;
+    }
+}
+
+void tunerSeek(int8_t direction)
+{
+    switch (tuner.ic) {
+#ifdef _RDA580X
+    case TUNER_RDA5807:
+    case TUNER_RDA5802:
+        rda580xSeek(direction);
+        break;
+#endif
+#ifdef _SI470X
+    case TUNER_SI470X:
+        si470xSeek(direction);
+        break;
+#endif
+    default:
+        tunerChangeFreq(direction * 10);
+        break;
+    }
 }

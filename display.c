@@ -388,10 +388,9 @@ void showRC5Info(uint16_t rc5Buf)
     return;
 }
 
-#if !defined(NOTUNER)
 void showRadio(void)
 {
-    uint16_t freq = tunerGetFreq();
+    uint16_t freq = tuner.rdFreq;
     uint8_t num = tunerStationNum();
 
 #if defined(KS0108)
@@ -424,7 +423,7 @@ void showRadio(void)
         ks0108WriteString((uint8_t *)"  ");
 
     // Frequency scale
-    showBar(FM_FREQ_MIN >> 4, FM_FREQ_MAX >> 4, freq >> 4);
+    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
 
     // Station number
     if (num) {
@@ -464,7 +463,7 @@ void showRadio(void)
     }
 
     // Frequency scale
-    showBar(FM_FREQ_MIN >> 4, FM_FREQ_MAX >> 4, freq >> 4);
+    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
 
     // Station number
     ks0066SetXY(14, 0);
@@ -492,7 +491,7 @@ void showRadio(void)
         ls020WriteString((uint8_t *)"      ");
 
     // Frequency scale
-    showBar(FM_FREQ_MIN >> 4, FM_FREQ_MAX >> 4, freq >> 4);
+    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
 
     // Station number
     ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
@@ -506,7 +505,6 @@ void showRadio(void)
 
     return;
 }
-#endif
 
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 {
