@@ -1,37 +1,48 @@
-AUDIOPROC = TDA7439
 DISPLAY = KS0108
 
+MCU = atmega16
+F_CPU = 16000000L
+
+APROC_LIST = TDA7439
 TUNER_LIST = RDA580X
+FEATURE_LIST =
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
 
 # Fimware file base name
-TARG = ampcontrol_m16_$(call lc,$(AUDIOPROC))_$(call lc,$(DISPLAY))_$(call lc,$(TUNER_LIST))
+TARG = ampcontrol_$(MCU)_$(call lc,$(DISPLAY))_$(call lc,$(APROC_LIST))_$(call lc,$(TUNER_LIST))
 
-MCU = atmega16
-F_CPU = 16000000L
+SRCS = main.c
+SRCS += input.c i2c.c ds1307.c rc5.c fft.c adc.c
 
-ifeq ($(AUDIOPROC), TDA7313)
-  AUDIO_SRC = audio/tda7313.c
-else ifeq ($(AUDIOPROC), TDA7318)
-  AUDIO_SRC = audio/tda7318.c
-else ifeq ($(AUDIOPROC), TDA7439)
-  AUDIO_SRC = audio/tda7439.c
-endif
+DEFINES = -D_$(MCU)
 
-FONTS = font-ks0066-ru-08.c font-ks0066-ru-24.c font-digits-32.c
+# Display source files
+FONTS_SRC = $(wildcard display/font*.c)
+ICONS_SRC = $(wildcard display/icon*.c)
+
 ifeq ($(DISPLAY), KS0108)
-  DISP_SRC = $(addprefix display/, ks0108.c $(FONTS))
+  SRCS += display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
 else ifeq ($(DISPLAY), KS0066)
-  DISP_SRC = display/ks0066.c
+  SRCS += display/ks0066.c
 else ifeq ($(DISPLAY), LS020)
-  DISP_SRC = $(addprefix display/, ls020.c $(FONTS))
+  SRCS += display/ls020.c $(FONTS_SRC) $(ICONS_SRC)
 else ifeq ($(DISPLAY), PCF8574)
-  DISP_SRC = display/pcf8574.c
+  SRCS += display/pcf8574.c
 endif
+SRCS += display.c
+DEFINES += -D$(APROC_LIST) -D$(DISPLAY)
 
-SRCS = $(wildcard *.c) $(AUDIO_SRC) $(DISP_SRC)
+# Audio source files
+ifeq ($(APROC_LIST), TDA7313)
+  SRCS += audio/tda7313.c
+else ifeq ($(APROC_LIST), TDA7318)
+  SRCS += audio/tda7318.c
+else ifeq ($(APROC_LIST), TDA7439)
+  SRCS += audio/tda7439.c
+endif
+DEFINES += -D$(APROC_LIST)
 
 # Tuner source files
 SRCS += tuner/tuner.c
@@ -76,14 +87,17 @@ endif
 # Build directory
 BUILDDIR = build
 
-OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding
-DEBUG = -g -Wall -Werror
-CFLAGS = $(DEBUG) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
+OPTIMIZE = -Os -mcall-prologues -fshort-enums -ffunction-sections -fdata-sections -ffreestanding -flto
+WARNLEVEL = -Wall -Werror
+CFLAGS = $(WARNLEVEL) -lm $(OPTIMIZE) -mmcu=$(MCU) -DF_CPU=$(F_CPU)
 CFLAGS += -MMD -MP -MT $(BUILDDIR)/$(*F).o -MF $(BUILDDIR)/$(*D)/$(*F).d
-LDFLAGS = $(DEBUG) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
+LDFLAGS = $(WARNLEVEL) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
+
+# Main definitions
 
 CC = avr-gcc
 OBJCOPY = avr-objcopy
+OBJDUMP = avr-objdump
 
 AVRDUDE = avrdude
 AD_MCU = -p $(MCU)
@@ -92,29 +106,35 @@ AD_MCU = -p $(MCU)
 
 AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
 
+SUBDIRS = audio display tuner
+
 OBJS = $(addprefix $(BUILDDIR)/, $(SRCS:.c=.o))
 ELF = $(BUILDDIR)/$(TARG).elf
+HEX = flash/$(TARG).hex
 
-all: $(ELF) size
+all: $(HEX) size
+
+$(HEX): $(ELF)
+	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) $(HEX)
 
 $(ELF): $(OBJS)
 	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
-	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS) -lm
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) flash/$(TARG).hex
+	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
+	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
-size:
+size: $(ELF)
 	@sh ./size.sh $(ELF)
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D_atmega16 -D$(AUDIOPROC) -D$(DISPLAY) $(DEFINES) -c -o $@ $<
+	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 
 clean:
 	rm -rf $(BUILDDIR)
 
 .PHONY: flash
-flash: $(ELF)
-	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:flash/$(TARG).hex:i
+flash:  $(HEX)
+	$(AVRDUDE) $(AD_CMDLINE) -U flash:w:$(HEX):i
 
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x3F:m -U hfuse:w:0xC1:m
