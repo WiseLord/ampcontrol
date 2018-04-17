@@ -95,13 +95,13 @@ void showRC5Info(uint16_t rc5Buf);
 void showRadio(void);
 void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 
-void showBrWork(uint8_t **txtLabels, uint8_t *buf);
+void showBrWork(uint8_t **txtLabels);
 void changeBrWork(int8_t diff);
 
 void showSndParam(sndParam *param, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
-void drawSpectrum(uint8_t *buf);
+void drawSpectrum();
 
 void setWorkBrightness(void);
 void setStbyBrightness(void);

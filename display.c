@@ -543,7 +543,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 }
 
 // Show brightness control
-void showBrWork(uint8_t **txtLabels, uint8_t *buf)
+void showBrWork(uint8_t **txtLabels)
 {
     showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
     showParValue(brWork);
@@ -726,7 +726,7 @@ void showTime(uint8_t **txtLabels)
     return;
 }
 
-void drawSpectrum(uint8_t *buf)
+void drawSpectrum()
 {
 #if defined(KS0108)
     uint8_t i, j, k;

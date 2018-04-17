@@ -5,15 +5,17 @@
 
 #include "fft.h"
 
-#define swap(x) (__builtin_avr_swap(x))     //  Swaps nibbles in byte
+#define swap(x)     (__builtin_avr_swap(x))     //  Swaps nibbles in byte
 
-#define MUX_LEFT            0
-#define MUX_RIGHT           1
+#define N_DB        32
 
-#define DC_CORR             128
+#define MUX_LEFT    0
+#define MUX_RIGHT   1
 
-void adcInit(void);
-uint8_t *getSpData(uint8_t fallSpeed);
-uint16_t getSignalLevel(void);
+extern uint8_t buf[FFT_SIZE];               // Previous results: left and right
+
+void adcInit();
+void getSpData(uint8_t fallSpeed);
+uint16_t getSignalLevel();
 
 #endif // ADC_H

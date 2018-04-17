@@ -442,7 +442,8 @@ int main(void)
                 setDisplayTime(DISPLAY_TIME_TEST);
             break;
         case MODE_SPECTRUM:
-            drawSpectrum(getSpData(1));
+            getSpData(1);
+            drawSpectrum();
             break;
 #if !defined(NOTUNER)
         case MODE_FM_RADIO:
@@ -463,7 +464,7 @@ int main(void)
             showTime(txtLabels);
             break;
         case MODE_BR:
-            showBrWork(txtLabels, getSpData(1));
+            showBrWork(txtLabels);
             break;
         default:
             showSndParam(curSndParam, txtLabels);

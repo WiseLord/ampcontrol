@@ -77,7 +77,7 @@ size:
 
 $(BUILDDIR)/%.o: %.c
 	@mkdir -p $(dir $@)
-	$(CC) $(CFLAGS) -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
+	$(CC) $(CFLAGS) -D_atmega16 -D$(AUDIOPROC) -D$(DISPLAY) -D$(TUNER) -c -o $@ $<
 
 clean:
 	rm -rf $(BUILDDIR)

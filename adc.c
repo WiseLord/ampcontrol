@@ -8,10 +8,7 @@
 
 static int16_t fr[FFT_SIZE];                            // Real values
 static int16_t fi[FFT_SIZE];                            // Imaginary values
-static uint8_t buf[FFT_SIZE];                           // Previous results: left and right
-
-static uint8_t adcCorrLeft = DC_CORR;                   // Correction for left channel
-static uint8_t adcCorrRight = DC_CORR;                  // Correction for right channel
+uint8_t buf[FFT_SIZE];                                  // Previous results: left and right
 
 static const uint8_t hannTable[] PROGMEM = {
     0,   1,   3,   6,  10,  16,  22,  30,
@@ -27,19 +24,18 @@ static const int16_t dbTable[N_DB - 1] PROGMEM = {
     1071, 1432, 1915, 2561, 3425, 4580, 6125
 };
 
-void adcInit(void)
+void adcInit()
 {
     // Enable ADC with prescaler 16
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (0 << ADPS1) | (0 << ADPS0);
     ADMUX |= (1 << ADLAR);                              // Adjust result to left (8bit ADC)
-
+#if defined(_atmega32) || defined(_atmega16)
     TIMSK |= (1 << TOIE0);                              // Enable Timer0 overflow interrupt
     TCCR0 |= (0 << CS02) | (1 << CS01) | (0 << CS00);   // Set timer prescaller to 8 (2MHz)
-
-    adcCorrLeft = 128;
-    adcCorrRight = 128;
-
-    return;
+#else
+    TIMSK0 |= (1 << TOIE0);                             // Enable Timer0 overflow interrupt
+    TCCR0B |= (0 << CS02) | (1 << CS01) | (0 << CS00);  // Set timer prescaller to 8 (2MHz)
+#endif
 }
 
 static uint8_t revBits(uint8_t x)
@@ -52,44 +48,44 @@ static uint8_t revBits(uint8_t x)
 
 static void getValues(uint8_t mux)
 {
-    uint8_t i = 0, j;
-    uint8_t hv;
-    uint8_t dcCorr = DC_CORR;
+    uint8_t i = 0;
 
     ADMUX &= ~((1 << MUX2) | (1 << MUX1) | (1 << MUX0));
-    ADMUX |= mux;                                       // Mux ADC to required audio channel
+    ADMUX |= mux;
 
-    switch (mux) {                                      // Set channel correction
-    case MUX_LEFT:
-        dcCorr = adcCorrLeft;
-        break;
-    case MUX_RIGHT:
-        dcCorr = adcCorrRight;
-        break;
-    }
-
-    do {
+    for (i = 0; i < FFT_SIZE; i++) {
         while (!(ADCSRA & (1 << ADSC)));                // Wait for start measure
-        j = revBits(i);
-        if (i < FFT_SIZE / 2)
-            hv = pgm_read_byte(&hannTable[i]);
-        else
-            hv = pgm_read_byte(&hannTable[FFT_SIZE - 1 - i]);
-
         while (ADCSRA & (1 << ADSC));                   // Wait for finish measure
-        fr[j] = ADCH - dcCorr;                          // Read channel value
-        fr[j] = ((int32_t)hv * fr[j]) >> 6;             // Apply Hann window
 
+        fi[i] = ADCH;                                   // Store in FI for futher handling
+    }
+}
+
+static void prepareData()
+{
+    uint8_t i, j;
+    int16_t dcOft = 0;
+    uint8_t hw;
+
+    // Calculate average DC offset
+    for (i = 0; i < FFT_SIZE; i++)
+        dcOft += fi[i];
+    dcOft /= FFT_SIZE;
+
+    // Move FI => FR with reversing bit order in index
+    for (i = 0; i < FFT_SIZE; i++) {
+        j = revBits(i);
+        hw = pgm_read_byte(&hannTable[i < 32 ? i : 63 - i]);
+        fr[j] = ((fi[i] - dcOft) * hw) >> 6;
         fi[i] = 0;
-    } while (++i < FFT_SIZE);
-
-    return;
+    }
 }
 
 static void cplx2dB(int16_t *fr, int16_t *fi)
 {
     uint8_t i, j;
     int16_t calc;
+
     for (i = 0; i < FFT_SIZE / 2; i++) {
         calc = ((int32_t)fr[i] * fr[i] + (int32_t)fi[i] * fi[i]) >> 13;
 
@@ -98,39 +94,32 @@ static void cplx2dB(int16_t *fr, int16_t *fi)
                 break;
         fr[i] = j;
     }
-    for (i = 0; i < FFT_SIZE; i++)
-        fi[i] = 0;
-    return;
 }
 
-uint8_t *getSpData(uint8_t fallSpeed)
+void getSpData(uint8_t fallSpeed)
 {
     uint8_t i;
+    uint8_t *p;
+    uint8_t mux;
 
-    getValues(MUX_LEFT);
-    fftRad4(fr, fi);
-    cplx2dB(fr, fi);
+    for (mux = MUX_LEFT; mux <= MUX_RIGHT; mux++) {
+        getValues(mux);
+        prepareData();
+        fftRad4(fr, fi);
+        cplx2dB(fr, fi);
 
-    for (i = 0; i < FFT_SIZE / 2; i++) {
-        (buf[i] > fallSpeed) ? (buf[i] -= fallSpeed) : (buf[i] = 1);
-        if (buf[i]-- <= fr[i])
-            buf[i] = fr[i];
+        p = &buf[(mux - MUX_LEFT) * FFT_SIZE / 2];
+
+        for (i = 0; i < FFT_SIZE / 2; i++) {
+            (*p > fallSpeed) ? (*p -= fallSpeed) : (*p = 1);
+            if ((*p)-- <= fr[i])
+                *p = fr[i];
+            p++;
+        }
     }
-
-    getValues(MUX_RIGHT);
-    fftRad4(fr, fi);
-    cplx2dB(fr, fi);
-
-    for (i = FFT_SIZE / 2; i < FFT_SIZE; i++) {
-        (buf[i] > fallSpeed) ? (buf[i] -= fallSpeed) : (buf[i] = 1);
-        if (buf[i]-- <= fr[i - FFT_SIZE / 2])
-            buf[i] = fr[i - FFT_SIZE / 2];
-    }
-
-    return buf;
 }
 
-uint16_t getSignalLevel(void)
+uint16_t getSignalLevel()
 {
     uint16_t ret = 0;
     uint8_t i;
