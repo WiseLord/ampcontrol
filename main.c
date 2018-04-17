@@ -13,7 +13,7 @@
 
 #include "tuner/tuner.h"
 
-uint8_t *txtLabels[LABELS_COUNT];   // Array with text label pointers
+uint8_t *txtLabels[LABEL_END];   // Array with text label pointers
 
 // Save parameters to EEPROM
 static void saveParams(void)
@@ -67,10 +67,10 @@ static void loadLabels(uint8_t **txtLabels)
     uint8_t i;
     uint8_t *addr;
 
-    addr = labelsAddr;
+    addr = (uint8_t *)EEPROM_LABELS_ADDR;
     i = 0;
 
-    while (i < LABELS_COUNT && addr < (uint8_t *)EEPROM_SIZE) {
+    while (i < LABEL_END && addr < (uint8_t *)EEPROM_SIZE) {
         if (eeprom_read_byte(addr) != '\0') {
             txtLabels[i] = addr;
             addr++;

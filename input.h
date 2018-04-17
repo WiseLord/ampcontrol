@@ -29,9 +29,6 @@
 #define MUTE            (1<<PC5)
 #define STDBY           (1<<PC6)
 
-// RC5 support definitions
-#define RC5_CMD_COUNT   31
-
 enum {
     CMD_RC5_STBY,
     CMD_RC5_MUTE,
@@ -64,6 +61,8 @@ enum {
     CMD_RC5_0,
     CMD_RC5_DISPLAY,
     CMD_RC5_FM_MONO,
+
+    CMD_RC_END,
 
     CMD_BTN_1,
     CMD_BTN_2,

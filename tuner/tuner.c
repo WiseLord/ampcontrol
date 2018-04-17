@@ -16,7 +16,7 @@ void tunerInit()
     _ctrl = eeprom_read_byte((uint8_t *)EEPROM_FM_CTRL);
     _freq = eeprom_read_word((uint16_t *)EEPROM_FM_FREQ);
     _mono = eeprom_read_byte((uint8_t *)EEPROM_FM_MONO);
-    _step = eeprom_read_byte((uint8_t *)EEPROM_FM_STEP);
+    _step = eeprom_read_byte((uint8_t *)EEPROM_FM_STEP2);
 
 #if defined(TEA5767)
     tea5767Init(_ctrl);

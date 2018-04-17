@@ -201,20 +201,26 @@ void loadAudioParams(uint8_t **txtLabels)
 {
     uint8_t i;
 
-    for (i = 0; i < SND_PARAM_COUNT; i++)
-        sndPar[i].value = eeprom_read_byte(eepromVolume + i);
+    sndPar[SND_VOLUME].value    = eeprom_read_byte((uint8_t *)MODE_SND_VOLUME);
+    sndPar[SND_BASS].value      = eeprom_read_byte((uint8_t *)MODE_SND_BASS);
+    sndPar[SND_TREBLE].value    = eeprom_read_byte((uint8_t *)MODE_SND_TREBLE);
+    sndPar[SND_FRONTREAR].value = eeprom_read_byte((uint8_t *)MODE_SND_FRONTREAR);
+    sndPar[SND_BALANCE].value   = eeprom_read_byte((uint8_t *)MODE_SND_BALANCE);
+    sndPar[SND_GAIN0].value     = eeprom_read_byte((uint8_t *)MODE_SND_GAIN0);
+    sndPar[SND_GAIN1].value     = eeprom_read_byte((uint8_t *)MODE_SND_GAIN1);
+    sndPar[SND_GAIN2].value     = eeprom_read_byte((uint8_t *)MODE_SND_GAIN2);
 
-    sndPar[SND_VOLUME].label = txtLabels[LABEL_VOLUME];
-    sndPar[SND_BASS].label = txtLabels[LABEL_BASS];
-    sndPar[SND_TREBLE].label = txtLabels[LABEL_TREBLE];
-    sndPar[SND_FRONTREAR].label = txtLabels[LABEL_FRONTREAR];
-    sndPar[SND_BALANCE].label = txtLabels[LABEL_BALANCE];
-    sndPar[SND_GAIN0].label = txtLabels[LABEL_GAIN0];
-    sndPar[SND_GAIN1].label = txtLabels[LABEL_GAIN1];
-    sndPar[SND_GAIN2].label = txtLabels[LABEL_GAIN2];
+    sndPar[SND_VOLUME].label    = txtLabels[MODE_SND_VOLUME];
+    sndPar[SND_BASS].label      = txtLabels[MODE_SND_BASS];
+    sndPar[SND_TREBLE].label    = txtLabels[MODE_SND_TREBLE];
+    sndPar[SND_FRONTREAR].label = txtLabels[MODE_SND_FRONTREAR];
+    sndPar[SND_BALANCE].label   = txtLabels[MODE_SND_BALANCE];
+    sndPar[SND_GAIN0].label     = txtLabels[MODE_SND_GAIN0];
+    sndPar[SND_GAIN1].label     = txtLabels[MODE_SND_GAIN1];
+    sndPar[SND_GAIN2].label     = txtLabels[MODE_SND_GAIN2];
 
-    chan = eeprom_read_byte(eepromChannel);
-    loud = eeprom_read_byte(eepromLoudness);
+    chan = eeprom_read_byte((uint8_t *)EEPROM_INPUT);
+    loud = eeprom_read_byte((uint8_t *)EEPROM_APROC_EXTRA);
 
     sndPar[SND_VOLUME].set = setVolume;
     sndPar[SND_BASS].set = setBass;
@@ -242,13 +248,17 @@ void setAudioParams(void)
 
 void saveAudioParams(void)
 {
-    uint8_t i;
+    eeprom_update_byte((uint8_t *)MODE_SND_VOLUME,    sndPar[SND_VOLUME].value);
+    eeprom_update_byte((uint8_t *)MODE_SND_BASS,      sndPar[SND_BASS].value );
+    eeprom_update_byte((uint8_t *)MODE_SND_TREBLE,    sndPar[SND_TREBLE].value);
+    eeprom_update_byte((uint8_t *)MODE_SND_FRONTREAR, sndPar[SND_FRONTREAR].value);
+    eeprom_update_byte((uint8_t *)MODE_SND_BALANCE,   sndPar[SND_BALANCE].value);
+    eeprom_update_byte((uint8_t *)MODE_SND_GAIN0,     sndPar[SND_GAIN0].value);
+    eeprom_update_byte((uint8_t *)MODE_SND_GAIN1,     sndPar[SND_GAIN1].value);
+    eeprom_update_byte((uint8_t *)MODE_SND_GAIN2,     sndPar[SND_GAIN2].value);
 
-    for (i = 0; i < SND_PARAM_COUNT; i++)
-        eeprom_update_byte(eepromVolume + i, sndPar[i].value);
-
-    eeprom_update_byte(eepromLoudness, loud);
-    eeprom_update_byte(eepromChannel, chan);
+    eeprom_update_byte((uint8_t *)EEPROM_INPUT, chan);
+    eeprom_update_byte((uint8_t *)EEPROM_APROC_EXTRA, loud);
 
     return;
 }

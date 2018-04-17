@@ -14,12 +14,10 @@ static volatile uint16_t rc5SaveBuf;
 static volatile uint16_t displayTime;
 
 static uint8_t rc5DeviceAddr;
-static uint8_t rcCode[RC5_CMD_COUNT];       // Array with rc5 commands
+static uint8_t rcCode[CMD_RC_END];       // Array with rc5 commands
 
 void inputInit()
 {
-    uint8_t i;
-
     // Setup buttons and encoders as inputs with pull-up resistors
     INPUT_DDR &= ~(BTN_MASK | ENC_AB);
     INPUT_PORT |= (BTN_MASK | ENC_AB);
@@ -31,10 +29,8 @@ void inputInit()
     TIMSK |= (1 << OCIE2);          // Enable timer compare match interrupt
 
     // Load RC5 device address and commands from eeprom
-    rc5DeviceAddr = eeprom_read_byte(eepromRC5Addr);
-    for (i = 0; i < RC5_CMD_COUNT; i++) {
-        rcCode[i] = eeprom_read_byte(eepromRC5Cmd + i);
-    }
+    rc5DeviceAddr = eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR);
+    eeprom_read_block(rcCode, (uint8_t *)EEPROM_RC_CMD, CMD_RC_END);
 
     encCnt = 0;
     cmdBuf = CMD_EMPTY;
@@ -44,7 +40,7 @@ static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
 {
     uint8_t i;
 
-    for (i = 0; i < RC5_CMD_COUNT; i++)
+    for (i = 0; i < CMD_RC_END; i++)
         if (rc5Cmd == rcCode[i])
             return i;
 

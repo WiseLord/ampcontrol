@@ -2,66 +2,57 @@
 #define EEPROM_H
 
 #include <inttypes.h>
+#include "audio/audio.h"
 
-// Parameters values
-#define eepromVolume    ((void*)0x00)
-#define eepromBass      ((void*)0x01)
-#define eepromMiddle    ((void*)0x02)
-#define eepromTreble    ((void*)0x03)
-#define eepromPreamp    ((void*)0x04)
-#define eepromBalance   ((void*)0x05)
-#define eepromGain0     ((void*)0x06)
-#define eepromGain1     ((void*)0x07)
-#define eepromGain2     ((void*)0x08)
-#define eepromGain3     ((void*)0x09)
+// Audio parameters values
+#define EEPROM_VOLUME           0x00
 
-// Some values stored in EEPROM
-#define eepromLoudness  ((void*)0x0C)
-#define eepromChannel   ((void*)0x0D)
+#define EEPROM_SP_MODE          0x10
+#define EEPROM_DISPLAY          0x11
+#define EEPROM_BR_STBY          0x12
+#define EEPROM_BR_WORK          0x13
 
-#define eepromSpMode    ((void*)0x10)
-#define eepromDisplay   ((void*)0x11)
-#define eepromBrStby    ((void*)0x12)
-#define eepromBrWork    ((void*)0x13)
-
-#define EEPROM_FM_FREQ  0x16
-#define EEPROM_FM_CTRL  0x18
-#define EEPROM_FM_MONO  0x19
-#define EEPROM_FM_STEP  0x1A
-
-#define eepromRC5Addr   ((void*)0x1C)
-#define eepromTempTH    ((void*)0x1D)
-
-#define EEPROM_ADC_CORR_L       0x1E
-#define EEPROM_ADC_CORR_R       0x1F
+// Audio bool parameters values
+#define EEPROM_AUDIOPROC        0x16
+#define EEPROM_MAX_INPUT_CNT    0x17
+#define EEPROM_INPUT            0x18
+#define EEPROM_APROC_EXTRA      0x19
 
 // RC5 commands array
-#define eepromRC5Cmd    ((uint8_t*)0x40)
+#define EEPROM_RC_TYPE          0x1E
+#define EEPROM_RC_ADDR          0x1F
+#define EEPROM_RC_CMD           0x20
+
+// FM tuner parameters valus
+#define EEPROM_FM_TUNER         0x50
+#define EEPROM_FM_CTRL          (EEPROM_FM_TUNER + 0x01)
+#define EEPROM_FM_STEP1         (EEPROM_FM_TUNER + 0x02)
+#define EEPROM_FM_STEP2         (EEPROM_FM_TUNER + 0x03)
+#define EEPROM_FM_FREQ_MIN      (EEPROM_FM_TUNER + 0x04)
+#define EEPROM_FM_FREQ_MAX      (EEPROM_FM_TUNER + 0x06)
+#define EEPROM_FM_FREQ          (EEPROM_FM_TUNER + 0x08)
+#define EEPROM_FM_MONO          (EEPROM_FM_TUNER + 0x0A)
+#define EEPROM_FM_RDS           (EEPROM_FM_TUNER + 0x0B)
+#define EEPROM_FM_VOLUME        (EEPROM_FM_TUNER + 0x0C)
+#define EEPROM_FM_BASS          (EEPROM_FM_TUNER + 0x0D)
+#define EEPROM_FM_TUNER_SIZE    14
 
 // FM stations
-#define EEPROM_STATIONS         0x70
-#define EEPROM_FAV_STATIONS     0x70
+#define EEPROM_FAV_STATIONS     (EEPROM_FM_TUNER + 0x10)
+#define EEPROM_STATIONS         (EEPROM_FM_TUNER + 0x24)
 
 // Text labels (maximum 15 byte followed by \0)
-#define labelsAddr      ((uint8_t*)0xF0)
+#define EEPROM_LABELS_ADDR      0xF0
 
 #define EEPROM_SIZE             0x200
 
 // EEPROM saved labels
 enum {
-    LABEL_VOLUME,
-    LABEL_BASS,
-    LABEL_MIDDLE,
-    LABEL_TREBLE,
-    LABEL_PREAMP,
-    LABEL_FRONTREAR,
-    LABEL_BALANCE,
-    LABEL_GAIN0,
-    LABEL_GAIN1,
-    LABEL_GAIN2,
-    LABEL_GAIN3,
-    LABEL_MUTE,
+    LABEL_MUTE = MODE_SND_END,
     LABEL_LOUDNESS,
+    LABEL_SURROUND,
+    LABEL_EFFECT_3D,
+    LABEL_TONE_DEFEAT,
     LABEL_ON,
     LABEL_OFF,
     LABEL_DB,
@@ -74,9 +65,9 @@ enum {
     LABEL_FRIDAY,
     LABEL_SADURDAY,
 
-    LABEL_BR_WORK
-};
+    LABEL_BR_WORK,
 
-#define LABELS_COUNT            24
+    LABEL_END
+};
 
 #endif // EEPROM_H
