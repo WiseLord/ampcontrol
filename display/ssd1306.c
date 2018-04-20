@@ -7,6 +7,7 @@
 #include <util/delay.h>
 
 static uint8_t fb[SSD1306_BUFFERSIZE];
+static uint8_t ssd1306Addr = SSD1306_I2C_ADDR_0;
 
 static const uint8_t initSeq[] PROGMEM = {
     SSD1306_DISPLAY_OFF,
@@ -45,31 +46,38 @@ static const uint8_t dispAreaSeq[] PROGMEM = {
     0x07,
 };
 
-static void _I2CWriteByte(uint8_t data)
+static uint8_t _I2CWriteByte(uint8_t data)
 {
     uint8_t i = 0;
+    uint8_t ret;
 
     // Data bits
     for (i = 0; i < 8; i++) {
-        if (data & 0x80)
+        OUT(SSD1306_SCK);       // Active SCL = 0
+        _delay_us(1);
+        if (data & 0x80) {
             IN(SSD1306_SDA);    // Pullup SDA = 1
-        else
+        } else {
             OUT(SSD1306_SDA);   // Active SDA = 0
+        }
         _delay_us(1);
         IN(SSD1306_SCK);        // Pullup SCL = 1
         _delay_us(1);
-        OUT(SSD1306_SCK);       // Active SCL = 0
         data <<= 1;
     }
     // ACK bit
-    IN(SSD1306_SDA);            // Pullup SDA = 1
+    OUT(SSD1306_SCK);           // Active SCL = 0
     _delay_us(1);
+    IN(SSD1306_SDA);            // Pullup SDA = ACK
+    _delay_us(1);
+    ret = !READ(SSD1306_SDA);   // Read ACK bit
     IN(SSD1306_SCK);            // Pullup SCL = 1
     _delay_us(1);
-    OUT(SSD1306_SCK);           // Active SCL = 0
+
+    return ret;
 }
 
-static void _I2CStart(uint8_t addr)
+static uint8_t _I2CStart(uint8_t addr)
 {
     IN(SSD1306_SCK);            // Pullup SCL = 1
     IN(SSD1306_SDA);            // Pullup SDA = 1
@@ -78,7 +86,7 @@ static void _I2CStart(uint8_t addr)
     _delay_us(1);
     OUT(SSD1306_SCK);           // Active SCL = 0
 
-    _I2CWriteByte(addr);
+    return _I2CWriteByte(addr);
 }
 
 static void _I2CStop()
@@ -90,6 +98,15 @@ static void _I2CStop()
     _delay_us(1);
     IN(SSD1306_SDA);            // Pullup SDA = 1
 }
+
+static uint8_t _I2CFindDevice(uint8_t addr)
+{
+    uint8_t ret = _I2CStart(addr);
+    _I2CStop();
+
+    return ret;
+}
+
 
 static void ssd1306SendCmd(uint8_t cmd)
 {
@@ -138,7 +155,16 @@ void ssd1306Init()
 {
     uint8_t i;
 
-    _I2CStart(SSD1306_I2C_ADDR);
+    // Set display SDA/SCL as active inputs with no pull-ups
+    CLR(SSD1306_SDA);
+    CLR(SSD1306_SCK);
+    IN(SSD1306_SDA);
+    IN(SSD1306_SCK);
+
+    if (_I2CFindDevice(SSD1306_I2C_ADDR_1))
+        ssd1306Addr = SSD1306_I2C_ADDR_1;
+
+    _I2CStart(ssd1306Addr);
     _I2CWriteByte(SSD1306_I2C_COMMAND);
 
     for (i = 0; i < sizeof(initSeq); i++)
@@ -163,7 +189,7 @@ void ssd1306UpdateFb()
     uint16_t i;
     uint8_t *fbP = fb;
 
-    _I2CStart(SSD1306_I2C_ADDR);
+    _I2CStart(ssd1306Addr);
     _I2CWriteByte(SSD1306_I2C_COMMAND);
 
     for (i = 0; i < sizeof(dispAreaSeq); i++)
@@ -171,7 +197,7 @@ void ssd1306UpdateFb()
 
     _I2CStop();
 
-    _I2CStart(SSD1306_I2C_ADDR);
+    _I2CStart(ssd1306Addr);
     _I2CWriteByte(SSD1306_I2C_DATA_SEQ);
 
     for (i = 0; i < SSD1306_BUFFERSIZE; i++)
@@ -216,7 +242,7 @@ void ssd1306SetBrightness(uint8_t br)
     if (br < SSD1306_MAX_BRIGHTNESS)
         rawBr = br * 8;
 
-    _I2CStart(SSD1306_I2C_ADDR);
+    _I2CStart(ssd1306Addr);
     _I2CWriteByte(SSD1306_I2C_COMMAND);
 
     ssd1306SendCmd(SSD1306_SETCONTRAST);
