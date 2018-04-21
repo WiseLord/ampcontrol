@@ -46,8 +46,10 @@ enum {
     MODE_TIME_EDIT,
     MODE_TIMER,
     MODE_SILENCE_TIMER,
+#ifdef _ALARM
     MODE_ALARM,
     MODE_ALARM_EDIT,
+#endif
     MODE_MUTE,
     MODE_LOUDNESS,
     MODE_SURROUND,

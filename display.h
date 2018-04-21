@@ -3,7 +3,6 @@
 
 #include <inttypes.h>
 #include "rtc.h"
-#include "alarm.h"
 #include "audio/audio.h"
 
 #ifdef _KS0066_16X2_PCF8574
@@ -110,7 +109,9 @@ void changeBrWork(int8_t diff);
 void showSndParam(sndMode mode);
 
 void showTime();
+#ifdef _ALARM
 void showAlarm();
+#endif
 void showTimer(int16_t timer);
 
 void switchSpMode();

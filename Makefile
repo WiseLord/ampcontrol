@@ -5,7 +5,7 @@ F_CPU = 16000000L
 
 APROC_LIST = TDA7439 TDA731X TDA7448 PT232X TEA63X0 TUNER_AUDIO
 TUNER_LIST = TEA5767 RDA580X TUX032 SI470X
-FEATURE_LIST = UARTCONTROL RDS RDA5807_DF
+FEATURE_LIST = ALARM UARTCONTROL RDS RDA5807_DF
 
 ifeq ($(MCU), atmega32)
 APROC_LIST += PGA2310
@@ -17,7 +17,7 @@ endif
 TARG = ampcontrol_$(MCU)_$(shell echo $(DISPLAY) | tr A-Z a-z)
 
 SRCS = main.c
-SRCS += input.c actions.c i2c.c rtc.c alarm.c remote.c fft.c adc.c
+SRCS += input.c actions.c i2c.c rtc.c remote.c fft.c adc.c
 
 DEFINES = -D_$(MCU)
 
@@ -101,6 +101,9 @@ ifeq "$(findstring UARTCONTROL, $(FEATURE_LIST))" "UARTCONTROL"
 endif
 ifeq "$(findstring RDS, $(FEATURE_LIST))" "RDS"
   SRCS += tuner/rds.c
+endif
+ifeq "$(findstring ALARM, $(FEATURE_LIST))" "ALARM"
+  SRCS += alarm.c
 endif
 DEFINES += $(addprefix -D_, $(FEATURE_LIST))
 

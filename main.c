@@ -8,6 +8,9 @@
 #ifdef _UARTCONTROL
 #include "uart.h"
 #endif
+#ifdef _ALARM
+#include "alarm.h"
+#endif
 #include "i2c.h"
 #include "display.h"
 #include "tuner/tuner.h"
@@ -52,8 +55,10 @@ static void hwInit(uint8_t extFunc)
 #endif
     adcInit();                              // Analog-to-digital converter
     rtcInit();
+#ifdef _ALARM
     alarmInit();
     alarm0.eam = ALARM_NOEDIT;
+#endif
     sei();                                  // Gloabl interrupt enable
 
     tunerInit();                            // Tuner

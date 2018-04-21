@@ -7,7 +7,9 @@
 #include "temp.h"
 #endif
 #include "adc.h"
+#ifdef _ALARM
 #include "alarm.h"
+#endif
 #ifdef _UARTCONTROL
 #include "uart.h"
 #endif
@@ -77,8 +79,10 @@ uint8_t getAction()
             action = CMD_RC_FM_DEC;
         else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
             action = CMD_RC_TIME;
+#ifdef _ALARM
         else if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT)
             action = CMD_RC_ALARM;
+#endif
         else
             action = CMD_RC_NEXT_SPMODE;
         break;
@@ -181,12 +185,14 @@ uint8_t getAction()
                 action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
             action = ACTION_NOACTION;
     }
+#ifdef _ALARM
     // Disable most actions in alarm edit mode
     if (dispMode == MODE_ALARM_EDIT) {
         if (action != CMD_RC_STBY && action != CMD_RC_ALARM &&
                 action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
             action = ACTION_NOACTION;
     }
+#endif
     // Disable most actions in FM edit mode
     if (dispMode == MODE_FM_TUNE) {
         if (action != CMD_RC_STBY &&
@@ -243,7 +249,9 @@ void handleAction(uint8_t action)
 
         setStbyBrightness();
         rtc.etm = RTC_NOEDIT;
+#ifdef _ALARM
         alarmSave();
+#endif
         setStbyTimer(STBY_TIMER_OFF);
         disableSilenceTimer();
         setInitTimer(INIT_TIMER_OFF);
@@ -291,6 +299,7 @@ void handleAction(uint8_t action)
             setDisplayTime(DISPLAY_TIME_TIME);
         }
         break;
+#ifdef _ALARM
     case CMD_RC_ALARM:
         if ((dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) && alarm0.eam != ALARM_WDAY) {
             alarmNextEditParam();
@@ -302,6 +311,7 @@ void handleAction(uint8_t action)
             setDisplayTime(DISPLAY_TIME_ALARM);
         }
         break;
+#endif
     case CMD_RC_NEXT_SPMODE:
         switchSpMode();
         displayClear();
@@ -494,10 +504,12 @@ void handleEncoder(int8_t encCnt)
             rtcChangeTime(encCnt);
             setDisplayTime(DISPLAY_TIME_TIME_EDIT);
             break;
+#ifdef _ALARM
         case MODE_ALARM_EDIT:
             alarmChangeTime(encCnt);
             setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
             break;
+#endif
         case MODE_BR:
             changeBrWork(encCnt);
             setDisplayTime(DISPLAY_TIME_BR);
@@ -515,7 +527,9 @@ void handleEncoder(int8_t encCnt)
         case MODE_TIME:
         case MODE_TIMER:
         case MODE_SILENCE_TIMER:
+#ifdef _ALARM
         case MODE_ALARM:
+#endif
         case MODE_FM_RADIO:
             dispMode = MODE_SND_VOLUME;
         default:
@@ -545,7 +559,7 @@ uint8_t checkAlarmAndTime()
 
     if (getClockTimer() == 0) {
         rtcReadTime();
-
+#ifdef _ALARM
         if (dispMode == MODE_STANDBY) {
             if ((rtc.sec == 0) &&
                     (rtc.min == alarm0.min) &&
@@ -556,7 +570,7 @@ uint8_t checkAlarmAndTime()
                 ret = ACTION_EXIT_STANDBY;
             }
         }
-
+#endif
         setClockTimer(200);                 // Limit check interval
     }
 
@@ -666,10 +680,12 @@ void showScreen()
     case MODE_SILENCE_TIMER:
         showTimer(getSilenceTimer());
         break;
+#ifdef _ALARM
     case MODE_ALARM:
     case MODE_ALARM_EDIT:
         showAlarm();
         break;
+#endif
     case MODE_BR:
         showBrWork();
         break;

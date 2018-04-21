@@ -10,7 +10,9 @@
 #include "temp.h"
 #endif
 #include "adc.h"
+#ifdef _ALARM
 #include "alarm.h"
+#endif
 #ifdef _RDS
 #include "tuner/rds.h"
 #endif
@@ -754,6 +756,7 @@ static void drawTm(uint8_t tm, const uint8_t *font)
 #endif
 }
 
+#ifdef _ALARM
 #if defined(_KS0066)
 static void drawAm(uint8_t am)
 {
@@ -775,6 +778,7 @@ static void drawAm(uint8_t am, const uint8_t *font)
     gdLoadFont(font, 1, FONT_DIR_0);
 #endif
 }
+#endif
 
 void displayInit()
 {
@@ -1589,6 +1593,7 @@ void showTime()
     writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtcWeekDay() - 1) % 7]);
 }
 
+#ifdef _ALARM
 void showAlarm()
 {
     uint8_t i;
@@ -1730,6 +1735,7 @@ void showAlarm()
     }
 #endif
 }
+#endif
 
 void showTimer(int16_t timer)
 {
