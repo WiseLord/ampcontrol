@@ -76,7 +76,7 @@ DEFINES += $(addprefix -D_, $(FEATURE_LIST))
 
 # Software SPI
 ifeq "$(findstring YES, $(SOFTWARE_SPI))" "YES"
-#  SRCS += spisw.c
+  SRCS += spisw.c
   DEFINES += -D_SPISW
 endif
 
