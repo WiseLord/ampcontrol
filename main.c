@@ -34,6 +34,7 @@ static void powerOn(void)
     _delay_ms(500);                 // Wait while power is being set up
 
     tunerPowerOn();
+    tunerSetMute(0);
     setAudioParams();
 
     return;
@@ -162,7 +163,7 @@ int main(void)
             }
             break;
         case CMD_BTN_2:
-        case CMD_RC5_NEXT_INPUT:
+        case CMD_RC5_IN_NEXT:
             switch (dispMode) {
             case MODE_GAIN:
                 nextChan();
@@ -216,7 +217,7 @@ int main(void)
             }
             break;
         case CMD_BTN_5:
-        case CMD_RC5_MENU:
+        case CMD_RC_NEXT_SNDPAR:
             if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
                 curSndParam++;
                 dispMode++;
@@ -227,12 +228,12 @@ int main(void)
             setDisplayTime(DISPLAY_TIME_AUDIO);
             break;
         case CMD_BTN_1_LONG:
-        case CMD_RC5_BACKLIGHT:
+        case CMD_RC5_BRIGHTNESS:
             dispMode = MODE_BR;
             setDisplayTime(DISPLAY_TIME_BR);
             break;
         case CMD_BTN_2_LONG:
-        case CMD_RC5_DISPLAY:
+        case CMD_RC5_DEF_DISPLAY:
             switch (getDefDisplay()) {
             case MODE_SPECTRUM:
                 if (getChan() == 0) {
@@ -291,40 +292,32 @@ int main(void)
             setDisplayTime(DISPLAY_TIME_AUDIO);
             break;
 #endif
-        case CMD_RC5_INPUT_0:
-        case CMD_RC5_INPUT_1:
-        case CMD_RC5_INPUT_2:
+        case CMD_RC5_IN_0:
+        case CMD_RC5_IN_1:
+        case CMD_RC5_IN_2:
 #if !defined(TDA7313)
-        case CMD_RC5_INPUT_3:
+        case CMD_RC5_IN_3:
 #endif
-            setChan(cmd - CMD_RC5_INPUT_0);
+            setChan(cmd - CMD_RC5_IN_0);
             clearDisplay();
             curSndParam = sndParAddr(SND_GAIN0 + getChan());
             dispMode = MODE_GAIN;
             setDisplayTime(DISPLAY_TIME_GAIN);
             break;
-        case CMD_RC5_SP_MODE:
+        case CMD_RC5_NEXT_SPMODE:
             switchSpMode();
             dispMode = MODE_SPECTRUM;
             setDisplayTime(DISPLAY_TIME_SP);
             break;
         case CMD_RC5_FM_INC:
         case CMD_RC5_FM_DEC:
-        case CMD_RC5_CHAN_UP:
-        case CMD_RC5_CHAN_DOWN:
             setChan(0);
             if (dispMode == MODE_FM_RADIO) {
                 switch (cmd) {
                 case CMD_RC5_FM_INC:
-                    tunerChangeFreq(+1);
-                    break;
-                case CMD_RC5_FM_DEC:
-                    tunerChangeFreq(-1);
-                    break;
-                case CMD_RC5_CHAN_UP:
                     tunerNextStation(SEARCH_UP);
                     break;
-                case CMD_RC5_CHAN_DOWN:
+                case CMD_RC5_FM_DEC:
                     tunerNextStation(SEARCH_DOWN);
                     break;
                 }
@@ -339,18 +332,18 @@ int main(void)
                 setDisplayTime(DISPLAY_TIME_FM_RADIO);
             }
             break;
-        case CMD_RC5_1:
-        case CMD_RC5_2:
-        case CMD_RC5_3:
-        case CMD_RC5_4:
-        case CMD_RC5_5:
-        case CMD_RC5_6:
-        case CMD_RC5_7:
-        case CMD_RC5_8:
-        case CMD_RC5_9:
-        case CMD_RC5_0:
+        case CMD_RC_FM_0:
+        case CMD_RC_FM_1:
+        case CMD_RC_FM_2:
+        case CMD_RC_FM_3:
+        case CMD_RC_FM_4:
+        case CMD_RC_FM_5:
+        case CMD_RC_FM_6:
+        case CMD_RC_FM_7:
+        case CMD_RC_FM_8:
+        case CMD_RC_FM_9:
             setChan(0);
-            tunerLoadStation(cmd - CMD_RC5_1);
+            tunerLoadStation(cmd == CMD_RC_FM_0 ? 9 : cmd - CMD_RC_FM_1);
             dispMode = MODE_FM_RADIO;
             setDisplayTime(DISPLAY_TIME_FM_RADIO);
             break;
