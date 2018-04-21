@@ -51,52 +51,45 @@ static uint8_t _I2CWriteByte(uint8_t data)
     uint8_t i = 0;
     uint8_t ret;
 
-    // Data bits
-    for (i = 0; i < 8; i++) {
-        OUT(SSD1306_SCK);       // Active SCL = 0
-        _delay_us(1);
-        if (data & 0x80) {
-            IN(SSD1306_SDA);    // Pullup SDA = 1
+    for (i = 0; i < 9; i++) {
+        _delay_us(0.4);
+        OUT(SSD1306_SCK);               // Active SCL = 0
+        _delay_us(0.4);
+        if (data & 0x80 || i == 8) {
+            IN(SSD1306_SDA);            // Pullup SDA = 1
         } else {
-            OUT(SSD1306_SDA);   // Active SDA = 0
+            OUT(SSD1306_SDA);           // Active SDA = 0
         }
-        _delay_us(1);
-        IN(SSD1306_SCK);        // Pullup SCL = 1
-        _delay_us(1);
+        _delay_us(0.4);
+        ret = !READ(SSD1306_SDA);       // Read ACK bit
+        IN(SSD1306_SCK);                // Pullup SCL = 1
+        _delay_us(0.4);
         data <<= 1;
     }
-    // ACK bit
-    OUT(SSD1306_SCK);           // Active SCL = 0
-    _delay_us(1);
-    IN(SSD1306_SDA);            // Pullup SDA = ACK
-    _delay_us(1);
-    ret = !READ(SSD1306_SDA);   // Read ACK bit
-    IN(SSD1306_SCK);            // Pullup SCL = 1
-    _delay_us(1);
 
     return ret;
 }
 
 static uint8_t _I2CStart(uint8_t addr)
 {
-    IN(SSD1306_SCK);            // Pullup SCL = 1
-    IN(SSD1306_SDA);            // Pullup SDA = 1
+    IN(SSD1306_SCK);                    // Pullup SCL = 1
+    IN(SSD1306_SDA);                    // Pullup SDA = 1
     _delay_us(1);
-    OUT(SSD1306_SDA);           // Active SDA = 0
+    OUT(SSD1306_SDA);                   // Active SDA = 0
     _delay_us(1);
-    OUT(SSD1306_SCK);           // Active SCL = 0
+    OUT(SSD1306_SCK);                   // Active SCL = 0
 
     return _I2CWriteByte(addr);
 }
 
 static void _I2CStop()
 {
-    OUT(SSD1306_SCK);           // Active SCL = 0
-    OUT(SSD1306_SDA);           // Active SDA = 0
+    OUT(SSD1306_SCK);                   // Active SCL = 0
+    OUT(SSD1306_SDA);                   // Active SDA = 0
     _delay_us(1);
-    IN(SSD1306_SCK);            // Pullup SCL = 1
+    IN(SSD1306_SCK);                    // Pullup SCL = 1
     _delay_us(1);
-    IN(SSD1306_SDA);            // Pullup SDA = 1
+    IN(SSD1306_SDA);                    // Pullup SDA = 1
 }
 
 static uint8_t _I2CFindDevice(uint8_t addr)
@@ -181,7 +174,7 @@ ISR (TIMER0_OVF_vect)
     // 2MHz / (256 - 56) = 10000Hz
     TCNT0 = 56;
 
-    ADCSRA |= 1 << ADSC;                        // Start ADC every interrupt
+    ADCSRA |= 1 << ADSC;                // Start ADC every interrupt
 }
 
 void ssd1306UpdateFb()
