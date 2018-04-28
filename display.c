@@ -315,20 +315,20 @@ static void showParValue(int8_t value)
     return;
 }
 
-static void showParLabel(const uint8_t *parLabel, uint8_t **txtLabels)
+static void showParLabel(uint8_t label, uint8_t **txtLabels)
 {
 #if defined(KS0108)
     ks0108LoadFont(font_ks0066_ru_24, 1);
     ks0108SetXY(0, 0);
-    writeStringEeprom(parLabel);
+    writeStringEeprom(txtLabels[label]);
     ks0108LoadFont(font_ks0066_ru_08, 1);
 #elif defined (KS0066) || defined(PCF8574)
     ks0066SetXY(0, 0);
-    writeStringEeprom(parLabel);
+    writeStringEeprom(txtLabels[label]);
 #elif defined(LS020)
     ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
     ls020SetXY(4, 8);
-    writeStringEeprom(parLabel);
+    writeStringEeprom(txtLabels[label]);
 #endif
 
     return;
@@ -545,7 +545,7 @@ void showBrWork(uint8_t **txtLabels)
 {
     showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
     showParValue(brWork);
-    showParLabel(txtLabels[LABEL_BR_WORK], txtLabels);
+    showParLabel(LABEL_BR_WORK, txtLabels);
 
     return;
 }
@@ -563,12 +563,14 @@ void changeBrWork(int8_t diff)
 }
 
 // Show audio parameter
-void showSndParam(sndParam *param, uint8_t **txtLabels)
+void showSndParam(sndMode mode, uint8_t **txtLabels)
 {
-    showBar(param->min, param->max, param->value);
-    showParValue(((int16_t)(param->value) * param->step + 4) >> 3);
-    showParLabel(param->label, txtLabels);
+    sndParam *param = &sndPar[mode];
 
+    showParLabel(mode, txtLabels);
+    showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
+    showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max),
+            param->value);
 #if defined(KS0108)
     ks0108LoadFont(font_ks0066_ru_08, 1);
     ks0108SetXY(116, 7);

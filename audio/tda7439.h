@@ -3,66 +3,31 @@
 
 #include <inttypes.h>
 
-#define TDA7439_ADDR            0b10001000
+// I2C address
+#define TDA7439_I2C_ADDR            0b10001000
 
-#define CHAN_CNT                4
+// I2C function selection
+#define TDA7439_INPUT_SELECT        0x00
+#define TDA7439_INPUT_GAIN          0x01
+#define TDA7439_PREAMP              0x02
+#define TDA7439_BASS                0x03
+#define TDA7439_MIDDLE              0x04
+#define TDA7439_TREBLE              0x05
+#define TDA7439_VOLUME_RIGHT        0x06
+#define TDA7439_VOLUME_LEFT         0x07
 
-// TDA7439 I2C function selection
-#define TDA7439_INPUT_SELECT    0x00
-#define TDA7439_INPUT_GAIN      0x01
-#define TDA7439_PREAMP          0x02
-#define TDA7439_BASS            0x03
-#define TDA7439_MIDDLE          0x04
-#define TDA7439_TREBLE          0x05
-#define TDA7439_VOLUME_RIGHT    0x06
-#define TDA7439_VOLUME_LEFT     0x07
-// I2c autoincrement flag
-#define TDA7439_AUTO_INC        0x10
+#define TDA7439_SPEAKER_MUTE        0b01111111
 
-#define MUTE_ON                 1
-#define MUTE_OFF                0
+// I2C autoincrement flag
+#define TDA7439_AUTO_INC            0x10
 
-typedef struct {
-    int8_t value;
-    int8_t min;
-    int8_t max;
-    uint8_t step;
-    uint8_t *label;
-    void (*set)(int8_t value);
-} sndParam;
+// Number of inputs
+#define TDA7439_IN_CNT              4
 
-enum {
-    SND_VOLUME,
-    SND_BASS,
-    SND_MIDDLE,
-    SND_TREBLE,
-    SND_PREAMP,
-    SND_BALANCE,
-    SND_GAIN0,
-    SND_GAIN1,
-    SND_GAIN2,
-    SND_GAIN3
-};
-
-#define SND_PARAM_COUNT         10
-
-sndParam *sndParAddr(uint8_t index);
-
-uint8_t getChan(void);
-uint8_t getMute(void);
-
-void changeParam(sndParam *sndPar, int8_t diff);
-
-void setChan(uint8_t ch);
-void nextChan(void);
-
-void muteVolume(void);
-void unmuteVolume(void);
-
-void switchMute(void);
-
-void loadAudioParams(uint8_t **txtLabels);
-void setAudioParams(void);
-void saveAudioParams(void);
+void tda7439SetSpeakers();
+void tda7439SetBMT();
+void tda7439SetPreamp();
+void tda7439SetInput();
+void tda7439SetMute();
 
 #endif // TDA7439_H

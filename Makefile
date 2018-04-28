@@ -32,17 +32,34 @@ else ifeq ($(DISPLAY), PCF8574)
   SRCS += display/pcf8574.c
 endif
 SRCS += display.c
-DEFINES += -D$(APROC_LIST) -D$(DISPLAY)
+DEFINES += -D$(DISPLAY)
 
 # Audio source files
-ifeq ($(APROC_LIST), TDA7313)
-  SRCS += audio/tda7313.c
-else ifeq ($(APROC_LIST), TDA7318)
-  SRCS += audio/tda7318.c
-else ifeq ($(APROC_LIST), TDA7439)
+SRCS += audio/audio.c
+ifeq "$(findstring TDA7439, $(APROC_LIST))" "TDA7439"
   SRCS += audio/tda7439.c
 endif
-DEFINES += -D$(APROC_LIST)
+ifeq "$(findstring TDA731X, $(APROC_LIST))" "TDA731X"
+  SRCS += audio/tda731x.c
+endif
+ifeq "$(findstring TDA7448, $(APROC_LIST))" "TDA7448"
+  SRCS += audio/tda7448.c
+endif
+ifeq "$(findstring PT232X, $(APROC_LIST))" "PT232X"
+  SRCS += audio/pt232x.c
+endif
+ifeq "$(findstring TEA63X0, $(APROC_LIST))" "TEA63X0"
+  SRCS += audio/tea63x0.c
+endif
+ifeq "$(findstring PGA2310, $(APROC_LIST))" "PGA2310"
+  SRCS += audio/pga2310.c
+  SOFTWARE_SPI = YES
+endif
+ifeq "$(findstring R2S15904SP, $(APROC_LIST))" "R2S15904SP"
+  SRCS += audio/r2s15904sp.c
+  SOFTWARE_SPI = YES
+endif
+DEFINES += $(addprefix -D_, $(APROC_LIST))
 
 # Tuner source files
 SRCS += tuner/tuner.c
@@ -69,6 +86,13 @@ ifeq "$(findstring SI470X, $(TUNER_LIST))" "SI470X"
 endif
 DEFINES += $(addprefix -D_, $(TUNER_LIST))
 
+# Features
+ifeq "$(findstring TEMPCONTROL, $(FEATURE_LIST))" "TEMPCONTROL"
+  SRCS += temp.c ds18x20.c
+endif
+ifeq "$(findstring UARTCONTROL, $(FEATURE_LIST))" "UARTCONTROL"
+  SRCS += uart.c
+endif
 ifeq "$(findstring RDS, $(FEATURE_LIST))" "RDS"
   SRCS += tuner/rds.c
 endif
@@ -104,7 +128,7 @@ AD_MCU = -p $(MCU)
 #AD_PROG = -c stk500v2
 #AD_PORT = -P avrdoper
 
-AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT)
+AD_CMDLINE = $(AD_MCU) $(AD_PROG) $(AD_PORT) -V -B 0.5
 
 SUBDIRS = audio display tuner
 
@@ -139,14 +163,14 @@ flash:  $(HEX)
 fuse:
 	$(AVRDUDE) $(AD_CMDLINE) -U lfuse:w:0x3F:m -U hfuse:w:0xC1:m
 
+eeprom_by:
+	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_by.bin:r
+
 eeprom_en:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_en.bin:r
 
 eeprom_ru:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ru.bin:r
-
-eeprom_by:
-	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_by.bin:r
 
 eeprom_ua:
 	$(AVRDUDE) $(AD_CMDLINE) -U eeprom:w:eeprom/eeprom_ua.bin:r

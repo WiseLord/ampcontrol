@@ -1,5 +1,19 @@
-#ifndef AUDIO_H
-#define AUDIO_H
+#ifndef AUDIOPROC_H
+#define AUDIOPROC_H
+
+#include <inttypes.h>
+
+typedef struct {
+    const int8_t min;
+    const int8_t max;
+    const int8_t step;
+} sndGrid;
+
+typedef struct {
+    int8_t value;
+    const sndGrid *grid;
+    void (*set)();
+} sndParam;
 
 typedef enum {
     MODE_SND_VOLUME = 0,
@@ -20,17 +34,58 @@ typedef enum {
     MODE_SND_END
 } sndMode;
 
-// Integral circuits definitions
-#if !defined(TDA7313) && !defined(TDA7318) && !defined(TDA7439)
-#define TDA7439
-#endif
+extern sndParam sndPar[MODE_SND_END];
 
-#if defined(TDA7313)
-#include "tda7313.h"
-#elif defined(TDA7318)
-#include "tda7318.h"
-#elif defined(TDA7439)
-#include "tda7439.h"
-#endif
+typedef enum {
+    AUDIOPROC_NO = 0,
+    AUDIOPROC_TDA7439,
+    AUDIOPROC_TDA7312,
+    AUDIOPROC_TDA7313,
+    AUDIOPROC_TDA7314,
+    AUDIOPROC_TDA7315,
+    AUDIOPROC_TDA7318,
+    AUDIOPROC_PT2314,
+    AUDIOPROC_TDA7448,
+    AUDIOPROC_PT232X,
+    AUDIOPROC_TEA6300,
+    AUDIOPROC_TEA6330,
+    AUDIOPROC_PGA2310,
 
-#endif // AUDIO_H
+    AUDIOPROC_TUNER_IC,
+
+    AUDIOPROC_R2S15904SP,
+
+    AUDIOPROC_END
+} aprocIC;
+
+typedef struct {
+    aprocIC ic;
+    uint8_t inCnt;
+    uint8_t input;
+    uint8_t extra;
+    uint8_t mute;
+} Audioproc_type;
+
+#define APROC_EXTRA_LOUDNESS        (1<<0)
+#define APROC_EXTRA_SURROUND        (1<<1)
+#define APROC_EXTRA_EFFECT3D        (1<<2)
+#define APROC_EXTRA_TONE_BYPASS     (1<<3)
+
+extern Audioproc_type aproc;
+
+void sndInit();
+
+void sndSetInput(uint8_t input);
+
+void sndSetMute(uint8_t value);
+
+void sndSetExtra();
+void sndSwitchExtra(uint8_t extra);
+
+void sndNextParam(uint8_t *mode);
+void sndChangeParam(uint8_t mode, int8_t diff);
+
+void sndPowerOn();
+void sndPowerOff();
+
+#endif // AUDIOPROC

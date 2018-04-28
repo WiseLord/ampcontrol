@@ -48,30 +48,17 @@
 
 // Display modes
 enum {
+    MODE_SPECTRUM = MODE_SND_END,
+    MODE_TEST,
     MODE_STANDBY,
-    MODE_SPECTRUM,
-    MODE_FM_RADIO,
-
-    MODE_VOLUME,
-    MODE_BASS,
-#if defined(TDA7439)
-    MODE_MIDDLE,
-#endif
-    MODE_TREBLE,
-#if defined(TDA7439)
-    MODE_PREAMP,
-#elif defined(TDA7313) || defined(TDA7318)
-    MODE_FRONTREAR,
-#endif
-    MODE_BALANCE,
-
-    MODE_GAIN,
-
     MODE_TIME,
     MODE_TIME_EDIT,
+    MODE_FM_RADIO,
     MODE_MUTE,
     MODE_LOUDNESS,
-    MODE_TEST,
+    MODE_SURROUND,
+    MODE_EFFECT_3D,
+    MODE_TONE_DEFEAT,
 
     MODE_BR
 };
@@ -98,7 +85,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels);
 void showBrWork(uint8_t **txtLabels);
 void changeBrWork(int8_t diff);
 
-void showSndParam(sndParam *param, uint8_t **txtLabels);
+void showSndParam(sndMode mode, uint8_t **txtLabels);
 
 void showTime(uint8_t **txtLabels);
 void drawSpectrum();

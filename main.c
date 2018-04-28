@@ -18,7 +18,7 @@ uint8_t *txtLabels[LABEL_END];   // Array with text label pointers
 // Save parameters to EEPROM
 static void saveParams(void)
 {
-    saveAudioParams();
+    sndPowerOff();
     saveDisplayParams();
     tunerPowerOff();
 
@@ -35,7 +35,7 @@ static void powerOn(void)
 
     tunerPowerOn();
     tunerSetMute(0);
-    setAudioParams();
+    sndPowerOff();
 
     return;
 }
@@ -43,7 +43,7 @@ static void powerOn(void)
 // Handle entering standby mode
 static void powerOff(void)
 {
-    muteVolume();
+    sndSetMute(1);
     tunerPowerOff();
 
     _delay_ms(500);
@@ -108,8 +108,6 @@ static void hwInit(void)
 
     tunerInit();                    // Tuner
 
-    loadAudioParams(txtLabels);     // Load labels/icons/etc
-
     return;
 }
 
@@ -117,8 +115,6 @@ int main(void)
 {
     uint8_t dispMode = MODE_STANDBY;
     uint8_t dispModePrev = dispMode;
-
-    sndParam *curSndParam = sndParAddr(SND_VOLUME);
 
     int8_t encCnt = 0;
     uint8_t cmd = CMD_EMPTY;
@@ -164,6 +160,7 @@ int main(void)
             break;
         case CMD_BTN_2:
         case CMD_RC5_IN_NEXT:
+/*
             switch (dispMode) {
             case MODE_GAIN:
                 nextChan();
@@ -174,6 +171,7 @@ int main(void)
                 setDisplayTime(DISPLAY_TIME_GAIN);
                 break;
             }
+*/
             break;
         case CMD_BTN_3:
         case CMD_RC5_TIME:
@@ -210,7 +208,7 @@ int main(void)
                 }
             default:
                 clearDisplay();
-                switchMute();
+                sndSetMute(!aproc.mute);
                 dispMode = MODE_MUTE;
                 setDisplayTime(DISPLAY_TIME_CHAN);
                 break;
@@ -218,13 +216,7 @@ int main(void)
             break;
         case CMD_BTN_5:
         case CMD_RC_NEXT_SNDPAR:
-            if (dispMode >= MODE_VOLUME && dispMode < MODE_BALANCE) {
-                curSndParam++;
-                dispMode++;
-            } else {
-                curSndParam = sndParAddr(SND_VOLUME);
-                dispMode = MODE_VOLUME;
-            }
+            sndNextParam(&dispMode);
             setDisplayTime(DISPLAY_TIME_AUDIO);
             break;
         case CMD_BTN_1_LONG:
@@ -236,7 +228,7 @@ int main(void)
         case CMD_RC5_DEF_DISPLAY:
             switch (getDefDisplay()) {
             case MODE_SPECTRUM:
-                if (getChan() == 0) {
+                if (aproc.input == 0) {
                     setDefDisplay(MODE_FM_RADIO);
                     break;
                 }
@@ -295,13 +287,11 @@ int main(void)
         case CMD_RC5_IN_0:
         case CMD_RC5_IN_1:
         case CMD_RC5_IN_2:
-#if !defined(TDA7313)
         case CMD_RC5_IN_3:
-#endif
-            setChan(cmd - CMD_RC5_IN_0);
+        case CMD_RC5_IN_4:
             clearDisplay();
-            curSndParam = sndParAddr(SND_GAIN0 + getChan());
-            dispMode = MODE_GAIN;
+            sndSetInput(cmd - CMD_RC5_IN_0);
+            dispMode = MODE_SND_GAIN0 + aproc.input;
             setDisplayTime(DISPLAY_TIME_GAIN);
             break;
         case CMD_RC5_NEXT_SPMODE:
@@ -311,7 +301,7 @@ int main(void)
             break;
         case CMD_RC5_FM_INC:
         case CMD_RC5_FM_DEC:
-            setChan(0);
+            sndSetInput(0);
             if (dispMode == MODE_FM_RADIO) {
                 switch (cmd) {
                 case CMD_RC5_FM_INC:
@@ -326,7 +316,7 @@ int main(void)
             setDisplayTime(DISPLAY_TIME_FM_RADIO);
             break;
         case CMD_RC5_FM_MONO:
-            if (getChan() == 0) {
+            if (aproc.input == 0) {
                 tunerSetMono(!tuner.mono);
                 dispMode = MODE_FM_RADIO;
                 setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -342,7 +332,7 @@ int main(void)
         case CMD_RC_FM_7:
         case CMD_RC_FM_8:
         case CMD_RC_FM_9:
-            setChan(0);
+            sndSetInput(0);
             tunerLoadStation(cmd == CMD_RC_FM_0 ? 9 : cmd - CMD_RC_FM_1);
             dispMode = MODE_FM_RADIO;
             setDisplayTime(DISPLAY_TIME_FM_RADIO);
@@ -376,12 +366,10 @@ int main(void)
             case MODE_SPECTRUM:
             case MODE_TIME:
             case MODE_FM_RADIO:
-                curSndParam = sndParAddr(SND_VOLUME);
-                dispMode = MODE_VOLUME;
+                dispMode = MODE_SND_VOLUME;
             default:
-                if (getMute())
-                    unmuteVolume();
-                changeParam(curSndParam, encCnt);
+                sndSetMute(0);
+                sndChangeParam(dispMode, encCnt);
                 setDisplayTime(DISPLAY_TIME_GAIN);
                 break;
             }
@@ -397,7 +385,7 @@ int main(void)
                 break;
             default:
                 dispMode = getDefDisplay();
-                if (dispMode == MODE_FM_RADIO && getChan())
+                if (dispMode == MODE_FM_RADIO && aproc.input)
                     dispMode = MODE_SPECTRUM;
                 break;
             }
@@ -429,13 +417,8 @@ int main(void)
             showRadio();
             break;
         case MODE_MUTE:
-            showBoolParam(getMute(), txtLabels[LABEL_MUTE], txtLabels);
+            showBoolParam(aproc.mute, txtLabels[LABEL_MUTE], txtLabels);
             break;
-#if defined(TDA7313)
-        case MODE_LOUDNESS:
-            showBoolParam(!getLoudness(), txtLabels[LABEL_LOUDNESS], txtLabels);
-            break;
-#endif
         case MODE_TIME:
         case MODE_TIME_EDIT:
             showTime(txtLabels);
@@ -444,7 +427,7 @@ int main(void)
             showBrWork(txtLabels);
             break;
         default:
-            showSndParam(curSndParam, txtLabels);
+            showSndParam(dispMode, txtLabels);
             break;
         }
 
