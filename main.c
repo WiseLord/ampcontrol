@@ -5,7 +5,7 @@
 #include "eeprom.h"
 #include "adc.h"
 #include "input.h"
-#include "rc5.h"
+#include "remote.h"
 #include "i2c.h"
 
 #include "audio/audio.h"
@@ -98,7 +98,7 @@ static void hwInit(void)
 
     inputInit();                    // Buttons/encoder polling
 
-    rc5Init();                      // IR Remote control
+    rcInit();                       // IR Remote control
     adcInit();                      // Analog-to-digital converter
 
     STMU_DDR |= (STDBY | MUTE)  ;   // Standby/Mute port
@@ -117,7 +117,7 @@ int main(void)
     uint8_t dispModePrev = dispMode;
 
     int8_t encCnt = 0;
-    uint8_t cmd = CMD_EMPTY;
+    uint8_t cmd = CMD_END;
     uint16_t rc5Buf = RC5_BUF_EMPTY;
     uint16_t rc5BufPrev = RC5_BUF_EMPTY;
 
@@ -126,20 +126,20 @@ int main(void)
     while (1) {
         encCnt = getEncoder();
         cmd = getBtnCmd();
-        rc5Buf = getRC5Buf();
+        rc5Buf = getRcCmd();
 
         // Don't handle any command in test mode
         if (dispMode == MODE_TEST) {
-            if (cmd != CMD_EMPTY)
+            if (cmd != CMD_END)
                 setDisplayTime(DISPLAY_TIME_TEST);
-            cmd = CMD_EMPTY;
+            cmd = CMD_END;
         }
 
         // Don't handle any command in standby mode except power on
         if (dispMode == MODE_STANDBY) {
             if (cmd != CMD_BTN_1 && cmd != CMD_RC5_STBY &&
                     cmd != CMD_BTN_TESTMODE)
-                cmd = CMD_EMPTY;
+                cmd = CMD_END;
         }
 
         // Handle command
@@ -159,7 +159,7 @@ int main(void)
             }
             break;
         case CMD_BTN_2:
-        case CMD_RC5_IN_NEXT:
+        case CMD_RC_IN_NEXT:
 /*
             switch (dispMode) {
             case MODE_GAIN:
@@ -174,7 +174,7 @@ int main(void)
 */
             break;
         case CMD_BTN_3:
-        case CMD_RC5_TIME:
+        case CMD_RC_TIME:
             switch (dispMode) {
             case MODE_TIME:
             case MODE_TIME_EDIT:
@@ -220,12 +220,12 @@ int main(void)
             setDisplayTime(DISPLAY_TIME_AUDIO);
             break;
         case CMD_BTN_1_LONG:
-        case CMD_RC5_BRIGHTNESS:
+        case CMD_RC_BRIGHTNESS:
             dispMode = MODE_BR;
             setDisplayTime(DISPLAY_TIME_BR);
             break;
         case CMD_BTN_2_LONG:
-        case CMD_RC5_DEF_DISPLAY:
+        case CMD_RC_DEF_DISPLAY:
             switch (getDefDisplay()) {
             case MODE_SPECTRUM:
                 if (aproc.input == 0) {
@@ -244,7 +244,7 @@ int main(void)
         case CMD_BTN_3_LONG:
         case CMD_BTN_4_LONG:
         case CMD_BTN_5_LONG:
-        case CMD_RC5_FM_STORE:
+        case CMD_RC_FM_STORE:
             if (dispMode == MODE_FM_RADIO) {
                 if (cmd == CMD_BTN_3_LONG)
                     tunerNextStation(SEARCH_DOWN);
@@ -284,30 +284,30 @@ int main(void)
             setDisplayTime(DISPLAY_TIME_AUDIO);
             break;
 #endif
-        case CMD_RC5_IN_0:
-        case CMD_RC5_IN_1:
-        case CMD_RC5_IN_2:
-        case CMD_RC5_IN_3:
-        case CMD_RC5_IN_4:
+        case CMD_RC_IN_0:
+        case CMD_RC_IN_1:
+        case CMD_RC_IN_2:
+        case CMD_RC_IN_3:
+        case CMD_RC_IN_4:
             clearDisplay();
-            sndSetInput(cmd - CMD_RC5_IN_0);
+            sndSetInput(cmd - CMD_RC_IN_0);
             dispMode = MODE_SND_GAIN0 + aproc.input;
             setDisplayTime(DISPLAY_TIME_GAIN);
             break;
-        case CMD_RC5_NEXT_SPMODE:
+        case CMD_RC_NEXT_SPMODE:
             switchSpMode();
             dispMode = MODE_SPECTRUM;
             setDisplayTime(DISPLAY_TIME_SP);
             break;
-        case CMD_RC5_FM_INC:
-        case CMD_RC5_FM_DEC:
+        case CMD_RC_FM_INC:
+        case CMD_RC_FM_DEC:
             sndSetInput(0);
             if (dispMode == MODE_FM_RADIO) {
                 switch (cmd) {
-                case CMD_RC5_FM_INC:
+                case CMD_RC_FM_INC:
                     tunerNextStation(SEARCH_UP);
                     break;
-                case CMD_RC5_FM_DEC:
+                case CMD_RC_FM_DEC:
                     tunerNextStation(SEARCH_DOWN);
                     break;
                 }
@@ -315,7 +315,7 @@ int main(void)
             dispMode = MODE_FM_RADIO;
             setDisplayTime(DISPLAY_TIME_FM_RADIO);
             break;
-        case CMD_RC5_FM_MONO:
+        case CMD_RC_FM_MONO:
             if (aproc.input == 0) {
                 tunerSetMono(!tuner.mono);
                 dispMode = MODE_FM_RADIO;
@@ -340,9 +340,9 @@ int main(void)
         }
 
         // Emulate RC5 VOL_UP/VOL_DOWN as encoder actions
-        if (cmd == CMD_RC5_VOL_UP)
+        if (cmd == CMD_RC_VOL_UP)
             encCnt++;
-        if (cmd == CMD_RC5_VOL_DOWN)
+        if (cmd == CMD_RC_VOL_DOWN)
             encCnt--;
 
         // Handle encoder

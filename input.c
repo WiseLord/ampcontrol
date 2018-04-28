@@ -4,7 +4,7 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "rc5.h"
+#include "remote.h"
 #include "eeprom.h"
 
 static volatile int8_t encCnt;
@@ -13,7 +13,10 @@ static volatile uint16_t rc5SaveBuf;
 
 static volatile uint16_t displayTime;
 
-static uint8_t rc5DeviceAddr;
+static volatile uint16_t rcTimer;
+
+//static uint8_t rcType;
+static uint8_t rcAddr;
 static uint8_t rcCode[CMD_RC_END];       // Array with rc5 commands
 
 void inputInit()
@@ -29,22 +32,22 @@ void inputInit()
     TIMSK |= (1 << OCIE2);          // Enable timer compare match interrupt
 
     // Load RC5 device address and commands from eeprom
-    rc5DeviceAddr = eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR);
+    rcAddr = eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR);
     eeprom_read_block(rcCode, (uint8_t *)EEPROM_RC_CMD, CMD_RC_END);
 
     encCnt = 0;
-    cmdBuf = CMD_EMPTY;
+    cmdBuf = CMD_END;
 }
 
-static uint8_t rc5CmdIndex(uint8_t rc5Cmd)
+static CmdID rcCmdIndex(uint8_t rcCmd)
 {
-    uint8_t i;
+    CmdID i;
 
     for (i = 0; i < CMD_RC_END; i++)
-        if (rc5Cmd == rcCode[i])
+        if (rcCmd == rcCode[i])
             return i;
 
-    return CMD_EMPTY;
+    return CMD_RC_END;
 }
 
 ISR (TIMER2_COMP_vect)
@@ -140,45 +143,13 @@ ISR (TIMER2_COMP_vect)
         btnCnt = 0;
     }
 
-    // Place RC5 event to command buffer if enough RC5 timer ticks
-    uint16_t rc5Buf = getRC5RawBuf();
-    if (rc5Buf != RC5_BUF_EMPTY)
-        rc5SaveBuf = rc5Buf;
-
-
-    static uint8_t togBitNow = 0;
-    static uint8_t togBitPrev = 0;
-
-    uint8_t rc5CmdBuf = CMD_EMPTY;
-    uint8_t rc5Cmd;
-
-    if ((rc5Buf != RC5_BUF_EMPTY) && ((rc5Buf & RC5_ADDR_MASK) >> 6 == rc5DeviceAddr)) {
-        if (rc5Buf & RC5_TOGB_MASK)
-            togBitNow = 1;
-        else
-            togBitNow = 0;
-
-        rc5Cmd = rc5Buf & RC5_COMM_MASK;
-        if ((togBitNow != togBitPrev) || (rc5Timer > 800)) {
-            rc5Timer = 0;
-            rc5CmdBuf = rc5CmdIndex(rc5Cmd);
-        }
-        if (rc5Cmd == rcCode[CMD_RC5_VOL_UP] || rc5Cmd == rcCode[CMD_RC5_VOL_DOWN]) {
-            if (rc5Timer > 400) {
-                rc5Timer = 360;
-                rc5CmdBuf = rc5CmdIndex(rc5Cmd);
-            }
-        }
-        togBitPrev = togBitNow;
-    }
-
-    if (cmdBuf == CMD_EMPTY) {
-        cmdBuf = rc5CmdBuf;
-    }
-
     // Timer of current display mode
     if (displayTime)
         displayTime--;
+
+    // Time from last IR command
+    if (rcTimer < RC_PRESS_LIMIT)
+        rcTimer++;
 
     // Time from last IR command
     if (rc5Timer < 1000)
@@ -198,13 +169,32 @@ int8_t getEncoder(void)
 uint8_t getBtnCmd(void)
 {
     uint8_t ret = cmdBuf;
-    cmdBuf = CMD_EMPTY;
+    cmdBuf = CMD_RC_END;
     return ret;
 }
 
-uint16_t getRC5Buf(void)
+uint8_t getRcCmd()
 {
-    return rc5SaveBuf;
+
+    // Place RC5 event to command buffer if enough RC5 timer ticks
+    IRData ir = takeIrData();
+
+    CmdID rcCmdBuf = CMD_RC_END;
+
+    if (ir.ready && (ir.address == rcAddr)) {
+        if (!ir.repeat || (rcTimer > RC_LONG_PRESS)) {
+            rcTimer = 0;
+            rcCmdBuf = rcCmdIndex(ir.command);
+        }
+        if (ir.command == rcCode[CMD_RC_VOL_UP] || ir.command == rcCode[CMD_RC_VOL_DOWN]) {
+            if (rcTimer > RC_VOL_REPEAT) {
+                rcTimer = RC_VOL_DELAY;
+                rcCmdBuf = rcCmdIndex(ir.command);
+            }
+        }
+    }
+
+    return rcCmdBuf;
 }
 
 void setDisplayTime(uint8_t value)

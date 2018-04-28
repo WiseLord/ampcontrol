@@ -29,30 +29,30 @@
 #define MUTE            (1<<PC5)
 #define STDBY           (1<<PC6)
 
-enum {
+typedef enum {
     CMD_RC5_STBY,
     CMD_RC5_MUTE,
     CMD_RC_NEXT_SNDPAR,
-    CMD_RC5_VOL_UP,
-    CMD_RC5_VOL_DOWN,
-    CMD_RC5_IN_0,
-    CMD_RC5_IN_1,
-    CMD_RC5_IN_2,
-    CMD_RC5_IN_3,
-    CMD_RC5_IN_4,
-    CMD_RC5_IN_PREV,
-    CMD_RC5_IN_NEXT,
+    CMD_RC_VOL_UP,
+    CMD_RC_VOL_DOWN,
+    CMD_RC_IN_0,
+    CMD_RC_IN_1,
+    CMD_RC_IN_2,
+    CMD_RC_IN_3,
+    CMD_RC_IN_4,
+    CMD_RC_IN_PREV,
+    CMD_RC_IN_NEXT,
     CMD_RC_LOUDNESS,
     CMD_RC_SURROUND,
     CMD_RC_EFFECT_3D,
     CMD_RC_TONE_DEFEAT,
 
     CMD_RC_FM_RDS,              // TXT
-    CMD_RC5_FM_INC,
-    CMD_RC5_FM_DEC,
+    CMD_RC_FM_INC,
+    CMD_RC_FM_DEC,
     CMD_RC_FM_MODE,             // UNIT
-    CMD_RC5_FM_MONO,
-    CMD_RC5_FM_STORE,
+    CMD_RC_FM_MONO,
+    CMD_RC_FM_STORE,
     CMD_RC_FM_0,
     CMD_RC_FM_1,
     CMD_RC_FM_2,
@@ -64,12 +64,12 @@ enum {
     CMD_RC_FM_8,
     CMD_RC_FM_9,
 
-    CMD_RC5_TIME,
+    CMD_RC_TIME,
     CMD_RC_ALARM,               // QUESTION
     CMD_RC_TIMER,               // TIMER
-    CMD_RC5_BRIGHTNESS,
-    CMD_RC5_DEF_DISPLAY,
-    CMD_RC5_NEXT_SPMODE,
+    CMD_RC_BRIGHTNESS,
+    CMD_RC_DEF_DISPLAY,
+    CMD_RC_NEXT_SPMODE,
     CMD_RC_FALLSPEED,
 
     CMD_RC_END,
@@ -86,18 +86,23 @@ enum {
     CMD_BTN_5_LONG,
     CMD_BTN_TESTMODE,
 
-    CMD_EMPTY = 0xEF
-};
+    CMD_END
+} CmdID;
 
 // Handling long press actions
 #define SHORT_PRESS     100
 #define LONG_PRESS      600
 
+#define RC_LONG_PRESS           800
+#define RC_VOL_DELAY            360
+#define RC_VOL_REPEAT           400
+#define RC_PRESS_LIMIT          1000
+
 void inputInit();
 
 int8_t getEncoder(void);
 uint8_t getBtnCmd(void);
-uint16_t getRC5Buf(void);
+uint8_t getRcCmd(void);
 
 void setDisplayTime(uint8_t value);
 uint8_t getDisplayTime(void);

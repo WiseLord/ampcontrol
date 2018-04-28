@@ -48,8 +48,8 @@
 #define BACKLIGHT_LINE      (1<<7)
 
 // RC5 definitions
-#define RC5                 D
-#define RC5_LINE            (1<<3)
+#define RC                  D
+#define RC_LINE             (1<<3)
 
 // I2C port definitions
 #define I2C_SDA             C

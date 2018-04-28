@@ -67,7 +67,7 @@ input.c
 input.h
 main.c
 pins.h
-rc5.c
-rc5.h
+remote.c
+remote.h
 spisw.c
 spisw.h

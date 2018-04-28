@@ -16,18 +16,24 @@
 
 #define RC5_BUF_EMPTY   0
 
-typedef enum {
-    STATE_START1,
-    STATE_MID1,
-    STATE_MID0,
-    STATE_START0,
-    STATE_ERROR,
-    STATE_BEGIN,
-    STATE_END
-} rc5State;
+enum {
+    IR_TYPE_RC5,
 
-void rc5Init(void);
+    IR_TYPE_NONE = 0x0F
+};
 
-uint16_t getRC5RawBuf(void);
+typedef struct {
+    uint8_t ready : 1;
+    uint8_t repeat : 1;
+    uint8_t type : 6;
+    uint8_t address;
+    uint8_t command;
+} IRData;
+
+void rcInit();
+
+IRData takeIrData();
+IRData getIrData();
+void setIrData(uint8_t type, uint8_t addr, uint8_t cmd);
 
 #endif // RC5_H
