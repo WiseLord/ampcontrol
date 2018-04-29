@@ -41,6 +41,7 @@ void setWorkBrightness();
 void setStbyBrightness();
 
 void displayInit();
+void displayClear();
 void displayPowerOff();
 
 #endif // DISPLAY_H

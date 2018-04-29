@@ -168,7 +168,7 @@ void handleAction(uint8_t action)
         }
         break;
     case CMD_RC_MUTE:
-        ks0066Clear();
+        displayClear();
         sndSetMute(!aproc.mute);
         dispMode = MODE_MUTE;
         setDisplayTime(DISPLAY_TIME_CHAN);
@@ -199,7 +199,7 @@ void handleAction(uint8_t action)
     case CMD_RC_SURROUND:
     case CMD_RC_EFFECT_3D:
     case CMD_RC_TONE_BYPASS:
-        ks0066Clear();
+        displayClear();
         sndSwitchExtra(1 << (action - CMD_RC_LOUDNESS));
         dispMode = MODE_LOUDNESS + (action - CMD_RC_LOUDNESS);
         setDisplayTime(DISPLAY_TIME_AUDIO);
@@ -209,7 +209,7 @@ void handleAction(uint8_t action)
     case CMD_RC_IN_2:
     case CMD_RC_IN_3:
     case CMD_RC_IN_4:
-        ks0066Clear();
+        displayClear();
         sndSetInput(action - CMD_RC_IN_0);
         dispMode = MODE_SND_GAIN0 + aproc.input;
         setDisplayTime(DISPLAY_TIME_GAIN);
@@ -325,14 +325,11 @@ void handleExitDefaultMode()
 void handleModeChange()
 {
     if (dispMode != dispModePrev)
-        ks0066Clear();
+        displayClear();
 }
 
 void showScreen()
 {
-
-    // Show things
-    ks0066SetXY(0, 0);
     switch (dispMode) {
     case MODE_STANDBY:
     case MODE_TIME:

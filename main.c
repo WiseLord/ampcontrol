@@ -9,7 +9,7 @@
 #include "display.h"
 #include "tuner/tuner.h"
 #include "actions.h"
-
+#include "pins.h"
 #include "rtc.h"
 
 // Hardware initialization

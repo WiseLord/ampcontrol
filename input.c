@@ -86,9 +86,14 @@ void inputInit()
     SET(ENCODER_A);
     SET(ENCODER_B);
 
+#if defined(_atmega8) || defined(_atmega16) || defined(_atmega32)
+#if F_CPU == 8000000L
     // Set timer prescaller to 64 (125 kHz) and reset on match
-#if defined(_atmega8)
     TCCR2 = (1 << CS22) | (0 << CS21) | (0 << CS20) | (1 << WGM21);
+#else
+    // Set timer prescaller to 128 (125 kHz) and reset on match
+    TCCR2 = ((1 << CS22) | (0 << CS21) | (1 << CS20) | (1 << WGM21));
+#endif
     OCR2 = 125;                                     // 125000/125 => 1000 polls/sec
     TCNT2 = 0;                                      // Reset timer value
     TIMSK |= (1 << OCIE2);                           // Enable timer compare match interrupt
@@ -102,7 +107,7 @@ void inputInit()
     rcCodesInit();
 }
 
-#if defined(_atmega8)
+#if defined(_atmega8) || defined(_atmega16) || defined(_atmega32)
 ISR (TIMER2_COMP_vect)
 #else
 ISR (TIMER2_COMPA_vect)
