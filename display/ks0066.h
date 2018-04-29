@@ -4,10 +4,23 @@
 #include <inttypes.h>
 
 // Display size
+#ifdef _KS0066_16X2_PCF8574
 #define KS0066_SCREEN_WIDTH         16
 #define KS0066_SCREEN_HEIGHT        2
+#define KS0066_WIRE_PCF8574
+#endif
+#ifdef _KS0066_16X2_8BIT
+#define KS0066_SCREEN_WIDTH         16
+#define KS0066_SCREEN_HEIGHT        2
+#define KS0066_WIRE_8BIT
+#endif
+#ifdef _KS0066_16X2_4BIT
+#define KS0066_SCREEN_WIDTH         16
+#define KS0066_SCREEN_HEIGHT        2
+#define KS0066_WIRE_4BIT
+#endif
 
-// KS0066 wiring type, if not set any, autoselect PCF8574
+// KS0066 wiring type, if not set any, autoselect KS0066_WIRE_4BIT
 #ifndef KS0066_WIRE_8BIT
 #ifndef KS0066_WIRE_4BIT
 #ifndef KS0066_WIRE_PCF8574
@@ -35,22 +48,22 @@
 #define KS0066_HOME                 0x02
 
 #define KS0066_SET_MODE             0x04
-#define KS0066_INC_ADDR         0x02
-#define KS0066_SHIFT_WINDOW     0x01
+#define KS0066_INC_ADDR             0x02
+#define KS0066_SHIFT_WINDOW         0x01
 
 #define KS0066_DISPLAY              0x08
-#define KS0066_DISPAY_ON        0x04
-#define KS0066_CURSOR_ON        0x02
-#define KS0066_CUR_BLINK_ON     0x01
+#define KS0066_DISPAY_ON            0x04
+#define KS0066_CURSOR_ON            0x02
+#define KS0066_CUR_BLINK_ON         0x01
 
 #define KS0066_SHIFT                0x10
-#define KS0066_SHIFT_DISPLAY    0x08
-#define KS0066_SHIFT_RIGHT      0x04
+#define KS0066_SHIFT_DISPLAY        0x08
+#define KS0066_SHIFT_RIGHT          0x04
 
 #define KS0066_FUNCTION             0x20
-#define KS0066_8BIT             0x10
-#define KS0066_2LINES           0x08
-#define KS0066_5X10             0x04
+#define KS0066_8BIT                 0x10
+#define KS0066_2LINES               0x08
+#define KS0066_5X10                 0x04
 
 #define KS0066_SET_CGRAM            0x40
 #define KS0066_SET_DDRAM            0x80
@@ -62,14 +75,17 @@
 #define KS0066_BCKL_OFF             0
 #define KS0066_BCKL_ON              1
 
-// Functions
-void ks0066WriteCommand(uint8_t cmd);
-void ks0066WriteData(uint8_t data);
+#define KS0066_MIN_BRIGHTNESS       0
+#define KS0066_MAX_BRIGHTNESS       32
 
+// Functions
 void ks0066Clear();
 void ks0066Init();
 
+void ks0066SelectSymbol(uint8_t num);
 void ks0066SetXY(uint8_t x, uint8_t y);
+
+void ks0066WriteData(uint8_t data);
 void ks0066WriteString(char *string);
 
 #endif // KS0066_H

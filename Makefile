@@ -1,5 +1,4 @@
-DISPLAY = KS0066_16X2
-WIRE = 4BIT
+DISPLAY = KS0066_16X2_4BIT
 
 MCU = atmega8
 F_CPU = 8000000L
@@ -17,11 +16,13 @@ SRCS += input.c actions.c i2c.c rtc.c remote.c fft.c adc.c
 
 DEFINES  = -D_$(MCU) -D_NO_MUTE_PORT
 
-ifeq ($(DISPLAY), KS0066_16X2)
-SRCS += display/ks0066.c
-DEFINES +=-DKS0066_WIRE_$(WIRE) -DKS0066
+ifeq "$(DISPLAY)" "KS0066_16X2_4BIT"
+  SRCS += display/ks0066.c
+else ifeq "$(DISPLAY)" "KS0066_16X2_PCF8574"
+  SRCS += display/ks0066.c
 endif
 SRCS += display.c
+DEFINES += -D_$(DISPLAY)
 
 # Audio source files
 SRCS += audio/audio.c

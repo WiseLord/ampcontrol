@@ -32,7 +32,7 @@ static void writeStringEeprom(const uint8_t *string)
 
 static void lcdGenLevels()
 {
-    ks0066WriteCommand(KS0066_SET_CGRAM);
+    ks0066SelectSymbol(0);
 
     uint8_t i, j;
 
@@ -49,7 +49,7 @@ static void lcdGenLevels()
 
 static void lcdGenBar()
 {
-    ks0066WriteCommand(KS0066_SET_CGRAM);
+    ks0066SelectSymbol(0);
 
     uint8_t i, j;
     uint8_t sym;
