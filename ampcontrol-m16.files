@@ -53,6 +53,8 @@ tuner/tuner.h
 tuner/tux032.c
 tuner/tux032.h
 
+actions.c
+actions.h
 adc.c
 adc.h
 display.c

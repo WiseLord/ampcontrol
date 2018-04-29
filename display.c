@@ -10,6 +10,7 @@
 #include "tuner/tuner.h"
 #include "adc.h"
 #include "pins.h"
+#include "remote.h"
 
 static uint8_t _br;
 static int8_t brStby;                           // Brightness in standby mode
@@ -18,19 +19,7 @@ static int8_t brWork;                           // Brightness in working mode
 uint8_t spMode;                                 // Spectrum mode
 static char strbuf[STR_BUFSIZE + 1];            // String buffer
 
-uint8_t defDisplay = MODE_SPECTRUM;             // Default display
-
-uint8_t getDefDisplay()
-{
-    return defDisplay;
-}
-
-void setDefDisplay(uint8_t value)
-{
-    defDisplay = value;
-
-    return;
-}
+uint8_t *txtLabels[LABEL_END];                  // Array with text label pointers
 
 #if defined(_KS0066)
 static uint8_t userSybmols = LCD_LEVELS;
@@ -105,6 +94,27 @@ static void lcdGenBar(void)
 
 void displayInit()
 {
+    uint8_t i;
+    uint8_t *addr;
+
+    // Load text labels from EEPROM
+    addr = (uint8_t *)EEPROM_LABELS_ADDR;
+    i = 0;
+
+    while (i < LABEL_END && addr < (uint8_t *)EEPROM_SIZE) {
+        if (eeprom_read_byte(addr) != '\0') {
+            txtLabels[i] = addr;
+            addr++;
+            i++;
+            while (eeprom_read_byte(addr) != '\0' &&
+                    addr < (uint8_t *)EEPROM_SIZE) {
+                addr++;
+            }
+        } else {
+            addr++;
+        }
+    }
+
 #if defined(_KS0108)
     ks0108Init();
     ks0108LoadFont(font_ks0066_ru_08, 1);
@@ -116,7 +126,9 @@ void displayInit()
 #endif
     OUT(DISP_BCKL);
 
-    return;
+    brStby = eeprom_read_byte((uint8_t *)EEPROM_BR_STBY);
+    brWork = eeprom_read_byte((uint8_t *)EEPROM_BR_WORK);
+    spMode  = eeprom_read_byte((uint8_t *)EEPROM_SP_MODE);
 }
 
 ISR (TIMER0_OVF_vect)
@@ -136,7 +148,7 @@ ISR (TIMER0_OVF_vect)
     return;
 }
 
-void clearDisplay()
+void displayClear()
 {
 #if defined(_KS0108)
     ks0108Clear();
@@ -334,61 +346,63 @@ static void showParLabel(uint8_t label, uint8_t **txtLabels)
     return;
 }
 
-void showRC5Info(uint16_t rc5Buf)
+void showRCInfo()
 {
+    IRData irData = getIrData();
+
 #if defined(_KS0108)
     ks0108LoadFont(font_ks0066_ru_08, 1);
     ks0108SetXY(0, 0);
     ks0108WriteString("RC5:");
     ks0108SetXY(5, 1);
-    ks0108WriteString("Raw = ");
-    ks0108WriteString(mkNumString(rc5Buf, 14, '0', 2));
+    ks0108WriteString("Type = ");
+    ks0108WriteString(mkNumString(irData.type, 1, '0', 16));
     ks0108SetXY(5, 2);
-    ks0108WriteString("Tog = ");
-    ks0108WriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
+    ks0108WriteString("Rep = ");
+    ks0108WriteString(mkNumString(irData.repeat, 1, '0', 16));
     ks0108SetXY(5, 3);
     ks0108WriteString("Adr = ");
-    ks0108WriteString(mkNumString((rc5Buf & 0x07C0) >> 6, 2, '0', 16));
+    ks0108WriteString(mkNumString(irData.address, 2, '0', 16));
     ks0108SetXY(5, 4);
     ks0108WriteString("Cmd = ");
-    ks0108WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
+    ks0108WriteString(mkNumString(irData.command, 2, '0', 16));
     ks0108SetXY(0, 6);
     ks0108WriteString("Buttons:");
     ks0108SetXY(5, 7);
-    ks0108WriteString(mkNumString(INPUT_PIN, 8, '0', 2));
+    ks0108WriteString("=-=-=");
 #elif defined(_KS0066)
     ks0066SetXY(0, 0);
     ks0066WriteString("R=");
-    ks0066WriteString(mkNumString(rc5Buf, 14, '0', 2));
+    ks0066WriteString(mkNumString(irData.type, 1, '0', 16));
     ks0066SetXY(0, 1);
-    ks0066WriteString("TB=");
-    ks0066WriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
+    ks0066WriteString("RP=");
+    ks0066WriteString(mkNumString(irData.repeat, 1, '0', 16));
     ks0066WriteString(",RC=");
-    ks0066WriteString(mkNumString((rc5Buf & 0x07C0) >> 6, 2, '0', 16));
+    ks0066WriteString(mkNumString(irData.address, 2, '0', 16));
     ks0066WriteString(",CM=");
-    ks0066WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
+    ks0066WriteString(mkNumString(irData.command, 2, '0', 16));
 #elif defined(_LS020)
     ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
     ls020SetXY(4, 0);
-    ls020WriteString(mkNumString(rc5Buf, 14, '0', 2));
+    ls020WriteString(mkNumString(irData.type, 1, '0', 16));
     ls020SetXY(5, 24);
-    ls020WriteString("Tog = ");
-    ls020WriteString(mkNumString(((rc5Buf & 0x0800) > 0), 1, '0', 16));
+    ls020WriteString("Rep = ");
+    ls020WriteString(mkNumString(irData.repeat, 1, '0', 16));
     ls020SetXY(6, 48);
     ls020WriteString("Adr = ");
-    ls020WriteString(mkNumString((rc5Buf & 0x07C0) >> 6, 2, '0', 16));
+    ls020WriteString(mkNumString(irData.address, 2, '0', 16));
     ls020SetXY(4, 72);
     ls020WriteString("Cmd = ");
-    ls020WriteString(mkNumString(rc5Buf & 0x003F, 2, '0', 16));
+    ls020WriteString(mkNumString(irData.command, 2, '0', 16));
     ls020SetXY(6, 104);
     ls020WriteString("Btn = ");
-    ls020WriteString(mkNumString(INPUT_PIN, 8, '0', 2));
+    ls020WriteString("=-=-=");
 #endif
 
     return;
 }
 
-void showRadio(void)
+void showRadio(uint8_t mode)
 {
     uint16_t freq = tuner.rdFreq;
     uint8_t num = tunerStationNum();
@@ -506,12 +520,12 @@ void showRadio(void)
     return;
 }
 
-void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
+void showBoolParam(uint8_t value, uint8_t labelIndex)
 {
 #if defined(_KS0108)
     ks0108LoadFont(font_ks0066_ru_24, 1);
     ks0108SetXY(0, 0);
-    writeStringEeprom(parLabel);
+    writeStringEeprom(txtLabels[labelIndex]);
     ks0108SetXY(0, 4);
     if (value)
         writeStringEeprom(txtLabels[LABEL_ON]);
@@ -520,7 +534,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
     ks0108LoadFont(font_ks0066_ru_08, 1);
 #elif defined(_KS0066)
     ks0066SetXY(0, 0);
-    writeStringEeprom(parLabel);
+    writeStringEeprom(txtLabels[labelIndex]);
     ks0066SetXY(1, 1);
     if (value)
         writeStringEeprom(txtLabels[LABEL_ON]);
@@ -529,7 +543,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 #elif defined(_LS020)
     ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
     ls020SetXY(4, 0);
-    writeStringEeprom(parLabel);
+    writeStringEeprom(txtLabels[labelIndex]);
     ls020SetXY(4, 32);
     if (value)
         writeStringEeprom(txtLabels[LABEL_ON]);
@@ -541,7 +555,7 @@ void showBoolParam(uint8_t value, const uint8_t *parLabel, uint8_t **txtLabels)
 }
 
 // Show brightness control
-void showBrWork(uint8_t **txtLabels)
+void showBrWork()
 {
     showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
     showParValue(brWork);
@@ -563,7 +577,7 @@ void changeBrWork(int8_t diff)
 }
 
 // Show audio parameter
-void showSndParam(sndMode mode, uint8_t **txtLabels)
+void showSndParam(uint8_t mode)
 {
     sndParam *param = &sndPar[mode];
 
@@ -620,7 +634,7 @@ static void drawTm(uint8_t tm, const uint8_t *font, uint8_t mult)
 }
 #endif
 
-void showTime(uint8_t **txtLabels)
+void showTime()
 {
     rtcReadTime();
 #if defined(_KS0108)
@@ -726,7 +740,7 @@ void showTime(uint8_t **txtLabels)
     return;
 }
 
-void drawSpectrum()
+void showSpectrum()
 {
 #if defined(_KS0108)
     uint8_t i, j, k;
@@ -842,21 +856,10 @@ void setStbyBrightness(void)
     return;
 }
 
-void loadDispParams(void)
-{
-    brStby = eeprom_read_byte((uint8_t *)EEPROM_BR_STBY);
-    brWork = eeprom_read_byte((uint8_t *)EEPROM_BR_WORK);
-    spMode  = eeprom_read_byte((uint8_t *)EEPROM_SP_MODE);
-    defDisplay = eeprom_read_byte((uint8_t *)EEPROM_DISPLAY);
-
-    return;
-}
-
-void saveDisplayParams(void)
+void displayPowerOff(void)
 {
     eeprom_update_byte((uint8_t *)EEPROM_BR_WORK, brWork);
     eeprom_update_byte((uint8_t *)EEPROM_SP_MODE, spMode);
-    eeprom_update_byte((uint8_t *)EEPROM_DISPLAY, defDisplay);
 
     return;
 }

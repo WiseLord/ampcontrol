@@ -14,7 +14,7 @@ lc = $(shell echo $1 | tr A-Z a-z)
 TARG = ampcontrol_$(MCU)_$(call lc,$(DISPLAY))_$(call lc,$(APROC_LIST))_$(call lc,$(TUNER_LIST))
 
 SRCS = main.c
-SRCS += input.c i2c.c rtc.c remote.c fft.c adc.c
+SRCS += input.c actions.c i2c.c rtc.c remote.c fft.c adc.c
 
 DEFINES = -D_$(MCU)
 
@@ -22,7 +22,7 @@ DEFINES = -D_$(MCU)
 FONTS_SRC = $(wildcard display/font*.c)
 ICONS_SRC = $(wildcard display/icon*.c)
 
-ifeq ($(DISPLAY), KS0108)
+ifeq "$(DISPLAY)" "KS0108"
   SRCS += display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
 else ifeq "$(DISPLAY)" "KS0066_16X2_8BIT"
   SRCS += display/ks0066.c
