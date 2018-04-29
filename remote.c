@@ -51,7 +51,7 @@ ISR(INT1_vect)
 
         irData.ready = 1;
         irData.repeat = (rc5TogBit == rc5TogBitOld);
-//      irData.type = IR_TYPE_RC5;
+        irData.type = IR_TYPE_RC5;
         irData.address  = (rc5Cmd & RC5_ADDR_MASK) >> 6;
         irData.command = rc5Cmd & RC5_COMM_MASK;
 

@@ -6,7 +6,7 @@ F_CPU = 8000000L
 
 APROC_LIST = PT232X
 TUNER_LIST = RDA580X
-FEATURE_LIST = RDA5807_DF
+FEATURE_LIST =
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
@@ -135,7 +135,7 @@ $(ELF): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
 	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
-size:   $(ELF)
+size: $(ELF)
 	@sh ./size.sh $(ELF)
 
 $(BUILDDIR)/%.o: %.c

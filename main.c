@@ -215,7 +215,7 @@ int main()
         case CMD_RC_LOUDNESS:
         case CMD_RC_SURROUND:
         case CMD_RC_EFFECT_3D:
-        case CMD_RC_TONE_DEFEAT:
+        case CMD_RC_TONE_BYPASS:
             ks0066Clear();
             sndSwitchExtra(1 << (action - CMD_RC_LOUDNESS));
             dispMode = MODE_LOUDNESS + (action - CMD_RC_LOUDNESS);

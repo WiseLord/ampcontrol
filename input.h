@@ -35,7 +35,7 @@ typedef enum {
     CMD_RC_LOUDNESS,
     CMD_RC_SURROUND,
     CMD_RC_EFFECT_3D,
-    CMD_RC_TONE_DEFEAT,
+    CMD_RC_TONE_BYPASS,
 
     CMD_RC_FM_RDS,              // TXT
     CMD_RC_FM_INC,              // CHAN_UP

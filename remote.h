@@ -1,5 +1,5 @@
-#ifndef RC5_H
-#define RC5_H
+#ifndef REMOTE_H
+#define REMOTE_H
 
 #include <inttypes.h>
 #include "pins.h"
@@ -36,4 +36,4 @@ IRData takeIrData();
 IRData getIrData();
 void setIrData(uint8_t type, uint8_t addr, uint8_t cmd);
 
-#endif // RC5_H
+#endif // REMOTE_H
