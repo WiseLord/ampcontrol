@@ -3,6 +3,7 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
+#include "display.h"
 #include "remote.h"
 #include "eeprom.h"
 #include "pins.h"
