@@ -5,11 +5,7 @@
 #include "rtc.h"
 #include "audio/audio.h"
 
-#ifdef _KS0066_16X2_PCF8574
-#define _KS0066
-#endif
-
-#ifdef _KS0066_16X2
+#if defined(_KS0066_16X2_8BIT) || defined(_KS0066_16X2_PCF8574)
 #define _KS0066
 #endif
 

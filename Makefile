@@ -24,15 +24,15 @@ DEFINES = -D_$(MCU)
 # Display source files
 FONTS_SRC = $(wildcard display/font*.c)
 ICONS_SRC = $(wildcard display/icon*.c)
-ifeq ($(DISPLAY), KS0066_16X2)
+ifeq "$(DISPLAY)" "KS0066_16X2_8BIT"
   SRCS += display/ks0066.c
-else ifeq ($(DISPLAY), KS0066_16X2_PCF8574)
+else ifeq "$(DISPLAY)" "KS0066_16X2_PCF8574"
   SRCS += display/ks0066.c
-else ifeq ($(DISPLAY), LS020)
+else ifeq "$(DISPLAY)" "LS020"
   SRCS += display/ls020.c $(FONTS_SRC) $(ICONS_SRC)
-else ifeq ($(DISPLAY), ST7920)
+else ifeq "$(DISPLAY)" "ST7920"
   SRCS += display/gdfb.c display/st7920.c $(FONTS_SRC) $(ICONS_SRC)
-else ifeq ($(DISPLAY), SSD1306)
+else ifeq "$(DISPLAY)" "SSD1306"
   SRCS += display/gdfb.c display/ssd1306.c $(FONTS_SRC) $(ICONS_SRC)
 else
   SRCS += display/gdfb.c display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
@@ -155,7 +155,7 @@ $(ELF): $(OBJS)
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
 	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
-size:   $(ELF)
+size: $(ELF)
 	@sh ./size.sh $(ELF)
 
 $(BUILDDIR)/%.o: %.c

@@ -1,28 +1,29 @@
 #ifndef ACTIONS_H
 #define ACTIONS_H
 
-#include "inttypes.h"
+#include <inttypes.h>
 
 #include "audio/audio.h"
 #include "input.h"
 
 // Timers for different screens
 #define DISPLAY_TIME_TEST                   20000U
-#define DISPLAY_TIME_TEMP                   20000U
 #define DISPLAY_TIME_GAIN                   3000U
 #define DISPLAY_TIME_GAIN_START             1500U
 #define DISPLAY_TIME_TIME                   3000U
 #define DISPLAY_TIME_TIME_EDIT              10000U
-#define DISPLAY_TIME_TIMER                  5000U
-#define DISPLAY_TIME_TIMER_EXP              64000U
-#define DISPLAY_TIME_ALARM                  3000U
-#define DISPLAY_TIME_ALARM_EDIT             10000U
 #define DISPLAY_TIME_FM_RADIO               5000U
 #define DISPLAY_TIME_FM_TUNE                10000U
 #define DISPLAY_TIME_CHAN                   2000U
 #define DISPLAY_TIME_AUDIO                  3000U
 #define DISPLAY_TIME_SP                     3000U
 #define DISPLAY_TIME_BR                     3000U
+
+#define DISPLAY_TIME_TEMP                   20000U
+#define DISPLAY_TIME_TIMER                  5000U
+#define DISPLAY_TIME_TIMER_EXP              64000U
+#define DISPLAY_TIME_ALARM                  3000U
+#define DISPLAY_TIME_ALARM_EDIT             10000U
 
 enum {
     ACTION_NEXT_RC_CMD = CMD_RC_END,    // First non-RC command
@@ -67,7 +68,6 @@ uint8_t getAction();
 
 void handleAction(uint8_t action);
 void handleEncoder(int8_t encCnt);
-void handleChangeFM(uint8_t step);
 
 uint8_t checkAlarmAndTime();
 

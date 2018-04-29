@@ -4,8 +4,8 @@
 #include "ui_mainwindow.h"
 
 #ifdef BLUETOOTH
-#include<QBluetoothDeviceDiscoveryAgent>
-#include<QBluetoothSocket>
+#include <QBluetoothDeviceDiscoveryAgent>
+#include <QBluetoothSocket>
 #else
 #include <QSystemTrayIcon>
 #include <QCloseEvent>

@@ -2,9 +2,11 @@
 
 #include <util/delay.h>
 #include <avr/interrupt.h>
+
 #include "../pins.h"
 #if defined(KS0066_WIRE_PCF8574)
 #include "../i2c.h"
+#include <avr/pgmspace.h>
 #endif
 
 #define swap(x) (__builtin_avr_swap(x))             // Swaps nibbles
@@ -13,7 +15,6 @@
 static uint8_t i2cData;
 static uint8_t pcf8574Addr = 0x40;
 
-#include <avr/pgmspace.h>
 const uint8_t pcf8574Addresses[] PROGMEM = {
     0x40, 0x42, 0x44, 0x46, 0x48, 0x4A, 0x4C, 0x4E,
     0x70, 0x72, 0x74, 0x76, 0x78, 0x7A, 0x7C, 0x7E,
@@ -23,7 +24,7 @@ const uint8_t pcf8574Addresses[] PROGMEM = {
 
 static uint8_t _br;
 static uint8_t _x;
-static uint8_t dataMode = KS0066_DATA_CGRAM;
+static uint8_t dataMode = KS0066_SET_CGRAM;
 
 static void ks0066WriteStrob()
 {
@@ -104,9 +105,9 @@ void ks0066WriteData(uint8_t data)
 #else
     SET(KS0066_RS);
 #endif
-    if (dataMode == KS0066_DATA_CGRAM || _x < KS0066_SCREEN_WIDTH) {
+    if (dataMode == KS0066_SET_CGRAM || _x < KS0066_SCREEN_WIDTH) {
         ks0066WritePort(data);
-        if (dataMode == KS0066_DATA_DDRAM)
+        if (dataMode == KS0066_SET_DDRAM)
             _x++;
     }
 }
@@ -133,10 +134,7 @@ void ks0066Init()
 #if defined(KS0066_WIRE_PCF8574)
     I2CStart(pcf8574Addr);
 
-    i2cData |= PCF8574_BL_LINE;
-    i2cData &= ~PCF8574_E_LINE;
-    i2cData &= ~PCF8574_RW_LINE;
-    i2cData &= ~PCF8574_RS_LINE;
+    i2cData = PCF8574_BL_LINE;
 #else
     OUT(KS0066_BCKL);
     OUT(KS0066_E);
@@ -194,13 +192,13 @@ void ks0066Init()
 
 void ks0066SelectSymbol(uint8_t num)
 {
-    dataMode = KS0066_DATA_CGRAM;
+    dataMode = KS0066_SET_CGRAM;
     ks0066WriteCommand(KS0066_SET_CGRAM + num * 8);
 }
 
 void ks0066SetXY(uint8_t x, uint8_t y)
 {
-    dataMode = KS0066_DATA_DDRAM;
+    dataMode = KS0066_SET_DDRAM;
     _x = x;
     ks0066WriteCommand(KS0066_SET_DDRAM + (y ? KS0066_LINE_WIDTH : 0) + x);
 }

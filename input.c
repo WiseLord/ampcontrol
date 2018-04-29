@@ -3,12 +3,12 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
+#include "remote.h"
 #include "eeprom.h"
 #include "pins.h"
-#include "display/gdfb.h"
 
-static volatile int8_t encCnt;
-static volatile cmdID cmdBuf;
+static volatile int8_t encCnt = 0;
+static volatile CmdID cmdBuf = CMD_END;
 static int8_t encRes = 0;
 static uint8_t silenceTime;
 
@@ -16,21 +16,59 @@ static uint8_t silenceTime;
 static volatile uint8_t encPrev = ENC_NO;
 static volatile uint8_t btnPrev = BTN_NO;
 
-static volatile uint16_t displayTime;
+static volatile uint16_t displayTime = 0;           // Display mode timer
+static volatile int16_t initTimer = INIT_TIMER_OFF; // Init timer
+static volatile uint8_t clockTimer = 0;             // RTC poll timer
 
 #ifdef _TEMPCONTROL
 static volatile uint16_t sensTimer;                 // Timer of temperature measuring process
 #endif
 static volatile int16_t stbyTimer = STBY_TIMER_OFF; // Standby timer
-static volatile int16_t initTimer = INIT_TIMER_OFF; // Init timer
 static volatile uint16_t secTimer;                  // 1 second timer
-static volatile uint8_t clockTimer;
 static volatile int16_t silenceTimer;               // Timer to check silence
 static volatile uint16_t rcTimer;
 
 static uint8_t rcType;
 static uint8_t rcAddr;
 static uint8_t rcCode[CMD_RC_END];                  // Array with rc commands
+
+static CmdID rcCmdIndex(uint8_t rcCmd)
+{
+    CmdID i;
+
+    for (i = 0; i < CMD_RC_END; i++)
+        if (rcCmd == rcCode[i])
+            return i;
+
+    return CMD_RC_END;
+}
+
+static uint8_t getPins()
+{
+#ifdef _atmega32
+    uint8_t pins = BTN_NO;
+
+    if (!READ(BUTTON_1))
+        pins |= BTN_D0;
+    if (!READ(BUTTON_2))
+        pins |= BTN_D1;
+    if (!READ(BUTTON_3))
+        pins |= BTN_D2;
+    if (!READ(BUTTON_4))
+        pins |= BTN_D3;
+    if (!READ(BUTTON_5))
+        pins |= BTN_D4;
+
+    if (!READ(ENCODER_A))
+        pins |= ENC_A;
+    if (!READ(ENCODER_B))
+        pins |= ENC_B;
+
+    return pins;
+#else
+    return gdGetPins();
+#endif
+}
 
 void rcCodesInit()
 {
@@ -72,6 +110,7 @@ void inputInit()
     TCCR2B = (1 << CS22) | (0 << CS21) | (1 << CS20);
     TCCR2A = (1 << WGM21);
     OCR2A = 125;                                    // 125000/125 => 1000 polls/sec
+    TCNT2 = 0;                                      // Reset timer value
     TIMSK2 |= (1 << OCIE2A);                        // Enable timer compare match interrupt
 #endif
 
@@ -84,44 +123,6 @@ void inputInit()
     cmdBuf = CMD_RC_END;
 #ifdef _TEMPCONTROL
     sensTimer = 0;
-#endif
-}
-
-static uint8_t rcCmdIndex(uint8_t cmd)
-{
-    uint8_t i;
-
-    for (i = 0; i < CMD_RC_END; i++)
-        if (cmd == rcCode[i])
-            return i;
-
-    return CMD_RC_END;
-}
-
-static uint8_t getPins()
-{
-#ifdef _atmega32
-    uint8_t pins = BTN_NO;
-
-    if (!READ(BUTTON_1))
-        pins |= BTN_D0;
-    if (!READ(BUTTON_2))
-        pins |= BTN_D1;
-    if (!READ(BUTTON_3))
-        pins |= BTN_D2;
-    if (!READ(BUTTON_4))
-        pins |= BTN_D3;
-    if (!READ(BUTTON_5))
-        pins |= BTN_D4;
-
-    if (!READ(ENCODER_A))
-        pins |= ENC_A;
-    if (!READ(ENCODER_B))
-        pins |= ENC_B;
-
-    return pins;
-#else
-    return gdGetPins();
 #endif
 }
 
@@ -240,9 +241,8 @@ ISR (TIMER2_COMPA_vect)
         displayTime--;
 
     // Time from last IR command
-    if (rcTimer < 1000)
+    if (rcTimer < RC_PRESS_LIMIT)
         rcTimer++;
-
 
     if (secTimer) {
         secTimer--;
@@ -269,7 +269,6 @@ ISR (TIMER2_COMPA_vect)
     if (initTimer > 0)
         initTimer--;
 }
-
 
 int8_t getEncoder()
 {
@@ -303,28 +302,28 @@ int8_t getEncoder()
     return ret;
 }
 
-cmdID getBtnCmd()
+CmdID getBtnCmd()
 {
-    cmdID ret = cmdBuf;
+    CmdID ret = cmdBuf;
     cmdBuf = CMD_RC_END;
     return ret;
 }
 
-cmdID getRcCmd()
+CmdID getRcCmd()
 {
     // Place RC event to command buffer if enough RC timer ticks
     IRData ir = takeIrData();
 
-    uint8_t rcCmdBuf = CMD_RC_END;
+    CmdID rcCmdBuf = CMD_RC_END;
 
     if (ir.ready && (ir.type == rcType) && (ir.address == rcAddr)) {
-        if (!ir.repeat || (rcTimer > 800)) {
+        if (!ir.repeat || (rcTimer > RC_LONG_PRESS)) {
             rcTimer = 0;
             rcCmdBuf = rcCmdIndex(ir.command);
         }
         if (ir.command == rcCode[CMD_RC_VOL_UP] || ir.command == rcCode[CMD_RC_VOL_DOWN]) {
-            if (rcTimer > 400) {
-                rcTimer = 360;
+            if (rcTimer > RC_VOL_REPEAT) {
+                rcTimer = RC_VOL_DELAY;
                 rcCmdBuf = rcCmdIndex(ir.command);
             }
         }
@@ -351,6 +350,26 @@ void setDisplayTime(uint16_t value)
 uint16_t getDisplayTime()
 {
     return displayTime;
+}
+
+void setClockTimer(uint8_t value)
+{
+    clockTimer = value;
+}
+
+uint8_t getClockTimer()
+{
+    return clockTimer;
+}
+
+void setInitTimer(int16_t value)
+{
+    initTimer = value;
+}
+
+int16_t getInitTimer()
+{
+    return initTimer;
 }
 
 #ifdef _TEMPCONTROL
@@ -385,16 +404,6 @@ int16_t getSecTimer()
     return secTimer;
 }
 
-void setClockTimer(uint8_t value)
-{
-    clockTimer = value;
-}
-
-uint8_t getClockTimer()
-{
-    return clockTimer;
-}
-
 void enableSilenceTimer()
 {
     if (silenceTime)
@@ -411,14 +420,4 @@ int16_t getSilenceTimer()
 void disableSilenceTimer()
 {
     silenceTimer = STBY_TIMER_OFF;
-}
-
-void setInitTimer(int16_t value)
-{
-    initTimer = value;
-}
-
-int16_t getInitTimer()
-{
-    return initTimer;
 }

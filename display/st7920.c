@@ -1,8 +1,8 @@
 #include "st7920.h"
 
-#include "util/delay.h"
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
+#include <util/delay.h>
 #include "../pins.h"
 
 static volatile uint8_t pins;

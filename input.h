@@ -2,7 +2,6 @@
 #define INPUT_H
 
 #include <inttypes.h>
-#include "remote.h"
 
 #define BTN_NO                  0x00
 #define BTN_D0                  0x01
@@ -79,18 +78,26 @@ typedef enum {
 
     CMD_END
 
-} cmdID;
+} CmdID;
+
+// Timers
+#define RTC_POLL_TIME           200
 
 // Handling long press actions
 #define SHORT_PRESS             100
 #define LONG_PRESS              600
 #define AUTOREPEAT              150
 
-#define STBY_TIMER_OFF          -1
-#define SILENCE_TIMER           180
+#define RC_LONG_PRESS           800
+#define RC_VOL_DELAY            360
+#define RC_VOL_REPEAT           400
+#define RC_PRESS_LIMIT          1000
 
 #define INIT_TIMER_OFF          -1
 #define INIT_TIMER_START        700
+
+#define STBY_TIMER_OFF          -1
+#define SILENCE_TIMER           180
 
 #define TEMP_MEASURE_TIME       1
 #define SENSOR_POLL_INTERVAL    5
@@ -99,14 +106,20 @@ void rcCodesInit();
 void inputInit();
 
 int8_t getEncoder();
-cmdID getBtnCmd();
-cmdID getRcCmd();
+CmdID getBtnCmd();
+CmdID getRcCmd();
 
 uint16_t getBtnBuf();
 uint16_t getEncBuf();
 
 void setDisplayTime(uint16_t value);
 uint16_t getDisplayTime();
+
+void setClockTimer(uint8_t value);
+uint8_t getClockTimer();
+
+void setInitTimer(int16_t value);
+int16_t getInitTimer();
 
 #ifdef _TEMPCONTROL
 uint8_t getSensTimer();
@@ -119,14 +132,8 @@ void setStbyTimer(int16_t val);
 void setSecTimer(uint16_t val);
 int16_t getSecTimer();
 
-void setClockTimer(uint8_t value);
-uint8_t getClockTimer();
-
 void enableSilenceTimer();
 void disableSilenceTimer();
 int16_t getSilenceTimer();
-
-void setInitTimer(int16_t value);
-int16_t getInitTimer();
 
 #endif // INPUT_H

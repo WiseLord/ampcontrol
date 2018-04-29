@@ -16,6 +16,7 @@
 #ifdef _RDS
 #include "tuner/rds.h"
 #endif
+#include "remote.h"
 
 static int8_t brStby;                       // Brightness in standby mode
 static int8_t brWork;                       // Brightness in working mode

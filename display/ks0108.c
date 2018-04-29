@@ -1,6 +1,6 @@
 #include "ks0108.h"
 
-#include "util/delay.h"
+#include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
 #include "../pins.h"

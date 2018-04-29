@@ -1,8 +1,6 @@
 #include "remote.h"
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
-#include <avr/pgmspace.h>
 #include "pins.h"
 
 static volatile IRData irData;                      // Last decoded IR command

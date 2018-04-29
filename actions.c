@@ -39,10 +39,22 @@ static uint8_t defDispMode()
     return ret;
 }
 
+static void handleChangeFM(uint8_t step)
+{
+    if (dispMode == MODE_FM_TUNE) {
+        tunerSeek(step);
+        setDisplayTime(DISPLAY_TIME_FM_TUNE);
+    } else {
+        tunerNextStation(step);
+        dispMode = MODE_FM_RADIO;
+        setDisplayTime(DISPLAY_TIME_FM_RADIO);
+    }
+}
+
 uint8_t getAction()
 {
     uint8_t action = ACTION_NOACTION;
-    cmdID cmd;
+    CmdID cmd;
 
     // Get command
     cmd = getBtnCmd();
@@ -541,18 +553,6 @@ void handleEncoder(int8_t encCnt)
     }
 }
 
-void handleChangeFM(uint8_t step)
-{
-    if (dispMode == MODE_FM_TUNE) {
-        tunerSeek(step);
-        setDisplayTime(DISPLAY_TIME_FM_TUNE);
-    } else {
-        tunerNextStation(step);
-        dispMode = MODE_FM_RADIO;
-        setDisplayTime(DISPLAY_TIME_FM_RADIO);
-    }
-}
-
 uint8_t checkAlarmAndTime()
 {
     uint8_t ret = ACTION_NOACTION;
@@ -571,7 +571,7 @@ uint8_t checkAlarmAndTime()
             }
         }
 #endif
-        setClockTimer(200);                 // Limit check interval
+        setClockTimer(RTC_POLL_TIME);            // Limit check interval
     }
 
     return ret;
@@ -584,8 +584,8 @@ void handleExitDefaultMode()
         case MODE_STANDBY:
             setStbyBrightness();
             break;
-        case MODE_TEMP:
 #ifdef _TEMPCONTROL
+        case MODE_TEMP:
             saveTempParams();
 #endif
         case MODE_TEST:
