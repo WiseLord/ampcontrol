@@ -588,32 +588,32 @@ void showSndParam(sndMode mode, uint8_t **txtLabels)
 }
 
 #if defined(_KS0108)
-static void drawTm(timeMode tm, const uint8_t *font)
+static void drawTm(uint8_t tm, const uint8_t *font)
 {
-    if (getEtm() == tm)
+    if (tm == rtc.etm)
         ks0108LoadFont(font, 0);
     else
         ks0108LoadFont(font, 1);
-    ks0108WriteString(mkNumString(getTime(tm), 2, '0', 10));
+    ks0108WriteString(mkNumString(*((int8_t *)&rtc + tm), 2, '0', 10));
     ks0108LoadFont(font, 1);
 
     return;
 }
 #elif defined(_KS0066)
-static void drawTm(timeMode tm)
+static void drawTm(uint8_t tm)
 {
-    ks0066WriteString(mkNumString(getTime(tm), 2, '0', 10));
+    ks0066WriteString(mkNumString(*((int8_t *)&rtc + tm), 2, '0', 10));
 
     return;
 }
 #elif defined(_LS020)
-static void drawTm(timeMode tm, const uint8_t *font, uint8_t mult)
+static void drawTm(uint8_t tm, const uint8_t *font, uint8_t mult)
 {
-    if (getEtm() == tm)
+    if (rtc.etm == tm)
         ls020LoadFont(font, COLOR_RED, mult);
     else
         ls020LoadFont(font, COLOR_CYAN, mult);
-    ls020WriteString(mkNumString(getTime(tm), 2, '0', 10));
+    ls020WriteString(mkNumString(*((int8_t *)&rtc + tm), 2, '0', 10));
     ls020LoadFont(font, COLOR_CYAN, mult);
 
     return;
@@ -622,27 +622,27 @@ static void drawTm(timeMode tm, const uint8_t *font, uint8_t mult)
 
 void showTime(uint8_t **txtLabels)
 {
-    readTime();
+    rtcReadTime();
 #if defined(_KS0108)
     ks0108SetXY(4, 0);
 
-    drawTm(HOUR, font_digits_32);
+    drawTm(RTC_HOUR, font_digits_32);
     ks0108WriteString("\x7F:\x7F");
-    drawTm(MIN, font_digits_32);
+    drawTm(RTC_MIN, font_digits_32);
     ks0108WriteString("\x7F:\x7F");
-    drawTm(SEC, font_digits_32);
+    drawTm(RTC_SEC, font_digits_32);
 
     ks0108SetXY(9, 4);
 
-    drawTm(DAY, font_ks0066_ru_24);
+    drawTm(RTC_DATE, font_ks0066_ru_24);
     ks0108WriteString("\x7F.\x7F");
-    drawTm(MONTH, font_ks0066_ru_24);
+    drawTm(RTC_MONTH, font_ks0066_ru_24);
     ks0108WriteString("\x7F.\x7F");
-    if (getEtm() == YEAR)
+    if (rtc.etm == RTC_YEAR)
         ks0108LoadFont(font_ks0066_ru_24, 0);
     ks0108WriteString("20");
     ks0108WriteChar('\x7F');
-    drawTm(YEAR, font_ks0066_ru_24);
+    drawTm(RTC_YEAR, font_ks0066_ru_24);
 
     ks0108LoadFont(font_ks0066_ru_08, 1);
     ks0108SetXY(32, 7);
@@ -650,70 +650,70 @@ void showTime(uint8_t **txtLabels)
 #elif defined(_KS0066)
     ks0066SetXY(0, 0);
 
-    drawTm(HOUR);
+    drawTm(RTC_HOUR);
     ks0066WriteData(':');
-    drawTm(MIN);
+    drawTm(RTC_MIN);
     ks0066WriteData(':');
-    drawTm(SEC);
+    drawTm(RTC_SEC);
 
     ks0066SetXY(11, 0);
-    drawTm(DAY);
+    drawTm(RTC_DATE);
     ks0066WriteData('.');
-    drawTm(MONTH);
+    drawTm(RTC_MONTH);
 
     ks0066SetXY(12, 1);
     ks0066WriteString("20");
-    drawTm(YEAR);
+    drawTm(RTC_YEAR);
 
     ks0066SetXY(0, 1);
 #elif defined(_LS020)
     ls020SetXY(2, 4);
 
-    drawTm(HOUR, font_ks0066_ru_24, 2);
+    drawTm(RTC_HOUR, font_ks0066_ru_24, 2);
     ls020WriteString("\x7F:\x7F");
-    drawTm(MIN, font_ks0066_ru_24, 2);
+    drawTm(RTC_MIN, font_ks0066_ru_24, 2);
     ls020WriteString("\x7F:\x7F");
-    drawTm(SEC, font_ks0066_ru_24, 2);
+    drawTm(RTC_SEC, font_ks0066_ru_24, 2);
 
     ls020SetXY(12, 64);
 
-    drawTm(DAY, font_digits_32, 1);
+    drawTm(RTC_DATE, font_digits_32, 1);
     ls020WriteString("\x7F.\x7F");
-    drawTm(MONTH, font_digits_32, 1);
+    drawTm(RTC_MONTH, font_digits_32, 1);
     ls020WriteString("\x7F.\x7F");
-    if (getEtm() == YEAR)
+    if (rtc.etm == RTC_YEAR)
         ls020LoadFont(font_digits_32, COLOR_RED, 1);
     ls020WriteString("20");
     ls020WriteChar('\x7F');
-    drawTm(YEAR, font_digits_32, 1);
+    drawTm(RTC_YEAR, font_digits_32, 1);
 
     ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
     ls020SetXY(24, 104);
 #endif
 
-    writeStringEeprom(txtLabels[LABEL_SUNDAY + getTime(WEEK) % 7]);
+    writeStringEeprom(txtLabels[LABEL_SUNDAY + rtcWeekDay() - 1]);
 
 #if defined(_KS0066)
-    if (getEtm() == NOEDIT) {
+    if (rtc.etm == RTC_NOEDIT) {
         ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
     } else {
-        switch (getEtm()) {
-        case HOUR:
+        switch (rtc.etm) {
+        case RTC_HOUR:
             ks0066SetXY(1, 0);
             break;
-        case MIN:
+        case RTC_MIN:
             ks0066SetXY(4, 0);
             break;
-        case SEC:
+        case RTC_SEC:
             ks0066SetXY(7, 0);
             break;
-        case DAY:
+        case RTC_DATE:
             ks0066SetXY(12, 0);
             break;
-        case MONTH:
+        case RTC_MONTH:
             ks0066SetXY(15, 0);
             break;
-        case YEAR:
+        case RTC_YEAR:
             ks0066SetXY(15, 1);
             break;
         default:
@@ -821,7 +821,7 @@ void setWorkBrightness(void)
 {
     _br = brWork;
 
-#if defined(KS0066_WIRE_PCF8574)
+#if defined(_KS0066_WIRE_PCF8574)
     if (brWork == DISP_MAX_BR)
         pcf8574IntBacklight(BACKLIGHT_ON);
     else
@@ -835,7 +835,7 @@ void setStbyBrightness(void)
 {
     _br = brStby;
 
-#if defined(KS0066_WIRE_PCF8574)
+#if defined(_KS0066_WIRE_PCF8574)
     pcf8574IntBacklight(BACKLIGHT_OFF);
 #endif
 

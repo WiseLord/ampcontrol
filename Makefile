@@ -14,7 +14,7 @@ lc = $(shell echo $1 | tr A-Z a-z)
 TARG = ampcontrol_$(MCU)_$(call lc,$(DISPLAY))_$(call lc,$(APROC_LIST))_$(call lc,$(TUNER_LIST))
 
 SRCS = main.c
-SRCS += input.c i2c.c ds1307.c remote.c fft.c adc.c
+SRCS += input.c i2c.c rtc.c remote.c fft.c adc.c
 
 DEFINES = -D_$(MCU)
 

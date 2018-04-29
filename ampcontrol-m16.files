@@ -56,8 +56,6 @@ tuner/tux032.h
 adc.c
 adc.h
 display.c
-ds1307.h
-ds1307.c
 eeprom.h
 fft.c
 fft.h
@@ -69,5 +67,7 @@ main.c
 pins.h
 remote.c
 remote.h
+rtc.h
+rtc.c
 spisw.c
 spisw.h

@@ -51,7 +51,7 @@ static void powerOff(void)
     STMU_PORT &= ~STDBY;
 
     setStbyBrightness();
-    stopEditTime();
+    rtc.etm = RTC_NOEDIT;
 
     return;
 }
@@ -107,6 +107,7 @@ static void hwInit(void)
     sei();                          // Gloabl interrupt enable
 
     tunerInit();                    // Tuner
+    rtc.etm = RTC_NOEDIT;
 
     return;
 }
@@ -178,10 +179,10 @@ int main(void)
             switch (dispMode) {
             case MODE_TIME:
             case MODE_TIME_EDIT:
-                editTime();
+                rtcNextEditParam();
                 dispMode = MODE_TIME_EDIT;
                 setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-                if (!isETM())
+                if (rtc.etm != RTC_ETM)
                     setDisplayTime(DISPLAY_TIME_TIME);
                 break;
             case MODE_FM_RADIO:
@@ -191,7 +192,7 @@ int main(void)
                     break;
                 }
             default:
-                stopEditTime();
+                rtc.etm = RTC_NOEDIT;
                 dispMode = MODE_TIME;
                 setDisplayTime(DISPLAY_TIME_TIME);
                 break;
@@ -354,7 +355,7 @@ int main(void)
                 setDisplayTime(DISPLAY_TIME_TEST);
                 break;
             case MODE_TIME_EDIT:
-                changeTime(encCnt);
+                rtcChangeTime(encCnt);
                 setDisplayTime(DISPLAY_TIME_TIME_EDIT);
                 break;
             case MODE_BR:
