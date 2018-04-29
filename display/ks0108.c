@@ -175,7 +175,7 @@ void ks0108WriteChar(uint8_t code)
     return;
 }
 
-void ks0108WriteString(uint8_t *string)
+void ks0108WriteString(char *string)
 {
     if (*string)
         ks0108WriteChar(*string++);

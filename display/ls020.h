@@ -66,6 +66,6 @@ void ls020LoadFont(const uint8_t *font, uint8_t color, uint8_t mult);
 
 void ls020WriteChar(uint8_t code);
 
-void ls020WriteString(uint8_t *string);
+void ls020WriteString(char *string);
 
 #endif // _LCD_H

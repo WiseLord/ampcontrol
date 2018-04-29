@@ -78,6 +78,6 @@ void ks0108SetXY(uint8_t x, uint8_t y);
 void ks0108LoadFont(const uint8_t *font, uint8_t color);
 
 void ks0108WriteChar(uint8_t code);
-void ks0108WriteString(uint8_t *string);
+void ks0108WriteString(char *string);
 
 #endif // KS0108_H

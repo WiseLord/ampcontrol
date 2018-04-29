@@ -24,15 +24,15 @@ ICONS_SRC = $(wildcard display/icon*.c)
 
 ifeq ($(DISPLAY), KS0108)
   SRCS += display/ks0108.c $(FONTS_SRC) $(ICONS_SRC)
-else ifeq ($(DISPLAY), KS0066)
+else ifeq "$(DISPLAY)" "KS0066_16X2_8BIT"
   SRCS += display/ks0066.c
-else ifeq ($(DISPLAY), LS020)
+else ifeq "$(DISPLAY)" "KS0066_16X2_PCF8574"
+  SRCS += display/ks0066.c
+else ifeq "$(DISPLAY)" "LS020"
   SRCS += display/ls020.c $(FONTS_SRC) $(ICONS_SRC)
-else ifeq ($(DISPLAY), PCF8574)
-  SRCS += display/pcf8574.c
 endif
 SRCS += display.c
-DEFINES += -D$(DISPLAY)
+DEFINES += -D_$(DISPLAY)
 
 # Audio source files
 SRCS += audio/audio.c

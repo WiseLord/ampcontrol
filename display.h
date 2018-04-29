@@ -6,19 +6,21 @@
 #include "ds1307.h"
 #include "audio/audio.h"
 
-// Graphics (ks0108-based) or character (ks0066-based) display selection
-#if !defined(KS0108) && !defined(KS0066) && !defined(LS020) && !defined(PCF8574)
-#define KS0108
+#if defined(_KS0066_16X2_8BIT) || defined(_KS0066_16X2_PCF8574)
+#define _KS0066
 #endif
 
-#if defined(KS0108)
+// Graphics (ks0108-based) or character (ks0066-based) display selection
+#if !defined(_KS0108) && !defined(_KS0066) && !defined(_LS020)
+#define _KS0108
+#endif
+
+#if defined(_KS0108)
 #include "display/ks0108.h"
-#elif defined(KS0066)
+#elif defined(_KS0066)
 #include "display/ks0066.h"
-#elif defined(LS020)
+#elif defined(_LS020)
 #include "display/ls020.h"
-#elif defined(PCF8574)
-#include "display/pcf8574.h"
 #endif
 
 // Spectrum output mode
@@ -43,8 +45,8 @@
 #define LCD_LEVELS              0
 #define LCD_BAR                 1
 
-#define DISP_MIN_BR                    0
-#define DISP_MAX_BR                    32
+#define DISP_MIN_BR             0
+#define DISP_MAX_BR             32
 
 // Display modes
 enum {
@@ -64,11 +66,11 @@ enum {
 };
 
 // Type of string printed (regular/eeprom/flash)
-#define STR_REG         0
-#define STR_EEP         1
-#define STR_PGM         2
+#define STR_REG                 0
+#define STR_EEP                 1
+#define STR_PGM                 2
 
-#define STR_BUFSIZE     16
+#define STR_BUFSIZE             16
 
 uint8_t getDefDisplay();
 void setDefDisplay(uint8_t value);
@@ -76,7 +78,7 @@ void setDefDisplay(uint8_t value);
 void displayInit();
 void clearDisplay();
 
-uint8_t *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
+char *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void showRC5Info(uint16_t rc5Buf);
 void showRadio(void);

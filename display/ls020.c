@@ -232,7 +232,7 @@ void ls020WriteChar(uint8_t code)
     return;
 }
 
-void ls020WriteString(uint8_t *string)
+void ls020WriteString(char *string)
 {
     if (*string)
         ls020WriteChar(*string++);
