@@ -54,7 +54,7 @@ void displayClear();
 char *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
 
 void showRCInfo();
-void showRadio(uint8_t mode);
+void showRadio(uint8_t tune);
 void showBoolParam(uint8_t value, uint8_t labelIndex);
 
 void showBrWork();

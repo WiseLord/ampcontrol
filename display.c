@@ -402,10 +402,12 @@ void showRCInfo()
     return;
 }
 
-void showRadio(uint8_t mode)
+void showRadio(uint8_t tune)
 {
-    uint16_t freq = tuner.rdFreq;
     uint8_t num = tunerStationNum();
+    tunerReadStatus();
+
+    uint16_t freq = tuner.rdFreq;
 
 #if defined(_KS0108)
     uint8_t i;
@@ -431,13 +433,12 @@ void showRadio(uint8_t mode)
 
     // Stereo indicator
     ks0108SetXY(114, 2);
-    if (tunerStereo())
+    if (tuner.mono) {
+        ks0108WriteString("MO");
+    } else if (tunerStereo())
         ks0108WriteString("ST");
     else
         ks0108WriteString("  ");
-
-    // Frequency scale
-    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
 
     // Station number
     if (num) {
@@ -447,6 +448,29 @@ void showRadio(uint8_t mode)
         ks0108SetXY(93, 4);
         ks0108WriteString(" --");
         ks0108LoadFont(font_ks0066_ru_08, 1);
+    }
+
+    // Frequency scale
+    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
+
+    ks0108LoadFont(font_ks0066_ru_08, 1);
+    if (tune == MODE_RADIO_TUNE) {
+        ks0108SetXY(108, 7);
+        ks0108WriteString("<<>>");
+    } else {
+        ks0108SetXY(110, 7);
+#ifdef _RDS
+        if (tuner.rds) {
+            if (rdsFlag)
+                ks0108WriteString("RDS");
+            else
+                ks0108WriteString("---");
+        } else {
+            ks0108WriteString("   ");
+        }
+#else
+        ks0108WriteString("   ");
+#endif
     }
 #elif defined(_KS0066)
     uint8_t lev;

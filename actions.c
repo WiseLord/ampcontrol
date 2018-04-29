@@ -58,6 +58,8 @@ uint8_t getAction()
             action = CMD_RC_FM_DEC;
         else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
             action = CMD_RC_TIME;
+        else
+            action = CMD_RC_NEXT_SPMODE;
         break;
     case CMD_BTN_4:
         if (dispMode == MODE_FM_RADIO)
@@ -172,6 +174,12 @@ void handleAction(uint8_t action)
             setDisplayTime(DISPLAY_TIME_TIME);
         }
         break;
+    case CMD_RC_NEXT_SPMODE:
+        switchSpMode();
+        displayClear();
+        dispMode = MODE_SPECTRUM;
+        setDisplayTime(DISPLAY_TIME_SP);
+        break;
     case CMD_RC_MUTE:
         displayClear();
         sndSetMute(!aproc.mute);
@@ -232,6 +240,7 @@ void handleAction(uint8_t action)
             switch (action) {
             case CMD_RC_FM_MODE:
                 fmMode = !fmMode;
+                displayClear();
                 break;
             case CMD_RC_FM_INC:
                 tunerNextStation(SEARCH_UP);
