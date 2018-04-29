@@ -141,8 +141,11 @@ void handleAction(uint8_t action)
         break;
     case ACTION_INIT_HARDWARE:
         tunerPowerOn();
-        tunerSetFreq();
         sndPowerOn();
+
+        tunerSetMute(aproc.input);
+        tunerSetFreq();
+
         setInitTimer(INIT_TIMER_OFF);
         break;
     case CMD_RC_STBY:
@@ -150,7 +153,9 @@ void handleAction(uint8_t action)
         sndPowerOff();
         tunerPowerOff();
         displayPowerOff();
+
         CLR(STMU_STBY);
+
         setStbyBrightness();
         rtc.etm = RTC_NOEDIT;
         setInitTimer(INIT_TIMER_OFF);
