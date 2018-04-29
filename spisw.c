@@ -52,7 +52,7 @@ void SPIswSendByte(uint8_t data)
 
 void SPIswSet(int8_t input)
 {
-#ifdef _atmega32
+#if 0   // TODO: Handle it later
     if (extFunc != USE_INPUT_STATUS)
         return;
 
