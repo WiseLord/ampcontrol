@@ -742,6 +742,8 @@ void showTime()
 
 void showSpectrum()
 {
+    getSpData(1);
+
 #if defined(_KS0108)
     uint8_t i, j, k;
     int8_t row;

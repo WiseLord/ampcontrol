@@ -226,6 +226,8 @@ void handleAction(uint8_t action)
                     fmMode = MODE_RADIO_CHAN;
                 dispMode = MODE_FM_RADIO;
                 setDisplayTime(DISPLAY_TIME_FM_RADIO);
+            } else {
+                break;
             }
             switch (action) {
             case CMD_RC_FM_MODE:
