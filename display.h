@@ -6,17 +6,18 @@
 #include "audio/audio.h"
 #include "display/ks0066.h"
 
-// Timers for different screens (ms)
-#define DISPLAY_TIME_TEST       15
-#define DISPLAY_TIME_GAIN       2
-#define DISPLAY_TIME_TIME       2
-#define DISPLAY_TIME_TIME_EDIT  10
-#define DISPLAY_TIME_FM_RADIO   5
-#define DISPLAY_TIME_FM_SCALE   60
-#define DISPLAY_TIME_CHAN       2
-#define DISPLAY_TIME_AUDIO      3
-#define DISPLAY_TIME_SP         3
-#define DISPLAY_TIME_BR         3
+// Timers for different screens
+#define DISPLAY_TIME_TEST                   20000U
+#define DISPLAY_TIME_GAIN                   3000U
+#define DISPLAY_TIME_TIME                   2000U
+#define DISPLAY_TIME_TIME_EDIT              10000U
+#define DISPLAY_TIME_FM_RADIO               5000U
+#define DISPLAY_TIME_FM_SCALE               60000U
+#define DISPLAY_TIME_FM_TUNE                10000U
+#define DISPLAY_TIME_CHAN                   2000U
+#define DISPLAY_TIME_AUDIO                  3000U
+#define DISPLAY_TIME_SP                     3000U
+#define DISPLAY_TIME_BR                     3000U
 
 // Backlight state
 #define BACKLIGHT_ON            1

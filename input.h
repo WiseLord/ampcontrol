@@ -2,7 +2,6 @@
 #define INPUT_H
 
 #include <inttypes.h>
-#include "pins.h"
 
 #define BTN_NO                  0x00
 #define BTN_D0                  0x01
@@ -90,11 +89,12 @@ enum {
 };
 
 // Timers
-#define RTC_POLL_TIME           500
+#define RTC_POLL_TIME           200
 
-// Handling long press actions */
+// Handling long press actions
 #define SHORT_PRESS             100
 #define LONG_PRESS              600
+#define AUTOREPEAT              150
 
 #define RC_LONG_PRESS           800
 #define RC_VOL_DELAY            360
@@ -104,16 +104,23 @@ enum {
 #define INIT_TIMER_OFF          -1
 #define INIT_TIMER_START        700
 
-extern uint16_t dispTimer;
-extern uint16_t rtcTimer;
-extern int16_t initTimer;
-
+void rcCodesInit();
 void inputInit();
 
 int8_t getEncoder();
-uint8_t getBtnCmd();
-uint8_t getRcCmd();
+CmdID getBtnCmd();
+CmdID getRcCmd();
 
-void setDispTimer(uint8_t value);
+uint16_t getBtnBuf();
+uint16_t getEncBuf();
+
+void setDisplayTime(uint16_t value);
+uint16_t getDisplayTime();
+
+void setClockTimer(uint8_t value);
+uint8_t getClockTimer();
+
+void setInitTimer(int16_t value);
+int16_t getInitTimer();
 
 #endif // INPUT_H

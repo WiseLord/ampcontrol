@@ -58,9 +58,9 @@ int main()
 
     while (1) {
         // Poll RTC for time
-        if (rtcTimer == 0) {
+        if (getClockTimer() == 0) {
             rtcReadTime();
-            rtcTimer = RTC_POLL_TIME;
+            setClockTimer(RTC_POLL_TIME);            // Limit check interval
         }
 
         // Get command
@@ -121,7 +121,7 @@ int main()
 
 
         // Init hardware if init timer expired
-        if (initTimer == 0)
+        if (getInitTimer() == 0)
             action = ACTION_INIT_HARDWARE;
 
         // Remap GO_STANDBY command to EXIT_STANDBY if in standby mode
@@ -142,7 +142,7 @@ int main()
         // Disable actions except ZERO_DISPLAY_TIME in temp mode
         if (dispMode == MODE_TEST) {
             if (action != ACTION_NOACTION)
-                setDispTimer(DISPLAY_TIME_TEST);
+                setDisplayTime(DISPLAY_TIME_TEST);
             action = ACTION_NOACTION;
         }
         // Disable actions except POWERON and TESTMODE in standby mode
@@ -156,14 +156,14 @@ int main()
         case ACTION_EXIT_STANDBY:
             SET(STMU_STBY); // Power up audio and tuner
             setWorkBrightness();
-            initTimer = INIT_TIMER_START;
+            setInitTimer(INIT_TIMER_START);
             dispMode = MODE_SPECTRUM;
             break;
         case ACTION_INIT_HARDWARE:
             tunerPowerOn();
             tunerSetFreq();
             sndPowerOn();
-            initTimer = INIT_TIMER_OFF;
+            setInitTimer(INIT_TIMER_OFF);
             break;
         case CMD_RC_STBY:
             sndSetMute(1);
@@ -173,44 +173,44 @@ int main()
             CLR(STMU_STBY);
             setStbyBrightness();
             rtc.etm = RTC_NOEDIT;
-            initTimer = INIT_TIMER_OFF;
+            setInitTimer(INIT_TIMER_OFF);
             dispMode = MODE_STANDBY;
             break;
         case CMD_RC_TIME:
             if ((dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) && rtc.etm != RTC_YEAR) {
                 rtcNextEditParam();
                 dispMode = MODE_TIME_EDIT;
-                setDispTimer(DISPLAY_TIME_TIME_EDIT);
+                setDisplayTime(DISPLAY_TIME_TIME_EDIT);
             } else {
                 rtc.etm = RTC_NOEDIT;
                 dispMode = MODE_TIME;
-                setDispTimer(DISPLAY_TIME_TIME);
+                setDisplayTime(DISPLAY_TIME_TIME);
             }
             break;
         case CMD_RC_MUTE:
             ks0066Clear();
             sndSetMute(!aproc.mute);
             dispMode = MODE_MUTE;
-            setDispTimer(DISPLAY_TIME_CHAN);
+            setDisplayTime(DISPLAY_TIME_CHAN);
             break;
         case CMD_RC_NEXT_SNDPAR:
             sndNextParam(&dispMode);
-            setDispTimer(DISPLAY_TIME_AUDIO);
+            setDisplayTime(DISPLAY_TIME_AUDIO);
             break;
         case CMD_RC_BRIGHTNESS:
             dispMode = MODE_BR;
-            setDispTimer(DISPLAY_TIME_BR);
+            setDisplayTime(DISPLAY_TIME_BR);
             break;
         case CMD_RC_DEF_DISPLAY:
             if (aproc.input == 0) {
-                setDispTimer(DISPLAY_TIME_FM_SCALE);
+                setDisplayTime(DISPLAY_TIME_FM_SCALE);
                 fmMode = MODE_FM_RADIO;
                 dispMode = MODE_FM_RADIO;
             }
             break;
         case ACTION_TESTMODE:
             dispMode = MODE_TEST;
-            setDispTimer(DISPLAY_TIME_TEST);
+            setDisplayTime(DISPLAY_TIME_TEST);
             break;
         case CMD_RC_LOUDNESS:
         case CMD_RC_SURROUND:
@@ -219,7 +219,7 @@ int main()
             ks0066Clear();
             sndSwitchExtra(1 << (action - CMD_RC_LOUDNESS));
             dispMode = MODE_LOUDNESS + (action - CMD_RC_LOUDNESS);
-            setDispTimer(DISPLAY_TIME_AUDIO);
+            setDisplayTime(DISPLAY_TIME_AUDIO);
             break;
         case CMD_RC_IN_0:
         case CMD_RC_IN_1:
@@ -229,7 +229,7 @@ int main()
             ks0066Clear();
             sndSetInput(action - CMD_RC_IN_0);
             dispMode = MODE_SND_GAIN0 + aproc.input;
-            setDispTimer(DISPLAY_TIME_GAIN);
+            setDisplayTime(DISPLAY_TIME_GAIN);
             break;
         default:
             if (!aproc.input && tuner.ic) {
@@ -237,7 +237,7 @@ int main()
                     if (dispMode != MODE_FM_RADIO)
                         fmMode = MODE_RADIO_CHAN;
                     dispMode = MODE_FM_RADIO;
-                    setDispTimer(DISPLAY_TIME_FM_RADIO);
+                    setDisplayTime(DISPLAY_TIME_FM_RADIO);
                 }
                 switch (action) {
                 case CMD_RC_FM_MODE:
@@ -285,20 +285,20 @@ int main()
             case MODE_STANDBY:
                 break;
             case MODE_TEST:
-                setDispTimer(DISPLAY_TIME_TEST);
+                setDisplayTime(DISPLAY_TIME_TEST);
                 break;
             case MODE_TIME_EDIT:
                 rtcChangeTime(encCnt);
-                setDispTimer(DISPLAY_TIME_TIME_EDIT);
+                setDisplayTime(DISPLAY_TIME_TIME_EDIT);
                 break;
             case MODE_BR:
                 changeBrWork(encCnt);
-                setDispTimer(DISPLAY_TIME_BR);
+                setDisplayTime(DISPLAY_TIME_BR);
                 break;
             case MODE_FM_RADIO: {
                 if (fmMode == MODE_RADIO_TUNE) {
                     tunerChangeFreq(encCnt);
-                    setDispTimer(DISPLAY_TIME_FM_RADIO);
+                    setDisplayTime(DISPLAY_TIME_FM_RADIO);
                     break;
                 }
             }
@@ -310,14 +310,14 @@ int main()
             default:
                 sndSetMute(0);
                 sndChangeParam(dispMode, encCnt);
-                setDispTimer(DISPLAY_TIME_GAIN);
+                setDisplayTime(DISPLAY_TIME_GAIN);
                 break;
             }
         }
 
 
         // Exit to default mode
-        if (dispTimer == 0) {
+        if (getDisplayTime() == 0) {
             switch (dispMode) {
             case MODE_STANDBY:
             case MODE_TEST:

@@ -2,7 +2,6 @@
 #define REMOTE_H
 
 #include <inttypes.h>
-#include "pins.h"
 
 #define RC5_SHORT_MIN   444     // 444 microseconds
 #define RC5_SHORT_MAX   1333    // 1333 microseconds

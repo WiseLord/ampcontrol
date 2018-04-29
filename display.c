@@ -154,7 +154,7 @@ void showRadio(uint8_t mode)
 
     // Station number
     ks0066SetXY(14, 0);
-    if (mode == MODE_RADIO_TUNE && rtcTimer < RTC_POLL_TIME / 2)
+    if (mode == MODE_RADIO_TUNE && getClockTimer() < RTC_POLL_TIME / 2)
         ks0066WriteString("  ");
     else if (num)
         writeNum(num, 2, ' ');
@@ -228,7 +228,7 @@ void showSndParam(uint8_t mode)
 
 static void drawTm(uint8_t tm)
 {
-    if (tm == rtc.etm && rtcTimer < RTC_POLL_TIME / 2)
+    if (tm == rtc.etm && getClockTimer() < RTC_POLL_TIME / 2)
         ks0066WriteString("  ");
     else
         writeNum(*((int8_t *)&rtc + tm), 2, '0');

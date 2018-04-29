@@ -1,32 +1,66 @@
 #include "input.h"
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
 #include "remote.h"
 #include "eeprom.h"
+#include "pins.h"
 
 static volatile int8_t encCnt = 0;
-static volatile uint8_t cmdBuf = CMD_RC_STBY;
+static volatile CmdID cmdBuf = CMD_RC_STBY;
 
 // Previous state
 static volatile uint8_t encPrev = ENC_NO;
 static volatile uint8_t btnPrev = BTN_NO;
 
-uint16_t dispTimer = 0;
-uint16_t rtcTimer = 0;
-int16_t initTimer = INIT_TIMER_OFF;
+static volatile uint16_t displayTime = 0;           // Display mode timer
+static volatile int16_t initTimer = INIT_TIMER_OFF; // Init timer
+static volatile uint8_t clockTimer = 0;             // RTC poll timer
 
 static volatile uint16_t rcTimer;
 
-//static uint8_t rcType;
+static uint8_t rcType;
 static uint8_t rcAddr;
-static uint8_t rcCode[CMD_RC_END];  // Array with rc commands
+static uint8_t rcCode[CMD_RC_END];                  // Array with rc commands
+
+static CmdID rcCmdIndex(uint8_t rcCmd)
+{
+    CmdID i;
+
+    for (i = 0; i < CMD_RC_END; i++)
+        if (rcCmd == rcCode[i])
+            return i;
+
+    return CMD_RC_END;
+}
+
+static uint8_t getPins()
+{
+    uint8_t pins = BTN_NO;
+
+    if (!READ(BUTTON_1))
+        pins |= BTN_D0;
+    if (!READ(BUTTON_2))
+        pins |= BTN_D1;
+    if (!READ(BUTTON_3))
+        pins |= BTN_D2;
+    if (!READ(BUTTON_4))
+        pins |= BTN_D3;
+    if (!READ(BUTTON_5))
+        pins |= BTN_D4;
+
+    if (!READ(ENCODER_A))
+        pins |= ENC_A;
+    if (!READ(ENCODER_B))
+        pins |= ENC_B;
+
+    return pins;
+}
 
 void rcCodesInit()
 {
-//  rcType = eeprom_read_byte((uint8_t*)EEPROM_RC_TYPE);
+    rcType = eeprom_read_byte((uint8_t *)EEPROM_RC_TYPE);
     rcAddr = eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR);
     eeprom_read_block(rcCode, (uint8_t *)EEPROM_RC_CMD, CMD_RC_END);
 }
@@ -64,40 +98,6 @@ void inputInit()
     TCNT2 = 0;
 #endif
     rcCodesInit();
-}
-
-static CmdID rcCmdIndex(uint8_t rcCmd)
-{
-    CmdID i;
-
-    for (i = 0; i < CMD_RC_END; i++)
-        if (rcCmd == rcCode[i])
-            return i;
-
-    return CMD_RC_END;
-}
-
-static uint8_t getPins()
-{
-    uint8_t pins = BTN_NO;
-
-    if (!READ(BUTTON_1))
-        pins |= BTN_D0;
-    if (!READ(BUTTON_2))
-        pins |= BTN_D1;
-    if (!READ(BUTTON_3))
-        pins |= BTN_D2;
-    if (!READ(BUTTON_4))
-        pins |= BTN_D3;
-    if (!READ(BUTTON_5))
-        pins |= BTN_D4;
-
-    if (!READ(ENCODER_A))
-        pins |= ENC_A;
-    if (!READ(ENCODER_B))
-        pins |= ENC_B;
-
-    return pins;
 }
 
 #if defined(_atmega8)
@@ -174,23 +174,22 @@ ISR (TIMER2_COMPA_vect)
         btnCnt = 0;
     }
 
-    // Init timer
-    if (initTimer > 0)
-        initTimer--;
+    // Timer of current display mode
+    if (displayTime)
+        displayTime--;
 
     // Time from last IR command
     if (rcTimer < RC_PRESS_LIMIT)
         rcTimer++;
 
-    // Current display mode timer
-    if (dispTimer)
-        dispTimer--;
+    // Timer clock update
+    if (clockTimer)
+        clockTimer--;
 
-    // RTC poll timer
-    if (rtcTimer)
-        rtcTimer--;
+    // Init timer
+    if (initTimer > 0)
+        initTimer--;
 }
-
 
 int8_t getEncoder()
 {
@@ -199,17 +198,16 @@ int8_t getEncoder()
     return ret;
 }
 
-uint8_t getBtnCmd()
+CmdID getBtnCmd()
 {
-    uint8_t ret = cmdBuf;
+    CmdID ret = cmdBuf;
     cmdBuf = CMD_RC_END;
     return ret;
 }
 
-uint8_t getRcCmd()
+CmdID getRcCmd()
 {
-
-    // Place RC5 event to command buffer if enough RC5 timer ticks
+    // Place RC event to command buffer if enough RC timer ticks
     IRData ir = takeIrData();
 
     CmdID rcCmdBuf = CMD_RC_END;
@@ -230,7 +228,42 @@ uint8_t getRcCmd()
     return rcCmdBuf;
 }
 
-void setDispTimer(uint8_t value)
+uint16_t getBtnBuf()
 {
-    dispTimer = 1000U * value;
+    return btnPrev;
+}
+
+uint16_t getEncBuf()
+{
+    return encPrev;
+}
+
+void setDisplayTime(uint16_t value)
+{
+    displayTime = value;
+}
+
+uint16_t getDisplayTime()
+{
+    return displayTime;
+}
+
+void setClockTimer(uint8_t value)
+{
+    clockTimer = value;
+}
+
+uint8_t getClockTimer()
+{
+    return clockTimer;
+}
+
+void setInitTimer(int16_t value)
+{
+    initTimer = value;
+}
+
+int16_t getInitTimer()
+{
+    return initTimer;
 }
