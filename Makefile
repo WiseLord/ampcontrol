@@ -9,7 +9,7 @@ FEATURE_LIST =
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
-TARG = ampcontrol_$(MCU)_$(call lc,$(WIRE))_$(call lc,$(APROC_LIST))_$(call lc,$(TUNER_LIST))
+TARG = ampcontrol_$(MCU)_$(call lc,$(DISPLAY))_$(call lc,$(APROC_LIST))_$(call lc,$(TUNER_LIST))
 
 SRCS = main.c
 SRCS += input.c actions.c i2c.c rtc.c remote.c fft.c adc.c
