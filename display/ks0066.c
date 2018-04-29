@@ -118,6 +118,7 @@ void ks0066Init()
 #endif
     OUT(KS0066_E);
     OUT(KS0066_RS);
+    OUT(DISP_BCKL);                                 // Backlight port
 
     CLR(KS0066_E);
     CLR(KS0066_RS);

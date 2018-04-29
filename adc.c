@@ -29,8 +29,10 @@ static uint8_t _br;
 void adcInit()
 {
 #if defined(_atmega8)
+    TIMSK |= (1 << TOIE0);                              // Enable Timer0 overflow interrupt
     TCCR0 = (0 << CS02) | (1 << CS01) | (0 << CS00);
 #else
+    TIMSK0 |= (1 << TOIE0);                             // Enable Timer0 overflow interrupt
     TCCR0B = (0 << CS02) | (1 << CS01) | (0 << CS00);
 #endif
     // Enable ADC with prescaler 16
@@ -53,9 +55,9 @@ ISR (TIMER0_OVF_vect)
         br = DISP_MIN_BR;
 
     if (br >= _br)
-        CLR(BCKL);                                      // Turn backlight off
+        CLR(DISP_BCKL);                                      // Turn backlight off
     else
-        SET(BCKL);                                      // Turn backlight on
+        SET(DISP_BCKL);                                      // Turn backlight on
 }
 
 static uint8_t revBits(uint8_t x)

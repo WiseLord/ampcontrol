@@ -8,7 +8,7 @@
 #include "pins.h"
 
 static volatile int8_t encCnt = 0;
-static volatile CmdID cmdBuf = CMD_RC_STBY;
+static volatile CmdID cmdBuf = CMD_END;
 
 // Previous state
 static volatile uint8_t encPrev = ENC_NO;
@@ -89,13 +89,15 @@ void inputInit()
     // Set timer prescaller to 64 (125 kHz) and reset on match
 #if defined(_atmega8)
     TCCR2 = (1 << CS22) | (0 << CS21) | (0 << CS20) | (1 << WGM21);
-    OCR2 = 125;                     // 125000/125 => 1000 polls/sec
-    TCNT2 = 0;                      // Reset timer value
+    OCR2 = 125;                                     // 125000/125 => 1000 polls/sec
+    TCNT2 = 0;                                      // Reset timer value
+    TIMSK |= (1 << OCIE2);                           // Enable timer compare match interrupt
 #else
     TCCR2A = (1 << WGM21);
     TCCR2B = (1 << CS22) | (0 << CS21) | (0 << CS20);
-    OCR2A = 125;
-    TCNT2 = 0;
+    OCR2A = 125;                                    // 125000/125 => 1000 polls/sec
+    TCNT2 = 0;                                      // Reset timer value
+    TIMSK2 |= (1 << OCIE2A);                         // Enable timer compare match interrupt
 #endif
     rcCodesInit();
 }
@@ -106,7 +108,7 @@ ISR (TIMER2_COMP_vect)
 ISR (TIMER2_COMPA_vect)
 #endif
 {
-    static int16_t btnCnt = 0;      // Buttons press duration value
+    static int16_t btnCnt = 0;                      // Buttons press duration value
 
     // Current state
     uint8_t btnNow = getPins();
@@ -120,7 +122,7 @@ ISR (TIMER2_COMPA_vect)
         if (encPrev == ENC_A)
             encCnt--;
     }
-    encPrev = encNow;               // Save current encoder state
+    encPrev = encNow;                               // Save current encoder state
 
     // If button event has happened, place it to command buffer
     if (btnNow) {

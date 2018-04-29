@@ -80,14 +80,6 @@ typedef enum {
 
 } CmdID;
 
-enum {
-    ACTION_EXIT_STANDBY = CMD_END,
-    ACTION_INIT_HARDWARE,
-    ACTION_TESTMODE,
-
-    ACTION_NOACTION = 0xEF
-};
-
 // Timers
 #define RTC_POLL_TIME           200
 

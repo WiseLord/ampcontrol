@@ -31,8 +31,8 @@
 #define KS0066_E_LINE       (1<<6)
 
 // Backlight port
-#define BCKL                C
-#define BCKL_LINE           (1<<3)
+#define DISP_BCKL           C
+#define DISP_BCKL_LINE      (1<<3)
 
 // RC5 definitions
 #define RC                  D

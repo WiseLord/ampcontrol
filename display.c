@@ -121,9 +121,9 @@ static void showBar(int16_t min, int16_t max, int16_t value)
     }
 }
 
-void showRC5Info()
+void showRCInfo()
 {
-    IRData irData = takeIrData();
+    IRData irData = getIrData();
 
     ks0066WriteString("RC CM");
     ks0066SetXY(0, 1);
