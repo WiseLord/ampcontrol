@@ -1,13 +1,19 @@
-#ifndef RC5_H
-#define RC5_H
+#ifndef REMOTE_H
+#define REMOTE_H
 
 #include <inttypes.h>
-#include "pins.h"
 
+#if F_CPU == 8000000L
+#define RC5_SHORT_MIN   444     // 444 microseconds
+#define RC5_SHORT_MAX   1333    // 1333 microseconds
+#define RC5_LONG_MIN    1334    // 1334 microseconds
+#define RC5_LONG_MAX    2222    // 2222 microseconds
+#else
 #define RC5_SHORT_MIN   888     // 444 microseconds
 #define RC5_SHORT_MAX   2666    // 1333 microseconds
 #define RC5_LONG_MIN    2668    // 1334 microseconds
 #define RC5_LONG_MAX    4444    // 2222 microseconds
+#endif
 
 #define RC5_STBT_MASK   0x3000
 #define RC5_TOGB_MASK   0x0800
@@ -36,4 +42,4 @@ IRData takeIrData();
 IRData getIrData();
 void setIrData(uint8_t type, uint8_t addr, uint8_t cmd);
 
-#endif // RC5_H
+#endif // REMOTE_H

@@ -1,7 +1,7 @@
 #include "remote.h"
 
-#include <avr/io.h>
 #include <avr/interrupt.h>
+#include "pins.h"
 
 static volatile IRData irData;          // Last decoded IR command
 
@@ -9,9 +9,14 @@ void rcInit()
 {
     IN(RC);                             // Set PD3 (INT1) to input
     TCCR1A = 0;                         // Reset Timer1 counter
-    TCCR1B = (1 << CS11);               // Set Timer1 prescaler to 8 (2MHz)
+    TCCR1B = (1 << CS11);               // Set Timer1 prescaler to 8
+#if defined(_atmega8) || defined(_atmega16) || defined(_atmega32)
     MCUCR = (1 << ISC10);               // Set INT1 to trigger on any edge
     GICR = (1 << INT1);                 // Enable INT1 interrupt
+#else
+    EICRA = (1 << ISC10);               // Set INT1 to trigger on any edge
+    EIMSK = (1 << INT1);                // Enable INT1 interrupt
+#endif
 }
 
 ISR(INT1_vect)
@@ -46,7 +51,7 @@ ISR(INT1_vect)
 
         irData.ready = 1;
         irData.repeat = (rc5TogBit == rc5TogBitOld);
-      irData.type = IR_TYPE_RC5;
+        irData.type = IR_TYPE_RC5;
         irData.address  = (rc5Cmd & RC5_ADDR_MASK) >> 6;
         irData.command = rc5Cmd & RC5_COMM_MASK;
 

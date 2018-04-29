@@ -114,7 +114,7 @@ void displayInit()
 #elif defined(LS020)
     ls020Init();
 #endif
-    DDR(BACKLIGHT) |= BACKLIGHT_LINE;
+    OUT(DISP_BCKL);
 
     return;
 }
@@ -129,9 +129,9 @@ ISR (TIMER0_OVF_vect)
         br = DISP_MIN_BR;
 
     if (br == _br) {
-        PORT(BACKLIGHT) &= ~BACKLIGHT_LINE;             // Turn backlight off
+        CLR(DISP_BCKL);                                 // Turn backlight off
     } else if (br == 0)
-        PORT(BACKLIGHT) |= BACKLIGHT_LINE;              // Turn backlight on
+        SET(DISP_BCKL);                                 // Turn backlight on
 
     return;
 }
