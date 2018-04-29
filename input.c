@@ -122,9 +122,9 @@ ISR (TIMER2_COMPA_vect)
 
     // If encoder event has happened, inc/dec encoder counter
     if (encNow == ENC_AB) {
-        if (encPrev == ENC_B)
-            encCnt++;
         if (encPrev == ENC_A)
+            encCnt++;
+        if (encPrev == ENC_B)
             encCnt--;
     }
     encPrev = encNow;                               // Save current encoder state
