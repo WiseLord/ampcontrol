@@ -55,9 +55,9 @@ ISR (TIMER0_OVF_vect)
         br = DISP_MIN_BR;
 
     if (br >= _br)
-        CLR(DISP_BCKL);                                      // Turn backlight off
+        CLR(DISP_BCKL);                                 // Turn backlight off
     else
-        SET(DISP_BCKL);                                      // Turn backlight on
+        SET(DISP_BCKL);                                 // Turn backlight on
 }
 
 static uint8_t revBits(uint8_t x)
