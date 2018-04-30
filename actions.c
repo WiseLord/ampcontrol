@@ -1,22 +1,24 @@
 #include "actions.h"
 
 #include <util/delay.h>
-#include "display.h"
-#include "tuner/tuner.h"
-#ifdef _TEMPCONTROL
-#include "temp.h"
-#endif
+
 #include "adc.h"
 #ifdef _ALARM
 #include "alarm.h"
 #endif
-#ifdef _UARTCONTROL
-#include "uart.h"
-#endif
+#include "display.h"
 #include "pins.h"
+#include "rtc.h"
 #ifdef _SPISW
 #include "spisw.h"
 #endif
+#ifdef _TEMPCONTROL
+#include "temp.h"
+#endif
+#ifdef _UARTCONTROL
+#include "uart.h"
+#endif
+#include "tuner/tuner.h"
 
 static uint8_t dispMode = MODE_STANDBY;
 static uint8_t dispModePrev = MODE_STANDBY;
@@ -418,7 +420,7 @@ void handleAction(uint8_t action)
         case MODE_STANDBY:
             dispMode = MODE_TEST;
             setWorkBrightness();
-            switchTestMode(CMD_RC_STBY);
+            switchRcCmd(CMD_RC_STBY);
             setDisplayTime(DISPLAY_TIME_TEST);
             break;
         }

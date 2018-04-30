@@ -3,26 +3,27 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
-#include "eeprom.h"
-#include "input.h"
-#include "tuner/tuner.h"
-#ifdef _TEMPCONTROL
-#include "temp.h"
-#endif
-#include "adc.h"
 #ifdef _ALARM
 #include "alarm.h"
 #endif
+#include "adc.h"
+#include "eeprom.h"
+#include "input.h"
+#include "remote.h"
+#include "rtc.h"
+#include "tuner/tuner.h"
 #ifdef _RDS
 #include "tuner/rds.h"
 #endif
-#include "remote.h"
+#ifdef _TEMPCONTROL
+#include "temp.h"
+#endif
 
 static int8_t brStby;                       // Brightness in standby mode
 static int8_t brWork;                       // Brightness in working mode
 
-static uint8_t spMode;                      // Spectrum mode
-static uint8_t fallSpeed;                   // Spectrum fall speed
+static SpMode spMode;                       // Spectrum mode
+static FallSpeed fallSpeed;                 // Spectrum fall speed
 
 static uint8_t rcIndex = CMD_RC_STBY;
 
@@ -31,6 +32,12 @@ static uint8_t defDisplay;                  // Default display mode
 char strbuf[STR_BUFSIZE + 1];               // String buffer
 uint8_t *txtLabels[LABEL_END];              // Array with text label pointers
 
+#if defined(_KS0066)
+static LcdSymGroup userSybmols = LCD_END;   // Generated user symbols for ks0066
+static LcdUserAddSym userAddSym = SYM_END;  // Additional user symbol
+#endif
+
+// Names of RC functions, MUST correspond to CmdID enum
 const char STR_RC_STBY[]        PROGMEM = "Standby mode";
 const char STR_RC_MUTE[]        PROGMEM = "Mute sound";
 const char STR_RC_NEXT_SNDPAR[] PROGMEM = "Sound menu";
@@ -73,6 +80,7 @@ const char STR_RC_DEF_DISPLAY[] PROGMEM = "Display mode";
 const char STR_RC_NEXT_SPMODE[] PROGMEM = "Spectrum mode";
 const char STR_RC_FALLSPEED[]   PROGMEM = "Fall speed";
 
+// Array of pointers to RC functions names, MUST correspond to CmdID enum
 PGM_P const rcLabels[] PROGMEM = {
     STR_RC_STBY,
     STR_RC_MUTE,
@@ -117,6 +125,7 @@ PGM_P const rcLabels[] PROGMEM = {
     STR_RC_FALLSPEED,
 };
 
+// Other strings stored in PROGMEM
 const char STR_IN_STATUS[]      PROGMEM = "BUTTONS & ENCODER";
 const char STR_REMOTE[]         PROGMEM = "Remote";
 const char STR_BUTTONS[]        PROGMEM = "Status";
@@ -162,11 +171,6 @@ const char STR_PREFIX_BIN[]     PROGMEM = "0b\x7F";
 const char STR_PREFIX_HEX[]     PROGMEM = "0x\x7F";
 
 #if defined(_KS0066)
-static uint8_t userSybmols = LCD_END;       // Generated user symbols for ks0066
-static uint8_t userAddSym = SYM_END;        // Additional user symbol
-#endif
-
-#if defined(_KS0066)
 static void lcdGenLevels()
 {
     if (userSybmols != LCD_LEVELS) {        // Generate 7 level symbols
@@ -183,7 +187,7 @@ static void lcdGenLevels()
     }
 }
 
-static void lcdGenBar(uint8_t sym)
+static void lcdGenBar(LcdUserAddSym sym)
 {
     static const uint8_t bar[] PROGMEM = {
         0b00000,
@@ -427,6 +431,7 @@ static void lcdGenAlarm()
 }
 #endif
 
+
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
 #if defined(_KS0066)
@@ -541,6 +546,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 #endif
 }
 
+
 static void writeStringEeprom(const uint8_t *string)
 {
     uint8_t i;
@@ -587,6 +593,7 @@ static void writeNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
 
     writeString(strbuf);
 }
+
 
 static void showParValue(int8_t value)
 {
@@ -821,10 +828,23 @@ void displayInit()
         fallSpeed = FALL_SPEED_FAST;
 }
 
-uint8_t **getTxtLabels()
+void displayPowerOff()
 {
-    return txtLabels;
+    eeprom_update_byte((uint8_t *)EEPROM_BR_STBY, brStby);
+    eeprom_update_byte((uint8_t *)EEPROM_BR_WORK, brWork);
+    eeprom_update_byte((uint8_t *)EEPROM_SP_MODE, spMode);
+    eeprom_update_byte((uint8_t *)EEPROM_DISPLAY, defDisplay);
+    eeprom_update_byte((uint8_t *)EEPROM_FALL_SPEED, fallSpeed);
 }
+
+void displayUpdate()
+{
+
+#if defined(_SSD1306)
+    ssd1306UpdateFb();
+#endif
+}
+
 
 void setDefDisplay(uint8_t value)
 {
@@ -835,6 +855,7 @@ uint8_t getDefDisplay()
 {
     return defDisplay;
 }
+
 
 void nextRcCmd()
 {
@@ -850,10 +871,10 @@ void nextRcCmd()
     if (++rcIndex >= CMD_RC_END)
         rcIndex = CMD_RC_STBY;
 
-    switchTestMode(rcIndex);
+    switchRcCmd(rcIndex);
 }
 
-void switchTestMode(uint8_t index)
+void switchRcCmd(uint8_t index)
 {
     rcIndex = index;
     setIrData(eeprom_read_byte((uint8_t *)EEPROM_RC_TYPE),
@@ -861,226 +882,226 @@ void switchTestMode(uint8_t index)
               eeprom_read_byte((uint8_t *)EEPROM_RC_CMD + rcIndex));
 }
 
-void showRcInfo()
+
+void switchSpMode()
 {
-    IRData irBuf = getIrData();
-    uint16_t btnBuf = getBtnBuf();
-    uint8_t encBuf = getEncBuf();
+    if (++spMode >= SP_MODE_END)
+        spMode = SP_MODE_METER;
+}
+
+void switchFallSpeed()
+{
+    if (++fallSpeed > FALL_SPEED_END)
+        fallSpeed = FALL_SPEED_LOW;
+}
+
+
+void getSpectrum()
+{
+    getSpData(fallSpeed);
+}
+
+
+void changeBrWork(int8_t diff)
+{
+    brWork += diff;
+    if (brWork > MAX_BRIGHTNESS)
+        brWork = MAX_BRIGHTNESS;
+    if (brWork < MIN_BRIGHTNESS)
+        brWork = MIN_BRIGHTNESS;
+    setWorkBrightness();
+}
+
+void setWorkBrightness()
+{
+#if defined(_KS0066)
+    ks0066SetBrightness(brWork);
+#if defined(KS0066_WIRE_PCF8574)
+    pcf8574SetBacklight(brWork);
+#endif
+#elif defined(_LS020)
+    ls020SetBrightness(brWork);
+#else
+    gdSetBrightness(brWork);
+#endif
+}
+
+void setStbyBrightness()
+{
+#if defined(_KS0066)
+    ks0066SetBrightness(brStby);
+#if defined(KS0066_WIRE_PCF8574)
+    pcf8574SetBacklight(KS0066_BCKL_OFF);
+#endif
+#elif defined(_LS020)
+    ls020SetBrightness(brStby);
+#else
+    gdSetBrightness(brStby);
+#endif
+}
+
+
+#ifdef _ALARM
+void showAlarm()
+{
+    uint8_t i;
 
 #if defined(_KS0066)
+    // Draw alarm value
     ks0066SetXY(0, 0);
-    writeString("I=");
-    writeNum(btnBuf + encBuf, 2, '0', 16);
-    writeString(" ");
-    writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
+    drawAm(ALARM_HOUR);
+    ks0066WriteData(':');
+    drawAm(ALARM_MIN);
 
+    // Check that input number less than CHAN_CNT
+    i = alarm0.input;
+    if (i >= aproc.inCnt)
+        i = 0;
+
+    // Draw selected input
+    ks0066SetXY(6, 0);
+    if (alarm0.eam != ALARM_INPUT || (getSecTimer() % 512) < 200)
+        writeStringEeprom(txtLabels[MODE_SND_GAIN0 + i]);
+    // Clear string tail
+    ks0066WriteTail (' ', 15);
+
+    // Draw weekdays
+    lcdGenAlarm ();
     ks0066SetXY(0, 1);
-    writeString("A=");
-    writeNum(irBuf.address, 2, '0', 16);
-    writeString(" C=");
-    writeNum(irBuf.command, 2, '0', 16);
-    writeString(" T=");
-    switch (irBuf.type) {
-    case IR_TYPE_RC5:
-        writeStringPgm(STR_RC_RC5);
-        break;
-    case IR_TYPE_NEC:
-        writeStringPgm(STR_RC_NEC);
-        break;
-    case IR_TYPE_RC6:
-        writeStringPgm(STR_RC_RC6);
-        break;
-    case IR_TYPE_SAM:
-        writeStringPgm(STR_RC_SAM);
-        break;
-    default:
-        writeStringPgm(STR_RC_NONE);
-        break;
+    if (alarm0.eam != ALARM_WDAY || (getSecTimer() % 512) < 200) {
+        ks0066WriteData (0x04);
+    } else {
+        ks0066WriteData (0x03);
+    }
+    for (i = 0; i < 7; i++) {
+        if (alarm0.wday & (0x40 >> i)) {
+            ks0066WriteData (0x01);
+        } else {
+            ks0066WriteData (0x00);
+        }
+        if (i != 6)
+            ks0066WriteData (0x02);
+    }
+    if (alarm0.eam != ALARM_WDAY || (getSecTimer() % 512) < 200) {
+        ks0066WriteData (0x06);
+    } else {
+        ks0066WriteData (0x05);
     }
 #elif defined(_LS020)
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-    ls020SetXY(10, 4);
-    writeStringPgm(STR_IN_STATUS);
+    uint8_t *label;
 
-    ls020SetXY(4, 22);
-    writeStringPgm(STR_BUTTONS);
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
-    ls020SetXY(60, 18);
-    writeNum(btnBuf >> 2, 5, '0', 2);
-    writeStringPgm(STR_SPDIVSP);
-    writeNum(encBuf, 2, '0', 2);
+    ls020SetXY(20, 4);
 
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-    ls020SetXY(10, 46);
-    writeStringPgm(STR_LEARN);
+    drawAm(ALARM_HOUR, font_ks0066_ru_24, 2);
+    writeStringPgm(STR_SPCOLSP);
+    drawAm(ALARM_MIN, font_ks0066_ru_24, 2);
 
-    ls020SetXY(4, 66);
-    writeStringPgm(STR_REMOTE);
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
-    ls020SetXY(60, 62);
-    switch (irBuf.type) {
-    case IR_TYPE_RC5:
-        writeStringPgm(STR_RC_RC5);
-        break;
-    case IR_TYPE_NEC:
-        writeStringPgm(STR_RC_NEC);
-        break;
-    case IR_TYPE_RC6:
-        writeStringPgm(STR_RC_RC6);
-        break;
-    case IR_TYPE_SAM:
-        writeStringPgm(STR_RC_SAM);
-        break;
-    default:
-        writeStringPgm(STR_RC_NONE);
-        break;
+    // Draw input icon selection rectangle
+    if (alarm0.eam == ALARM_INPUT) {
+        ls020DrawFrame(96 + 48, 0, 127 + 48, 31, COLOR_YELLOW);
+        ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_YELLOW);
+    } else {
+        ls020DrawFrame(96 + 48, 0, 127 + 48, 31, COLOR_BLACK);
+        ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_BLACK);
     }
 
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-    ls020SetXY(4, 84);
-    writeStringPgm(STR_ADDRESS);
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
-    ls020SetXY(60, 82);
-    writeNum(irBuf.address, 2, '0', 16);
-    writeStringPgm(STR_SPARRSP);
-    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR), 2, '0', 16);
+    // Check that input number less than CHAN_CNT
+    i = alarm0.input;
+    if (i >= aproc.inCnt)
+        i = 0;
+    showParIcon(MODE_SND_GAIN0 + i);
 
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-    ls020SetXY(4, 102);
-    writeStringPgm(STR_FUNCTION);
-    ls020SetXY(60, 102);
-    writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
+    // Draw weekdays selection rectangle
+    if (alarm0.eam == ALARM_WDAY) {
+        ls020DrawFrame(0, 130, 175, 93, COLOR_YELLOW);
+        ls020DrawFrame(1, 131, 174, 92, COLOR_YELLOW);
+    } else {
+        ls020DrawFrame(0, 130, 175, 93, COLOR_BLACK);
+        ls020DrawFrame(1, 131, 174, 92, COLOR_BLACK);
+    }
 
-    ls020SetXY(4, 118);
-    writeStringPgm(STR_COMMAND);
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
-    ls020SetXY(60, 114);
-    writeNum(irBuf.command, 2, '0', 16);
-    writeStringPgm(STR_SPARRSP);
-    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
+    // Draw weekdays
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+    label = txtLabels[LABEL_WEEKDAYS];
+    for (i = 0; i < 7; i++) {
+        ls020SetXY(5 + 25 * i, 38 + 63);
+        ls020WriteChar(eeprom_read_byte(&label[i * 2]));
+        ls020WriteChar(0x7F);
+        ls020WriteChar(eeprom_read_byte(&label[i * 2 + 1]));
+
+        ls020DrawFrame(3 + 25 * i, 47 + 63, 21 + 25 * i, 60 + 68, COLOR_CYAN);
+        ls020DrawRect(6 + 25 * i, 50 + 63, 18 + 25 * i, 57 + 68,
+                      alarm0.wday & (0x40 >> i) ? COLOR_CYAN : COLOR_BCKG);
+    }
 #else
-    gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
-    gdSetXY(10, 0);
-    writeStringPgm(STR_IN_STATUS);
+    uint8_t *label;
 
-    gdSetXY(0, 10);
-    writeStringPgm(STR_BUTTONS);
-    gdSetXY(48, 10);
-    writeStringPgm(STR_PREFIX_HEX);
-    writeNum(btnBuf, 4, '0', 16);
-    writeStringPgm(STR_SPDIVSP);
-    writeStringPgm(STR_PREFIX_BIN);
-    writeNum(encBuf, 2, '0', 2);
+    gdSetXY(4, 0);
 
-    gdSetXY(10, 20);
-    writeStringPgm(STR_LEARN);
+    drawAm(ALARM_HOUR, font_digits_32);
+    writeStringPgm(STR_SPCOLSP);
+    drawAm(ALARM_MIN, font_digits_32);
 
-    gdSetXY(0, 30);
-    writeStringPgm(STR_REMOTE);
-    gdSetXY(48, 30);
-    switch (irBuf.type) {
-    case IR_TYPE_RC5:
-        writeStringPgm(STR_RC_RC5);
-        break;
-    case IR_TYPE_NEC:
-        writeStringPgm(STR_RC_NEC);
-        break;
-    case IR_TYPE_RC6:
-        writeStringPgm(STR_RC_RC6);
-        break;
-    case IR_TYPE_SAM:
-        writeStringPgm(STR_RC_SAM);
-        break;
-    default:
-        writeStringPgm(STR_RC_NONE);
-        break;
+    // Draw input icon selection
+    if (alarm0.eam == ALARM_INPUT) {
+        gdDrawFilledRect(99, 2, 3, 26, 1);
+        gdDrawFilledRect(99, 28, 29, 3, 1);
+    } else {
+        gdDrawFilledRect(99, 2, 3, 26, 0);
+        gdDrawFilledRect(99, 28, 29, 3, 0);
     }
 
-    gdSetXY(0, 39);
-    writeStringPgm(STR_ADDRESS);
-    gdSetXY(48, 39);
-    writeStringPgm(STR_PREFIX_HEX);
-    writeNum(irBuf.address, 2, '0', 16);
-    writeStringPgm(STR_SPARRSP);
-    writeStringPgm(STR_PREFIX_HEX);
-    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR), 2, '0', 16);
+    // Check that input number less than CHAN_CNT
+    i = alarm0.input;
+    if (i >= aproc.inCnt)
+        i = 0;
+    showParIcon(MODE_SND_GAIN0 + i);
 
-    gdSetXY(0, 48);
-    writeStringPgm(STR_FUNCTION);
-    gdSetXY(48, 48);
-    writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
+    // Draw weekdays selection rectangle
+    if (alarm0.eam == ALARM_WDAY) {
+        gdDrawRect(0, 34, 128, 30, 1);
+        gdDrawRect(1, 35, 126, 28, 1);
+    } else {
+        gdDrawRect(0, 34, 128, 30, 0);
+        gdDrawRect(1, 35, 126, 28, 0);
+    }
 
-    gdSetXY(0, 57);
-    writeStringPgm(STR_COMMAND);
-    gdSetXY(48, 57);
-    writeStringPgm(STR_PREFIX_HEX);
-    writeNum(irBuf.command, 2, '0', 16);
-    writeStringPgm(STR_SPARRSP);
-    writeStringPgm(STR_PREFIX_HEX);
-    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
+    // Draw weekdays
+    gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+    label = txtLabels[LABEL_WEEKDAYS];
+    for (i = 0; i < 7; i++) {
+        gdSetXY(5 + 18 * i, 38);
+        gdWriteChar(eeprom_read_byte(&label[i * 2]));
+        gdWriteChar(0x7F);
+        gdWriteChar(eeprom_read_byte(&label[i * 2 + 1]));
+
+        gdDrawRect(3 + 18 * i, 47, 14, 14, 1);
+        if (alarm0.wday & (0x40 >> i))
+            gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 1);
+        else
+            gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 0);
+    }
 #endif
 }
+#endif
 
-#ifdef _TEMPCONTROL
-void showTemp()
+void showBrWork()
 {
-    int8_t tempTH = getTempTH();
+    showParLabel(LABEL_BR_WORK);
+    showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
 #if defined(_KS0066)
-    lcdGenBar (SYM_STEREO_DEGREE);
-    ks0066SetXY (0, 0);
-    writeStringPgm(STR_THRESHOLD);
-    showParValue (tempTH);
-    writeString("\x07""C");
-
-    ks0066SetXY (0, 1);
-    writeString("1:");
-    writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
-    writeString("\x07""C");
-    writeString("  2:");
-    writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
-    writeString("\x07""C");
+    ks0066SetXY(13, 0);
+    writeNum(brWork, 3, ' ', 10);
 #elif defined(_LS020)
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
-
-    ls020SetXY(2, 28 + 68);
-    writeStringPgm(STR_SENSOR1);
-    writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
-    writeStringPgm(STR_DEGREE);
-
-    ls020SetXY(2, 48 + 68);
-    writeStringPgm(STR_SENSOR2);
-    writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
-    writeStringPgm(STR_DEGREE);
-
-    showParValue(tempTH);
-    showBar(MIN_TEMP, MAX_TEMP, tempTH);
-    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-    ls020SetXY(2, 0);
-    writeStringPgm(STR_THRESHOLD);
-    showParIcon(ICON24_THRESHOLD);
+    showParValue(brWork);
+    drawBarSpectrum();
+    showParIcon(ICON24_BRIGHTNESS);
 #else
-    gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
-
-    gdSetXY(0, 48);
-    writeStringPgm(STR_SENSOR1);
-    writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
-    writeStringPgm(STR_DEGREE);
-
-    gdSetXY(0, 56);
-    writeStringPgm(STR_SENSOR2);
-    writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
-    writeStringPgm(STR_DEGREE);
-
-    showParValue(tempTH);
-    showBar(MIN_TEMP, MAX_TEMP, tempTH);
-    gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
-    gdSetXY(0, 0);
-    writeStringPgm(STR_THRESHOLD);
-    showParIcon(ICON24_THRESHOLD);
-
+    showParValue(brWork);
+    drawBarSpectrum();
+    showParIcon(ICON24_BRIGHTNESS);
 #endif
 }
-#endif
 
 void showRadio(uint8_t tune)
 {
@@ -1335,194 +1356,226 @@ void showRadio(uint8_t tune)
 #endif
 }
 
-void showMute()
+void showRcInfo()
 {
-    showParLabel(LABEL_MUTE);
-    drawMiniSpectrum();
+    IRData irBuf = getIrData();
+    uint16_t btnBuf = getBtnBuf();
+    uint8_t encBuf = getEncBuf();
 
 #if defined(_KS0066)
-    lcdGenBar(SYM_MUTE_CROSS);
-    ks0066SetXY(14, 0);
-    ks0066WriteData(0x06);
-    if (aproc.mute)
-        ks0066WriteData(0x07);
-    else
-        ks0066WriteData(' ');
+    ks0066SetXY(0, 0);
+    writeString("I=");
+    writeNum(btnBuf + encBuf, 2, '0', 16);
+    writeString(" ");
+    writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
+
+    ks0066SetXY(0, 1);
+    writeString("A=");
+    writeNum(irBuf.address, 2, '0', 16);
+    writeString(" C=");
+    writeNum(irBuf.command, 2, '0', 16);
+    writeString(" T=");
+    switch (irBuf.type) {
+    case IR_TYPE_RC5:
+        writeStringPgm(STR_RC_RC5);
+        break;
+    case IR_TYPE_NEC:
+        writeStringPgm(STR_RC_NEC);
+        break;
+    case IR_TYPE_RC6:
+        writeStringPgm(STR_RC_RC6);
+        break;
+    case IR_TYPE_SAM:
+        writeStringPgm(STR_RC_SAM);
+        break;
+    default:
+        writeStringPgm(STR_RC_NONE);
+        break;
+    }
 #elif defined(_LS020)
-    ls020SetXY(96, 32);
-    if (aproc.mute)
-        ls020WriteIcon32(ICON32_MUTE_ON);
-    else
-        ls020WriteIcon32(ICON32_MUTE_OFF);
-#else
-    gdSetXY(96, 32);
-    if (aproc.mute)
-        gdWriteIcon32(ICON32_MUTE_ON);
-    else
-        gdWriteIcon32(ICON32_MUTE_OFF);
-#endif
-}
-
-void showLoudness()
-{
-    showParLabel(LABEL_LOUDNESS);
-    drawMiniSpectrum();
-#if defined(_KS0066)
-    lcdGenBar(SYM_LOUDNESS_CROSS);
-    ks0066SetXY(14, 0);
-    ks0066WriteData(0x06);
-    if (aproc.extra & APROC_EXTRA_LOUDNESS)
-        ks0066WriteData(0x07);
-    else
-        ks0066WriteData(' ');
-#elif defined(_LS020)
-    ls020SetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_LOUDNESS)
-        ls020WriteIcon32(ICON32_LOUDNESS_ON);
-    else
-        ls020WriteIcon32(ICON32_LOUDNESS_OFF);
-#else
-    gdSetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_LOUDNESS)
-        gdWriteIcon32(ICON32_LOUDNESS_ON);
-    else
-        gdWriteIcon32(ICON32_LOUDNESS_OFF);
-#endif
-}
-
-void showSurround()
-{
-    showParLabel(LABEL_SURROUND);
-    drawMiniSpectrum();
-#if defined(_KS0066)
-    lcdGenBar(SYM_SURROUND_CROSS);
-    ks0066SetXY(14, 0);
-    ks0066WriteData(0x06);
-    if (aproc.extra & APROC_EXTRA_SURROUND)
-        ks0066WriteData(0x07);
-    else
-        ks0066WriteData(' ');
-#elif defined(_LS020)
-    ls020SetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_SURROUND)
-        ls020WriteIcon32(ICON32_SURROUND_ON);
-    else
-        ls020WriteIcon32(ICON32_SURROUND_OFF);
-#else
-    gdSetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_SURROUND)
-        gdWriteIcon32(ICON32_SURROUND_ON);
-    else
-        gdWriteIcon32(ICON32_SURROUND_OFF);
-#endif
-}
-
-void showEffect3d()
-{
-    showParLabel(LABEL_EFFECT_3D);
-    drawMiniSpectrum();
-#if defined(_KS0066)
-    lcdGenBar(SYM_EFFECT_3D_CROSS);
-    ks0066SetXY(14, 0);
-    ks0066WriteData(0x06);
-    if (aproc.extra & APROC_EXTRA_EFFECT3D)
-        ks0066WriteData(0x07);
-    else
-        ks0066WriteData(' ');
-#elif defined(_LS020)
-    ls020SetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_EFFECT3D)
-        ls020WriteIcon32(ICON32_EFFECT_3D_ON);
-    else
-        ls020WriteIcon32(ICON32_EFFECT_3D_OFF);
-#else
-    gdSetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_EFFECT3D)
-        gdWriteIcon32(ICON32_EFFECT_3D_ON);
-    else
-        gdWriteIcon32(ICON32_EFFECT_3D_OFF);
-#endif
-}
-
-void showToneBypass()
-{
-    showParLabel(LABEL_TONE_BYPASS);
-    drawMiniSpectrum();
-#if defined(_KS0066)
-    lcdGenBar(SYM_TONE_BYPASS_CROSS);
-    ks0066SetXY(14, 0);
-    ks0066WriteData(0x06);
-    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
-        ks0066WriteData(0x07);
-    else
-        ks0066WriteData(' ');
-#elif defined(_LS020)
-    ls020SetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
-        ls020WriteIcon32(ICON32_TONE_BYPASS_ON);
-    else
-        ls020WriteIcon32(ICON32_TONE_BYPASS_OFF);
-#else
-    gdSetXY(96, 32);
-    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
-        gdWriteIcon32(ICON32_TONE_BYPASS_ON);
-    else
-        gdWriteIcon32(ICON32_TONE_BYPASS_OFF);
-#endif
-}
-
-
-void showBrWork()
-{
-    showParLabel(LABEL_BR_WORK);
-    showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
-#if defined(_KS0066)
-    ks0066SetXY(13, 0);
-    writeNum(brWork, 3, ' ', 10);
-#elif defined(_LS020)
-    showParValue(brWork);
-    drawBarSpectrum();
-    showParIcon(ICON24_BRIGHTNESS);
-#else
-    showParValue(brWork);
-    drawBarSpectrum();
-    showParIcon(ICON24_BRIGHTNESS);
-#endif
-}
-
-void changeBrWork(int8_t diff)
-{
-    brWork += diff;
-    if (brWork > MAX_BRIGHTNESS)
-        brWork = MAX_BRIGHTNESS;
-    if (brWork < MIN_BRIGHTNESS)
-        brWork = MIN_BRIGHTNESS;
-    setWorkBrightness();
-}
-
-void showSndParam(sndMode mode)
-{
-    sndParam *param = &sndPar[mode];
-
-    showParLabel(mode);
-    showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
-    showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max),
-            param->value);
-#if defined(_KS0066)
-    ks0066SetXY(14, 0);
-#elif defined(_LS020)
-    drawBarSpectrum();
-    showParIcon(mode);
     ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-    ls020SetXY(162, 120);
+    ls020SetXY(10, 4);
+    writeStringPgm(STR_IN_STATUS);
+
+    ls020SetXY(4, 22);
+    writeStringPgm(STR_BUTTONS);
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+    ls020SetXY(60, 18);
+    writeNum(btnBuf >> 2, 5, '0', 2);
+    writeStringPgm(STR_SPDIVSP);
+    writeNum(encBuf, 2, '0', 2);
+
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+    ls020SetXY(10, 46);
+    writeStringPgm(STR_LEARN);
+
+    ls020SetXY(4, 66);
+    writeStringPgm(STR_REMOTE);
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+    ls020SetXY(60, 62);
+    switch (irBuf.type) {
+    case IR_TYPE_RC5:
+        writeStringPgm(STR_RC_RC5);
+        break;
+    case IR_TYPE_NEC:
+        writeStringPgm(STR_RC_NEC);
+        break;
+    case IR_TYPE_RC6:
+        writeStringPgm(STR_RC_RC6);
+        break;
+    case IR_TYPE_SAM:
+        writeStringPgm(STR_RC_SAM);
+        break;
+    default:
+        writeStringPgm(STR_RC_NONE);
+        break;
+    }
+
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+    ls020SetXY(4, 84);
+    writeStringPgm(STR_ADDRESS);
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+    ls020SetXY(60, 82);
+    writeNum(irBuf.address, 2, '0', 16);
+    writeStringPgm(STR_SPARRSP);
+    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR), 2, '0', 16);
+
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+    ls020SetXY(4, 102);
+    writeStringPgm(STR_FUNCTION);
+    ls020SetXY(60, 102);
+    writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
+
+    ls020SetXY(4, 118);
+    writeStringPgm(STR_COMMAND);
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+    ls020SetXY(60, 114);
+    writeNum(irBuf.command, 2, '0', 16);
+    writeStringPgm(STR_SPARRSP);
+    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
 #else
-    drawBarSpectrum();
-    showParIcon(mode);
     gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
-    gdSetXY(116, 56);
+    gdSetXY(10, 0);
+    writeStringPgm(STR_IN_STATUS);
+
+    gdSetXY(0, 10);
+    writeStringPgm(STR_BUTTONS);
+    gdSetXY(48, 10);
+    writeStringPgm(STR_PREFIX_HEX);
+    writeNum(btnBuf, 4, '0', 16);
+    writeStringPgm(STR_SPDIVSP);
+    writeStringPgm(STR_PREFIX_BIN);
+    writeNum(encBuf, 2, '0', 2);
+
+    gdSetXY(10, 20);
+    writeStringPgm(STR_LEARN);
+
+    gdSetXY(0, 30);
+    writeStringPgm(STR_REMOTE);
+    gdSetXY(48, 30);
+    switch (irBuf.type) {
+    case IR_TYPE_RC5:
+        writeStringPgm(STR_RC_RC5);
+        break;
+    case IR_TYPE_NEC:
+        writeStringPgm(STR_RC_NEC);
+        break;
+    case IR_TYPE_RC6:
+        writeStringPgm(STR_RC_RC6);
+        break;
+    case IR_TYPE_SAM:
+        writeStringPgm(STR_RC_SAM);
+        break;
+    default:
+        writeStringPgm(STR_RC_NONE);
+        break;
+    }
+
+    gdSetXY(0, 39);
+    writeStringPgm(STR_ADDRESS);
+    gdSetXY(48, 39);
+    writeStringPgm(STR_PREFIX_HEX);
+    writeNum(irBuf.address, 2, '0', 16);
+    writeStringPgm(STR_SPARRSP);
+    writeStringPgm(STR_PREFIX_HEX);
+    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_ADDR), 2, '0', 16);
+
+    gdSetXY(0, 48);
+    writeStringPgm(STR_FUNCTION);
+    gdSetXY(48, 48);
+    writeStringPgm((const char *)pgm_read_word(&rcLabels[rcIndex]));
+
+    gdSetXY(0, 57);
+    writeStringPgm(STR_COMMAND);
+    gdSetXY(48, 57);
+    writeStringPgm(STR_PREFIX_HEX);
+    writeNum(irBuf.command, 2, '0', 16);
+    writeStringPgm(STR_SPARRSP);
+    writeStringPgm(STR_PREFIX_HEX);
+    writeNum(eeprom_read_byte((uint8_t *)EEPROM_RC_CMD + rcIndex), 2, '0', 16);
 #endif
-    writeStringEeprom(txtLabels[LABEL_DB]);
 }
+
+#ifdef _TEMPCONTROL
+void showTemp()
+{
+    int8_t tempTH = getTempTH();
+#if defined(_KS0066)
+    lcdGenBar (SYM_STEREO_DEGREE);
+    ks0066SetXY (0, 0);
+    writeStringPgm(STR_THRESHOLD);
+    showParValue (tempTH);
+    writeString("\x07""C");
+
+    ks0066SetXY (0, 1);
+    writeString("1:");
+    writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
+    writeString("\x07""C");
+    writeString("  2:");
+    writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
+    writeString("\x07""C");
+#elif defined(_LS020)
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 2);
+
+    ls020SetXY(2, 28 + 68);
+    writeStringPgm(STR_SENSOR1);
+    writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
+    writeStringPgm(STR_DEGREE);
+
+    ls020SetXY(2, 48 + 68);
+    writeStringPgm(STR_SENSOR2);
+    writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
+    writeStringPgm(STR_DEGREE);
+
+    showParValue(tempTH);
+    showBar(MIN_TEMP, MAX_TEMP, tempTH);
+    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
+    ls020SetXY(2, 0);
+    writeStringPgm(STR_THRESHOLD);
+    showParIcon(ICON24_THRESHOLD);
+#else
+    gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+
+    gdSetXY(0, 48);
+    writeStringPgm(STR_SENSOR1);
+    writeNum(ds18x20GetTemp(0) / 10, 3, ' ', 10);
+    writeStringPgm(STR_DEGREE);
+
+    gdSetXY(0, 56);
+    writeStringPgm(STR_SENSOR2);
+    writeNum(ds18x20GetTemp(1) / 10, 3, ' ', 10);
+    writeStringPgm(STR_DEGREE);
+
+    showParValue(tempTH);
+    showBar(MIN_TEMP, MAX_TEMP, tempTH);
+    gdLoadFont(font_ks0066_ru_24, 1, FONT_DIR_0);
+    gdSetXY(0, 0);
+    writeStringPgm(STR_THRESHOLD);
+    showParIcon(ICON24_THRESHOLD);
+
+#endif
+}
+#endif
 
 void showTime()
 {
@@ -1594,153 +1647,8 @@ void showTime()
     writeStringEeprom(txtLabels[LABEL_SUNDAY + (rtcWeekDay() - 1) % 7]);
 }
 
-#ifdef _ALARM
-void showAlarm()
-{
-    uint8_t i;
-
-#if defined(_KS0066)
-    // Draw alarm value
-    ks0066SetXY(0, 0);
-    drawAm(ALARM_HOUR);
-    ks0066WriteData(':');
-    drawAm(ALARM_MIN);
-
-    // Check that input number less than CHAN_CNT
-    i = alarm0.input;
-    if (i >= aproc.inCnt)
-        i = 0;
-
-    // Draw selected input
-    ks0066SetXY(6, 0);
-    if (alarm0.eam != ALARM_INPUT || (getSecTimer() % 512) < 200)
-        writeStringEeprom(txtLabels[MODE_SND_GAIN0 + i]);
-    // Clear string tail
-    ks0066WriteTail (' ', 15);
-
-    // Draw weekdays
-    lcdGenAlarm ();
-    ks0066SetXY(0, 1);
-    if (alarm0.eam != ALARM_WDAY || (getSecTimer() % 512) < 200) {
-        ks0066WriteData (0x04);
-    } else {
-        ks0066WriteData (0x03);
-    }
-    for (i = 0; i < 7; i++) {
-        if (alarm0.wday & (0x40 >> i)) {
-            ks0066WriteData (0x01);
-        } else {
-            ks0066WriteData (0x00);
-        }
-        if (i != 6)
-            ks0066WriteData (0x02);
-    }
-    if (alarm0.eam != ALARM_WDAY || (getSecTimer() % 512) < 200) {
-        ks0066WriteData (0x06);
-    } else {
-        ks0066WriteData (0x05);
-    }
-#elif defined(_LS020)
-    uint8_t *label;
-
-    ls020SetXY(20, 4);
-
-    drawAm(ALARM_HOUR, font_ks0066_ru_24, 2);
-    writeStringPgm(STR_SPCOLSP);
-    drawAm(ALARM_MIN, font_ks0066_ru_24, 2);
-
-    // Draw input icon selection rectangle
-    if (alarm0.eam == ALARM_INPUT) {
-        ls020DrawFrame(96 + 48, 0, 127 + 48, 31, COLOR_YELLOW);
-        ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_YELLOW);
-    } else {
-        ls020DrawFrame(96 + 48, 0, 127 + 48, 31, COLOR_BLACK);
-        ls020DrawFrame(97 + 48, 1, 126 + 48, 30, COLOR_BLACK);
-    }
-
-    // Check that input number less than CHAN_CNT
-    i = alarm0.input;
-    if (i >= aproc.inCnt)
-        i = 0;
-    showParIcon(MODE_SND_GAIN0 + i);
-
-    // Draw weekdays selection rectangle
-    if (alarm0.eam == ALARM_WDAY) {
-        ls020DrawFrame(0, 130, 175, 93, COLOR_YELLOW);
-        ls020DrawFrame(1, 131, 174, 92, COLOR_YELLOW);
-    } else {
-        ls020DrawFrame(0, 130, 175, 93, COLOR_BLACK);
-        ls020DrawFrame(1, 131, 174, 92, COLOR_BLACK);
-    }
-
-    // Draw weekdays
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-    label = txtLabels[LABEL_WEEKDAYS];
-    for (i = 0; i < 7; i++) {
-        ls020SetXY(5 + 25 * i, 38 + 63);
-        ls020WriteChar(eeprom_read_byte(&label[i * 2]));
-        ls020WriteChar(0x7F);
-        ls020WriteChar(eeprom_read_byte(&label[i * 2 + 1]));
-
-        ls020DrawFrame(3 + 25 * i, 47 + 63, 21 + 25 * i, 60 + 68, COLOR_CYAN);
-        ls020DrawRect(6 + 25 * i, 50 + 63, 18 + 25 * i, 57 + 68,
-                      alarm0.wday & (0x40 >> i) ? COLOR_CYAN : COLOR_BCKG);
-    }
-#else
-    uint8_t *label;
-
-    gdSetXY(4, 0);
-
-    drawAm(ALARM_HOUR, font_digits_32);
-    writeStringPgm(STR_SPCOLSP);
-    drawAm(ALARM_MIN, font_digits_32);
-
-    // Draw input icon selection
-    if (alarm0.eam == ALARM_INPUT) {
-        gdDrawFilledRect(99, 2, 3, 26, 1);
-        gdDrawFilledRect(99, 28, 29, 3, 1);
-    } else {
-        gdDrawFilledRect(99, 2, 3, 26, 0);
-        gdDrawFilledRect(99, 28, 29, 3, 0);
-    }
-
-    // Check that input number less than CHAN_CNT
-    i = alarm0.input;
-    if (i >= aproc.inCnt)
-        i = 0;
-    showParIcon(MODE_SND_GAIN0 + i);
-
-    // Draw weekdays selection rectangle
-    if (alarm0.eam == ALARM_WDAY) {
-        gdDrawRect(0, 34, 128, 30, 1);
-        gdDrawRect(1, 35, 126, 28, 1);
-    } else {
-        gdDrawRect(0, 34, 128, 30, 0);
-        gdDrawRect(1, 35, 126, 28, 0);
-    }
-
-    // Draw weekdays
-    gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
-    label = txtLabels[LABEL_WEEKDAYS];
-    for (i = 0; i < 7; i++) {
-        gdSetXY(5 + 18 * i, 38);
-        gdWriteChar(eeprom_read_byte(&label[i * 2]));
-        gdWriteChar(0x7F);
-        gdWriteChar(eeprom_read_byte(&label[i * 2 + 1]));
-
-        gdDrawRect(3 + 18 * i, 47, 14, 14, 1);
-        if (alarm0.wday & (0x40 >> i))
-            gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 1);
-        else
-            gdDrawFilledRect(5 + 18 * i, 49, 10, 10, 0);
-    }
-#endif
-}
-#endif
-
 void showTimer(int16_t timer)
 {
-
 #if defined(_KS0066)
     ks0066SetXY(0, 0);
     writeStringEeprom(txtLabels[LABEL_TIMER]);
@@ -1819,25 +1727,6 @@ void showTimer(int16_t timer)
         drawSpCol(xbase, 3, 63, ybase, 31);
     }
 #endif
-}
-
-void switchSpMode()
-{
-    if (++spMode >= SP_MODE_END)
-        spMode = SP_MODE_METER;
-}
-
-void switchFallSpeed()
-{
-    fallSpeed++;
-    if (fallSpeed > FALL_SPEED_FAST)
-        fallSpeed = FALL_SPEED_LOW;
-}
-
-
-void getSpectrum()
-{
-    getSpData(fallSpeed);
 }
 
 void showSpectrum()
@@ -2053,47 +1942,164 @@ void showSpectrum()
 #endif
 }
 
-void setWorkBrightness()
+
+void showEffect3d()
 {
+    showParLabel(LABEL_EFFECT_3D);
+    drawMiniSpectrum();
 #if defined(_KS0066)
-    ks0066SetBrightness(brWork);
-#if defined(KS0066_WIRE_PCF8574)
-    pcf8574SetBacklight(brWork);
-#endif
+    lcdGenBar(SYM_EFFECT_3D_CROSS);
+    ks0066SetXY(14, 0);
+    ks0066WriteData(0x06);
+    if (aproc.extra & APROC_EXTRA_EFFECT3D)
+        ks0066WriteData(0x07);
+    else
+        ks0066WriteData(' ');
 #elif defined(_LS020)
-    ls020SetBrightness(brWork);
+    ls020SetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_EFFECT3D)
+        ls020WriteIcon32(ICON32_EFFECT_3D_ON);
+    else
+        ls020WriteIcon32(ICON32_EFFECT_3D_OFF);
 #else
-    gdSetBrightness(brWork);
+    gdSetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_EFFECT3D)
+        gdWriteIcon32(ICON32_EFFECT_3D_ON);
+    else
+        gdWriteIcon32(ICON32_EFFECT_3D_OFF);
 #endif
 }
 
-void setStbyBrightness()
+void showLoudness()
 {
+    showParLabel(LABEL_LOUDNESS);
+    drawMiniSpectrum();
 #if defined(_KS0066)
-    ks0066SetBrightness(brStby);
-#if defined(KS0066_WIRE_PCF8574)
-    pcf8574SetBacklight(KS0066_BCKL_OFF);
-#endif
+    lcdGenBar(SYM_LOUDNESS_CROSS);
+    ks0066SetXY(14, 0);
+    ks0066WriteData(0x06);
+    if (aproc.extra & APROC_EXTRA_LOUDNESS)
+        ks0066WriteData(0x07);
+    else
+        ks0066WriteData(' ');
 #elif defined(_LS020)
-    ls020SetBrightness(brStby);
+    ls020SetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_LOUDNESS)
+        ls020WriteIcon32(ICON32_LOUDNESS_ON);
+    else
+        ls020WriteIcon32(ICON32_LOUDNESS_OFF);
 #else
-    gdSetBrightness(brStby);
+    gdSetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_LOUDNESS)
+        gdWriteIcon32(ICON32_LOUDNESS_ON);
+    else
+        gdWriteIcon32(ICON32_LOUDNESS_OFF);
 #endif
 }
 
-void displayPowerOff()
+void showMute()
 {
-    eeprom_update_byte((uint8_t *)EEPROM_BR_STBY, brStby);
-    eeprom_update_byte((uint8_t *)EEPROM_BR_WORK, brWork);
-    eeprom_update_byte((uint8_t *)EEPROM_SP_MODE, spMode);
-    eeprom_update_byte((uint8_t *)EEPROM_DISPLAY, defDisplay);
-    eeprom_update_byte((uint8_t *)EEPROM_FALL_SPEED, fallSpeed);
+    showParLabel(LABEL_MUTE);
+    drawMiniSpectrum();
+
+#if defined(_KS0066)
+    lcdGenBar(SYM_MUTE_CROSS);
+    ks0066SetXY(14, 0);
+    ks0066WriteData(0x06);
+    if (aproc.mute)
+        ks0066WriteData(0x07);
+    else
+        ks0066WriteData(' ');
+#elif defined(_LS020)
+    ls020SetXY(96, 32);
+    if (aproc.mute)
+        ls020WriteIcon32(ICON32_MUTE_ON);
+    else
+        ls020WriteIcon32(ICON32_MUTE_OFF);
+#else
+    gdSetXY(96, 32);
+    if (aproc.mute)
+        gdWriteIcon32(ICON32_MUTE_ON);
+    else
+        gdWriteIcon32(ICON32_MUTE_OFF);
+#endif
 }
 
-void displayUpdate()
+void showSurround()
 {
-
-#if defined(_SSD1306)
-    ssd1306UpdateFb();
+    showParLabel(LABEL_SURROUND);
+    drawMiniSpectrum();
+#if defined(_KS0066)
+    lcdGenBar(SYM_SURROUND_CROSS);
+    ks0066SetXY(14, 0);
+    ks0066WriteData(0x06);
+    if (aproc.extra & APROC_EXTRA_SURROUND)
+        ks0066WriteData(0x07);
+    else
+        ks0066WriteData(' ');
+#elif defined(_LS020)
+    ls020SetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_SURROUND)
+        ls020WriteIcon32(ICON32_SURROUND_ON);
+    else
+        ls020WriteIcon32(ICON32_SURROUND_OFF);
+#else
+    gdSetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_SURROUND)
+        gdWriteIcon32(ICON32_SURROUND_ON);
+    else
+        gdWriteIcon32(ICON32_SURROUND_OFF);
 #endif
+}
+
+void showToneBypass()
+{
+    showParLabel(LABEL_TONE_BYPASS);
+    drawMiniSpectrum();
+#if defined(_KS0066)
+    lcdGenBar(SYM_TONE_BYPASS_CROSS);
+    ks0066SetXY(14, 0);
+    ks0066WriteData(0x06);
+    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
+        ks0066WriteData(0x07);
+    else
+        ks0066WriteData(' ');
+#elif defined(_LS020)
+    ls020SetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
+        ls020WriteIcon32(ICON32_TONE_BYPASS_ON);
+    else
+        ls020WriteIcon32(ICON32_TONE_BYPASS_OFF);
+#else
+    gdSetXY(96, 32);
+    if (aproc.extra & APROC_EXTRA_TONE_BYPASS)
+        gdWriteIcon32(ICON32_TONE_BYPASS_ON);
+    else
+        gdWriteIcon32(ICON32_TONE_BYPASS_OFF);
+#endif
+}
+
+
+void showSndParam(sndMode mode)
+{
+    sndParam *param = &sndPar[mode];
+
+    showParLabel(mode);
+    showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
+    showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max),
+            param->value);
+#if defined(_KS0066)
+    ks0066SetXY(14, 0);
+#elif defined(_LS020)
+    drawBarSpectrum();
+    showParIcon(mode);
+    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
+    ls020SetXY(162, 120);
+#else
+    drawBarSpectrum();
+    showParIcon(mode);
+    gdLoadFont(font_ks0066_ru_08, 1, FONT_DIR_0);
+    gdSetXY(116, 56);
+#endif
+    writeStringEeprom(txtLabels[LABEL_DB]);
 }

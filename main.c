@@ -19,6 +19,7 @@
 #endif
 #include "actions.h"
 #include "pins.h"
+#include "rtc.h"
 #ifdef _SPISW
 #include "spisw.h"
 #endif
