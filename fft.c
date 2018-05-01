@@ -8,7 +8,7 @@ static const uint8_t sinTable[] PROGMEM = {
     180, 162, 142, 120,  98,  74,  50,  25
 };
 
-#define mshf_16( a, b)    \
+#define mshf_16( a, b)        \
     ({                        \
     int prod, val1=a, val2=b; \
     __asm__ __volatile__ (    \

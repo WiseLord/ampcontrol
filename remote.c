@@ -3,7 +3,7 @@
 #include <avr/interrupt.h>
 #include "pins.h"
 
-static volatile IRData irData;          // Last decoded IR command
+static IRData irData;                   // Last decoded IR command
 
 void rcInit()
 {
