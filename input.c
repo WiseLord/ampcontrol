@@ -7,19 +7,19 @@
 #include "eeprom.h"
 #include "pins.h"
 
-static volatile int8_t encCnt = 0;
-static volatile CmdID cmdBuf = CMD_END;
+static int8_t encCnt = 0;
+static CmdID cmdBuf = CMD_END;
 
 // Previous state
-static volatile uint8_t encPrev = ENC_NO;
-static volatile uint8_t btnPrev = BTN_NO;
+static uint8_t encPrev = ENC_NO;
+static uint8_t btnPrev = BTN_NO;
 
-static volatile uint16_t displayTime = 0;           // Display mode timer
-static volatile int16_t initTimer = INIT_TIMER_OFF; // Init timer
-static volatile uint8_t clockTimer = 0;             // RTC poll timer
+static uint16_t displayTime = 0;                    // Display mode timer
+static int16_t initTimer = INIT_TIMER_OFF;          // Init timer
+static uint8_t clockTimer = 0;                      // RTC poll timer
 
-static volatile uint16_t secTimer;                  // 1 second timer
-static volatile uint16_t rcTimer;
+static uint16_t secTimer;                           // 1 second timer
+static uint16_t rcTimer;
 
 static uint8_t rcType;
 static uint8_t rcAddr;
