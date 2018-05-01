@@ -5,12 +5,13 @@
 #include <avr/pgmspace.h>
 #include <avr/eeprom.h>
 
+#include "adc.h"
 #include "eeprom.h"
 #include "input.h"
-#include "tuner/tuner.h"
-#include "adc.h"
 #include "pins.h"
 #include "remote.h"
+#include "rtc.h"
+#include "tuner/tuner.h"
 
 static uint8_t _br;
 static int8_t brStby;                           // Brightness in standby mode

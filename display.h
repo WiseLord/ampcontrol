@@ -3,7 +3,6 @@
 
 #include <inttypes.h>
 
-#include "rtc.h"
 #include "audio/audio.h"
 
 #if defined(_KS0066_16X2_8BIT) || defined(_KS0066_16X2_PCF8574)
