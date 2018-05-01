@@ -3,8 +3,8 @@
 #include <avr/interrupt.h>
 #include "pins.h"
 
-static volatile IRData irData;                      // Last decoded IR command
-static volatile uint8_t ovfCnt = 250;               // Overflow counter
+static IRData irData;                               // Last decoded IR command
+static uint8_t ovfCnt = 250;                        // Overflow counter
 
 void rcInit()
 {

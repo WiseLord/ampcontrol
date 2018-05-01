@@ -5,7 +5,7 @@
 #include <util/delay.h>
 #include "../pins.h"
 
-static volatile uint8_t pins;
+static uint8_t pins;
 
 static uint8_t fb[ST7920_SIZE_X / 4][ST7920_SIZE_Y / 2];
 static uint8_t _br;

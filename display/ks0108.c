@@ -5,7 +5,7 @@
 #include <avr/pgmspace.h>
 #include "../pins.h"
 
-static volatile uint8_t pins;
+static uint8_t pins;
 
 #ifdef _KS0108B
 #define KS0108_SET_CS1(); \

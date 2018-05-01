@@ -8,26 +8,26 @@
 #include "eeprom.h"
 #include "pins.h"
 
-static volatile int8_t encCnt = 0;
-static volatile CmdID cmdBuf = CMD_END;
+static int8_t encCnt = 0;
+static CmdID cmdBuf = CMD_END;
 static int8_t encRes = 0;
 static uint8_t silenceTime;
 
 // Previous state
-static volatile uint8_t encPrev = ENC_NO;
-static volatile uint8_t btnPrev = BTN_NO;
+static uint8_t encPrev = ENC_NO;
+static uint8_t btnPrev = BTN_NO;
 
-static volatile uint16_t displayTime = 0;           // Display mode timer
-static volatile int16_t initTimer = INIT_TIMER_OFF; // Init timer
-static volatile uint8_t clockTimer = 0;             // RTC poll timer
+static uint16_t displayTime = 0;                    // Display mode timer
+static int16_t initTimer = INIT_TIMER_OFF;          // Init timer
+static uint8_t clockTimer = 0;                      // RTC poll timer
 
 #ifdef _TEMPCONTROL
-static volatile uint16_t sensTimer;                 // Timer of temperature measuring process
+static uint16_t sensTimer;                          // Timer of temperature measuring process
 #endif
-static volatile int16_t stbyTimer = STBY_TIMER_OFF; // Standby timer
-static volatile uint16_t secTimer;                  // 1 second timer
-static volatile int16_t silenceTimer;               // Timer to check silence
-static volatile uint16_t rcTimer;
+static int16_t stbyTimer = STBY_TIMER_OFF;          // Standby timer
+static uint16_t secTimer;                           // 1 second timer
+static int16_t silenceTimer;                        // Timer to check silence
+static uint16_t rcTimer;
 
 static uint8_t rcType;
 static uint8_t rcAddr;
