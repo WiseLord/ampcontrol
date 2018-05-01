@@ -334,14 +334,9 @@ void handleAction(uint8_t action)
         break;
     case CMD_RC_MUTE:
         dispMode = MODE_MUTE;
-        if (aproc.mute) {
-            sndSetMute(0);
-            tunerSetMute(aproc.input);
-            setDisplayTime(DISPLAY_TIME_AUDIO);
-        } else {
-            tunerSetMute(1);
-            sndSetMute(1);
-        }
+        sndSetMute(!aproc.mute);
+        tunerSetMute(aproc.mute || aproc.input);
+        setDisplayTime(DISPLAY_TIME_AUDIO);
         break;
     case ACTION_NEXT_RC_CMD:
         displayClear();

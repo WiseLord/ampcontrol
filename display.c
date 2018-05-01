@@ -549,10 +549,7 @@ static void showBar(int16_t min, int16_t max, int16_t value)
 
 static void writeStringEeprom(const uint8_t *string)
 {
-    uint8_t i;
-
-    for (i = 0; i < STR_BUFSIZE; i++)
-        strbuf[i] = eeprom_read_byte(&string[i]);
+    eeprom_read_block(strbuf, string, STR_BUFSIZE);
 
     writeString(strbuf);
 }
@@ -830,7 +827,6 @@ void displayInit()
 
 void displayPowerOff()
 {
-    eeprom_update_byte((uint8_t *)EEPROM_BR_STBY, brStby);
     eeprom_update_byte((uint8_t *)EEPROM_BR_WORK, brWork);
     eeprom_update_byte((uint8_t *)EEPROM_SP_MODE, spMode);
     eeprom_update_byte((uint8_t *)EEPROM_DISPLAY, defDisplay);
