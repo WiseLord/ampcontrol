@@ -29,10 +29,6 @@ display/ks0066.c
 display/ks0066.h
 display/ks0108.c
 display/ks0108.h
-display/ls020.c
-display/ls020.h
-display/pcf8574.c
-display/pcf8574.h
 
 tuner/lc72131.c
 tuner/lc72131.h

@@ -34,8 +34,6 @@ static void writeStringEeprom(const uint8_t *string)
     ks0108WriteString(strbuf);
 #elif defined(_KS0066)
     ks0066WriteString(strbuf);
-#elif defined(_LS020)
-    ls020WriteString(strbuf);
 #endif
 }
 
@@ -117,8 +115,6 @@ void displayInit()
 #elif defined(_KS0066)
     ks0066Init();
     lcdGenLevels();
-#elif defined(_LS020)
-    ls020Init();
 #endif
     OUT(DISP_BCKL);
 
@@ -150,8 +146,6 @@ void displayClear()
     ks0108Clear();
 #elif defined(_KS0066)
     ks0066Clear();
-#elif defined(_LS020)
-    ls020Clear();
 #endif
 
     return;
@@ -280,25 +274,6 @@ static void showBar(int16_t min, int16_t max, int16_t value)
             }
         }
     }
-#elif defined(_LS020)
-    uint8_t i;
-
-    if (min + max) {
-        value = (int16_t)85 * (value - min) / (max - min);
-    } else {
-        value = (int16_t)42 * value / max;
-    }
-    ls020SetXY(0, 60);
-    for (i = 0; i < 85; i++) {
-        if (((min + max) && (value <= i)) || (!(min + max) &&
-                                              (((value > 0) && ((i < 42) || (value + 42 < i))) ||
-                                               ((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
-            ls020DrawRect(i * 2 + 2, 55, i * 2 + 2, 85, COLOR_BCKG);
-            ls020DrawRect(i * 2 + 2, 69, i * 2 + 2, 71, COLOR_BLUE);
-        } else {
-            ls020DrawRect(i * 2 + 2, 55, i * 2 + 2, 85, COLOR_CYAN);
-        }
-    }
 #endif
 
     return;
@@ -314,10 +289,6 @@ static void showParValue(int8_t value)
 #elif defined(_KS0066)
     ks0066SetXY(11, 0);
     ks0066WriteString(mkNumString(value, 3, ' ', 10));
-#elif defined(_LS020)
-    ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
-    ls020SetXY(100, 96);
-    ls020WriteString(mkNumString(value, 3, ' ', 10));
 #endif
 
     return;
@@ -332,10 +303,6 @@ static void showParLabel(uint8_t label, uint8_t **txtLabels)
     ks0108LoadFont(font_ks0066_ru_08, 1);
 #elif defined (_KS0066)
     ks0066SetXY(0, 0);
-    writeStringEeprom(txtLabels[label]);
-#elif defined(_LS020)
-    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-    ls020SetXY(4, 8);
     writeStringEeprom(txtLabels[label]);
 #endif
 
@@ -377,22 +344,6 @@ void showRCInfo()
     ks0066WriteString(mkNumString(irData.address, 2, '0', 16));
     ks0066WriteString(",CM=");
     ks0066WriteString(mkNumString(irData.command, 2, '0', 16));
-#elif defined(_LS020)
-    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-    ls020SetXY(4, 0);
-    ls020WriteString(mkNumString(irData.type, 1, '0', 16));
-    ls020SetXY(5, 24);
-    ls020WriteString("Rep = ");
-    ls020WriteString(mkNumString(irData.repeat, 1, '0', 16));
-    ls020SetXY(6, 48);
-    ls020WriteString("Adr = ");
-    ls020WriteString(mkNumString(irData.address, 2, '0', 16));
-    ls020SetXY(4, 72);
-    ls020WriteString("Cmd = ");
-    ls020WriteString(mkNumString(irData.command, 2, '0', 16));
-    ls020SetXY(6, 104);
-    ls020WriteString("Btn = ");
-    ls020WriteString("=-=-=");
 #endif
 
     return;
@@ -476,7 +427,7 @@ void showRadio(uint8_t tune)
     ks0066WriteString("FM ");
     ks0066WriteString(mkNumString(freq / 100, 3, ' ', 10));
     ks0066WriteData('.');
-    ks0066WriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
+    ks0066WriteString(mkNumString(freq % 100, 2, '0', 10));
 
     // Stereo indicator
     ks0066SetXY(9, 0);
@@ -506,35 +457,6 @@ void showRadio(uint8_t tune)
     } else {
         ks0066WriteString("--");
     }
-#elif defined(_LS020)
-
-    // Frequency value
-    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-    ls020SetXY(4, 8);
-    ls020WriteString("FM ");
-    ls020WriteString(mkNumString(freq / 100, 3, ' ', 10));
-    ls020WriteString("\x7F.\x7F");
-    ls020WriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
-
-    // Stereo indicator
-    ls020LoadFont(font_ks0066_ru_08, COLOR_CYAN, 1);
-    ls020SetXY(132, 12);
-    if (tunerStereo())
-        ls020WriteString("STEREO");
-    else
-        ls020WriteString("      ");
-
-    // Frequency scale
-    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
-
-    // Station number
-    ls020LoadFont(font_digits_32, COLOR_CYAN, 1);
-    ls020SetXY(124, 96);
-    if (num) {
-        ls020WriteString(mkNumString(num, 3, ' ', 10));
-    } else {
-        ls020WriteString(" --");
-    }
 #endif
 
     return;
@@ -556,15 +478,6 @@ void showBoolParam(uint8_t value, uint8_t labelIndex)
     ks0066SetXY(0, 0);
     writeStringEeprom(txtLabels[labelIndex]);
     ks0066SetXY(1, 1);
-    if (value)
-        writeStringEeprom(txtLabels[LABEL_ON]);
-    else
-        writeStringEeprom(txtLabels[LABEL_OFF]);
-#elif defined(_LS020)
-    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-    ls020SetXY(4, 0);
-    writeStringEeprom(txtLabels[labelIndex]);
-    ls020SetXY(4, 32);
     if (value)
         writeStringEeprom(txtLabels[LABEL_ON]);
     else
@@ -612,10 +525,6 @@ void showSndParam(uint8_t mode)
 #elif defined (_KS0066)
     ks0066SetXY(14, 0);
     writeStringEeprom(txtLabels[LABEL_DB]);
-#elif defined(_LS020)
-    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-    ls020SetXY(150, 104);
-    writeStringEeprom(txtLabels[LABEL_DB]);
 #endif
 
     return;
@@ -637,18 +546,6 @@ static void drawTm(uint8_t tm, const uint8_t *font)
 static void drawTm(uint8_t tm)
 {
     ks0066WriteString(mkNumString(*((int8_t *)&rtc + tm), 2, '0', 10));
-
-    return;
-}
-#elif defined(_LS020)
-static void drawTm(uint8_t tm, const uint8_t *font, uint8_t mult)
-{
-    if (rtc.etm == tm)
-        ls020LoadFont(font, COLOR_RED, mult);
-    else
-        ls020LoadFont(font, COLOR_CYAN, mult);
-    ls020WriteString(mkNumString(*((int8_t *)&rtc + tm), 2, '0', 10));
-    ls020LoadFont(font, COLOR_CYAN, mult);
 
     return;
 }
@@ -700,29 +597,6 @@ void showTime()
     drawTm(RTC_YEAR);
 
     ks0066SetXY(0, 1);
-#elif defined(_LS020)
-    ls020SetXY(2, 4);
-
-    drawTm(RTC_HOUR, font_ks0066_ru_24, 2);
-    ls020WriteString("\x7F:\x7F");
-    drawTm(RTC_MIN, font_ks0066_ru_24, 2);
-    ls020WriteString("\x7F:\x7F");
-    drawTm(RTC_SEC, font_ks0066_ru_24, 2);
-
-    ls020SetXY(12, 64);
-
-    drawTm(RTC_DATE, font_digits_32, 1);
-    ls020WriteString("\x7F.\x7F");
-    drawTm(RTC_MONTH, font_digits_32, 1);
-    ls020WriteString("\x7F.\x7F");
-    if (rtc.etm == RTC_YEAR)
-        ls020LoadFont(font_digits_32, COLOR_RED, 1);
-    ls020WriteString("20");
-    ls020WriteChar('\x7F');
-    drawTm(RTC_YEAR, font_digits_32, 1);
-
-    ls020LoadFont(font_ks0066_ru_24, COLOR_CYAN, 1);
-    ls020SetXY(24, 104);
 #endif
 
     writeStringEeprom(txtLabels[LABEL_SUNDAY + rtcWeekDay() - 1]);
@@ -825,28 +699,6 @@ void showSpectrum()
             ks0066WriteData(lcdBuf[i]);
         else
             ks0066WriteData(0xFF);
-    }
-
-#elif defined(_LS020)
-    uint8_t i;
-    uint8_t val;
-
-    for (i = 0; i < 29; i++) {
-        switch (spMode) {
-        case SP_MODE_STEREO:
-            val = buf[i] * 2;
-            ls020DrawRect(2 + i * 6, 2, 5 + i * 6, 2 + (63 - val) - 1, COLOR_BCKG);
-            ls020DrawRect(2 + i * 6, 2 + (63 - val), 5 + i * 6, 65, COLOR_YELLOW);
-            val = buf[i + 32] * 2;
-            ls020DrawRect(2 + i * 6, 2 + 64, 5 + i * 6, 2 + (63 - val) - 1 + 64, COLOR_BCKG);
-            ls020DrawRect(2 + i * 6, 2 + (63 - val) + 64, 5 + i * 6, 65 + 64, COLOR_YELLOW);
-            break;
-        default:
-            val = (buf[i] + buf[i + 32]) * 2;
-            ls020DrawRect(2 + i * 6, 2, 5 + i * 6, 2 + (127 - val) - 1, COLOR_BCKG);
-            ls020DrawRect(2 + i * 6, 2 + (127 - val), 5 + i * 6, 129, COLOR_YELLOW);
-            break;
-        }
     }
 #endif
 

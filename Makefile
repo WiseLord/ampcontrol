@@ -28,8 +28,6 @@ else ifeq "$(DISPLAY)" "KS0066_16X2_8BIT"
   SRCS += display/ks0066.c
 else ifeq "$(DISPLAY)" "KS0066_16X2_PCF8574"
   SRCS += display/ks0066.c
-else ifeq "$(DISPLAY)" "LS020"
-  SRCS += display/ls020.c $(FONTS_SRC) $(ICONS_SRC)
 endif
 SRCS += display.c
 DEFINES += -D_$(DISPLAY)

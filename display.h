@@ -10,7 +10,7 @@
 #endif
 
 // Graphics (ks0108-based) or character (ks0066-based) display selection
-#if !defined(_KS0108) && !defined(_KS0066) && !defined(_LS020)
+#if !defined(_KS0108) && !defined(_KS0066)
 #define _KS0108
 #endif
 
@@ -18,8 +18,6 @@
 #include "display/ks0108.h"
 #elif defined(_KS0066)
 #include "display/ks0066.h"
-#elif defined(_LS020)
-#include "display/ls020.h"
 #endif
 
 // Spectrum output mode
