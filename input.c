@@ -155,8 +155,6 @@ ISR (TIMER2_COMPA_vect)
                     break;
                 }
             }
-        } else {
-            btnPrev = btnNow;
         }
     } else {
         if ((btnCnt > SHORT_PRESS) && (btnCnt < LONG_PRESS)) {
@@ -180,6 +178,7 @@ ISR (TIMER2_COMPA_vect)
         }
         btnCnt = 0;
     }
+    btnPrev = btnNow;
 
     // Timer of current display mode
     if (displayTime)

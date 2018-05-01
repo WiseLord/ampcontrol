@@ -28,10 +28,7 @@ static uint8_t userSybmols = LCD_LEVELS;
 
 static void writeStringEeprom(const uint8_t *string)
 {
-    uint8_t i = 0;
-
-    for (i = 0; i < STR_BUFSIZE; i++)
-        strbuf[i] = eeprom_read_byte(&string[i]);
+    eeprom_read_block(strbuf, string, STR_BUFSIZE);
 
 #if defined(_KS0108)
     ks0108WriteString(strbuf);
@@ -40,8 +37,6 @@ static void writeStringEeprom(const uint8_t *string)
 #elif defined(_LS020)
     ls020WriteString(strbuf);
 #endif
-
-    return;
 }
 
 #if defined(_KS0066)
@@ -368,9 +363,9 @@ void showRCInfo()
     ks0108WriteString("Cmd = ");
     ks0108WriteString(mkNumString(irData.command, 2, '0', 16));
     ks0108SetXY(0, 6);
-    ks0108WriteString("Buttons:");
+    ks0108WriteString("Input:");
     ks0108SetXY(5, 7);
-    ks0108WriteString("=-=-=");
+    ks0108WriteString(mkNumString(getEncBuf() | getBtnBuf(), 8, '0', 2));
 #elif defined(_KS0066)
     ks0066SetXY(0, 0);
     ks0066WriteString("R=");
@@ -419,7 +414,7 @@ void showRadio(uint8_t tune)
     ks0108WriteString("FM ");
     ks0108WriteString(mkNumString(freq / 100, 3, ' ', 10));
     ks0108WriteString("\x7F.\x7F");
-    ks0108WriteString(mkNumString(freq / 10 % 10, 1, ' ', 10));
+    ks0108WriteString(mkNumString(freq % 100, 2, '0', 10));
     ks0108LoadFont(font_ks0066_ru_08, 1);
 
     // Signal level
