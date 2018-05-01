@@ -18,6 +18,7 @@ static volatile uint16_t displayTime = 0;           // Display mode timer
 static volatile int16_t initTimer = INIT_TIMER_OFF; // Init timer
 static volatile uint8_t clockTimer = 0;             // RTC poll timer
 
+static volatile uint16_t secTimer;                  // 1 second timer
 static volatile uint16_t rcTimer;
 
 static uint8_t rcType;
@@ -188,6 +189,12 @@ ISR (TIMER2_COMPA_vect)
     if (rcTimer < RC_PRESS_LIMIT)
         rcTimer++;
 
+    if (secTimer) {
+        secTimer--;
+    } else {
+        secTimer = 1000;
+    }
+
     // Timer clock update
     if (clockTimer)
         clockTimer--;
@@ -272,4 +279,14 @@ void setInitTimer(int16_t value)
 int16_t getInitTimer()
 {
     return initTimer;
+}
+
+void setSecTimer(uint16_t val)
+{
+    secTimer = val;
+}
+
+int16_t getSecTimer()
+{
+    return secTimer;
 }

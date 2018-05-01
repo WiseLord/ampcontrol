@@ -45,6 +45,10 @@
 #define KS0108_STA_DISP_OFF         0x20    // DB5
 #define KS0108_STA_BUSY             0x80    // DB4
 
+// Some common defines
+#define KS0108_MIN_BRIGHTNESS       0
+#define KS0108_MAX_BRIGHTNESS       32
+
 #define CS_ENABLE                   1
 #define CS_DISABLE                  0
 

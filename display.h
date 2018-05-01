@@ -14,41 +14,61 @@
 #define _KS0108
 #endif
 
-#if defined(_KS0108)
-#include "display/ks0108.h"
-#elif defined(_KS0066)
+#if defined(_KS0066)
 #include "display/ks0066.h"
+#define MIN_BRIGHTNESS          KS0066_MIN_BRIGHTNESS
+#define MAX_BRIGHTNESS          KS0066_MAX_BRIGHTNESS
+#define writeString(x)          ks0066WriteString(x)
+#define displayClear()          ks0066Clear()
+#else
+#include "display/ks0108.h"
+#define MIN_BRIGHTNESS          KS0108_MIN_BRIGHTNESS
+#define MAX_BRIGHTNESS          KS0108_MAX_BRIGHTNESS
+#define writeString(x)          ks0108WriteString(x)
+#define displayClear()          ks0108Clear()
 #endif
 
-// Spectrum output mode
-#define SP_MODE_STEREO          0
-#define SP_MODE_MIXED           1
-
+// Backlight state
 #define BACKLIGHT_ON            1
 #define BACKLIGHT_OFF           0
-
-// Data stored in user characters
-#define LCD_LEVELS              0
-#define LCD_BAR                 1
 
 // Radio tuning mode
 #define MODE_RADIO_TUNE         1
 #define MODE_RADIO_CHAN         0
 
-#define DISP_MIN_BR             0
-#define DISP_MAX_BR             32
-
-// Type of string printed (regular/eeprom/flash)
-#define STR_REG                 0
-#define STR_EEP                 1
-#define STR_PGM                 2
-
 #define STR_BUFSIZE             16
 
-void displayInit();
-void displayClear();
+// Spectrum output mode
+typedef enum {
+    SP_MODE_METER = 0,
+    SP_MODE_STEREO,
+    SP_MODE_MIXED,
 
-char *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix);
+    SP_MODE_END
+} SpMode;
+
+#if defined(_KS0066)
+typedef enum {
+    LCD_LEVELS = 0,
+    LCD_BAR,
+
+    LCD_END
+} LcdSymGroup;
+
+typedef enum {
+    SYM_STEREO_DEGREE = 0,
+    SYM_MUTE_CROSS,
+    SYM_LOUDNESS_CROSS,
+    SYM_SURROUND_CROSS,
+    SYM_EFFECT_3D_CROSS,
+    SYM_TONE_BYPASS_CROSS,
+    SYM_STEREO_MONO,
+
+    SYM_END
+} LcdUserAddSym;
+#endif
+
+void displayInit();
 
 void showRCInfo();
 void showRadio(uint8_t tune);

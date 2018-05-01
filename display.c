@@ -14,212 +14,209 @@
 #include "tuner/tuner.h"
 
 static uint8_t _br;
-static int8_t brStby;                           // Brightness in standby mode
-static int8_t brWork;                           // Brightness in working mode
+static int8_t brStby;                       // Brightness in standby mode
+static int8_t brWork;                       // Brightness in working mode
 
-uint8_t spMode;                                 // Spectrum mode
-static char strbuf[STR_BUFSIZE + 1];            // String buffer
+static SpMode spMode;                       // Spectrum mode
 
-uint8_t *txtLabels[LABEL_END];                  // Array with text label pointers
+static char strbuf[STR_BUFSIZE + 1];        // String buffer
+
+uint8_t *txtLabels[LABEL_END];              // Array with text label pointers
 
 #if defined(_KS0066)
-static uint8_t userSybmols = LCD_LEVELS;
+static LcdSymGroup userSybmols = LCD_END;   // Generated user symbols for ks0066
+static LcdUserAddSym userAddSym = SYM_END;  // Additional user symbol
 #endif
 
-static void writeStringEeprom(const uint8_t *string)
+#if defined(_KS0066)
+static void lcdGenLevels()
 {
-    eeprom_read_block(strbuf, string, STR_BUFSIZE);
+    if (userSybmols != LCD_LEVELS) {        // Generate 7 level symbols
+        userSybmols = LCD_LEVELS;
 
-#if defined(_KS0108)
-    ks0108WriteString(strbuf);
-#elif defined(_KS0066)
-    ks0066WriteString(strbuf);
-#endif
+        uint8_t i, j;
+        ks0066SelectSymbol(0);
+        for (i = 0; i < 7; i++)
+            for (j = 0; j < 8; j++)
+                if (i + j >= 7)
+                    ks0066WriteData(0xFF);
+                else
+                    ks0066WriteData(0x00);
+    }
 }
 
-#if defined(_KS0066)
-static void lcdGenLevels(void)
+static void lcdGenBar(LcdUserAddSym sym)
 {
-    ks0066SelectSymbol(0);
+    static const uint8_t bar[] PROGMEM = {
+        0b00000,
+        0b10000,
+        0b10100,
+        0b10101,
+        0b00101,
+        0b00001,
+    };
+    static const uint8_t speakerIcon[] PROGMEM = {
+        0b00001,
+        0b00011,
+        0b11101,
+        0b10101,
+        0b11101,
+        0b00011,
+        0b00001,
+        0b00000,
+    };
+    static const uint8_t loudnessIcon[] PROGMEM = {
+        0b00000,
+        0b10000,
+        0b10001,
+        0b10101,
+        0b10101,
+        0b10101,
+        0b10101,
+        0b00000,
+    };
+    static const uint8_t surroundIcon[] PROGMEM = {
+        0b01010,
+        0b10001,
+        0b10101,
+        0b10101,
+        0b10101,
+        0b10001,
+        0b01010,
+        0b00000,
+    };
+    static const uint8_t effect3dIcon[] PROGMEM = {
+        0b01110,
+        0b10001,
+        0b00000,
+        0b01110,
+        0b00000,
+        0b10001,
+        0b01110,
+        0b00000,
+    };
+    static const uint8_t toneBypassIcon[] PROGMEM = {
+        0b01000,
+        0b10101,
+        0b00010,
+        0b00000,
+        0b11111,
+        0b00000,
+        0b11111,
+        0b00000,
+    };
+    static const uint8_t stereoIcon[] PROGMEM = {
+        0b00000,
+        0b11011,
+        0b10101,
+        0b10101,
+        0b10101,
+        0b11011,
+        0b00000,
+        0b00000,
+    };
+    static const uint8_t monoIcon[] PROGMEM = {
+        0b00000,
+        0b00111,
+        0b01001,
+        0b01001,
+        0b01001,
+        0b00111,
+        0b00000,
+        0b00000,
+    };
+    static const uint8_t crossIcon[] PROGMEM = {
+        0b00000,
+        0b10001,
+        0b01010,
+        0b00100,
+        0b01010,
+        0b10001,
+        0b00000,
+        0b00000,
+    };
+    static const uint8_t degreeIcon[] PROGMEM = {
+        0b00110,
+        0b01001,
+        0b01001,
+        0b00110,
+        0b00000,
+        0b00000,
+        0b00000,
+        0b00000,
+    };
 
-    uint8_t i, j;
+    uint8_t i;
 
-    for (i = 0; i < 8; i++) {
-        for (j = 0; j < 8; j++) {
-            if (i + j >= 7) {
-                ks0066WriteData(0xFF);
-            } else {
+    if (userSybmols != LCD_BAR || userAddSym != sym) {
+        // Generate main 6 bar symbols
+        userSybmols = LCD_BAR;
+        ks0066SelectSymbol(0);
+        for (i = 0; i < 48; i++) {
+            if ((i & 0x07) == 0x03) {
+                ks0066WriteData(0x15);
+            } else if ((i & 0x07) == 0x07) {
                 ks0066WriteData(0x00);
+            } else {
+                ks0066WriteData(pgm_read_byte(&bar[i >> 3]));
             }
         }
-    }
-
-    return;
-}
-static void lcdGenBar(void)
-{
-    ks0066SelectSymbol(0);
-
-    uint8_t i;
-    uint8_t pos[] = {0x00, 0x10, 0x14, 0x15, 0x05, 0x01};
-
-    for (i = 0; i < 48; i++) {
-        if ((i & 0x07) == 0x03) {
-            ks0066WriteData(0x15);
-        } else if ((i & 0x07) == 0x07) {
-            ks0066WriteData(0x00);
-        } else {
-            ks0066WriteData(pos[i >> 3]);
+        // Generate two additional symbols
+        userAddSym = sym;
+        switch (sym) {
+        case SYM_MUTE_CROSS:
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&speakerIcon[i]));
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+            break;
+        case SYM_LOUDNESS_CROSS:
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&loudnessIcon[i]));
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+            break;
+        case SYM_SURROUND_CROSS:
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&surroundIcon[i]));
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+            break;
+        case SYM_EFFECT_3D_CROSS:
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&effect3dIcon[i]));
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+            break;
+        case SYM_TONE_BYPASS_CROSS:
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&toneBypassIcon[i]));
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&crossIcon[i]));
+            break;
+        case SYM_STEREO_MONO:
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&stereoIcon[i]));
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&monoIcon[i]));
+            break;
+        default:
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&stereoIcon[i]));
+            for (i = 0; i < 8; i++)
+                ks0066WriteData(pgm_read_byte(&degreeIcon[i]));
+            break;
         }
     }
-    // Stereo indicator
-    ks0066WriteData(0b00000000);
-    ks0066WriteData(0b00011011);
-    ks0066WriteData(0b00010101);
-    ks0066WriteData(0b00010101);
-    ks0066WriteData(0b00010101);
-    ks0066WriteData(0b00011011);
-    ks0066WriteData(0b00000000);
-    ks0066WriteData(0b00000000);
-
-    return;
 }
 #endif
-
-void displayInit()
-{
-    uint8_t i;
-    uint8_t *addr;
-
-    // Load text labels from EEPROM
-    addr = (uint8_t *)EEPROM_LABELS_ADDR;
-    i = 0;
-
-    while (i < LABEL_END && addr < (uint8_t *)EEPROM_SIZE) {
-        if (eeprom_read_byte(addr) != '\0') {
-            txtLabels[i] = addr;
-            addr++;
-            i++;
-            while (eeprom_read_byte(addr) != '\0' &&
-                    addr < (uint8_t *)EEPROM_SIZE) {
-                addr++;
-            }
-        } else {
-            addr++;
-        }
-    }
-
-#if defined(_KS0108)
-    ks0108Init();
-    ks0108LoadFont(font_ks0066_ru_08, 1);
-#elif defined(_KS0066)
-    ks0066Init();
-    lcdGenLevels();
-#endif
-    OUT(DISP_BCKL);
-
-    brStby = eeprom_read_byte((uint8_t *)EEPROM_BR_STBY);
-    brWork = eeprom_read_byte((uint8_t *)EEPROM_BR_WORK);
-    spMode  = eeprom_read_byte((uint8_t *)EEPROM_SP_MODE);
-}
-
-ISR (TIMER0_OVF_vect)
-{
-    ADCSRA |= 1 << ADSC;                                // Start ADC every second interrupt
-
-    static uint8_t br;
-
-    if (++br >= DISP_MAX_BR)                            // Loop brightness
-        br = DISP_MIN_BR;
-
-    if (br == _br) {
-        CLR(DISP_BCKL);                                 // Turn backlight off
-    } else if (br == 0)
-        SET(DISP_BCKL);                                 // Turn backlight on
-
-    return;
-}
-
-void displayClear()
-{
-#if defined(_KS0108)
-    ks0108Clear();
-#elif defined(_KS0066)
-    ks0066Clear();
-#endif
-
-    return;
-}
-
-char *mkNumString(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
-{
-    uint8_t numdiv;
-    uint8_t sign = lead;
-    int8_t i;
-
-    if (number < 0) {
-        sign = '-';
-        number = -number;
-    }
-
-    for (i = 0; i < width; i++)
-        strbuf[i] = lead;
-    strbuf[width] = '\0';
-    i = width - 1;
-
-    while (number > 0 || i == width - 1) {
-        numdiv = number % radix;
-        strbuf[i] = numdiv + 0x30;
-        if (numdiv >= 10)
-            strbuf[i] += 7;
-        i--;
-        number /= radix;
-    }
-
-    if (i >= 0)
-        strbuf[i] = sign;
-
-    return strbuf;
-}
 
 static void showBar(int16_t min, int16_t max, int16_t value)
 {
-#if defined(_KS0108)
-    uint8_t data;
-    uint8_t i, j;
-
-    if (min + max) {
-        value = (int16_t)85 * (value - min) / (max - min);
-    } else {
-        value = (int16_t)42 * value / max;
-    }
-    for (j = 5; j <= 6; j++) {
-        ks0108SetXY(0, j);
-        for (i = 0; i < 85; i++) {
-            if (((min + max) && (value <= i)) || (!(min + max) &&
-                                                  (((value > 0) && ((i < 42) || (value + 42 < i))) ||
-                                                   ((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
-                if (j == 5) {
-                    data = 0x80;
-                } else {
-                    data = 0x01;
-                }
-            } else {
-                data = 0xFF;
-            }
-            if (i & 0x01) {
-                data = 0x00;
-            }
-            ks0108WriteData(data);
-        }
-    }
-#elif defined(_KS0066)
+#if defined(_KS0066)
     uint8_t i;
 
-    if (userSybmols != LCD_BAR) {
-        lcdGenBar();
-        userSybmols = LCD_BAR;
-    }
+    lcdGenBar(userAddSym);
 
     ks0066SetXY(0, 1);
 
@@ -274,76 +271,202 @@ static void showBar(int16_t min, int16_t max, int16_t value)
             }
         }
     }
+#else
+    uint8_t data;
+    uint8_t i, j;
+
+    if (min + max) {
+        value = (int16_t)85 * (value - min) / (max - min);
+    } else {
+        value = (int16_t)42 * value / max;
+    }
+    for (j = 5; j <= 6; j++) {
+        ks0108SetXY(0, j);
+        for (i = 0; i < 85; i++) {
+            if (((min + max) && (value <= i)) || (!(min + max) &&
+                                                  (((value > 0) && ((i < 42) || (value + 42 < i))) ||
+                                                   ((value <= 0) && ((i > 42) || (value + 42 > i)))))) {
+                if (j == 5) {
+                    data = 0x80;
+                } else {
+                    data = 0x01;
+                }
+            } else {
+                data = 0xFF;
+            }
+            if (i & 0x01) {
+                data = 0x00;
+            }
+            ks0108WriteData(data);
+        }
+    }
 #endif
 
     return;
 }
+
+
+static void writeStringEeprom(const uint8_t *string)
+{
+    eeprom_read_block(strbuf, string, STR_BUFSIZE);
+    writeString(strbuf);
+}
+
+static void writeNum(int16_t number, uint8_t width, uint8_t lead, uint8_t radix)
+{
+    uint8_t numdiv;
+    uint8_t sign = lead;
+    int8_t i;
+
+    if (number < 0) {
+        sign = '-';
+        number = -number;
+    }
+
+    for (i = 0; i < width; i++)
+        strbuf[i] = lead;
+    strbuf[width] = '\0';
+    i = width - 1;
+
+    while (number > 0 || i == width - 1) {
+        numdiv = number % radix;
+        strbuf[i] = numdiv + 0x30;
+        if (numdiv >= 10)
+            strbuf[i] += 7;
+        i--;
+        number /= radix;
+    }
+
+    if (i >= 0)
+        strbuf[i] = sign;
+
+    writeString(strbuf);
+}
+
 
 static void showParValue(int8_t value)
 {
-#if defined(_KS0108)
+#if defined(_KS0066)
+    ks0066SetXY(11, 0);
+    writeNum(value, 3, ' ', 10);
+#else
     ks0108LoadFont(font_ks0066_ru_24, 1);
     ks0108SetXY(93, 4);
-    ks0108WriteString(mkNumString(value, 3, ' ', 10));
+    writeNum(value, 3, ' ', 10);
     ks0108LoadFont(font_ks0066_ru_08, 1);
-#elif defined(_KS0066)
-    ks0066SetXY(11, 0);
-    ks0066WriteString(mkNumString(value, 3, ' ', 10));
 #endif
-
-    return;
 }
 
-static void showParLabel(uint8_t label, uint8_t **txtLabels)
+static void showParLabel(uint8_t label)
 {
-#if defined(_KS0108)
+#if defined (_KS0066)
+    ks0066SetXY (0, 0);
+    writeStringEeprom(txtLabels[label]);
+#else
     ks0108LoadFont(font_ks0066_ru_24, 1);
     ks0108SetXY(0, 0);
     writeStringEeprom(txtLabels[label]);
-    ks0108LoadFont(font_ks0066_ru_08, 1);
-#elif defined (_KS0066)
-    ks0066SetXY(0, 0);
-    writeStringEeprom(txtLabels[label]);
 #endif
 
     return;
 }
+
+void displayInit()
+{
+    uint8_t i;
+    uint8_t *addr;
+
+    // Load text labels from EEPROM
+    addr = (uint8_t *)EEPROM_LABELS_ADDR;
+    i = 0;
+
+    while (i < LABEL_END && addr < (uint8_t *)EEPROM_SIZE) {
+        if (eeprom_read_byte(addr) != '\0') {
+            txtLabels[i] = addr;
+            addr++;
+            i++;
+            while (eeprom_read_byte(addr) != '\0' &&
+                    addr < (uint8_t *)EEPROM_SIZE) {
+                addr++;
+            }
+        } else {
+            addr++;
+        }
+    }
+
+#if defined(_KS0066)
+    ks0066Init();
+    lcdGenLevels();
+#else
+    ks0108Init();
+    ks0108LoadFont(font_ks0066_ru_08, 1);
+#endif
+    OUT(DISP_BCKL);
+
+    brStby = eeprom_read_byte((uint8_t *)EEPROM_BR_STBY);
+    brWork = eeprom_read_byte((uint8_t *)EEPROM_BR_WORK);
+    spMode  = eeprom_read_byte((uint8_t *)EEPROM_SP_MODE);
+}
+
+#if !defined(_KS0066)
+ISR (TIMER0_OVF_vect)
+{
+    ADCSRA |= 1 << ADSC;                                // Start ADC every second interrupt
+
+    static uint8_t run = 1;
+    if (run)
+        ADCSRA |= 1 << ADSC;                        // Start ADC every second interrupt
+    run = !run;
+
+    static uint8_t br;
+
+    if (++br >= MAX_BRIGHTNESS)                         // Loop brightness
+        br = MIN_BRIGHTNESS;
+
+    if (br == _br) {
+        CLR(DISP_BCKL);                                 // Turn backlight off
+    } else if (br == 0)
+        SET(DISP_BCKL);                                 // Turn backlight on
+
+    return;
+}
+#endif
 
 void showRCInfo()
 {
     IRData irData = getIrData();
 
-#if defined(_KS0108)
+#if defined(_KS0066)
+    ks0066SetXY(0, 0);
+    writeString("R=");
+    writeNum(irData.type, 1, '0', 16);
+    ks0066SetXY(0, 1);
+    writeString("RP=");
+    writeNum(irData.repeat, 1, '0', 16);
+    writeString(",RC=");
+    writeNum(irData.address, 2, '0', 16);
+    writeString(",CM=");
+    writeNum(irData.command, 2, '0', 16);
+#else
     ks0108LoadFont(font_ks0066_ru_08, 1);
     ks0108SetXY(0, 0);
     ks0108WriteString("RC5:");
     ks0108SetXY(5, 1);
     ks0108WriteString("Type = ");
-    ks0108WriteString(mkNumString(irData.type, 1, '0', 16));
+    writeNum(irData.type, 1, '0', 16);
     ks0108SetXY(5, 2);
     ks0108WriteString("Rep = ");
-    ks0108WriteString(mkNumString(irData.repeat, 1, '0', 16));
+    writeNum(irData.repeat, 1, '0', 16);
     ks0108SetXY(5, 3);
     ks0108WriteString("Adr = ");
-    ks0108WriteString(mkNumString(irData.address, 2, '0', 16));
+    writeNum(irData.address, 2, '0', 16);
     ks0108SetXY(5, 4);
     ks0108WriteString("Cmd = ");
-    ks0108WriteString(mkNumString(irData.command, 2, '0', 16));
+    writeNum(irData.command, 2, '0', 16);
     ks0108SetXY(0, 6);
     ks0108WriteString("Input:");
     ks0108SetXY(5, 7);
-    ks0108WriteString(mkNumString(getEncBuf() | getBtnBuf(), 8, '0', 2));
-#elif defined(_KS0066)
-    ks0066SetXY(0, 0);
-    ks0066WriteString("R=");
-    ks0066WriteString(mkNumString(irData.type, 1, '0', 16));
-    ks0066SetXY(0, 1);
-    ks0066WriteString("RP=");
-    ks0066WriteString(mkNumString(irData.repeat, 1, '0', 16));
-    ks0066WriteString(",RC=");
-    ks0066WriteString(mkNumString(irData.address, 2, '0', 16));
-    ks0066WriteString(",CM=");
-    ks0066WriteString(mkNumString(irData.command, 2, '0', 16));
+    writeNum(getEncBuf() | getBtnBuf(), 8, '0', 2);
 #endif
 
     return;
@@ -351,27 +474,102 @@ void showRCInfo()
 
 void showRadio(uint8_t tune)
 {
-    uint8_t num = tunerStationNum();
     tunerReadStatus();
 
-    uint16_t freq = tuner.rdFreq;
-
-#if defined(_KS0108)
     uint8_t i;
 
+    uint8_t level = tunerLevel();
+    uint8_t num = tunerStationNum();
+#ifdef _RDS
+    uint8_t rdsFlag = rdsGetFlag();
+#endif
+
+#if defined(_KS0066)
+    lcdGenBar(SYM_STEREO_MONO);
+
+    // Frequency value
+    ks0066SetXY(0, 0);
+    writeString("FM ");
+    writeNum(tuner.rdFreq / 100, 3, ' ', 10);
+    ks0066WriteData('.');
+    writeNum(tuner.rdFreq % 100, 2, '0', 10);
+
+    // Signal level
+    ks0066SetXY(12, 0);
+    level = level * 2 / 5;
+    if (level < 3) {
+        ks0066WriteData(level);
+        ks0066WriteData(0x00);
+    } else {
+        ks0066WriteData(0x03);
+        ks0066WriteData(level - 3);
+    }
+
+    // Stereo indicator
+    ks0066SetXY(10, 0);
+    if (tuner.mono)
+        writeString("\x07");
+    else if (tunerStereo())
+        writeString("\x06");
+    else
+        writeString(" ");
+
+    // Station number
+    ks0066SetXY(14, 1);
+    if (num) {
+        writeNum(num, 2, ' ', 10);
+    } else {
+        writeString("--");
+    }
+
+    // Select between RDS and spectrum mode
+#ifdef _RDS
+    if (rdsFlag) {
+        // RDS data
+        ks0066SetXY(0, 1);
+        writeString("RDS:");
+        writeString(rdsGetText ());
+    } else {
+#endif
+        // Frequency scale
+        uint8_t value = (int16_t)36 * ((tuner.rdFreq - tuner.fMin) >> 4) / ((tuner.fMax - tuner.fMin) >> 4);
+        ks0066SetXY(0, 1);
+        for (i = 0; i < 12; i++) {
+            if (value / 3 > i) {
+                ks0066WriteData(0x03);
+            } else {
+                if (value / 3 < i) {
+                    ks0066WriteData(0x00);
+                } else {
+                    ks0066WriteData(value % 3);
+                }
+            }
+        }
+#ifdef _RDS
+    }
+#endif
+
+    // Tune status
+    ks0066SetXY (12, 1);
+    if (tune == MODE_RADIO_TUNE) {
+        writeString("<>");
+    } else {
+        writeString("  ");
+    }
+#else
     // Frequency value
     ks0108LoadFont(font_ks0066_ru_24, 1);
     ks0108SetXY(0, 0);
     ks0108WriteString("FM ");
-    ks0108WriteString(mkNumString(freq / 100, 3, ' ', 10));
+    writeNum(tuner.rdFreq / 100, 3, ' ', 10);
     ks0108WriteString("\x7F.\x7F");
-    ks0108WriteString(mkNumString(freq % 100, 2, '0', 10));
+    writeNum(tuner.rdFreq % 100, 2, '0', 10);
     ks0108LoadFont(font_ks0066_ru_08, 1);
 
     // Signal level
     ks0108SetXY (112, 0);
     for (i = 0; i < 16; i += 2) {
-        if (i <= tunerLevel())
+        if (i <= level)
             ks0108WriteData(256 - (128 >> (i / 2)));
         else
             ks0108WriteData(0x80);
@@ -398,7 +596,7 @@ void showRadio(uint8_t tune)
     }
 
     // Frequency scale
-    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
+    showBar(tuner.fMin >> 4, tuner.fMax >> 4, tuner.rdFreq >> 4);
 
     ks0108LoadFont(font_ks0066_ru_08, 1);
     if (tune == MODE_RADIO_TUNE) {
@@ -419,44 +617,6 @@ void showRadio(uint8_t tune)
         ks0108WriteString("   ");
 #endif
     }
-#elif defined(_KS0066)
-    uint8_t lev;
-
-    // Frequency value
-    ks0066SetXY(0, 0);
-    ks0066WriteString("FM ");
-    ks0066WriteString(mkNumString(freq / 100, 3, ' ', 10));
-    ks0066WriteData('.');
-    ks0066WriteString(mkNumString(freq % 100, 2, '0', 10));
-
-    // Stereo indicator
-    ks0066SetXY(9, 0);
-    if (tunerStereo())
-        ks0066WriteString("\x06");
-    else
-        ks0066WriteString(" ");
-
-    // Signal level
-    ks0066SetXY(11, 0);
-    lev = tunerLevel() * 2 / 5;
-    if (lev < 3) {
-        ks0066WriteData(lev);
-        ks0066WriteData(0x00);
-    } else {
-        ks0066WriteData(0x03);
-        ks0066WriteData(lev - 3);
-    }
-
-    // Frequency scale
-    showBar(tuner.fMin >> 4, tuner.fMax >> 4, freq >> 4);
-
-    // Station number
-    ks0066SetXY(14, 0);
-    if (num) {
-        ks0066WriteString(mkNumString(num, 2, ' ', 10));
-    } else {
-        ks0066WriteString("--");
-    }
 #endif
 
     return;
@@ -464,24 +624,27 @@ void showRadio(uint8_t tune)
 
 void showBoolParam(uint8_t value, uint8_t labelIndex)
 {
-#if defined(_KS0108)
-    ks0108LoadFont(font_ks0066_ru_24, 1);
-    ks0108SetXY(0, 0);
-    writeStringEeprom(txtLabels[labelIndex]);
+    showParLabel(LABEL_MUTE);
+
+#if defined(_KS0066)
+    sndParam *param = &sndPar[MODE_SND_VOLUME];
+
+    lcdGenBar(SYM_MUTE_CROSS + (labelIndex - LABEL_MUTE));
+    ks0066SetXY(14, 0);
+    ks0066WriteData(0x06);
+    if (value)
+        ks0066WriteData(0x07);
+    else
+        ks0066WriteData(' ');
+    showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max),
+            param->value);
+#else
     ks0108SetXY(0, 4);
     if (value)
         writeStringEeprom(txtLabels[LABEL_ON]);
     else
         writeStringEeprom(txtLabels[LABEL_OFF]);
     ks0108LoadFont(font_ks0066_ru_08, 1);
-#elif defined(_KS0066)
-    ks0066SetXY(0, 0);
-    writeStringEeprom(txtLabels[labelIndex]);
-    ks0066SetXY(1, 1);
-    if (value)
-        writeStringEeprom(txtLabels[LABEL_ON]);
-    else
-        writeStringEeprom(txtLabels[LABEL_OFF]);
 #endif
 
     return;
@@ -490,9 +653,9 @@ void showBoolParam(uint8_t value, uint8_t labelIndex)
 // Show brightness control
 void showBrWork()
 {
-    showBar(DISP_MIN_BR, DISP_MAX_BR, brWork);
+    showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
     showParValue(brWork);
-    showParLabel(LABEL_BR_WORK, txtLabels);
+    showParLabel(LABEL_BR_WORK);
 
     return;
 }
@@ -500,10 +663,10 @@ void showBrWork()
 void changeBrWork(int8_t diff)
 {
     brWork += diff;
-    if (brWork > DISP_MAX_BR)
-        brWork = DISP_MAX_BR;
-    if (brWork < DISP_MIN_BR)
-        brWork = DISP_MIN_BR;
+    if (brWork > MAX_BRIGHTNESS)
+        brWork = MAX_BRIGHTNESS;
+    if (brWork < MIN_BRIGHTNESS)
+        brWork = MIN_BRIGHTNESS;
     setWorkBrightness();
 
     return;
@@ -514,38 +677,40 @@ void showSndParam(uint8_t mode)
 {
     sndParam *param = &sndPar[mode];
 
-    showParLabel(mode, txtLabels);
+    showParLabel(mode);
     showParValue(((int16_t)(param->value) * (int8_t)pgm_read_byte(&param->grid->step) + 4) >> 3);
     showBar((int8_t)pgm_read_byte(&param->grid->min), (int8_t)pgm_read_byte(&param->grid->max),
             param->value);
-#if defined(_KS0108)
+#if defined (_KS0066)
+    ks0066SetXY(14, 0);
+    writeStringEeprom(txtLabels[LABEL_DB]);
+#else
     ks0108LoadFont(font_ks0066_ru_08, 1);
     ks0108SetXY(116, 7);
-    writeStringEeprom(txtLabels[LABEL_DB]);
-#elif defined (_KS0066)
-    ks0066SetXY(14, 0);
     writeStringEeprom(txtLabels[LABEL_DB]);
 #endif
 
     return;
 }
 
-#if defined(_KS0108)
+#if defined(_KS0066)
+static void drawTm(uint8_t tm)
+{
+    if (rtc.etm != tm || (getSecTimer() % 512) < 200) {
+        writeNum(*((int8_t *)&rtc + tm), 2, '0', 10);
+    } else {
+        writeString("  ");
+    }
+}
+#else
 static void drawTm(uint8_t tm, const uint8_t *font)
 {
     if (tm == rtc.etm)
         ks0108LoadFont(font, 0);
     else
         ks0108LoadFont(font, 1);
-    ks0108WriteString(mkNumString(*((int8_t *)&rtc + tm), 2, '0', 10));
+    writeNum(*((int8_t *)&rtc + tm), 2, '0', 10);
     ks0108LoadFont(font, 1);
-
-    return;
-}
-#elif defined(_KS0066)
-static void drawTm(uint8_t tm)
-{
-    ks0066WriteString(mkNumString(*((int8_t *)&rtc + tm), 2, '0', 10));
 
     return;
 }
@@ -554,7 +719,26 @@ static void drawTm(uint8_t tm)
 void showTime()
 {
     rtcReadTime();
-#if defined(_KS0108)
+#if defined(_KS0066)
+    ks0066SetXY(0, 0);
+
+    drawTm(RTC_HOUR);
+    ks0066WriteData(':');
+    drawTm(RTC_MIN);
+    ks0066WriteData(':');
+    drawTm(RTC_SEC);
+
+    ks0066SetXY(11, 0);
+    drawTm(RTC_DATE);
+    ks0066WriteData('.');
+    drawTm(RTC_MONTH);
+
+    ks0066SetXY(12, 1);
+    writeString("20");
+    drawTm(RTC_YEAR);
+
+    ks0066SetXY(0, 1);
+#else
     ks0108SetXY(4, 0);
 
     drawTm(RTC_HOUR, font_digits_32);
@@ -578,14 +762,17 @@ void showTime()
     ks0108LoadFont(font_ks0066_ru_08, 1);
     ks0108SetXY(32, 7);
 
-#elif defined(_KS0066)
-    ks0066SetXY(0, 0);
+#endif
 
-    drawTm(RTC_HOUR);
-    ks0066WriteData(':');
-    drawTm(RTC_MIN);
-    ks0066WriteData(':');
-    drawTm(RTC_SEC);
+    writeStringEeprom(txtLabels[LABEL_SUNDAY + rtcWeekDay() - 1]);
+
+#if defined(_KS0066)
+    ks0066SetXY(0, 0);
+    drawTm (RTC_HOUR);
+    ks0066WriteData (':');
+    drawTm (RTC_MIN);
+    ks0066WriteData (':');
+    drawTm (RTC_SEC);
 
     ks0066SetXY(11, 0);
     drawTm(RTC_DATE);
@@ -599,38 +786,6 @@ void showTime()
     ks0066SetXY(0, 1);
 #endif
 
-    writeStringEeprom(txtLabels[LABEL_SUNDAY + rtcWeekDay() - 1]);
-
-#if defined(_KS0066)
-    if (rtc.etm == RTC_NOEDIT) {
-        ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON);
-    } else {
-        switch (rtc.etm) {
-        case RTC_HOUR:
-            ks0066SetXY(1, 0);
-            break;
-        case RTC_MIN:
-            ks0066SetXY(4, 0);
-            break;
-        case RTC_SEC:
-            ks0066SetXY(7, 0);
-            break;
-        case RTC_DATE:
-            ks0066SetXY(12, 0);
-            break;
-        case RTC_MONTH:
-            ks0066SetXY(15, 0);
-            break;
-        case RTC_YEAR:
-            ks0066SetXY(15, 1);
-            break;
-        default:
-            break;
-        }
-        ks0066WriteCommand(KS0066_DISPLAY | KS0066_DISPAY_ON | KS0066_CUR_BLINK_ON);
-    }
-#endif
-
     return;
 }
 
@@ -638,11 +793,96 @@ void showSpectrum()
 {
     getSpData(1);
 
-#if defined(_KS0108)
+#if defined(_KS0066)
+    uint8_t i, data;
+    uint16_t left, right;
+
+    switch (spMode) {
+    case SP_MODE_STEREO:
+        lcdGenLevels();
+        ks0066SetXY(0, 0);
+        for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+            data = buf[i] >> 2;
+            if (data >= 7)
+                data = 0xFF;
+            ks0066WriteData(data);
+        }
+        ks0066SetXY(0, 1);
+        for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+            data = buf[FFT_SIZE / 2 + i] >> 2;
+            if (data >= 7)
+                data = 0xFF;
+            ks0066WriteData(data);
+        }
+        break;
+    case SP_MODE_MIXED:
+        lcdGenLevels();
+        for (i = 0; i < KS0066_SCREEN_WIDTH; i++) {
+            data = buf[i];
+            data += buf[FFT_SIZE / 2 + i];
+            data >>= 2;
+            ks0066SetXY(i, 0);
+            if (data < 8)
+                ks0066WriteData(' ');
+            else if (data < 15)
+                ks0066WriteData(data - 8);
+            else
+                ks0066WriteData(0xFF);
+            ks0066SetXY(i, 1);
+            if (data < 7)
+                ks0066WriteData(data);
+            else
+                ks0066WriteData(0xFF);
+        }
+        break;
+    default:
+        lcdGenBar(userAddSym);
+        left = 0;
+        right = 0;
+        for (i = 0; i < FFT_SIZE / 2; i++) {
+            left += buf[i];
+            right += buf[FFT_SIZE / 2 + i];
+        }
+        left >>= 4;
+        right >>= 4;
+
+        ks0066SetXY(0, 0);
+        ks0066WriteData('L');
+        for (i = 0; i < KS0066_SCREEN_WIDTH - 1; i++) {
+            if (left / 3 > i) {
+                ks0066WriteData(0x03);
+            } else {
+                if (left / 3 < i) {
+                    ks0066WriteData(0x00);
+                } else {
+                    ks0066WriteData(left % 3);
+                }
+            }
+        }
+        ks0066SetXY(0, 1);
+        ks0066WriteData('R');
+        for (i = 0; i < KS0066_SCREEN_WIDTH - 1; i++) {
+            if (right / 3 > i) {
+                ks0066WriteData(0x03);
+            } else {
+                if (right / 3 < i) {
+                    ks0066WriteData(0x00);
+                } else {
+                    ks0066WriteData(right % 3);
+                }
+            }
+        }
+        break;
+    }
+#else
     uint8_t i, j, k;
     int8_t row;
     uint8_t data;
     uint8_t val;
+
+    if (spMode == SP_MODE_METER)
+        spMode = SP_MODE_STEREO;
+
     ks0108SetXY(0, 0);
     for (i = 0; i < KS0108_ROWS; i++) {
         for (j = 0, k = 32; j < 32; j++, k++) {
@@ -673,33 +913,6 @@ void showSpectrum()
             ks0108WriteData(0x00);
         }
     }
-#elif defined(_KS0066)
-    uint8_t i;
-    uint8_t lcdBuf[16];
-
-    if (userSybmols != LCD_LEVELS) {
-        lcdGenLevels();
-        userSybmols = LCD_LEVELS;
-    }
-
-    for (i = 0; i < 16; i++) {
-        lcdBuf[i] = buf[2 * i] + buf[2 * i + 1];
-        lcdBuf[i] += buf[32 + 2 * i] + buf[32 + 2 * i + 1];
-        lcdBuf[i] >>= 2;
-    }
-
-    for (i = 0; i < 16; i++) {
-        ks0066SetXY(i, 0);
-        if (lcdBuf[i] < 8)
-            ks0066WriteData(0x20);
-        else
-            ks0066WriteData(lcdBuf[i] - 8);
-        ks0066SetXY(i, 1);
-        if (lcdBuf[i] < 8)
-            ks0066WriteData(lcdBuf[i]);
-        else
-            ks0066WriteData(0xFF);
-    }
 #endif
 
     return;
@@ -709,11 +922,11 @@ void setWorkBrightness(void)
 {
     _br = brWork;
 
-#if defined(_KS0066_WIRE_PCF8574)
-    if (brWork == DISP_MAX_BR)
-        pcf8574IntBacklight(BACKLIGHT_ON);
+#if defined(KS0066_WIRE_PCF8574)
+    if (brWork)
+        pcf8574SetBacklight(BACKLIGHT_ON);
     else
-        pcf8574IntBacklight(BACKLIGHT_OFF);
+        pcf8574SetBacklight(BACKLIGHT_OFF);
 #endif
 
     return;
@@ -723,8 +936,8 @@ void setStbyBrightness(void)
 {
     _br = brStby;
 
-#if defined(_KS0066_WIRE_PCF8574)
-    pcf8574IntBacklight(BACKLIGHT_OFF);
+#if defined(KS0066_WIRE_PCF8574)
+    pcf8574SetBacklight(BACKLIGHT_OFF);
 #endif
 
     return;
@@ -741,7 +954,6 @@ void displayPowerOff(void)
 // Change spectrum mode
 void switchSpMode()
 {
-    spMode = !spMode;
-
-    return;
+    if (++spMode >= SP_MODE_END)
+        spMode = SP_MODE_METER;
 }
