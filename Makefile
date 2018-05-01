@@ -5,7 +5,7 @@ F_CPU = 16000000L
 
 APROC_LIST = TDA7439
 TUNER_LIST = RDA580X
-FEATURE_LIST =
+FEATURE_LIST = RDA5807_DF
 
 # Lowercase argument
 lc = $(shell echo $1 | tr A-Z a-z)
