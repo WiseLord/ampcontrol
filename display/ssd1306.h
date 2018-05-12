@@ -105,6 +105,9 @@
 #define SSD1306_HEIGHT                  64
 #define SSD1306_BUFFERSIZE              (SSD1306_WIDTH * SSD1306_HEIGHT / 8)
 
+#define SSD1306_USE_PAGE_ADDRESSING
+#define SSD1306_ROTATE_180
+
 #define SSD1306_MIN_BRIGHTNESS          0
 #define SSD1306_MAX_BRIGHTNESS          32
 

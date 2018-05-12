@@ -12,20 +12,33 @@ static uint8_t ssd1306Addr = SSD1306_I2C_ADDR_0;
 static const uint8_t initSeq[] PROGMEM = {
     SSD1306_DISPLAY_OFF,
     SSD1306_SETDISPLAYCLOCKDIV,
-    0xF0,
+    0x80,
     SSD1306_SETMULTIPLEX,
-    0x3F,
+    (SSD1306_HEIGHT - 1),
     SSD1306_SETDISPLAYOFFSET,
     0x00,
     SSD1306_SETSTARTLINE | 0x00,
     SSD1306_MEMORYMODE,
+#ifdef SSD1306_USE_PAGE_ADDRESSING
+    SSD1306_MEMORYMODE_PAGE,
+#else
     SSD1306_MEMORYMODE_HORISONTAL,
+#endif
+#ifdef SSD1306_ROTATE_180
     SSD1306_SEGREMAP_ON,
     SSD1306_COMSCANDEC,
+#else
+    SSD1306_SEGREMAP_OFF,
+    SSD1306_COMSCANINC,
+#endif
     SSD1306_SETCOMPINS,
+#if SSD1306_HEIGHT == 64
     0x12,
+#else
+    0x02,
+#endif
     SSD1306_SETCONTRAST,
-    0xFF,
+    0x8F,
     SSD1306_SETPRECHARGE,
     0x1F,
     SSD1306_SETVCOMDETECT,
@@ -34,9 +47,11 @@ static const uint8_t initSeq[] PROGMEM = {
     SSD1306_NORMALDISPLAY,
     SSD1306_CHARGEPUMP,
     0x14,
+    SSD1306_SCROLL_DEACTIVATE,
     SSD1306_DISPLAY_ON,
 };
 
+#ifndef SSD1306_USE_PAGE_ADDRESSING
 static const uint8_t dispAreaSeq[] PROGMEM = {
     SSD1306_COLUMNADDR,
     0x00,
@@ -45,7 +60,7 @@ static const uint8_t dispAreaSeq[] PROGMEM = {
     0x00,
     0x07,
 };
-
+#endif
 static uint8_t _I2CWriteByte(uint8_t data)
 {
     uint8_t i = 0;
@@ -182,6 +197,24 @@ void ssd1306UpdateFb()
     uint16_t i;
     uint8_t *fbP = fb;
 
+#ifdef SSD1306_USE_PAGE_ADDRESSING
+    uint8_t page;
+    for (page = 0; page < 8; page++) {
+        _I2CStart(ssd1306Addr);
+        _I2CWriteByte(SSD1306_I2C_COMMAND);
+        ssd1306SendCmd(SSD1306_SETLOWCOLUMN);
+        ssd1306SendCmd(SSD1306_SETHIGHCOLUMN);
+        ssd1306SendCmd(SSD1306_PAGE_START + page);
+        _I2CStop();
+
+        _I2CStart(ssd1306Addr);
+        _I2CWriteByte(SSD1306_I2C_DATA_SEQ);
+        for (i = 0; i < SSD1306_WIDTH; i++) {
+            _I2CWriteByte(*fbP++);
+        }
+        _I2CStop();
+    }
+#else
     _I2CStart(ssd1306Addr);
     _I2CWriteByte(SSD1306_I2C_COMMAND);
 
@@ -197,6 +230,7 @@ void ssd1306UpdateFb()
         _I2CWriteByte(*fbP++);
 
     _I2CStop();
+#endif
 }
 
 void ssd1306DrawPixel(uint8_t x, uint8_t y, uint8_t color)
