@@ -11,7 +11,11 @@
 
 // Fundamental commands
 
+#ifdef _SH1106
+#define SSD1306_SETLOWCOLUMN            0x02 // Display columns 0..127 wired to 2..129 columns of SH1106
+#else
 #define SSD1306_SETLOWCOLUMN            0x00 // (Page addressing mode) 0x00..0x0F => Low nibble of column address
+#endif
 #define SSD1306_SETHIGHCOLUMN           0x10 // (Page addressing mode) 0x00..0x0F => High nibble of column address
 
 #define SSD1306_MEMORYMODE              0x20 // Set memory mode, followed by 1 byte:
