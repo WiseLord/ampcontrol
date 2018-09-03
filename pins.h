@@ -91,6 +91,15 @@
 #define ISP_MISO            B
 #define ISP_MISO_LINE       (1<<4)
 
+// Ext function options
+enum {
+    USE_DS18B20 = 0,
+    USE_SW_SPI,
+    USE_INPUT_STATUS,
+
+    USE_EXT_END
+};
+
 // EXT outputs definitions
 #define EXT_0               ISP_MOSI
 #define EXT_0_LINE          ISP_MOSI_LINE
