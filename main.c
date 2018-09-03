@@ -11,10 +11,16 @@
 #include "actions.h"
 #include "pins.h"
 #include "rtc.h"
+#ifdef _SPISW
+#include "spisw.h"
+#endif
 
 // Hardware initialization
 static void hwInit()
 {
+#ifdef _SPISW
+    SPIswInitLines(USE_SW_SPI);
+#endif
 #ifdef _HARDWARE_RST
 #ifdef _SI470X
     si470xReset();

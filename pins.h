@@ -111,6 +111,15 @@
 #define BUTTON_5            D
 #define BUTTON_5_LINE       (1<<7)
 
+// Ext function options
+enum {
+    USE_DS18B20 = 0,
+    USE_SW_SPI,
+    USE_INPUT_STATUS,
+
+    USE_EXT_END
+};
+
 // EXT outputs definitions
 #define EXT_0               C
 #define EXT_0_LINE          (1<<2)
