@@ -36,6 +36,13 @@ enum {
     ACTION_NOACTION
 };
 
+enum {
+    INIT_STBY_MODE = 0,
+    INIT_WORK_MODE,
+
+    INIT_END,
+};
+
 // Display modes
 enum {
     MODE_SPECTRUM = MODE_SND_END,
@@ -66,7 +73,7 @@ enum {
 
 uint8_t getAction();
 
-void handleAction(uint8_t action);
+void handleAction(uint8_t action, uint8_t initMode);
 void handleEncoder(int8_t encCnt);
 
 uint8_t checkAlarmAndTime();

@@ -47,6 +47,7 @@
 #define EEPROM_FALL_SPEED           0x34
 
 // Other parameters
+#define EEPROM_INIT_MODE            0x35
 #define EEPROM_ENC_RES              0x36
 #define EEPROM_RC_TYPE              0x38
 #define EEPROM_RC_ADDR              0x39

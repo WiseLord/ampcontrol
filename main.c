@@ -67,15 +67,17 @@ static void hwInit(uint8_t extFunc)
     OUT(STMU_STBY);                         // Standby port
     OUT(STMU_MUTE);                         // Mute port
     sndInit();                              // Load labels/icons/etc
-
-    setStbyTimer(0);
 }
 
 int main()
 {
     int8_t encCnt = 0;
-    uint8_t action = ACTION_NOACTION;
+    uint8_t action = CMD_RC_STBY;
     uint8_t extFunc = eeprom_read_byte((uint8_t *)EEPROM_EXT_FUNC);
+    uint8_t initMode = eeprom_read_byte((uint8_t *)EEPROM_INIT_MODE);
+
+    if (initMode == INIT_WORK_MODE)
+        action = ACTION_EXIT_STANDBY;
 
     // Init hardware
     hwInit(extFunc);
@@ -108,7 +110,7 @@ int main()
             action = getAction();
 
         // Handle action
-        handleAction(action);
+        handleAction(action, initMode);
 
         // Handle encoder
         encCnt = getEncoder();              // Get value from encoder

@@ -26,7 +26,7 @@ static uint16_t sensTimer;                          // Timer of temperature meas
 #endif
 static int16_t stbyTimer = STBY_TIMER_OFF;          // Standby timer
 static uint16_t secTimer;                           // 1 second timer
-static int16_t silenceTimer;                        // Timer to check silence
+static int16_t silenceTimer = STBY_TIMER_OFF;       // Timer to check silence
 static uint16_t rcTimer;
 
 static uint8_t rcType;

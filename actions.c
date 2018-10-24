@@ -1,5 +1,6 @@
 #include "actions.h"
 
+#include <avr/eeprom.h>
 #include <util/delay.h>
 
 #include "adc.h"
@@ -7,6 +8,7 @@
 #include "alarm.h"
 #endif
 #include "display.h"
+#include "eeprom.h"
 #include "pins.h"
 #include "rtc.h"
 #ifdef _SPISW
@@ -222,7 +224,7 @@ uint8_t getAction()
 }
 
 
-void handleAction(uint8_t action)
+void handleAction(uint8_t action, uint8_t initMode)
 {
     int16_t stbyTimer = STBY_TIMER_OFF;
 
@@ -240,6 +242,8 @@ void handleAction(uint8_t action)
         setDisplayTime(DISPLAY_TIME_GAIN_START);
         enableSilenceTimer();
 
+        if (initMode < INIT_END)
+            eeprom_update_byte((uint8_t*)EEPROM_INIT_MODE, INIT_WORK_MODE);
         break;
     case ACTION_INIT_HARDWARE:
         tunerPowerOn();
@@ -270,6 +274,9 @@ void handleAction(uint8_t action)
         disableSilenceTimer();
         setInitTimer(INIT_TIMER_OFF);
         dispMode = MODE_STANDBY;
+
+        if (initMode < INIT_END)
+            eeprom_update_byte((uint8_t*)EEPROM_INIT_MODE, INIT_STBY_MODE);
         break;
     case CMD_RC_TIMER:
         rtc.etm = RTC_NOEDIT;
