@@ -10,7 +10,7 @@
     </message>
     <message>
         <location filename="../aboutdialog.ui" line="51"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;  About Ampcontrol ATmega32 EEPROM editor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This program allows to edit eeprom binary files for &lt;a href=&quot;http://wiselord.github.io/avr/ampcontrol/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ampcontrol&lt;/span&gt;&lt;/a&gt; project.&lt;/p&gt;&lt;p&gt;Ampcontrol project can help to transform an ordinary sound amplifier to a fully digital controlled one with function of sound spectrum analyzer.&lt;/p&gt;&lt;p&gt;It is based on ATmega32 MCU and supports various FM tuners and audioprocessors, mostly via I²C bus.&lt;/p&gt;&lt;p&gt;Amcontrol project sources (GPL license) can be found on &lt;a href=&quot;https://github.com/WiseLord/ampcontrol&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Project is created and maintained by WiseLord.&lt;/p&gt;&lt;p&gt;Email: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;&#xa0;&#xa0;About Ampcontrol ATmega32 EEPROM editor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This program allows to edit eeprom binary files for &lt;a href=&quot;http://wiselord.github.io/avr/ampcontrol/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ampcontrol&lt;/span&gt;&lt;/a&gt; project.&lt;/p&gt;&lt;p&gt;Ampcontrol project can help to transform an ordinary sound amplifier to a fully digital controlled one with function of sound spectrum analyzer.&lt;/p&gt;&lt;p&gt;It is based on ATmega32 MCU and supports various FM tuners and audioprocessors, mostly via I²C bus.&lt;/p&gt;&lt;p&gt;Amcontrol project sources (GPL license) can be found on &lt;a href=&quot;https://github.com/WiseLord/ampcontrol&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Project is created and maintained by WiseLord.&lt;/p&gt;&lt;p&gt;Email: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation></translation>
     </message>
 </context>
@@ -77,22 +77,22 @@
         <translation>Будзільнік</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2879"/>
+        <location filename="../mainwindow.ui" line="2927"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2890"/>
+        <location filename="../mainwindow.ui" line="2938"/>
         <source>&amp;Help</source>
         <translation>&amp;Даведка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2941"/>
+        <location filename="../mainwindow.ui" line="2989"/>
         <source>Save AMSR file as ...</source>
         <translation>Захаваць AMSR файл як ...</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2960"/>
+        <location filename="../mainwindow.ui" line="3008"/>
         <source>Belarusian</source>
         <translation>Беларуская</translation>
     </message>
@@ -607,6 +607,7 @@
     </message>
     <message>
         <location filename="../mainwindow.ui" line="2211"/>
+        <location filename="../mainwindow.ui" line="2882"/>
         <source>Standby mode</source>
         <translation>Рэжым чакання</translation>
     </message>
@@ -749,7 +750,7 @@
     <message>
         <location filename="../mainwindow.ui" line="2449"/>
         <source> Hz</source>
-        <translation>Гц</translation>
+        <translation> Гц</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="2485"/>
@@ -827,57 +828,67 @@
         <translation>Таймер цішыні (хв, 0 = вымк)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2897"/>
+        <location filename="../mainwindow.ui" line="2868"/>
+        <source>State after loss of electricity</source>
+        <translation>Стан пасля знікнення электрычнасці</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="2887"/>
+        <source>Previous mode</source>
+        <translation>Папярэдні стан</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="2945"/>
         <source>Language</source>
         <translation>Мова</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2911"/>
+        <location filename="../mainwindow.ui" line="2959"/>
         <source>&amp;Open eeprom binary …</source>
         <translation>&amp;Адкрыць бінарны файл eeprom …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2916"/>
+        <location filename="../mainwindow.ui" line="2964"/>
         <source>&amp;Save eeprom binary</source>
         <translation>&amp;Захаваць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2921"/>
+        <location filename="../mainwindow.ui" line="2969"/>
         <source>Save &amp;eeprom binary as …</source>
         <translation>Захаваць бінарны файл eeprom &amp;як …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2926"/>
+        <location filename="../mainwindow.ui" line="2974"/>
         <source>&amp;Load default eeprom</source>
         <translation>За&amp;грузіць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2931"/>
+        <location filename="../mainwindow.ui" line="2979"/>
         <source>&amp;About</source>
         <translation>&amp;Аб праграме</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2936"/>
+        <location filename="../mainwindow.ui" line="2984"/>
         <source>A&amp;boutQt</source>
         <translation>Аб &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2952"/>
+        <location filename="../mainwindow.ui" line="3000"/>
         <source>Auto</source>
         <translation>Аўта</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2968"/>
+        <location filename="../mainwindow.ui" line="3016"/>
         <source>English</source>
         <translation>Англiйская</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2976"/>
+        <location filename="../mainwindow.ui" line="3024"/>
         <source>Russian</source>
         <translation>Руская</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2981"/>
+        <location filename="../mainwindow.ui" line="3029"/>
         <source>Exit</source>
         <translation>Выхад</translation>
     </message>
@@ -939,13 +950,13 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="596"/>
-        <location filename="../mainwindow.cpp" line="1026"/>
+        <location filename="../mainwindow.cpp" line="1035"/>
         <source>Remove station</source>
         <translation>Выдаліць станцыю</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="602"/>
-        <location filename="../mainwindow.cpp" line="1030"/>
+        <location filename="../mainwindow.cpp" line="1039"/>
         <source>Add station</source>
         <translation>Дадаць станцыю</translation>
     </message>

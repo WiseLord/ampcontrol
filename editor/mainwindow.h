@@ -100,6 +100,7 @@ private slots:
     void setExtfunc(int value);
     void setThreshold(int value);
     void setSilence(int value);
+    void setInitMode(int value);
 
     void setLanguage();
     void retranslate(QString lang);

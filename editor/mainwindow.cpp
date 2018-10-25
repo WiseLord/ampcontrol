@@ -925,6 +925,9 @@ void MainWindow::setOther()
 
     setSilence((unsigned char)eep[EEPROM_SILENCE_TIMER]);
     sbxSilence->setValue((unsigned char)eep[EEPROM_SILENCE_TIMER]);
+
+    setInitMode(((unsigned char)eep[EEPROM_INIT_MODE] < 2) ? 1 : 0);
+    cbxInitMode->setCurrentIndex(((unsigned char)eep[EEPROM_INIT_MODE]) < 2 ? 1 : 0);
 }
 
 void MainWindow::setSpmode(int value)
@@ -988,6 +991,12 @@ void MainWindow::setSilence(int value)
     eep[EEPROM_SILENCE_TIMER] = (unsigned char)value;
     updateHexTable(EEPROM_SILENCE_TIMER);
 
+}
+
+void MainWindow::setInitMode(int value)
+{
+    eep[EEPROM_INIT_MODE] = (char)(value ? 0x00 : 0xFF);
+    updateHexTable(EEPROM_INIT_MODE);
 }
 
 void MainWindow::setLanguage()
