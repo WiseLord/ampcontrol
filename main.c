@@ -38,7 +38,9 @@ static void hwInit(uint8_t extFunc)
 #endif
     } else {
 #ifdef _SPISW
-        SPIswInitLines(extFunc);
+        if (extFunc == USE_SW_SPI) {
+            SPIswInitLines(extFunc);
+        }
 #endif
     }
 #ifdef _HARDWARE_RST
