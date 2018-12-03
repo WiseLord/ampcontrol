@@ -161,14 +161,6 @@ void st7920Init()
     // Switch display to parallel mode
     SET(ST7920_PSB);
 
-    // Hardware reset
-#ifdef _atmega32
-    OUT(ST7920_RST);
-    CLR(ST7920_RST);
-    _delay_us(1);
-    SET(ST7920_RST);
-#endif
-
     // Init display in graphics mode
     _delay_ms(40);
     st7920WriteCmd(ST7920_FUNCTION | ST7920_8BIT);

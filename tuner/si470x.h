@@ -130,13 +130,11 @@
 #define SI470X_VOL_MIN              0
 #define SI470X_VOL_MAX              15
 
-void si470xReset();
+void si470xInit(void);
 
-void si470xInit();
+void si470xSetFreq(void);
 
-void si470xSetFreq();
-
-void si470xReadStatus();
+void si470xReadStatus(void);
 
 void si470xSetVolume(int8_t value);
 void si470xSetMute(uint8_t value);

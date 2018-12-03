@@ -178,13 +178,6 @@ void ls020Init()
     SPCR = (1 << SPE) | (1 << MSTR);
     SPSR = (1 << SPI2X);
 
-    CLR(LS020_CS);
-
-    // Reset display
-    CLR(LS020_RES);
-    _delay_ms(5);
-    SET(LS020_RES);
-
     // Set command mode
     SET(LS020_RS);
 

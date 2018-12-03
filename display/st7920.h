@@ -50,11 +50,11 @@
 
 void st7920SetBrightness(uint8_t br);
 
-void st7920Init();
-void st7920Clear();
+void st7920Init(void);
+void st7920Clear(void);
 
 void st7920DrawPixel(uint8_t x, uint8_t y, uint8_t color);
 
-uint8_t st7920GetPins();
+uint8_t st7920GetPins(void);
 
 #endif // ST7920_H

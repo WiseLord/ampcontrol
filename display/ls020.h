@@ -53,9 +53,9 @@ enum {
 
 void ls020SetBrightness(uint8_t br);
 
-void ls020Init();
+void ls020Init(void);
 
-void ls020PowerOff ();
+void ls020PowerOff(void);
 
 void ls020DrawRect(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color);
 void ls020DrawFrame(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t color);
@@ -63,7 +63,7 @@ void ls020DrawFrame(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2, uint8_t colo
 #define ls020DrawHorizLine(x1, y, x2, color) ls020DrawRect(x1, y, x2, y, color)
 #define ls020DrawPixel(x, y,color) ls020DrawRect(x, y, x, y, color)
 
-void ls020Clear();
+void ls020Clear(void);
 
 void ls020SetXY(uint8_t x, uint8_t y);
 uint8_t ls020GetX();

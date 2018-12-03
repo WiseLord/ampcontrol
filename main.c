@@ -1,5 +1,6 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
+#include <util/delay.h>
 
 #include "eeprom.h"
 #include "adc.h"
@@ -24,9 +25,27 @@
 #include "spisw.h"
 #endif
 
+void hwReset()
+{
+    OUT(DISP_RESET);
+    IN(I2C_SCL);
+    SET(I2C_SCL);
+    _delay_ms(1);
+    OUT(I2C_SDA);
+
+    CLR(I2C_SDA);
+    CLR(DISP_RESET);
+    _delay_ms(5);
+    SET(DISP_RESET);
+    IN(I2C_SDA);
+    _delay_ms(1);
+}
+
 // Hardware initialization
 static void hwInit(uint8_t extFunc)
 {
+    hwReset();
+
 #ifdef _TEMPCONTROL
     loadTempParams();
 #endif
@@ -43,11 +62,6 @@ static void hwInit(uint8_t extFunc)
         }
 #endif
     }
-#ifdef _HARDWARE_RST
-#ifdef _SI470X
-    si470xReset();
-#endif
-#endif
 
     I2CInit();                              // I2C bus
     displayInit();                          // Load params and text labels before fb scan started

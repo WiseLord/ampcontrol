@@ -34,11 +34,11 @@
 
 void ks0108SetBrightness(uint8_t br);
 
-void ks0108Init();
-void ks0108Clear();
+void ks0108Init(void);
+void ks0108Clear(void);
 
 void ks0108DrawPixel(uint8_t x, uint8_t y, uint8_t color);
 
-uint8_t ks0108GetPins();
+uint8_t ks0108GetPins(void);
 
 #endif // KS0108_H

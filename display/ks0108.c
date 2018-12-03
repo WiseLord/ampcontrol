@@ -189,15 +189,6 @@ void ks0108Init()
     CLR(KS0108_DI);
     CLR(KS0108_E);
 
-    // Hardware reset
-#ifdef _atmega32
-    OUT(KS0108_RES);
-    CLR(KS0108_RES);
-    _delay_us(1);
-    SET(KS0108_RES);
-    _delay_us(1);
-#endif
-
     // Init first controller
     KS0108_SET_CS1();
     ks0108WriteCmd(KS0108_DISPLAY_START_LINE);

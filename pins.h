@@ -78,7 +78,7 @@
 #define DISP_CTRL1_LINE     (1<<4)
 #define DISP_CTRL2          D
 #define DISP_CTRL2_LINE     (1<<3)
-#define DISP_RESET          C
+#define DISP_RESET          D
 #define DISP_RESET_LINE     (1<<1)
 // Display backlight port
 #define DISP_BCKL           D
@@ -286,13 +286,8 @@ enum {
 #define SI470X_B_SDIO_LINE  I2C_SDA_LINE
 #define SI470X_B_SCLK       I2C_SCL
 #define SI470X_B_SCLK_LINE  I2C_SCL_LINE
-#if defined(_atmega32)
-#define SI470X_B_RST        EXT_2
-#define SI470X_B_RST_LINE   EXT_2_LINE
-#elif defined(_atmega328p)
-#define SI470X_B_RST        D
-#define SI470X_B_RST_LINE   (1<<1)
-#endif
+#define SI470X_B_RST        DISP_RESET
+#define SI470X_B_RST_LINE   DISP_RESET_LINE
 
 // SSD1306 port
 #define SSD1306_SCK         DISP_STROB
