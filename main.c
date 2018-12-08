@@ -28,16 +28,30 @@
 void hwReset()
 {
     OUT(DISP_RESET);
+
     IN(I2C_SCL);
     SET(I2C_SCL);
-    _delay_ms(1);
-    OUT(I2C_SDA);
-
-    CLR(I2C_SDA);
-    CLR(DISP_RESET);
-    _delay_ms(5);
-    SET(DISP_RESET);
     IN(I2C_SDA);
+    SET(I2C_SDA);
+
+    CLR(DISP_RESET);    // Start display and Si470x reset
+
+    CLR(I2C_SCL);       // Put to zero in this sequence to avoid fake START
+    OUT(I2C_SCL);
+
+    _delay_ms(1);       // Select 2-wire interface:
+    CLR(I2C_SDA);       // SDA = 0
+    OUT(I2C_SDA);
+    IN(I2C_SCL);        // SCL = 1
+    SET(I2C_SCL);
+
+    _delay_ms(5);       // Reset
+
+    SET(DISP_RESET);    // End of reset
+
+    _delay_ms(1);
+    IN(I2C_SDA);        // SDA = 1
+    SET(I2C_SDA);
     _delay_ms(1);
 }
 
