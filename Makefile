@@ -156,7 +156,7 @@ $(ELF): $(OBJS)
 size: $(ELF)
 	@sh ./size.sh $(ELF)
 
-$(BUILDDIR)/%.o: %.c
+$(BUILDDIR)/%.o: %.c Makefile
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 

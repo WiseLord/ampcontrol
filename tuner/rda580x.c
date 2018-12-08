@@ -32,11 +32,11 @@ static void rda580xSetBit(uint8_t idx, uint8_t bit, uint8_t cond)
     rda580xWriteReg(idx / 2 + 2);
 }
 
-void rda580xInit()
+void rda580xInit(void)
 {
     tunerWrBuf[0] = RDA580X_DHIZ;
     tunerWrBuf[1] = RDA580X_SKMODE | RDA580X_CLK_MODE_32768 | RDA5807_NEW_METHOD;
-    tunerWrBuf[6] = 0b1000 & RDA5807_SEEKTH;
+    tunerWrBuf[6] = 0x08 & RDA5807_SEEKTH;
     tunerWrBuf[7] = RDA580X_LNA_PORT_SEL_LNAP | RDA580X_VOLUME;
 #ifdef _RDA5807_DF
     tunerWrBuf[10] = (0x40 & RDA5807_TH_SOFRBLEND);
@@ -82,7 +82,7 @@ void rda580xInit()
         tuner.step2 = 5;
 }
 
-void rda580xSetFreq()
+void rda580xSetFreq(void)
 {
 #ifdef _RDA5807_DF
     if (tunerWrBuf[11] & RDA5807_FREQ_MODE) {
@@ -98,15 +98,15 @@ void rda580xSetFreq()
 #endif
         // Freq in grid
         uint16_t chan = (tuner.freq - fBL) / tuner.step2;
-        tunerWrBuf[2] = chan >> 2; // 8 MSB
-        tunerWrBuf[3] = ((chan & 0x03) << 6) | RDA580X_TUNE | band |
+        tunerWrBuf[2] = ((chan >> 2) & RDA580X_CHAN_9_2);      // 8 MSB
+        tunerWrBuf[3] = ((chan << 6) & RDA580X_CHAN_1_0) | RDA580X_TUNE | band |
         (tuner.step2 == 20 ? RDA580X_SPACE_200 : (tuner.step2 == 10 ? RDA580X_SPACE_100 : RDA580X_SPACE_50));
     }
     rda580xWriteReg(2); // Stop seek if it is
     rda580xWriteReg(3);
 }
 
-void rda580xReadStatus()
+void rda580xReadStatus(void)
 {
     uint8_t i;
 

@@ -18,28 +18,8 @@ static void si470xWriteI2C(uint8_t bytes)
     I2CStop();
 }
 
-static void initRegs()
+void si470xInit(void)
 {
-    uint8_t i;
-
-    I2CStart(SI470X_I2C_ADDR | I2C_READ);
-
-    for (i = 0; i < 26; i++) {
-        // Skip regs 0A..06
-        I2CReadByte(I2C_ACK);
-    }
-
-    // Regs 07..09 must be read first before we will write them later
-    tunerWrBuf[10] = I2CReadByte(I2C_ACK);
-    tunerWrBuf[11] = I2CReadByte(I2C_NOACK);
-
-    I2CStop();
-}
-
-void si470xInit()
-{
-    initRegs();
-
     tunerWrBuf[0] = SI470X_SKMODE;
     if (tuner.ctrl & TUNER_SMUTE) {
         tunerWrBuf[0] &= ~SI470X_DSMUTE;
@@ -65,10 +45,13 @@ void si470xInit()
         }
     }
     tunerWrBuf[7] = band | SI470X_VOLUME |
-               (tuner.step2 == 20 ? SI470X_SPACE_200 : (tuner.step2 == 10 ? SI470X_SPACE_100 : SI470X_SPACE_50));
+                    (tuner.step2 == 20 ? SI470X_SPACE_200 : (tuner.step2 == 10 ? SI470X_SPACE_100 : SI470X_SPACE_50));
 
     tunerWrBuf[6] = SI470X_SEEKTH & 12; // 25 by default for backward compatibility
-    tunerWrBuf[9] = (SI470X_SKSNR & 0b00010000) | (SI470X_SKCNT & 0b00000001);
+    tunerWrBuf[9] = (SI470X_SKSNR & 0x10) | (SI470X_SKCNT & 0x01);
+
+    tunerWrBuf[10] = 0x01;
+    tunerWrBuf[11] = 0x00;
 
     tunerWrBuf[10] |= SI470X_XOSCEN;
 
@@ -81,20 +64,20 @@ void si470xInit()
         tuner.step2 = 5;
 }
 
-void si470xSetFreq()
+void si470xSetFreq(void)
 {
     uint16_t chan;
 
     chan = (tuner.freq - fBL) / tuner.step2;
 
     tunerWrBuf[0] &= ~SI470X_SEEK; // not seek
-    tunerWrBuf[2] = SI470X_TUNE | ((chan >> 8) & 0b00000011);
+    tunerWrBuf[2] = SI470X_TUNE | ((chan >> 8) & SI470X_CHAN_9_8);
     tunerWrBuf[3] = (chan & SI470X_CHAN_7_0);
 
     si470xWriteI2C(4);
 }
 
-void si470xReadStatus()
+void si470xReadStatus(void)
 {
     uint8_t i;
 

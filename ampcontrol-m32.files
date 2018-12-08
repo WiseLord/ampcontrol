@@ -44,10 +44,12 @@ tuner/lm7001.c
 tuner/lm7001.h
 tuner/rda580x.c
 tuner/rda580x.h
+tuner/rda580x_regs.h
 tuner/rds.c
 tuner/rds.h
 tuner/si470x.c
 tuner/si470x.h
+tuner/si470x_regs.h
 tuner/tea5767.c
 tuner/tea5767.h
 tuner/tuner.c
