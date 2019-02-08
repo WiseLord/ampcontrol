@@ -1948,9 +1948,9 @@ void showEffect3d()
     ks0066SetXY(14, 0);
     ks0066WriteData(0x06);
     if (aproc.extra & APROC_EXTRA_EFFECT3D)
-        ks0066WriteData(0x07);
-    else
         ks0066WriteData(' ');
+    else
+        ks0066WriteData(0x07);
 #elif defined(_LS020)
     ls020SetXY(96, 32);
     if (aproc.extra & APROC_EXTRA_EFFECT3D)
@@ -1975,9 +1975,9 @@ void showLoudness()
     ks0066SetXY(14, 0);
     ks0066WriteData(0x06);
     if (aproc.extra & APROC_EXTRA_LOUDNESS)
-        ks0066WriteData(0x07);
-    else
         ks0066WriteData(' ');
+    else
+        ks0066WriteData(0x07);
 #elif defined(_LS020)
     ls020SetXY(96, 32);
     if (aproc.extra & APROC_EXTRA_LOUDNESS)
@@ -2030,9 +2030,9 @@ void showSurround()
     ks0066SetXY(14, 0);
     ks0066WriteData(0x06);
     if (aproc.extra & APROC_EXTRA_SURROUND)
-        ks0066WriteData(0x07);
-    else
         ks0066WriteData(' ');
+    else
+        ks0066WriteData(0x07);
 #elif defined(_LS020)
     ls020SetXY(96, 32);
     if (aproc.extra & APROC_EXTRA_SURROUND)
