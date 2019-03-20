@@ -71,9 +71,7 @@ static void hwInit(uint8_t extFunc)
 #endif
     } else {
 #ifdef _SPISW
-        if (extFunc == USE_SW_SPI) {
-            SPIswInitLines(extFunc);
-        }
+        SPIswInitLines(extFunc);
 #endif
     }
 
