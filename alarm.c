@@ -18,7 +18,6 @@ void alarmInit()
 void alarmSave()
 {
     eeprom_update_block(&alarm0, (void *)EEPROM_A0_HOUR, sizeof(ALARM_type) - 1);
-    alarm0.eam = ALARM_NOEDIT;
 }
 
 void alarmNextEditParam()

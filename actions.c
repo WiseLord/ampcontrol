@@ -89,24 +89,31 @@ uint8_t getAction()
         action = CMD_RC_IN_NEXT;
         break;
     case CMD_BTN_3:
-        if (dispMode == MODE_TIMER)
+        if (dispMode == MODE_TIMER) {
             action = CMD_RC_TIMER;
-        else if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
-            action = CMD_RC_FM_DEC;
-        else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
+        } else if (dispMode == MODE_SPECTRUM) {
+            action = CMD_RC_NEXT_SPMODE;
+        } else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) {
             action = CMD_RC_TIME;
 #ifdef _ALARM
-        else if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT)
+        } else if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) {
             action = CMD_RC_ALARM;
 #endif
-        else
-            action = CMD_RC_NEXT_SPMODE;
+        } else {
+            if (!aproc.input) {
+                action = CMD_RC_FM_DEC;
+            }
+        }
         break;
     case CMD_BTN_4:
-        if (dispMode == MODE_FM_TUNE || dispMode == MODE_FM_RADIO)
-            action = CMD_RC_FM_INC;
-        else
-            action = CMD_RC_MUTE;
+        if (dispMode == MODE_ALARM_EDIT || dispMode == MODE_TIME_EDIT || dispMode == MODE_TIMER) {
+            dispMode = getDefDisplay();
+            action = ACTION_ZERO_DISPLAYTIME;
+        } else {
+            if (!aproc.input) {
+                action = CMD_RC_FM_INC;
+            }
+        }
         break;
     case CMD_BTN_5:
         if (dispMode == MODE_TEST) {
@@ -128,18 +135,30 @@ uint8_t getAction()
         action = CMD_RC_DEF_DISPLAY;
         break;
     case CMD_BTN_3_LONG:
-        if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT)
-            action = CMD_RC_TIMER;
-        else if (dispMode == MODE_TIMER)
-            action = CMD_RC_ALARM;
-        else
-            action = CMD_RC_TIME;
+        if (dispMode != MODE_STANDBY) {
+            if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) {
+                dispMode = MODE_TIMER;
+                action = CMD_RC_TIMER;
+            } else if (dispMode == MODE_TIMER) {
+                dispMode = MODE_ALARM_EDIT;
+                action = CMD_RC_ALARM;
+            } else if (dispMode != MODE_STANDBY) {
+                dispMode = MODE_TIME_EDIT;
+                action = CMD_RC_TIME;
+            }
+        }
         break;
     case CMD_BTN_4_LONG:
-        action = CMD_RC_FM_MODE;
+        if (dispMode == MODE_SPECTRUM) {
+            action = CMD_RC_NEXT_SPMODE;
+        } else {
+            if (!aproc.input) {
+                action = CMD_RC_FM_MODE;
+            }
+        }
         break;
     case CMD_BTN_5_LONG:
-        // Reserved for future purposes
+        action = CMD_RC_MUTE;
         break;
 
     case CMD_BTN_12_LONG:
@@ -198,24 +217,24 @@ uint8_t getAction()
     // Disable most action in time edit mode
     if (dispMode == MODE_TIME_EDIT) {
         if (action != CMD_RC_STBY && action != CMD_RC_TIME &&
-                action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
+            action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
             action = ACTION_NOACTION;
     }
 #ifdef _ALARM
     // Disable most actions in alarm edit mode
     if (dispMode == MODE_ALARM_EDIT) {
         if (action != CMD_RC_STBY && action != CMD_RC_ALARM &&
-                action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
+            action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP)
             action = ACTION_NOACTION;
     }
 #endif
     // Disable most actions in FM edit mode
     if (dispMode == MODE_FM_TUNE) {
         if (action != CMD_RC_STBY &&
-                action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP &&
-                action != CMD_RC_FM_MODE && action != CMD_RC_FM_STORE &&
-                action != CMD_RC_FM_DEC && action != CMD_RC_FM_INC &&
-                (action < CMD_RC_FM_0 || action > CMD_RC_FM_9)
+            action != CMD_RC_VOL_DOWN && action != CMD_RC_VOL_UP &&
+            action != CMD_RC_FM_MODE && action != CMD_RC_FM_STORE &&
+            action != CMD_RC_FM_DEC && action != CMD_RC_FM_INC &&
+            (action < CMD_RC_FM_0 || action > CMD_RC_FM_9)
            )
             action = ACTION_NOACTION;
     }
@@ -243,7 +262,7 @@ void handleAction(uint8_t action, uint8_t initMode)
         enableSilenceTimer();
 
         if (initMode < INIT_END)
-            eeprom_update_byte((uint8_t*)EEPROM_INIT_MODE, INIT_WORK_MODE);
+            eeprom_update_byte((uint8_t *)EEPROM_INIT_MODE, INIT_WORK_MODE);
         break;
     case ACTION_INIT_HARDWARE:
         tunerPowerOn();
@@ -276,61 +295,51 @@ void handleAction(uint8_t action, uint8_t initMode)
         dispMode = MODE_STANDBY;
 
         if (initMode < INIT_END)
-            eeprom_update_byte((uint8_t*)EEPROM_INIT_MODE, INIT_STBY_MODE);
+            eeprom_update_byte((uint8_t *)EEPROM_INIT_MODE, INIT_STBY_MODE);
         break;
     case CMD_RC_TIMER:
+#ifdef _ALARM
+        alarm0.eam = ALARM_NOEDIT;
+#endif
         rtc.etm = RTC_NOEDIT;
-        if (dispMode == MODE_TIMER) {
-            setSecTimer(2000);
-            stbyTimer = getStbyTimer();
-            if (stbyTimer < 120)            // 2 min
-                setStbyTimer(120);
-            else if (stbyTimer < 300)       // 5 min
-                setStbyTimer(300);
-            else if (stbyTimer < 600)       // 10 min
-                setStbyTimer(600);
-            else if (stbyTimer < 1200)      // 20 min
-                setStbyTimer(1200);
-            else if (stbyTimer < 2400)      // 40 min
-                setStbyTimer(2400);
-            else if (stbyTimer < 3600)      // 1 hour
-                setStbyTimer(3600);
-            else if (stbyTimer < 5400)      // 1.5 hours
-                setStbyTimer(5400);
-            else if (stbyTimer < 7200)      // 2 hours
-                setStbyTimer(7200);
-            else if (stbyTimer < 10800)     // 3 hours
-                setStbyTimer(10800);
-            else if (stbyTimer < 18000)     // 5 hours
-                setStbyTimer(18000);
-            else
-                setStbyTimer(STBY_TIMER_OFF);
-        }
+        setSecTimer(2000);
+        stbyTimer = getStbyTimer();
+        if (stbyTimer < 120)            // 2 min
+            setStbyTimer(120);
+        else if (stbyTimer < 300)       // 5 min
+            setStbyTimer(300);
+        else if (stbyTimer < 600)       // 10 min
+            setStbyTimer(600);
+        else if (stbyTimer < 1200)      // 20 min
+            setStbyTimer(1200);
+        else if (stbyTimer < 2400)      // 40 min
+            setStbyTimer(2400);
+        else if (stbyTimer < 3600)      // 1 hour
+            setStbyTimer(3600);
+        else if (stbyTimer < 5400)      // 1.5 hours
+            setStbyTimer(5400);
+        else if (stbyTimer < 7200)      // 2 hours
+            setStbyTimer(7200);
+        else if (stbyTimer < 10800)     // 3 hours
+            setStbyTimer(10800);
+        else if (stbyTimer < 18000)     // 5 hours
+            setStbyTimer(18000);
+        else
+            setStbyTimer(STBY_TIMER_OFF);
         dispMode = MODE_TIMER;
         setDisplayTime(DISPLAY_TIME_TIMER);
         break;
     case CMD_RC_TIME:
-        if ((dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) && rtc.etm != RTC_YEAR) {
-            rtcNextEditParam();
-            dispMode = MODE_TIME_EDIT;
-            setDisplayTime(DISPLAY_TIME_TIME_EDIT);
-        } else {
-            rtc.etm = RTC_NOEDIT;
-            dispMode = MODE_TIME;
-            setDisplayTime(DISPLAY_TIME_TIME);
-        }
+        rtcNextEditParam();
+        dispMode = MODE_TIME_EDIT;
+        setDisplayTime(DISPLAY_TIME_TIME_EDIT);
         break;
 #ifdef _ALARM
     case CMD_RC_ALARM:
-        if ((dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) && alarm0.eam != ALARM_WDAY) {
-            alarmNextEditParam();
-            dispMode = MODE_ALARM_EDIT;
-            setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
-        } else {
-            alarmSave();
-            dispMode = MODE_ALARM;
-            setDisplayTime(DISPLAY_TIME_ALARM);
-        }
+        alarmNextEditParam();
+        dispMode = MODE_ALARM_EDIT;
+        setDisplayTime(DISPLAY_TIME_ALARM_EDIT);
+        alarmSave();
         break;
 #endif
     case CMD_RC_NEXT_SPMODE:
@@ -470,7 +479,7 @@ void handleAction(uint8_t action, uint8_t initMode)
                     dispMode = MODE_FM_TUNE;
                     setDisplayTime(DISPLAY_TIME_FM_TUNE);
                     break;
-                case MODE_FM_TUNE:
+                default:
                     dispMode = MODE_FM_RADIO;
                     setDisplayTime(DISPLAY_TIME_FM_RADIO);
                 }
@@ -566,9 +575,9 @@ uint8_t checkAlarmAndTime()
 #ifdef _ALARM
         if (dispMode == MODE_STANDBY) {
             if ((rtc.sec == 0) &&
-                    (rtc.min == alarm0.min) &&
-                    (rtc.hour == alarm0.hour) &&
-                    (alarm0.wday & (0x40 >> ((rtcWeekDay() + 5) % 7)))
+                (rtc.min == alarm0.min) &&
+                (rtc.hour == alarm0.hour) &&
+                (alarm0.wday & (0x40 >> ((rtcWeekDay() + 5) % 7)))
                ) {
                 sndSetInput(alarm0.input);
                 ret = ACTION_EXIT_STANDBY;
