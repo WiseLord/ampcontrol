@@ -1130,7 +1130,7 @@ void showRadio(uint8_t tune)
         ks0066WriteData(0x00);
     } else {
         ks0066WriteData(0x03);
-        ks0066WriteData(level - 3);
+        ks0066WriteData(level > 6 ? 0x03 : level - 3);
     }
 
     // Stereo indicator
