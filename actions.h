@@ -12,7 +12,7 @@
 #define DISPLAY_TIME_GAIN_START             1500U
 #define DISPLAY_TIME_TIME                   3000U
 #define DISPLAY_TIME_TIME_EDIT              10000U
-#define DISPLAY_TIME_FM_RADIO               5000U
+#define DISPLAY_TIME_FM_RADIO               3000U
 #define DISPLAY_TIME_FM_TUNE                10000U
 #define DISPLAY_TIME_CHAN                   2000U
 #define DISPLAY_TIME_AUDIO                  3000U

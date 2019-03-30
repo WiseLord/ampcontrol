@@ -78,43 +78,44 @@ typedef enum {
 } LcdUserAddSym;
 #endif
 
-void displayInit();
-void displayPowerOff();
-void displayUpdate();
+void displayInit(void);
+void displayPowerOff(void);
+void displayUpdate(void);
 
 void setDefDisplay(uint8_t value);
 uint8_t getDefDisplay();
 
-void nextRcCmd();
+void nextRcCmd(void);
 void switchRcCmd(uint8_t index);
 
-void switchSpMode();
-void switchFallSpeed();
+void switchSpMode(void);
+SpMode getSpMode(void);
+void switchFallSpeed(void);
 
-void getSpectrum();
+void getSpectrum(void);
 
 void changeBrWork(int8_t diff);
-void setWorkBrightness();
-void setStbyBrightness();
+void setWorkBrightness(void);
+void setStbyBrightness(void);
 
 #ifdef _ALARM
-void showAlarm();
+void showAlarm(void);
 #endif
-void showBrWork();
+void showBrWork(void);
 void showRadio(uint8_t tune);
-void showRcInfo();
+void showRcInfo(void);
 #ifdef _TEMPCONTROL
-void showTemp();
+void showTemp(void);
 #endif
-void showTime();
+void showTime(void);
 void showTimer(int16_t timer);
-void showSpectrum();
+void showSpectrum(void);
 
-void showEffect3d();
-void showLoudness();
-void showMute();
-void showSurround();
-void showToneBypass();
+void showEffect3d(void);
+void showLoudness(void);
+void showMute(void);
+void showSurround(void);
+void showToneBypass(void);
 
 void showSndParam(sndMode mode);
 

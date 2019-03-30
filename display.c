@@ -785,7 +785,7 @@ static void drawAm(uint8_t am, const uint8_t *font)
 }
 #endif
 
-void displayInit()
+void displayInit(void)
 {
     uint8_t i;
     uint8_t *addr;
@@ -825,7 +825,7 @@ void displayInit()
         fallSpeed = FALL_SPEED_FAST;
 }
 
-void displayPowerOff()
+void displayPowerOff(void)
 {
     eeprom_update_byte((uint8_t *)EEPROM_BR_WORK, brWork);
     eeprom_update_byte((uint8_t *)EEPROM_SP_MODE, spMode);
@@ -833,7 +833,7 @@ void displayPowerOff()
     eeprom_update_byte((uint8_t *)EEPROM_FALL_SPEED, fallSpeed);
 }
 
-void displayUpdate()
+void displayUpdate(void)
 {
 
 #if defined(_SSD1306)
@@ -853,7 +853,7 @@ uint8_t getDefDisplay()
 }
 
 
-void nextRcCmd()
+void nextRcCmd(void)
 {
     IRData irBuf = getIrData();
 
@@ -885,14 +885,19 @@ void switchSpMode()
         spMode = SP_MODE_METER;
 }
 
-void switchFallSpeed()
+SpMode getSpMode(void)
+{
+    return spMode;
+}
+
+void switchFallSpeed(void)
 {
     if (++fallSpeed > FALL_SPEED_END)
         fallSpeed = FALL_SPEED_LOW;
 }
 
 
-void getSpectrum()
+void getSpectrum(void)
 {
     getSpData(fallSpeed);
 }
@@ -908,7 +913,7 @@ void changeBrWork(int8_t diff)
     setWorkBrightness();
 }
 
-void setWorkBrightness()
+void setWorkBrightness(void)
 {
 #if defined(_KS0066)
     ks0066SetBrightness(brWork);
@@ -922,7 +927,7 @@ void setWorkBrightness()
 #endif
 }
 
-void setStbyBrightness()
+void setStbyBrightness(void)
 {
 #if defined(_KS0066)
     ks0066SetBrightness(brStby);
@@ -938,7 +943,7 @@ void setStbyBrightness()
 
 
 #ifdef _ALARM
-void showAlarm()
+void showAlarm(void)
 {
     uint8_t i;
 
@@ -1081,7 +1086,7 @@ void showAlarm()
 }
 #endif
 
-void showBrWork()
+void showBrWork(void)
 {
     showParLabel(LABEL_BR_WORK);
     showBar(MIN_BRIGHTNESS, MAX_BRIGHTNESS, brWork);
@@ -1352,7 +1357,7 @@ void showRadio(uint8_t tune)
 #endif
 }
 
-void showRcInfo()
+void showRcInfo(void)
 {
     IRData irBuf = getIrData();
     uint16_t btnBuf = getBtnBuf();
@@ -1513,7 +1518,7 @@ void showRcInfo()
 }
 
 #ifdef _TEMPCONTROL
-void showTemp()
+void showTemp(void)
 {
     int8_t tempTH = getTempTH();
 #if defined(_KS0066)
@@ -1573,7 +1578,7 @@ void showTemp()
 }
 #endif
 
-void showTime()
+void showTime(void)
 {
 #if defined(_KS0066)
     ks0066SetXY(0, 0);
@@ -1725,7 +1730,7 @@ void showTimer(int16_t timer)
 #endif
 }
 
-void showSpectrum()
+void showSpectrum(void)
 {
 #if defined(_KS0066)
     uint8_t i, data;
@@ -1939,7 +1944,7 @@ void showSpectrum()
 }
 
 
-void showEffect3d()
+void showEffect3d(void)
 {
     showParLabel(LABEL_EFFECT_3D);
     drawMiniSpectrum();
@@ -1966,7 +1971,7 @@ void showEffect3d()
 #endif
 }
 
-void showLoudness()
+void showLoudness(void)
 {
     showParLabel(LABEL_LOUDNESS);
     drawMiniSpectrum();
@@ -1993,7 +1998,7 @@ void showLoudness()
 #endif
 }
 
-void showMute()
+void showMute(void)
 {
     showParLabel(LABEL_MUTE);
     drawMiniSpectrum();
@@ -2021,7 +2026,7 @@ void showMute()
 #endif
 }
 
-void showSurround()
+void showSurround(void)
 {
     showParLabel(LABEL_SURROUND);
     drawMiniSpectrum();
@@ -2048,7 +2053,7 @@ void showSurround()
 #endif
 }
 
-void showToneBypass()
+void showToneBypass(void)
 {
     showParLabel(LABEL_TONE_BYPASS);
     drawMiniSpectrum();

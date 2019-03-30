@@ -91,12 +91,10 @@ uint8_t getAction()
     case CMD_BTN_3:
         if (dispMode == MODE_TIMER) {
             action = CMD_RC_TIMER;
-        } else if (dispMode == MODE_SPECTRUM) {
-            action = CMD_RC_NEXT_SPMODE;
-        } else if (dispMode == MODE_TIME || dispMode == MODE_TIME_EDIT) {
+        } else if (dispMode == MODE_TIME_EDIT) {
             action = CMD_RC_TIME;
 #ifdef _ALARM
-        } else if (dispMode == MODE_ALARM || dispMode == MODE_ALARM_EDIT) {
+        } else if (dispMode == MODE_ALARM_EDIT) {
             action = CMD_RC_ALARM;
 #endif
         } else {
@@ -132,7 +130,14 @@ uint8_t getAction()
             action = CMD_RC_BRIGHTNESS;
         break;
     case CMD_BTN_2_LONG:
-        action = CMD_RC_DEF_DISPLAY;
+        if (getDefDisplay() == MODE_TIME) {
+            switchSpMode();
+            action = CMD_RC_DEF_DISPLAY;
+        } else if (getDefDisplay() == MODE_SPECTRUM && getSpMode() != SP_MODE_END - 1) {
+            action = CMD_RC_NEXT_SPMODE;
+        } else {
+            action = CMD_RC_DEF_DISPLAY;
+        }
         break;
     case CMD_BTN_3_LONG:
         if (dispMode != MODE_STANDBY) {
@@ -142,19 +147,15 @@ uint8_t getAction()
             } else if (dispMode == MODE_TIMER) {
                 dispMode = MODE_ALARM_EDIT;
                 action = CMD_RC_ALARM;
-            } else if (dispMode != MODE_STANDBY) {
+            } else if (dispMode != MODE_STANDBY && dispMode != MODE_FM_TUNE) {
                 dispMode = MODE_TIME_EDIT;
                 action = CMD_RC_TIME;
             }
         }
         break;
     case CMD_BTN_4_LONG:
-        if (dispMode == MODE_SPECTRUM) {
-            action = CMD_RC_NEXT_SPMODE;
-        } else {
-            if (!aproc.input) {
-                action = CMD_RC_FM_MODE;
-            }
+        if (!aproc.input) {
+            action = CMD_RC_FM_MODE;
         }
         break;
     case CMD_BTN_5_LONG:
@@ -475,13 +476,14 @@ void handleAction(uint8_t action, uint8_t initMode)
                 break;
             case CMD_RC_FM_MODE:
                 switch (dispMode) {
-                case MODE_FM_RADIO:
+                case MODE_FM_TUNE:
+                    dispMode = MODE_FM_RADIO;
+                    setDisplayTime(DISPLAY_TIME_FM_RADIO);
+                    break;
+                default:
                     dispMode = MODE_FM_TUNE;
                     setDisplayTime(DISPLAY_TIME_FM_TUNE);
                     break;
-                default:
-                    dispMode = MODE_FM_RADIO;
-                    setDisplayTime(DISPLAY_TIME_FM_RADIO);
                 }
                 break;
             case CMD_RC_FM_STORE:
