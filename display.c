@@ -799,7 +799,7 @@ void displayInit(void)
             addr++;
             i++;
             while (eeprom_read_byte(addr) != '\0' &&
-                    addr < (uint8_t *)EEPROM_SIZE) {
+                   addr < (uint8_t *)EEPROM_SIZE) {
                 addr++;
             }
         } else {
@@ -1732,9 +1732,30 @@ void showTimer(int16_t timer)
 
 void showSpectrum(void)
 {
+    uint8_t left = 0;
+    uint8_t right = 0;
+    uint8_t data;
+
+    if (spMode == SP_MODE_METER) {
+        data = 0;
+        for (uint8_t i = 0; i < FFT_SIZE / 2 - 1; i++) {
+            data = buf[i] + buf[i + 1];
+            if (data > left) {
+                left = data;
+            }
+        }
+        data = 0;
+        for (uint8_t i = 0; i < FFT_SIZE / 2 - 1; i++) {
+            data = buf[i + FFT_SIZE / 2] + buf[i + (FFT_SIZE / 2 - 1)];
+            if (data > right) {
+                right = data;
+            }
+        }
+
+    }
+
 #if defined(_KS0066)
-    uint8_t i, data;
-    uint16_t left, right;
+    uint8_t i;
 
     switch (spMode) {
     case SP_MODE_STEREO:
@@ -1776,14 +1797,6 @@ void showSpectrum(void)
         break;
     default:
         lcdGenBar(userAddSym);
-        left = 0;
-        right = 0;
-        for (i = 0; i < FFT_SIZE / 2; i++) {
-            left += buf[i];
-            right += buf[FFT_SIZE / 2 + i];
-        }
-        left >>= 4;
-        right >>= 4;
 
         ks0066SetXY(0, 0);
         ks0066WriteData(eeprom_read_byte(txtLabels[LABEL_LEFT_CHANNEL]));
@@ -1816,7 +1829,6 @@ void showSpectrum(void)
 #elif defined(_LS020)
     uint8_t x, xbase;
     uint8_t ybase;
-    uint16_t left, right;
 
     switch (spMode) {
     case SP_MODE_STEREO:
@@ -1853,14 +1865,6 @@ void showSpectrum(void)
         writeStringEeprom(txtLabels[LABEL_LEFT_CHANNEL]);
         ls020SetXY(2, 80);
         writeStringEeprom(txtLabels[LABEL_RIGHT_CHANNEL]);
-        left = 0;
-        right = 0;
-        for (x = 0; x < 32; x++) {
-            left += buf[x];
-            right += buf[x + 32];
-        }
-        left >>= 3;
-        right >>= 3;
 
         for (x = 0; x < 58; x++) {
             ls020DrawRect(3 * x + 1, 20, 3 * x + 2, 29, x < left ? COLOR_YELLOW : COLOR_BLACK);
@@ -1874,31 +1878,29 @@ void showSpectrum(void)
         break;
     }
 #else
-    uint8_t x, xbase;
-    uint8_t y, ybase;
-    uint16_t left, right;
+    uint8_t xbase, ybase;
 
     switch (spMode) {
     case SP_MODE_STEREO:
-        for (x = 0; x < GD_SIZE_X / 6 + 1; x++) {
-            xbase = x * 6;
+        for (uint8_t i = 0; i < GD_SIZE_X / 6 + 1; i++) {
+            xbase = i * 6;
 
-            for (y = 0; y < GD_SIZE_Y; y += 32) {
-                ybase = buf[x + y];
+            for (uint8_t y = 0; y < GD_SIZE_Y; y += 32) {
+                ybase = buf[i + y];
                 drawSpCol(xbase, 2, 31 + y, ybase, 31);
-                ybase += buf[x + y + 1];
+                ybase += buf[i + y + 1];
                 ybase /= 2;
                 drawSpCol(xbase + 3, 2, 31 + y, ybase, 31);
             }
         }
         break;
     case SP_MODE_MIXED:
-        for (x = 0; x < GD_SIZE_X / 6 + 1; x++) {
-            xbase = x * 6;
+        for (uint8_t i = 0; i < GD_SIZE_X / 6 + 1; i++) {
+            xbase = i * 6;
 
-            ybase = buf[x] + buf[x + 32];
+            ybase = buf[i] + buf[i + 32];
             drawSpCol(xbase, 2, 63, ybase, 63);
-            ybase += buf[x + 1] + buf[x + 32 + 1];
+            ybase += buf[i + 1] + buf[i + 32 + 1];
             ybase /= 2;
             drawSpCol(xbase + 3, 2, 63, ybase, 63);
         }
@@ -1909,32 +1911,24 @@ void showSpectrum(void)
         writeStringEeprom(txtLabels[LABEL_LEFT_CHANNEL]);
         gdSetXY(0, 36);
         writeStringEeprom(txtLabels[LABEL_RIGHT_CHANNEL]);
-        left = 0;
-        right = 0;
-        for (x = 0; x < GD_SIZE_X / 4; x++) {
-            left += buf[x];
-            right += buf[x + 32];
-        }
-        left >>= 4;
-        right >>= 4;
 
-        for (x = 0; x < 43; x++) {
-            for (y = 12; y < 27; y++) {
-                if (x < left || y == 19) {
-                    gdDrawPixel(3 * x + 0, y, 1);
-                    gdDrawPixel(3 * x + 1, y, 1);
+        for (uint8_t i = 0; i < 43; i++) {
+            for (uint8_t y = 12; y < 27; y++) {
+                if (i < left || y == 19) {
+                    gdDrawPixel(3 * i + 0, y, 1);
+                    gdDrawPixel(3 * i + 1, y, 1);
                 } else {
-                    gdDrawPixel(3 * x + 0, y, 0);
-                    gdDrawPixel(3 * x + 1, y, 0);
+                    gdDrawPixel(3 * i + 0, y, 0);
+                    gdDrawPixel(3 * i + 1, y, 0);
                 }
             }
-            for (y = 48; y < 63; y++) {
-                if (x < right || y == 55) {
-                    gdDrawPixel(3 * x + 0, y, 1);
-                    gdDrawPixel(3 * x + 1, y, 1);
+            for (uint8_t y = 48; y < 63; y++) {
+                if (i < right || y == 55) {
+                    gdDrawPixel(3 * i + 0, y, 1);
+                    gdDrawPixel(3 * i + 1, y, 1);
                 } else {
-                    gdDrawPixel(3 * x + 0, y, 0);
-                    gdDrawPixel(3 * x + 1, y, 0);
+                    gdDrawPixel(3 * i + 0, y, 0);
+                    gdDrawPixel(3 * i + 1, y, 0);
                 }
             }
         }
