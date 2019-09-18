@@ -1746,7 +1746,7 @@ void showSpectrum(void)
         }
         data = 0;
         for (uint8_t i = 0; i < FFT_SIZE / 2 - 1; i++) {
-            data = buf[i + FFT_SIZE / 2] + buf[i + (FFT_SIZE / 2 - 1)];
+            data = buf[i + FFT_SIZE / 2] + buf[i + FFT_SIZE / 2 + 1];
             if (data > right) {
                 right = data;
             }
