@@ -696,10 +696,10 @@ void showSndParam(uint8_t mode)
 #if defined(_KS0066)
 static void drawTm(uint8_t tm)
 {
-    if (rtc.etm != tm || (getSecTimer() % 512) < 200) {
-        writeNum(*((int8_t *)&rtc + tm), 2, '0', 10);
-    } else {
+    if (tm == rtc.etm && getClockTimer() < RTC_POLL_TIME / 2)
         writeString("  ");
+    } else {
+        writeNum(*((int8_t *)&rtc + tm), 2, '0', 10);
     }
 }
 #else

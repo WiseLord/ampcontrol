@@ -1,8 +1,8 @@
 #include <avr/interrupt.h>
 #include <avr/eeprom.h>
 
-#include "eeprom.h"
 #include "adc.h"
+#include "eeprom.h"
 #include "input.h"
 #include "remote.h"
 #include "i2c.h"

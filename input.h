@@ -115,7 +115,4 @@ uint8_t getClockTimer();
 void setInitTimer(int16_t value);
 int16_t getInitTimer();
 
-void setSecTimer(uint16_t val);
-int16_t getSecTimer();
-
 #endif // INPUT_H
