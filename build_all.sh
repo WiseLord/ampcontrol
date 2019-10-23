@@ -1,6 +1,6 @@
 #!/bin/sh
 
-for MCU in atmega168p atmega328p atmega8
+for MCU in atmega8
 do
   for DISPLAY in KS0066_16X2_4BIT KS0066_16X2_PCF8574
   do
@@ -12,8 +12,9 @@ do
         then
           if [ $AUDIOPROC != "TUNER_AUDIO" -o $TUNER == "RDA580X" -o $TUNER == "SI470X" ]
           then
-            make clean
-            make -j4  MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}
+            echo "Compiling for MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}"
+            make -s clean
+            make -j4 -s MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}
           fi
         fi
       done

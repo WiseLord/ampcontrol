@@ -73,7 +73,10 @@ uint8_t getAction()
         }
         break;
     case CMD_BTN_1_LONG:
-        action = CMD_RC_BRIGHTNESS;
+        if (dispMode == MODE_TEST)
+            action = ACTION_ZERO_DISPLAYTIME;
+        else
+            action = CMD_RC_BRIGHTNESS;
         break;
     case CMD_BTN_2_LONG:
         action = CMD_RC_DEF_DISPLAY;
@@ -105,11 +108,12 @@ uint8_t getAction()
         }
     }
 
-    // Disable actions except ZERO_DISPLAY_TIME in temp mode
+    // Disable actions except ZERO_DISPLAY_TIME in test mode
     if (dispMode == MODE_TEST) {
         if (action != ACTION_NOACTION)
             setDisplayTime(DISPLAY_TIME_TEST);
-        action = ACTION_NOACTION;
+        if (action != ACTION_ZERO_DISPLAYTIME)
+            action = ACTION_NOACTION;
     }
     // Disable actions except POWERON and TESTMODE in standby mode
     if (dispMode == MODE_STANDBY) {
@@ -182,6 +186,9 @@ void handleAction(uint8_t action)
     case CMD_RC_NEXT_SNDPAR:
         sndNextParam(&dispMode);
         setDisplayTime(DISPLAY_TIME_AUDIO);
+        break;
+    case ACTION_ZERO_DISPLAYTIME:
+        setDisplayTime(0);
         break;
     case CMD_RC_BRIGHTNESS:
         dispMode = MODE_BR;
