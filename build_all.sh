@@ -13,7 +13,8 @@ do
           if [ $AUDIOPROC != "TUNER_AUDIO" -o $TUNER == "RDA580X" -o $TUNER == "SI470X" ]
           then
             make clean
-            make -j4  MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}
+            echo "Compiling for MCU=${MCU} APROC=${AUDIOPROC} TUNER=${TUNER} DISPLAY=${DISPLAY}"
+            make -s -j4  MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}
           fi
         fi
       done

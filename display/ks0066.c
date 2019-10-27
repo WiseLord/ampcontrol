@@ -22,7 +22,6 @@ const uint8_t pcf8574Addresses[] PROGMEM = {
 
 #endif
 
-static uint8_t _br;
 static uint8_t _x;
 static uint8_t dataMode = KS0066_SET_CGRAM;
 
@@ -215,27 +214,6 @@ void ks0066WriteTail(uint8_t ch, uint8_t pos)
         ks0066WriteData (ch);
 }
 
-ISR (TIMER0_OVF_vect)
-{
-    // 2MHz / (256 - 156) = 20000Hz
-    TCNT0 = 156;
-
-    static uint8_t run = 1;
-    if (run)
-        ADCSRA |= 1 << ADSC;                        // Start ADC every second interrupt
-    run = !run;
-
-    static uint8_t br;
-
-    if (++br >= KS0066_MAX_BRIGHTNESS)              // Loop brightness
-        br = KS0066_MIN_BRIGHTNESS;
-
-    if (br == _br) {
-        CLR(KS0066_BCKL);                           // Turn backlight off
-    } else if (br == 0)
-        SET(KS0066_BCKL);                           // Turn backlight on
-}
-
 void pcf8574SetBacklight(uint8_t value)
 {
 #if defined(KS0066_WIRE_PCF8574)
@@ -245,9 +223,4 @@ void pcf8574SetBacklight(uint8_t value)
         i2cData &= ~PCF8574_BL_LINE;
     ks0066WriteCommand(KS0066_NO_COMMAND);
 #endif
-}
-
-void ks0066SetBrightness(uint8_t br)
-{
-    _br = br;
 }

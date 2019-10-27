@@ -90,6 +90,5 @@ void ks0066WriteString(char *string);
 void ks0066WriteTail(uint8_t ch, uint8_t pos);
 
 void pcf8574SetBacklight(uint8_t value);
-void ks0066SetBrightness(uint8_t br);
 
 #endif // KS0066_H

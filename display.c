@@ -408,7 +408,6 @@ void displayInit()
     spMode  = eeprom_read_byte((uint8_t *)EEPROM_SP_MODE);
 }
 
-#if !defined(_KS0066)
 ISR (TIMER0_OVF_vect)
 {
     ADCSRA |= 1 << ADSC;                                // Start ADC every second interrupt
@@ -430,7 +429,6 @@ ISR (TIMER0_OVF_vect)
 
     return;
 }
-#endif
 
 void showRCInfo()
 {
@@ -696,7 +694,7 @@ void showSndParam(uint8_t mode)
 #if defined(_KS0066)
 static void drawTm(uint8_t tm)
 {
-    if (tm == rtc.etm && getClockTimer() < RTC_POLL_TIME / 2)
+    if (tm == rtc.etm && getClockTimer() < RTC_POLL_TIME / 2) {
         writeString("  ");
     } else {
         writeNum(*((int8_t *)&rtc + tm), 2, '0', 10);
