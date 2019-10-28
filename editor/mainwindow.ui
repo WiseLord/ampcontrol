@@ -17,7 +17,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Ampcontrol ATmega8 EEPROM editor</string>
+   <string>Ampcontrol ATmega8 / ATmega16 EEPROM editor</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0">
@@ -44,16 +44,16 @@
       <property name="columnCount">
        <number>16</number>
       </property>
-      <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>22</number>
-      </attribute>
       <attribute name="horizontalHeaderMinimumSectionSize">
        <number>22</number>
       </attribute>
-      <attribute name="verticalHeaderDefaultSectionSize">
-       <number>18</number>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>22</number>
       </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
+       <number>18</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
        <number>18</number>
       </attribute>
       <row/>
@@ -2135,6 +2135,124 @@
          </widget>
         </item>
         <item>
+         <widget class="QWidget" name="wgtPcf8574" native="true">
+          <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="1,0">
+           <property name="spacing">
+            <number>0</number>
+           </property>
+           <property name="leftMargin">
+            <number>3</number>
+           </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="lblPcf8574">
+             <property name="text">
+              <string>PCF8574 address</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QComboBox" name="cbxPcf8574">
+             <property name="minimumSize">
+              <size>
+               <width>120</width>
+               <height>0</height>
+              </size>
+             </property>
+             <item>
+              <property name="text">
+               <string notr="true">0x40</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x42</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x44</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x46</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x48</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x4A</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x4C</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x4E</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x70</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x72</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x74</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x76</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x78</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x7A</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x7C</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string notr="true">0x7E</string>
+              </property>
+             </item>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item>
          <spacer name="vspOther">
           <property name="orientation">
            <enum>Qt::Vertical</enum>
@@ -2299,8 +2417,8 @@
    <slot>updateTranslation(int,int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>722</x>
-     <y>229</y>
+     <x>546</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
      <x>707</x>
@@ -2315,8 +2433,8 @@
    <slot>setInput(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>851</x>
-     <y>106</y>
+     <x>948</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel">
      <x>807</x>
@@ -2331,8 +2449,8 @@
    <slot>setLoudness(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>149</y>
+     <x>948</x>
+     <y>126</y>
     </hint>
     <hint type="destinationlabel">
      <x>806</x>
@@ -2347,7 +2465,7 @@
    <slot>setAudioproc(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>845</x>
+     <x>946</x>
      <y>78</y>
     </hint>
     <hint type="destinationlabel">
@@ -2363,8 +2481,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>864</x>
-     <y>552</y>
+     <x>549</x>
+     <y>508</y>
     </hint>
     <hint type="destinationlabel">
      <x>837</x>
@@ -2379,8 +2497,8 @@
    <slot>setFmmono(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>272</y>
+     <x>948</x>
+     <y>225</y>
     </hint>
     <hint type="destinationlabel">
      <x>817</x>
@@ -2395,8 +2513,8 @@
    <slot>setFmfreq(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>122</y>
+     <x>948</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
      <x>813</x>
@@ -2411,8 +2529,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>855</x>
-     <y>522</y>
+     <x>549</x>
+     <y>481</y>
     </hint>
     <hint type="destinationlabel">
      <x>838</x>
@@ -2427,8 +2545,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>854</x>
-     <y>393</y>
+     <x>549</x>
+     <y>346</y>
     </hint>
     <hint type="destinationlabel">
      <x>827</x>
@@ -2443,8 +2561,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>854</x>
-     <y>473</y>
+     <x>549</x>
+     <y>427</y>
     </hint>
     <hint type="destinationlabel">
      <x>833</x>
@@ -2459,8 +2577,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>854</x>
-     <y>447</y>
+     <x>549</x>
+     <y>400</y>
     </hint>
     <hint type="destinationlabel">
      <x>832</x>
@@ -2475,8 +2593,8 @@
    <slot>setBalance(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>348</y>
+     <x>948</x>
+     <y>298</y>
     </hint>
     <hint type="destinationlabel">
      <x>820</x>
@@ -2491,8 +2609,8 @@
    <slot>setVolume(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>841</x>
-     <y>253</y>
+     <x>948</x>
+     <y>223</y>
     </hint>
     <hint type="destinationlabel">
      <x>821</x>
@@ -2507,8 +2625,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>854</x>
-     <y>498</y>
+     <x>549</x>
+     <y>454</y>
     </hint>
     <hint type="destinationlabel">
      <x>832</x>
@@ -2523,8 +2641,8 @@
    <slot>setTreble(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>319</y>
+     <x>948</x>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel">
      <x>817</x>
@@ -2539,7 +2657,7 @@
    <slot>setTuner(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
+     <x>948</x>
      <y>78</y>
     </hint>
     <hint type="destinationlabel">
@@ -2555,8 +2673,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>852</x>
-     <y>423</y>
+     <x>549</x>
+     <y>373</y>
     </hint>
     <hint type="destinationlabel">
      <x>829</x>
@@ -2571,8 +2689,8 @@
    <slot>setBass(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>840</x>
-     <y>275</y>
+     <x>948</x>
+     <y>248</y>
     </hint>
     <hint type="destinationlabel">
      <x>809</x>
@@ -2587,8 +2705,8 @@
    <slot>setBrstby(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>92</y>
+     <x>948</x>
+     <y>79</y>
     </hint>
     <hint type="destinationlabel">
      <x>816</x>
@@ -2635,8 +2753,8 @@
    <slot>setSurround(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>845</x>
-     <y>169</y>
+     <x>948</x>
+     <y>150</y>
     </hint>
     <hint type="destinationlabel">
      <x>814</x>
@@ -2651,8 +2769,8 @@
    <slot>setEffect3d(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>207</y>
+     <x>948</x>
+     <y>174</y>
     </hint>
     <hint type="destinationlabel">
      <x>813</x>
@@ -2667,8 +2785,8 @@
    <slot>setToneBypass(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>223</y>
+     <x>948</x>
+     <y>198</y>
     </hint>
     <hint type="destinationlabel">
      <x>812</x>
@@ -2683,8 +2801,8 @@
    <slot>setFmMin(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>850</x>
-     <y>140</y>
+     <x>948</x>
+     <y>128</y>
     </hint>
     <hint type="destinationlabel">
      <x>814</x>
@@ -2699,8 +2817,8 @@
    <slot>setFmMax(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>182</y>
+     <x>948</x>
+     <y>153</y>
     </hint>
     <hint type="destinationlabel">
      <x>816</x>
@@ -2715,8 +2833,8 @@
    <slot>setFmRds(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>302</y>
+     <x>948</x>
+     <y>249</y>
     </hint>
     <hint type="destinationlabel">
      <x>817</x>
@@ -2731,8 +2849,8 @@
    <slot>setFmstep1(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>212</y>
+     <x>948</x>
+     <y>177</y>
     </hint>
     <hint type="destinationlabel">
      <x>814</x>
@@ -2747,8 +2865,8 @@
    <slot>setFmstep2(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>949</x>
-     <y>242</y>
+     <x>948</x>
+     <y>201</y>
     </hint>
     <hint type="destinationlabel">
      <x>817</x>
@@ -2763,8 +2881,8 @@
    <slot>setRemoteType(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>838</x>
-     <y>74</y>
+     <x>948</x>
+     <y>78</y>
     </hint>
     <hint type="destinationlabel">
      <x>807</x>
@@ -2779,8 +2897,8 @@
    <slot>setRemoteAddr(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>839</x>
-     <y>107</y>
+     <x>948</x>
+     <y>103</y>
     </hint>
     <hint type="destinationlabel">
      <x>808</x>
@@ -2795,8 +2913,8 @@
    <slot>setRemoteCmd(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>846</x>
-     <y>138</y>
+     <x>948</x>
+     <y>128</y>
     </hint>
     <hint type="destinationlabel">
      <x>816</x>
@@ -2811,8 +2929,8 @@
    <slot>setRemoteIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>702</x>
-     <y>268</y>
+     <x>546</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel">
      <x>687</x>
@@ -2907,8 +3025,8 @@
    <slot>setCurFreq(double)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>814</x>
-     <y>563</y>
+     <x>948</x>
+     <y>582</y>
     </hint>
     <hint type="destinationlabel">
      <x>778</x>
@@ -2923,8 +3041,8 @@
    <slot>stationAddRemove()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>815</x>
-     <y>597</y>
+     <x>948</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>783</x>
@@ -2939,8 +3057,8 @@
    <slot>setStationIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>613</x>
-     <y>355</y>
+     <x>546</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel">
      <x>587</x>
@@ -2955,8 +3073,8 @@
    <slot>stationRemoveAll()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>498</x>
-     <y>595</y>
+     <x>569</x>
+     <y>606</y>
     </hint>
     <hint type="destinationlabel">
      <x>476</x>
@@ -2971,8 +3089,8 @@
    <slot>setFmctrl()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>854</x>
-     <y>369</y>
+     <x>549</x>
+     <y>319</y>
     </hint>
     <hint type="destinationlabel">
      <x>827</x>
@@ -2987,8 +3105,8 @@
    <slot>setFmBass(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>843</x>
-     <y>316</y>
+     <x>948</x>
+     <y>273</y>
     </hint>
     <hint type="destinationlabel">
      <x>817</x>
@@ -3044,6 +3162,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>cbxPcf8574</sender>
+   <signal>activated(int)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setPcf8574Idx(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>856</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>807</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>openEeprom()</slot>
@@ -3091,5 +3225,6 @@
   <slot>setStationIndex(int)</slot>
   <slot>stationRemoveAll()</slot>
   <slot>setFmBass(int)</slot>
+  <slot>setPcf8574Idx(int)</slot>
  </slots>
 </ui>

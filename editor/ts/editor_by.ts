@@ -10,8 +10,8 @@
     </message>
     <message>
         <location filename="../aboutdialog.ui" line="51"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;  About Ampcontrol ATmega8 EEPROM editor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This program allows to edit eeprom binary files for &lt;a href=&quot;http://wiselord.github.io/avr/ampcontrol/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ampcontrol&lt;/span&gt;&lt;/a&gt; project.&lt;/p&gt;&lt;p&gt;Ampcontrol project can help to transform an ordinary sound amplifier to a fully digital controlled one with function of sound spectrum analyzer.&lt;/p&gt;&lt;p&gt;It is based on ATmega8 MCU and supports various FM tuners and audioprocessors, mostly via I²C bus.&lt;/p&gt;&lt;p&gt;Amcontrol project sources (GPL license) can be found on &lt;a href=&quot;https://github.com/WiseLord/ampcontrol/tree/m8&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Project is created and maintained by WiseLord.&lt;/p&gt;&lt;p&gt;Email: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Пра рэдактар EEPROM Ampcontrol (m8)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Гэтая праграма дазваляе рэдагаваць бинарныя файлы  eeprom для праекта &lt;a href=&quot;http://wiselord.github.io/avr/ampcontrol/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ampcontrol&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Праект Ampcontrol дазваляе звычайны ўзмацняльнік гуку ператварыць у кіруемую лічбавую прыладу з фунцыяналам аналізатара спектру гукавага сігналу.&lt;/p&gt;&lt;p&gt;Заснаваны на МК ATmega8 и падтрымлівае разнастайныя FM-цюнеры і аудыёпрацесары, у асноўным, працуючыя па шыне I²C.&lt;/p&gt;&lt;p&gt;Зыходнікі праекта Amcontrol (ліцензія GPL) знаходзяцца на &lt;a href=&quot;https://github.com/WiseLord/ampcontrol/tree/m8&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Праект створаны і падтрымоўваецца WiseLord.&lt;/p&gt;&lt;p&gt;Электронная пошта: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;About Ampcontrol ATmega8/16 EEPROM editor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;This program allows to edit eeprom binary files for &lt;a href=&quot;http://wiselord.github.io/avr/ampcontrol/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ampcontrol&lt;/span&gt;&lt;/a&gt; project.&lt;/p&gt;&lt;p&gt;Ampcontrol project can help to transform an ordinary sound amplifier to a fully digital controlled one with function of sound spectrum analyzer.&lt;/p&gt;&lt;p&gt;It is based on ATmega8/16 MCU and supports various FM tuners and audioprocessors, mostly via I²C bus.&lt;/p&gt;&lt;p&gt;Amcontrol project sources (GPL license) can be found on &lt;a href=&quot;https://github.com/WiseLord/ampcontrol/tree/m8&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Project is created and maintained by WiseLord.&lt;/p&gt;&lt;p&gt;Email: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:12pt; font-weight:600;&quot;&gt;Пра рэдактар EEPROM Ampcontrol (m8/m16)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Гэтая праграма дазваляе рэдагаваць бинарныя файлы  eeprom для праекта &lt;a href=&quot;http://wiselord.github.io/avr/ampcontrol/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;ampcontrol&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Праект Ampcontrol дазваляе звычайны ўзмацняльнік гуку ператварыць у кіруемую лічбавую прыладу з фунцыяналам аналізатара спектру гукавага сігналу.&lt;/p&gt;&lt;p&gt;Заснаваны на МК ATmega8/16 и падтрымлівае разнастайныя FM-цюнеры і аудыёпрацесары, у асноўным, працуючыя па шыне I²C.&lt;/p&gt;&lt;p&gt;Зыходнікі праекта Amcontrol (ліцензія GPL) знаходзяцца на &lt;a href=&quot;https://github.com/WiseLord/ampcontrol/tree/m8&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;Github&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;Праект створаны і падтрымоўваецца WiseLord.&lt;/p&gt;&lt;p&gt;Электронная пошта: &lt;a href=&quot;mailto:wiselord1983@gmail.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0000ff;&quot;&gt;wiselord1983@gmail.com&lt;/span&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
@@ -57,11 +57,6 @@
         <translation>Нядзеля</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="20"/>
-        <source>Ampcontrol ATmega8 EEPROM editor</source>
-        <translation>Рэдактар EEPROM Ampcontrol (m8)</translation>
-    </message>
-    <message>
         <location filename="../mainwindow.ui" line="309"/>
         <source>Translation</source>
         <translation>Пераклад</translation>
@@ -87,17 +82,17 @@
         <translation>Будзільнік</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2169"/>
+        <location filename="../mainwindow.ui" line="2287"/>
         <source>&amp;File</source>
         <translation>&amp;Файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2179"/>
+        <location filename="../mainwindow.ui" line="2297"/>
         <source>&amp;Help</source>
         <translation>&amp;Даведка</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2244"/>
+        <location filename="../mainwindow.ui" line="2362"/>
         <source>Belarusian</source>
         <translation>Беларуская</translation>
     </message>
@@ -263,6 +258,11 @@
         <location filename="../mainwindow.ui" line="1339"/>
         <source>Audio</source>
         <translation>Аудыё</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="20"/>
+        <source>Ampcontrol ATmega8 / ATmega16 EEPROM editor</source>
+        <translation>Рэдактар EEPROM Ampcontrol (ATmega8 / ATmega16)</translation>
     </message>
     <message>
         <location filename="../mainwindow.ui" line="357"/>
@@ -723,57 +723,62 @@
         <translation>Яркасць у рэжыме чакання</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2186"/>
+        <location filename="../mainwindow.ui" line="2158"/>
+        <source>PCF8574 address</source>
+        <translation>Адрас PCF8574</translation>
+    </message>
+    <message>
+        <location filename="../mainwindow.ui" line="2304"/>
         <source>&amp;Language</source>
         <translation>&amp;Мова</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2200"/>
+        <location filename="../mainwindow.ui" line="2318"/>
         <source>&amp;Open eeprom binary …</source>
         <translation>&amp;Адкрыць бінарны файл eeprom …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2205"/>
+        <location filename="../mainwindow.ui" line="2323"/>
         <source>&amp;Save eeprom binary</source>
         <translation>&amp;Захаваць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2210"/>
+        <location filename="../mainwindow.ui" line="2328"/>
         <source>Save &amp;eeprom binary as …</source>
         <translation>Захаваць бінарны файл eeprom &amp;як …</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2215"/>
+        <location filename="../mainwindow.ui" line="2333"/>
         <source>&amp;Load default eeprom</source>
         <translation>За&amp;грузіць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2220"/>
+        <location filename="../mainwindow.ui" line="2338"/>
         <source>&amp;About</source>
         <translation>&amp;Аб праграме</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2225"/>
+        <location filename="../mainwindow.ui" line="2343"/>
         <source>A&amp;boutQt</source>
         <translation>Аб &amp;Qt</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2236"/>
+        <location filename="../mainwindow.ui" line="2354"/>
         <source>Auto</source>
         <translation>Аўта</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2252"/>
+        <location filename="../mainwindow.ui" line="2370"/>
         <source>English</source>
         <translation>Англiйская</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2260"/>
+        <location filename="../mainwindow.ui" line="2378"/>
         <source>Russian</source>
         <translation>Руская</translation>
     </message>
     <message>
-        <location filename="../mainwindow.ui" line="2265"/>
+        <location filename="../mainwindow.ui" line="2383"/>
         <source>Exit</source>
         <translation>Выхад</translation>
     </message>
@@ -819,13 +824,13 @@
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="525"/>
-        <location filename="../mainwindow.cpp" line="854"/>
+        <location filename="../mainwindow.cpp" line="871"/>
         <source>Remove station</source>
         <translation>Выдаліць станцыю</translation>
     </message>
     <message>
         <location filename="../mainwindow.cpp" line="531"/>
-        <location filename="../mainwindow.cpp" line="858"/>
+        <location filename="../mainwindow.cpp" line="875"/>
         <source>Add station</source>
         <translation>Дадаць станцыю</translation>
     </message>

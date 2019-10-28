@@ -808,6 +808,16 @@ void MainWindow::setOther()
 {
     setBrstby(eep[EEPROM_BR_STBY]);
     sbxBrstby->setValue(eep[EEPROM_BR_STBY]);
+
+    int pcf8574Index = 0;
+    int pcf8574Addr7 = eep[EEPROM_PCF8574_ADDR] / 2;
+    if (pcf8574Addr7 >= 0x38 && pcf8574Addr7 <= 0x3F) {
+        pcf8574Index = pcf8574Addr7 - 0x38 + 8;
+    } else if (pcf8574Addr7 >= 0x20 && pcf8574Addr7 <= 0x2F) {
+        pcf8574Index = pcf8574Addr7 - 0x20;
+    }
+    setPcf8574Idx(pcf8574Index);
+    cbxPcf8574->setCurrentIndex(pcf8574Index);
 }
 
 void MainWindow::setBrstby(int value)
@@ -816,6 +826,13 @@ void MainWindow::setBrstby(int value)
         value = 1;
     eep[EEPROM_BR_STBY] = (char)value;
     updateHexTable(EEPROM_BR_STBY);
+}
+
+void MainWindow::setPcf8574Idx(int index)
+{
+    cbxPcf8574->setCurrentIndex(index);
+    eep[EEPROM_PCF8574_ADDR] = cbxPcf8574->currentText().toInt(nullptr, 16);
+    updateHexTable(EEPROM_PCF8574_ADDR);
 }
 
 void MainWindow::setLanguage()

@@ -86,6 +86,7 @@ private slots:
 
     void setOther();
     void setBrstby(int value);
+    void setPcf8574Idx(int index);
 
     void setLanguage();
     void retranslate(QString lang);
