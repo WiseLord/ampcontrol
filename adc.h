@@ -3,8 +3,6 @@
 
 #include <inttypes.h>
 
-#define swap(x) (__builtin_avr_swap(x))     //  Swaps nibbles in byte
-
 #define N_DB                16
 
 #define DISP_MIN_BR         0

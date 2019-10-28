@@ -11,24 +11,6 @@ static uint8_t dispModePrev = MODE_STANDBY;
 static uint8_t fmMode = MODE_FM_RADIO;
 static uint8_t defDisp = MODE_SPECTRUM;
 
-static uint8_t defDispMode()
-{
-    uint8_t ret;
-
-    if (defDisp == MODE_FM_RADIO) {
-        if (aproc.input || !tuner.ic)
-            ret = MODE_SPECTRUM;
-        else
-            ret = MODE_FM_RADIO;
-    } else {
-        ret = defDisp;
-    }
-    if (aproc.mute)
-        ret = MODE_MUTE;
-
-    return ret;
-}
-
 uint8_t getAction()
 {
     uint8_t action = ACTION_NOACTION;
@@ -195,12 +177,18 @@ void handleAction(uint8_t action)
         setDisplayTime(DISPLAY_TIME_BR);
         break;
     case CMD_RC_DEF_DISPLAY:
-        defDisp = MODE_SPECTRUM;
-        if (aproc.input == 0) {
-            if (dispMode == MODE_SPECTRUM) {
-                fmMode = MODE_RADIO_CHAN;
+        switch (defDisp) {
+        case MODE_TIME:
+            defDisp = MODE_SPECTRUM;
+            break;
+        case MODE_SPECTRUM:
+            if (!aproc.input && tuner.ic) {
                 defDisp = MODE_FM_RADIO;
+                break;
             }
+        default:
+            defDisp = MODE_TIME;
+            break;
         }
         dispMode = defDisp;
         break;
@@ -330,7 +318,15 @@ void handleExitDefaultMode()
             dispMode = MODE_STANDBY;
             break;
         default:
-            dispMode = defDispMode();
+            if (aproc.mute) {
+                dispMode = MODE_MUTE;
+            } else {
+                if (defDisp == MODE_FM_RADIO && (aproc.input || !tuner.ic)) {
+                    dispMode = MODE_SPECTRUM;
+                } else {
+                    dispMode = defDisp;
+                }
+            }
             break;
         }
     }

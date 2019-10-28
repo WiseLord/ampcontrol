@@ -3,7 +3,7 @@ DISPLAY = KS0066_16X2_4BIT
 MCU = atmega8
 F_CPU = 8000000L
 
-APROC_LIST = PT232X
+APROC_LIST = TDA731X
 TUNER_LIST = SI470X
 FEATURE_LIST =
 
@@ -139,7 +139,7 @@ $(ELF): $(OBJS)
 size: $(ELF)
 	@sh ./size.sh $(ELF)
 
-$(BUILDDIR)/%.o: %.c
+$(BUILDDIR)/%.o: %.c Makefile
 	@mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) $(DEFINES) -c -o $@ $<
 

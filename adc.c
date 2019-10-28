@@ -1,3 +1,4 @@
+#include <avr/builtins.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
 #include <avr/pgmspace.h>
@@ -63,7 +64,7 @@ ISR (TIMER0_OVF_vect)
 static uint8_t revBits(uint8_t x)
 {
     x = ((x & 0x15) << 1) | ((x & 0x2A) >> 1);          // 00abcdef => 00badcfe
-    x = (x & 0x0C) | swap(x & 0x33);                    // 00badcfe => 00fedcba
+    x = (x & 0x0C) | __builtin_avr_swap(x & 0x33);                    // 00badcfe => 00fedcba
 
     return x;
 }

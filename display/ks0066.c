@@ -2,13 +2,16 @@
 
 #include <util/delay.h>
 
+#include <avr/builtins.h>
+#include <avr/eeprom.h>
+#include <avr/interrupt.h>
+
+#include "../eeprom.h"
 #include "../pins.h"
 #if defined(KS0066_WIRE_PCF8574)
 #include "../i2c.h"
 #include <avr/pgmspace.h>
 #endif
-
-#define swap(x) (__builtin_avr_swap(x))             // Swaps nibbles
 
 #if defined(KS0066_WIRE_PCF8574)
 static uint8_t i2cData;
@@ -68,7 +71,7 @@ static void ks0066WritePort(uint8_t data)
     ks0066WriteStrob();
 
 #if !defined(KS0066_WIRE_8BIT)
-    ks0066SetData(swap(data));
+    ks0066SetData(__builtin_avr_swap(data));
     ks0066WriteStrob();
 #endif
 
@@ -97,14 +100,18 @@ void ks0066WriteData(uint8_t data)
     ks0066WritePort(data);
 }
 
-void ks0066Clear()
+void ks0066Clear(void)
 {
     ks0066WriteCommand(KS0066_CLEAR);
     _delay_ms(2);
 }
 
-void ks0066Init()
+void ks0066Init(void)
 {
+#if defined(KS0066_WIRE_PCF8574)
+    pcf8574Addr = eeprom_read_byte((uint8_t *)EEPROM_PCF8574_ADDR);
+#endif
+
 #if defined(KS0066_WIRE_PCF8574)
     I2CStart(pcf8574Addr);
 
@@ -112,6 +119,9 @@ void ks0066Init()
 #else
     OUT(KS0066_BCKL);
     OUT(KS0066_E);
+#ifdef DISP_RW
+    OUT(KS0066_RW);
+#endif
     OUT(KS0066_RS);
 
     OUT(KS0066_D7);
@@ -127,6 +137,9 @@ void ks0066Init()
 
     SET(KS0066_BCKL);
     CLR(KS0066_E);
+#ifdef DISP_RW
+    CLR(KS0066_RW);
+#endif
     CLR(KS0066_RS);
 #endif
 
@@ -176,4 +189,15 @@ void ks0066WriteString(char *string)
 {
     while (*string)
         ks0066WriteData(*string++);
+}
+
+void pcf8574SetBacklight(uint8_t value)
+{
+#if defined(KS0066_WIRE_PCF8574)
+    if (value)
+        i2cData |= PCF8574_BL_LINE;
+    else
+        i2cData &= ~PCF8574_BL_LINE;
+    ks0066WriteCommand(KS0066_NO_COMMAND);
+#endif
 }

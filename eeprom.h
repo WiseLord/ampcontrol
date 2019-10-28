@@ -11,6 +11,7 @@
 #define EEPROM_DISPLAY          0x11
 #define EEPROM_BR_STBY          0x12
 #define EEPROM_BR_WORK          0x13
+#define EEPROM_PCF8574_ADDR     0x14
 
 // Audio bool parameters values
 #define EEPROM_AUDIOPROC        0x16

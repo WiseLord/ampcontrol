@@ -79,13 +79,15 @@
 #define KS0066_MAX_BRIGHTNESS       32
 
 // Functions
-void ks0066Clear();
-void ks0066Init();
+void ks0066Clear(void);
+void ks0066Init(void);
 
 void ks0066SelectSymbol(uint8_t num);
 void ks0066SetXY(uint8_t x, uint8_t y);
 
 void ks0066WriteData(uint8_t data);
 void ks0066WriteString(char *string);
+
+void pcf8574SetBacklight(uint8_t value);
 
 #endif // KS0066_H
