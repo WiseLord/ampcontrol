@@ -410,12 +410,10 @@ void displayInit()
 
 ISR (TIMER0_OVF_vect)
 {
-    ADCSRA |= 1 << ADSC;                                // Start ADC every second interrupt
+    // 1MHz / (255 - 155) = 10000Hz => 10kHz Fourier analysis
+    TCNT0 = 155;
 
-    static uint8_t run = 1;
-    if (run)
-        ADCSRA |= 1 << ADSC;                        // Start ADC every second interrupt
-    run = !run;
+    ADCSRA |= 1 << ADSC;
 
     static uint8_t br;
 
