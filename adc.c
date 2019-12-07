@@ -29,7 +29,7 @@ void adcInit()
     // Enable ADC with prescaler 16
     ADCSRA = (1 << ADEN) | (1 << ADPS2) | (0 << ADPS1) | (0 << ADPS0);
     ADMUX |= (1 << ADLAR);                              // Adjust result to left (8bit ADC)
-#ifdef _atmega32
+#if defined(_atmega8) || defined(_atmega16) || defined(_atmega32)
     TIMSK |= (1 << TOIE0);                              // Enable Timer0 overflow interrupt
     TCCR0 |= (0 << CS02) | (1 << CS01) | (0 << CS00);   // Set timer prescaller to 8 (2MHz)
 #else
