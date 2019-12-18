@@ -1912,6 +1912,10 @@ void showSpectrum(void)
         gdSetXY(0, 36);
         writeStringEeprom(txtLabels[LABEL_RIGHT_CHANNEL]);
 
+        // Scale range 0..62 to 0..42
+        left = left * 2 / 3;
+        right = right * 2 / 3;
+
         for (uint8_t i = 0; i < 43; i++) {
             for (uint8_t y = 12; y < 27; y++) {
                 if (i < left || y == 19) {
