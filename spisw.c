@@ -33,7 +33,7 @@ void SPIswInit(uint8_t dataOrder)
 void SPIswSendByte(uint8_t data)
 {
     uint8_t i;
-    uint8_t mask = SPISW_DORD_LSB_FIRST ? 0x01 : 0x80;
+    uint8_t mask = (dord == SPISW_DORD_LSB_FIRST) ? 0x01 : 0x80;
 
     for (i = 0; i < 8; i++) {
         if (data & mask)
