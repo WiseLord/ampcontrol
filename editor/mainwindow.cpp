@@ -9,11 +9,11 @@
 
 #include "irseq.h"
 
-#include "../audio/audio.h"
-#include "../eeprom.h"
-#include "../tuner/tuner.h"
-#include "../display.h"
-#include "../remote.h"
+#include "audio/audio.h"
+#include "eeprom.h"
+#include "tuner/tuner.h"
+#include "display.h"
+#include "remote.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)
@@ -71,11 +71,11 @@ void MainWindow::updateHexTable(int pos)
     QTableWidgetItem *item = wgtHexTable->item(pos / 16, pos % 16);
     item->setText(eep.mid(pos, 1).toHex().toUpper());
     if (item->text() == "FF" && pos >= MODE_SND_END)
-        item->setTextColor(Qt::gray);
+        item->setForeground(QBrush(Qt::gray));
     else if (item->text() == "00" && (pos) >= EEPROM_LABELS_ADDR)
-        item->setTextColor(Qt::blue);
+        item->setForeground(QBrush(Qt::blue));
     else
-        item->setTextColor(Qt::black);
+        item->setForeground(QBrush(Qt::black));
 }
 
 void MainWindow::updateHexTable()
