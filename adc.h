@@ -9,8 +9,13 @@
 
 #define N_DB        32
 
+#ifdef _atmega328p
+#define MUX_LEFT    6
+#define MUX_RIGHT   7
+#else
 #define MUX_LEFT    0
 #define MUX_RIGHT   1
+#endif
 
 extern uint8_t buf[FFT_SIZE];               // Previous results: left and right
 
