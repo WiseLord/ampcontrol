@@ -109,9 +109,13 @@ LDFLAGS = $(WARNLEVEL) -mmcu=$(MCU) -Wl,--gc-sections -Wl,--relax
 
 # Main definitions
 
-CC = avr-gcc
-OBJCOPY = avr-objcopy
-OBJDUMP = avr-objdump
+PREFIX = avr-
+CC = $(PREFIX)gcc
+AS = $(PREFIX)gcc -x assembler-with-cpp
+CP = $(PREFIX)objcopy
+OD = $(PREFIX)objdump
+AR = $(PREFIX)ar
+SZ = $(PREFIX)size
 
 AVRDUDE = avrdude
 AD_MCU = -p $(MCU)
@@ -129,15 +133,15 @@ HEX = flash/$(TARG).hex
 all: $(HEX) size
 
 $(HEX): $(ELF)
-	$(OBJCOPY) -O ihex -R .eeprom -R .nwram $(ELF) $(HEX)
+	$(CP) -O ihex -R .eeprom -R .nwram $(ELF) $(HEX)
 
 $(ELF): $(OBJS)
 	@mkdir -p $(addprefix $(BUILDDIR)/, $(SUBDIRS)) flash
 	$(CC) $(LDFLAGS) -o $(ELF) $(OBJS)
-	$(OBJDUMP) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
+	$(OD) -h -S $(ELF) > $(BUILDDIR)/$(TARG).lss
 
 size: $(ELF)
-	@sh ./size.sh $(ELF)
+	$(SZ) $(ELF)
 
 $(BUILDDIR)/%.o: %.c Makefile
 	@mkdir -p $(dir $@)

@@ -1,5 +1,9 @@
 #!/bin/sh
 
+cd src/
+
+MAKEOPTS="-j4 -s"
+
 for MCU in atmega8
 do
   for DISPLAY in KS0066_16X2_4BIT KS0066_16X2_PCF8574
@@ -14,7 +18,7 @@ do
           then
             echo "Compiling for MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}"
             make -s clean
-            make -j4 -s MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}
+            make ${MAKEOPTS} MCU=${MCU} APROC_LIST=${AUDIOPROC} TUNER_LIST=${TUNER} DISPLAY=${DISPLAY}
           fi
         fi
       done

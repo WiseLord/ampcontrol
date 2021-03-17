@@ -1,6 +1,2 @@
 build-*
-build/*
-*.user
-*.hex
-*.cflags
-*.cxxflags
+

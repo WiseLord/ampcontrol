@@ -5,6 +5,7 @@
 --convert-tabs
 --attach-namespaces
 --max-code-length=100
+--min-conditional-indent=0
 --max-instatement-indent=120
 --pad-header
 --pad-oper

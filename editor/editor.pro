@@ -16,6 +16,8 @@ TEMPLATE = app
 DEFINES += _TEA5767 _RDA580X _TUX032 _LM7001 _RDS
 DEFINES += _TDA7439 _TDA731X _TDA7448 _PT232X _TEA63X0 _PGA2310 _RDA580X_AUDIO
 
+INCLUDEPATH += ../src/
+
 SOURCES += main.cpp\
     mainwindow.cpp \
     lcdconverter.cpp \
