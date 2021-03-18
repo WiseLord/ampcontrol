@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/ampcontrol.png</file>
+        <file>res/eeprom_en.bin</file>
+        <file>fonts/LiberationMono-Bold.ttf</file>
+    </qresource>
+</RCC>
