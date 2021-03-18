@@ -10,7 +10,6 @@
 #include "audio/audio.h"
 #include "eeprom.h"
 #include "tuner/tuner.h"
-#include "display.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent)

@@ -783,54 +783,54 @@
         <translation>Выхад</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="96"/>
+        <location filename="../mainwindow.cpp" line="95"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="96"/>
+        <location filename="../mainwindow.cpp" line="95"/>
         <source>loaded</source>
         <translation>загружаны</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="169"/>
+        <location filename="../mainwindow.cpp" line="168"/>
         <source>Can&apos;t save</source>
         <translation>Не атрымалася захаваць</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="174"/>
+        <location filename="../mainwindow.cpp" line="173"/>
         <source>Saved as</source>
         <translation>Захавана як</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="188"/>
+        <location filename="../mainwindow.cpp" line="187"/>
         <source>Open eeprom binary</source>
         <translation>Адкрыць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="190"/>
+        <location filename="../mainwindow.cpp" line="189"/>
         <source>EEPROM files (*.bin);;All files (*.*)</source>
         <translation>Файлы EEPROM (*.bin);;Усе файлы (*.*)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="203"/>
+        <location filename="../mainwindow.cpp" line="202"/>
         <source>Save eeprom binary</source>
         <translation>Захаваць бінарны файл eeprom</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="205"/>
+        <location filename="../mainwindow.cpp" line="204"/>
         <source>EEPROM files (*.bin)</source>
         <translation>Файлы EEPROM (*.bin)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="525"/>
-        <location filename="../mainwindow.cpp" line="871"/>
+        <location filename="../mainwindow.cpp" line="524"/>
+        <location filename="../mainwindow.cpp" line="870"/>
         <source>Remove station</source>
         <translation>Выдаліць станцыю</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="531"/>
-        <location filename="../mainwindow.cpp" line="875"/>
+        <location filename="../mainwindow.cpp" line="530"/>
+        <location filename="../mainwindow.cpp" line="874"/>
         <source>Add station</source>
         <translation>Дадаць станцыю</translation>
     </message>
