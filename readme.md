@@ -30,7 +30,7 @@ Some videos related to the device can be found at
 - [ST7920](files/sch/st7920.png) - Monochrome 128x64 graphic display
 - [KS0066 16x2](files/sch/ks0066.png) - Monochrome alphanumeric display
 - [LS020](files/sch/ls020.png) - Color 176x132 graphic display found in some Siemence mobile phones like S65
-- SSD1306 - Monochrome 128x64 graphic OLED I²C (SCK - PA4, SDA - PA2)
+- SSD1306 - Monochrome 128x64 graphic OLED I²C (SCK=PA4, SDA=PA2 for ATmega32, SCK=PC0, SDA=PC1 for ATmega328p)
 
 ## Supported audio processors:
 
