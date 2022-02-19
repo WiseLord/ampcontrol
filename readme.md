@@ -6,7 +6,7 @@ It supports various I²C/SPI-controlled audioprocessors and FM tuners.
 Some videos related to the device can be found at
 [Youtube](https://www.youtube.com/watch?v=i6dqi8C9fBk&list=PLfv57leyFFd3KTFyBgsR7_01ZDTgWIuI9&index=10)
 
-![Ampcontrol remote](doc/ampcontrol.jpg)
+![Ampcontrol](doc/ampcontrol.jpg)
 
 ## Main features:
 
