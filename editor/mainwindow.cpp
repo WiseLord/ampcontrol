@@ -333,6 +333,7 @@ void MainWindow::setAudioproc(int proc)
         cbxSurround->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_SURROUND));
         wgtEffect3d->show();
         cbxEffect3d->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_EFFECT3D));
+        /* FALLTHRU */
     case AUDIOPROC_R2S15904SP:
         wgtToneBypass->show();
         cbxToneBypass->setCurrentIndex(!!(eep[EEPROM_APROC_EXTRA] & APROC_EXTRA_TONE_BYPASS));
@@ -345,16 +346,19 @@ void MainWindow::setAudioproc(int proc)
         break;
     case AUDIOPROC_PT232X:
         cbxInput->insertItem(0, "Input 5");
+        /* FALLTHRU */
     case AUDIOPROC_TDA7439:
     case AUDIOPROC_TDA7312:
     case AUDIOPROC_TDA7318:
     case AUDIOPROC_PT2314:
     case AUDIOPROC_R2S15904SP:
         cbxInput->insertItem(0, "Input 4");
+        /* FALLTHRU */
     case AUDIOPROC_TDA7313:
     case AUDIOPROC_TEA6300:
         cbxInput->insertItem(0, "Input 3");
         cbxInput->insertItem(0, "Input 2");
+        /* FALLTHRU */
     default:
         cbxInput->insertItem(0, "Input 1");
         wgtInput->show();
@@ -418,7 +422,6 @@ void MainWindow::setAudioproc(int proc)
         wgtBalance->show();
         setAudioParam(dsbBalance, -14, 14, 2, MODE_SND_BALANCE);
         break;
-        break;
     case AUDIOPROC_PGA2310:
         wgtVolume->show();
         setAudioParam(dsbVolume, -96, 31, 1, MODE_SND_VOLUME);
@@ -438,7 +441,6 @@ void MainWindow::setAudioproc(int proc)
         setAudioParam(dsbTreble, -16, 16, 2, MODE_SND_TREBLE);
         wgtBalance->show();
         setAudioParam(dsbBalance, -15, 15, 1, MODE_SND_BALANCE);
-        break;
         break;
     }
 
@@ -718,6 +720,7 @@ void MainWindow::setTuner(int tuner)
         cbxFmctrlBl->show();
         cbxFmctrlPllref->show();
         cbxFmctrlXtal->show();
+        /* FALLTHRU */
     case TUNER_RDA5807:
     case TUNER_RDA5802:
     case TUNER_SI470X:
@@ -741,6 +744,7 @@ void MainWindow::setTuner(int tuner)
         wgtFmmono->show();
         setFmmono(eep[EEPROM_FM_MONO]);
         cbxFmmono->setCurrentIndex(eep[EEPROM_FM_MONO]);
+        /* FALLTHRU */
     case TUNER_TUX032:
     case TUNER_LM7001:
     case TUNER_LC72131:

@@ -949,14 +949,14 @@
         <translation>Файлы AMSR (*.amsr)</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="596"/>
-        <location filename="../mainwindow.cpp" line="1035"/>
+        <location filename="../mainwindow.cpp" line="598"/>
+        <location filename="../mainwindow.cpp" line="1039"/>
         <source>Remove station</source>
         <translation>Выдаліць станцыю</translation>
     </message>
     <message>
-        <location filename="../mainwindow.cpp" line="602"/>
-        <location filename="../mainwindow.cpp" line="1039"/>
+        <location filename="../mainwindow.cpp" line="604"/>
+        <location filename="../mainwindow.cpp" line="1043"/>
         <source>Add station</source>
         <translation>Дадаць станцыю</translation>
     </message>
